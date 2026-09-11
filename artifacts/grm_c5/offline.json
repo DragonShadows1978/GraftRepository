@@ -1,0 +1,5091 @@
+{
+  "blocked_cells": 72,
+  "blocked_fixtures": [
+    "RT1:rule_off:sup_harbor_restatement",
+    "RT1:rule_off:sup_reserve_juniper_pass",
+    "RT1:rule_off:sup_praxis_fresh",
+    "RT1:rule_off:sup_solace_fresh",
+    "RT1:rule_off:sup_reserve_tundra_ledger",
+    "RT1:rule_off:sup_lumen_head",
+    "RT1:rule_off:sup_reserve_meridian_docket",
+    "RT1:rule_off:sup_orion_current",
+    "RT1:rule_off:sup_reserve_falcon_registry",
+    "RT1:rule_on:sup_harbor_restatement",
+    "RT1:rule_on:sup_reserve_juniper_pass",
+    "RT1:rule_on:sup_praxis_fresh",
+    "RT1:rule_on:sup_solace_fresh",
+    "RT1:rule_on:sup_reserve_tundra_ledger",
+    "RT1:rule_on:sup_lumen_head",
+    "RT1:rule_on:sup_reserve_meridian_docket",
+    "RT1:rule_on:sup_orion_current",
+    "RT1:rule_on:sup_reserve_falcon_registry"
+  ],
+  "cell": "offline",
+  "cell_count": 504,
+  "claim_scope": "A passing rule is a narrower grounding rule for a named class, not a prose-grounding certificate.",
+  "evidence_class": "CPU finite validation",
+  "executable": "/usr/bin/python",
+  "executed_sources": [
+    {
+      "bytes": 0,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/adapters/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2003,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/adapters/tokenizer.py",
+      "sha256": "e7c5ec1340910318708418963e55fc4dd334eefdd75fa0b902ae2446dd3d0859"
+    },
+    {
+      "bytes": 0,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 265082,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/graft_arena.py",
+      "sha256": "e03a44b5e0155fc10a0be5c56e66e117c768a67993fab76df3ecf3aa62cdb20b"
+    },
+    {
+      "bytes": 14227,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/graft_quant.py",
+      "sha256": "ebe40790286a719db38de403210aa20e17e7e4d2699f7b7dae452e014f4fa130"
+    },
+    {
+      "bytes": 35998,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/grm_admission.py",
+      "sha256": "62510861b5b1a33af375a4120d78351d2f880b2618a5462c1776a073f3f2d00f"
+    },
+    {
+      "bytes": 29224,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/grm_demand.py",
+      "sha256": "2fd50307650af0c72c19ecb4f7ce6eb11c3bbf9d5b3439905007b87857b195b3"
+    },
+    {
+      "bytes": 9742,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/grm_frame.py",
+      "sha256": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2"
+    },
+    {
+      "bytes": 1789,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/grm_supersession.py",
+      "sha256": "c8e9baf7c69e41ebdcf05fda84a2895ed7d2b6f7ff67903fdb655924510fdd5e"
+    },
+    {
+      "bytes": 3576,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/grm_text_norm.py",
+      "sha256": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8"
+    },
+    {
+      "bytes": 11171,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/kv_graft.py",
+      "sha256": "d8d44d032c5398c4606b1b6f1b547a94baa2415e36225cb04dd6ef313622ef2d"
+    },
+    {
+      "bytes": 34465,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/core/mistral7b_tc.py",
+      "sha256": "49430e5920508d740a2f8be7b6ba0caadd0442c7798454cf6fa2a808204bf1c4"
+    },
+    {
+      "bytes": 13451,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/scripts/grm_c5_offline.py",
+      "sha256": "3f21d993993b6beb878b3d4d279c7f13ae23100ccc8f60295bb6b987a0e18cbd"
+    },
+    {
+      "bytes": 13137,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/scripts/grm_c5_register.py",
+      "sha256": "9fb1f609f973e60fe06cd144710817bf601b31c253d0ee54a3e44d1436b5396e"
+    },
+    {
+      "bytes": 5465,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/scripts/grm_c5_rules.py",
+      "sha256": "15cafb21100314e852b7c6bd8ef7ede84a36caaa7aa31963c3960eb256011dd8"
+    },
+    {
+      "bytes": 41298,
+      "path": "/mnt/ForgeRealm/wt/grm-c5/scripts/grm_det1_common.py",
+      "sha256": "f13f44cfa6f87dc57cec4ae9bf7fe509a6fbd0be983746202ad64da18a4d8343"
+    }
+  ],
+  "fixture_count": 126,
+  "gates": {
+    "N_no_regressions": true,
+    "N_recovery": false,
+    "N_zero_new_false_acceptances": true,
+    "S_no_regressions": true,
+    "S_recovery": true,
+    "S_zero_new_false_acceptances": true,
+    "W_negative_control_prediction": true,
+    "full_grounding_input_coverage": false
+  },
+  "gpu_cells": [],
+  "gpu_decision": "No missing served texts. RT1 lacks mount text, not answers. Regeneration condition is not met.",
+  "gpu_seconds": 0,
+  "inherited_false_acceptances": [
+    "control:N:swapped_relation",
+    "control:N:negation",
+    "control:N:alias_collision",
+    "control:N:source_negation"
+  ],
+  "new_false_acceptances": {
+    "0": [],
+    "N": [],
+    "S": [],
+    "W": [
+      "control:S:omitted_token",
+      "control:S:swapped_relation",
+      "control:S:negation",
+      "control:S:scattered_word",
+      "control:S:alias_collision",
+      "control:S:source_negation",
+      "control:S:split_across_mounts",
+      "control:S:source_suffix",
+      "control:N:omitted_token",
+      "control:N:scattered_word",
+      "control:N:split_across_mounts",
+      "control:N:source_suffix"
+    ]
+  },
+  "python": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+  "registration": {
+    "bytes": 94329,
+    "path": "/mnt/ForgeRealm/wt/grm-c5/artifacts/grm_c5/registration.json",
+    "sha256": "8127ddcf3768b2a30fa789abf5f61d0ba55ef58a8e56d4230838d4fc411c8964"
+  },
+  "regressions": {
+    "0": [],
+    "N": [],
+    "S": [],
+    "W": []
+  },
+  "rows": [
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "EB1:t05",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "EB1:t09",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "EB1:t13",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "EB1:t16",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "EB1:t19",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "EB1:t22",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "EB1:t24",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "EB1:t26",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "EB1:t30",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "EB1:t33",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "EB1:t70",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "EB1:t80",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "EB1:t90",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "EB1:t100",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-64:t05",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-64:t09",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-64:t13",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-64:t16",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-64:t19",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-64:t22",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-64:t24",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-64:t26",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-64:t30",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-64:t33",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-64:t70",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-64:t80",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-64:t90",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-64:t100",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-96:t05",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-96:t09",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-96:t13",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-96:t16",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-96:t19",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-96:t22",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-96:t24",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-96:t26",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-96:t30",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-96:t33",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-96:t70",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-96:t80",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-96:t90",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-96:t100",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-128:t05",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-128:t09",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-128:t13",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-128:t16",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-128:t19",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-128:t22",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-128:t24",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-128:t26",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-128:t30",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-128:t33",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-128:t70",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-128:t80",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-128:t90",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-128:t100",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-192:t05",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-192:t09",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-192:t13",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-192:t16",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-192:t19",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-192:t22",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-192:t24",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-192:t26",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-192:t30",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-192:t33",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-192:t70",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-192:t80",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-192:t90",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-192:t100",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-256:t05",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": false,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": false,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": false,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": false,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-256:t09",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-256:t13",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-256:t16",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-256:t19",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-256:t22",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-256:t24",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-256:t26",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-256:t30",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-256:t33",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-256:t70",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-256:t80",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-256:t90",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_with_persisted_mount_text",
+      "id": "WC1-256:t100",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_and_frozen_mount_ids_with_hash_bound_repository_text",
+      "id": "SC1:t30",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "original",
+      "evidence": "generated_demand_trip_not_selected_as_served",
+      "id": "SC1:t30-trip",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_only",
+      "id": "RT1:rule_off:sup_harbor_restatement",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_only",
+      "id": "RT1:rule_off:sup_reserve_juniper_pass",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_only",
+      "id": "RT1:rule_off:sup_praxis_fresh",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_only",
+      "id": "RT1:rule_off:sup_solace_fresh",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_only",
+      "id": "RT1:rule_off:sup_reserve_tundra_ledger",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_only",
+      "id": "RT1:rule_off:sup_lumen_head",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_only",
+      "id": "RT1:rule_off:sup_reserve_meridian_docket",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_only",
+      "id": "RT1:rule_off:sup_orion_current",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_only",
+      "id": "RT1:rule_off:sup_reserve_falcon_registry",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_only",
+      "id": "RT1:rule_on:sup_harbor_restatement",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_only",
+      "id": "RT1:rule_on:sup_reserve_juniper_pass",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_only",
+      "id": "RT1:rule_on:sup_praxis_fresh",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_only",
+      "id": "RT1:rule_on:sup_solace_fresh",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_only",
+      "id": "RT1:rule_on:sup_reserve_tundra_ledger",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_only",
+      "id": "RT1:rule_on:sup_lumen_head",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_only",
+      "id": "RT1:rule_on:sup_reserve_meridian_docket",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_only",
+      "id": "RT1:rule_on:sup_orion_current",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": null,
+          "reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+          "status": "BLOCKED"
+        }
+      },
+      "class": "original",
+      "evidence": "served_text_only",
+      "id": "RT1:rule_on:sup_reserve_falcon_registry",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        }
+      },
+      "class": "S",
+      "evidence": "constructed_adversarial_control",
+      "id": "control:S:changed_digit",
+      "kind": "changed_digit"
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": false,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "S",
+      "evidence": "constructed_adversarial_control",
+      "id": "control:S:omitted_token",
+      "kind": "omitted_token"
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "S",
+      "evidence": "constructed_adversarial_control",
+      "id": "control:S:swapped_relation",
+      "kind": "swapped_relation"
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "S",
+      "evidence": "constructed_adversarial_control",
+      "id": "control:S:negation",
+      "kind": "negation"
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "S",
+      "evidence": "constructed_adversarial_control",
+      "id": "control:S:scattered_word",
+      "kind": "scattered_word"
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "S",
+      "evidence": "constructed_adversarial_control",
+      "id": "control:S:alias_collision",
+      "kind": "alias_collision"
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "S",
+      "evidence": "constructed_adversarial_control",
+      "id": "control:S:source_negation",
+      "kind": "source_negation"
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "S",
+      "evidence": "constructed_adversarial_control",
+      "id": "control:S:split_across_mounts",
+      "kind": "split_across_mounts"
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        }
+      },
+      "class": "S",
+      "evidence": "constructed_adversarial_control",
+      "id": "control:S:extra_token",
+      "kind": "extra_token"
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "S",
+      "evidence": "constructed_adversarial_control",
+      "id": "control:S:source_suffix",
+      "kind": "source_suffix"
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "diagnostic",
+      "evidence": "constructed_positive_not_a_served_recovery",
+      "id": "diagnostic:S:positive",
+      "kind": null
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        }
+      },
+      "class": "N",
+      "evidence": "constructed_adversarial_control",
+      "id": "control:N:changed_digit",
+      "kind": "changed_digit"
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": false,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": false,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "N",
+      "evidence": "constructed_adversarial_control",
+      "id": "control:N:omitted_token",
+      "kind": "omitted_token"
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "N",
+      "evidence": "constructed_adversarial_control",
+      "id": "control:N:swapped_relation",
+      "kind": "swapped_relation"
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "N",
+      "evidence": "constructed_adversarial_control",
+      "id": "control:N:negation",
+      "kind": "negation"
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "N",
+      "evidence": "constructed_adversarial_control",
+      "id": "control:N:scattered_word",
+      "kind": "scattered_word"
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "N",
+      "evidence": "constructed_adversarial_control",
+      "id": "control:N:alias_collision",
+      "kind": "alias_collision"
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "N",
+      "evidence": "constructed_adversarial_control",
+      "id": "control:N:source_negation",
+      "kind": "source_negation"
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0,
+            1
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "N",
+      "evidence": "constructed_adversarial_control",
+      "id": "control:N:split_across_mounts",
+      "kind": "split_across_mounts"
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        }
+      },
+      "class": "N",
+      "evidence": "constructed_adversarial_control",
+      "id": "control:N:extra_token",
+      "kind": "extra_token"
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [],
+          "expected_value_hit": true,
+          "grounded": false,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "N",
+      "evidence": "constructed_adversarial_control",
+      "id": "control:N:source_suffix",
+      "kind": "source_suffix"
+    },
+    {
+      "arms": {
+        "0": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "N": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "S": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        },
+        "W": {
+          "contributors": [
+            0
+          ],
+          "expected_value_hit": true,
+          "grounded": true,
+          "status": "SCORED"
+        }
+      },
+      "class": "diagnostic",
+      "evidence": "constructed_positive_not_a_served_recovery",
+      "id": "diagnostic:N:positive",
+      "kind": null
+    }
+  ],
+  "schema": "grm.c5.receipt.v1",
+  "science_status": "RED",
+  "scored_cells": 432,
+  "t33_binding_audit": [
+    {
+      "abstain_reason": "identifier_unbound",
+      "fixture": "EB1:t33",
+      "infer_calls": 0,
+      "recorded_mounts": [],
+      "scope": "candidate predicate only; no eligibility change, mount or generation",
+      "source_binds_if_eligible_0": true,
+      "source_binds_if_eligible_N": true,
+      "source_excluded_live": true,
+      "source_node_id": 35
+    },
+    {
+      "abstain_reason": null,
+      "fixture": "WC1-64:t33",
+      "infer_calls": 7,
+      "recorded_mounts": [
+        82
+      ],
+      "scope": "candidate predicate only; no eligibility change, mount or generation",
+      "source_binds_if_eligible_0": true,
+      "source_binds_if_eligible_N": true,
+      "source_excluded_live": false,
+      "source_node_id": 81
+    },
+    {
+      "abstain_reason": "identifier_unbound",
+      "fixture": "WC1-96:t33",
+      "infer_calls": 0,
+      "recorded_mounts": [],
+      "scope": "candidate predicate only; no eligibility change, mount or generation",
+      "source_binds_if_eligible_0": true,
+      "source_binds_if_eligible_N": true,
+      "source_excluded_live": true,
+      "source_node_id": 35
+    },
+    {
+      "abstain_reason": "identifier_unbound",
+      "fixture": "WC1-128:t33",
+      "infer_calls": 0,
+      "recorded_mounts": [],
+      "scope": "candidate predicate only; no eligibility change, mount or generation",
+      "source_binds_if_eligible_0": true,
+      "source_binds_if_eligible_N": true,
+      "source_excluded_live": true,
+      "source_node_id": 35
+    },
+    {
+      "abstain_reason": "identifier_unbound",
+      "fixture": "WC1-192:t33",
+      "infer_calls": 0,
+      "recorded_mounts": [],
+      "scope": "candidate predicate only; no eligibility change, mount or generation",
+      "source_binds_if_eligible_0": true,
+      "source_binds_if_eligible_N": true,
+      "source_excluded_live": true,
+      "source_node_id": 35
+    },
+    {
+      "abstain_reason": "identifier_unbound",
+      "fixture": "WC1-256:t33",
+      "infer_calls": 0,
+      "recorded_mounts": [],
+      "scope": "candidate predicate only; no eligibility change, mount or generation",
+      "source_binds_if_eligible_0": true,
+      "source_binds_if_eligible_N": true,
+      "source_excluded_live": true,
+      "source_node_id": 35
+    }
+  ],
+  "wall_seconds": 0.09134834492579103
+}

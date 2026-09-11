@@ -1,0 +1,4674 @@
+[
+  {
+    "abstain_reason": null,
+    "answer": "Auric-4-Alpha",
+    "campaign": "EB1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      3,
+      4
+    ],
+    "expected": [
+      "Auric-4-Alpha"
+    ],
+    "id": "EB1:t05",
+    "infer_calls": 7,
+    "mounted_ids": [
+      0
+    ],
+    "question": "Recall probe. What is the current orion pin value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          0
+        ],
+        "ordinal": 0,
+        "planned": [
+          0
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_eb1/g5_run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 0,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact orion pin. The current orion pin value is Auric-4-Alpha. If asked later for orion pin, answer Auric-4-Alpha only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Auric-4-Alpha.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact orion pin. The current orion pin value is Auric-4-Alpha. If asked later for orion pin, answer Auric-4-Alpha only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Auric-4-Alpha.<|end|>"
+    ],
+    "turn": 5
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Vortex-3-Sierra",
+    "campaign": "EB1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      8,
+      9
+    ],
+    "expected": [
+      "Vortex-3-Sierra"
+    ],
+    "id": "EB1:t09",
+    "infer_calls": 7,
+    "mounted_ids": [
+      4
+    ],
+    "question": "Recall probe. What is the current cypher bridge value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          4
+        ],
+        "ordinal": 0,
+        "planned": [
+          4
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_eb1/g5_run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 4,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact cypher bridge. The current cypher bridge value is Vortex-3-Sierra. If asked later for cypher bridge, answer Vortex-3-Sierra only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current cypher bridge value is Vortex-3-Sierra.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact cypher bridge. The current cypher bridge value is Vortex-3-Sierra. If asked later for cypher bridge, answer Vortex-3-Sierra only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current cypher bridge value is Vortex-3-Sierra.<|end|>"
+    ],
+    "turn": 9
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Kestrel-9-Tango",
+    "campaign": "EB1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      12,
+      14
+    ],
+    "expected": [
+      "Kestrel-9-Tango"
+    ],
+    "id": "EB1:t13",
+    "infer_calls": 8,
+    "mounted_ids": [
+      6
+    ],
+    "question": "Recall probe. What is the current orion pin value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          6
+        ],
+        "ordinal": 0,
+        "planned": [
+          6,
+          7
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_eb1/g5_run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 7,
+    "source_node_text": "The current orion pin value is Kestrel-9-Tango.",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact orion pin. The current orion pin value is Kestrel-9-Tango. This is the current value. If asked later, answer Kestrel-9-Tango only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Kestrel-9-Tango.<|end|>"
+    ],
+    "turn": 13
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Zenith-2-Echo",
+    "campaign": "EB1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      16,
+      17
+    ],
+    "expected": [
+      "Zenith-2-Echo"
+    ],
+    "id": "EB1:t16",
+    "infer_calls": 7,
+    "mounted_ids": [
+      12
+    ],
+    "question": "Recall probe. What is the current lyra dock value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          12
+        ],
+        "ordinal": 0,
+        "planned": [
+          12,
+          13
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_eb1/g5_run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 13,
+    "source_node_text": "The current lyra dock value is Zenith-2-Echo.",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact lyra dock. The current lyra dock value is Zenith-2-Echo. This is the current value. If asked later, answer Zenith-2-Echo only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current lyra dock value is Zenith-2-Echo.<|end|>"
+    ],
+    "turn": 16
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Quartz-5-Bravo",
+    "campaign": "EB1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      19,
+      21
+    ],
+    "expected": [
+      "Quartz-5-Bravo"
+    ],
+    "id": "EB1:t19",
+    "infer_calls": 6,
+    "mounted_ids": [
+      8
+    ],
+    "question": "Recall probe. What is the current nova key value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          8
+        ],
+        "ordinal": 0,
+        "planned": [
+          8
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_eb1/g5_run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 5,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current orion pin value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Auric-4-Alpha<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact nova key. The current nova key value is Quartz-5-Bravo. If asked later for nova key, answer Quartz-5-Bravo only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current nova key value is Quartz-5-Bravo.<|end|>"
+    ],
+    "turn": 19
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Gold-7-Foxtrot",
+    "campaign": "EB1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      23,
+      24
+    ],
+    "expected": [
+      "Gold-7-Foxtrot"
+    ],
+    "id": "EB1:t22",
+    "infer_calls": 8,
+    "mounted_ids": [
+      19
+    ],
+    "question": "Recall probe. What is the current mira seal value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          19
+        ],
+        "ordinal": 0,
+        "planned": [
+          19,
+          20
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_eb1/g5_run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 20,
+    "source_node_text": "The current mira seal value is Gold-7-Foxtrot.",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact mira seal. The current mira seal value is Gold-7-Foxtrot. This is the current value. If asked later, answer Gold-7-Foxtrot only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current mira seal value is Gold-7-Foxtrot.<|end|>"
+    ],
+    "turn": 22
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Harbor-8-Golf",
+    "campaign": "EB1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      25,
+      26
+    ],
+    "expected": [
+      "Harbor-8-Golf"
+    ],
+    "id": "EB1:t24",
+    "infer_calls": 7,
+    "mounted_ids": [
+      16
+    ],
+    "question": "Recall probe. What is the current terra port value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          16
+        ],
+        "ordinal": 0,
+        "planned": [
+          16
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_eb1/g5_run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 15,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current orion pin value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Kestrel-9-Tango<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact terra port. The current terra port value is Harbor-8-Golf. If asked later for terra port, answer Harbor-8-Golf only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current terra port value is Harbor-8-Golf.<|end|>"
+    ],
+    "turn": 24
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Violet-2-Hotel",
+    "campaign": "EB1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      27,
+      28
+    ],
+    "expected": [
+      "Violet-2-Hotel"
+    ],
+    "id": "EB1:t26",
+    "infer_calls": 7,
+    "mounted_ids": [
+      23
+    ],
+    "question": "Recall probe. What is the current ember code value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          23
+        ],
+        "ordinal": 0,
+        "planned": [
+          23
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_eb1/g5_run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 22,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current nova key value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Quartz-5-Bravo<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact ember code. The current ember code value is Violet-2-Hotel. If asked later for ember code, answer Violet-2-Hotel only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current ember code value is Violet-2-Hotel.<|end|>"
+    ],
+    "turn": 26
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Cobalt-1-India",
+    "campaign": "EB1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      31,
+      32
+    ],
+    "expected": [
+      "Cobalt-1-India"
+    ],
+    "id": "EB1:t30",
+    "infer_calls": 7,
+    "mounted_ids": [
+      30
+    ],
+    "question": "Recall probe. What is the current atlas tone value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          30
+        ],
+        "ordinal": 0,
+        "planned": [
+          30
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_eb1/g5_run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 29,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current ember code value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Violet-2-Hotel<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact atlas tone. The current atlas tone value is Cobalt-1-India. If asked later for atlas tone, answer Cobalt-1-India only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current atlas tone value is Cobalt-1-India.<|end|>"
+    ],
+    "turn": 30
+  },
+  {
+    "abstain_reason": "identifier_unbound",
+    "answer": "Not in memory: no stored record matches polaris, mark.",
+    "campaign": "EB1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      34,
+      35
+    ],
+    "expected": [
+      "Marble-4-Juliet"
+    ],
+    "id": "EB1:t33",
+    "infer_calls": 0,
+    "mounted_ids": [],
+    "question": "Recall probe. What is the current polaris mark value? Reply with only the value.",
+    "recorded_correct": false,
+    "recorded_trips": [],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_eb1/g5_run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 35,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact polaris mark. The current polaris mark value is Marble-4-Juliet. If asked later for polaris mark, answer Marble-4-Juliet only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current polaris mark value is Marble-4-Juliet.<|end|>",
+    "texts": [],
+    "turn": 33
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Nadir-9-November",
+    "campaign": "EB1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      97,
+      99
+    ],
+    "expected": [
+      "Nadir-9-November"
+    ],
+    "id": "EB1:t70",
+    "infer_calls": 7,
+    "mounted_ids": [
+      37
+    ],
+    "question": "Recall probe. What is the current beacon ward value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          37
+        ],
+        "ordinal": 0,
+        "planned": [
+          37
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_eb1/g5_run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 37,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact beacon ward. The current beacon ward value is Nadir-9-November. If asked later for beacon ward, answer Nadir-9-November only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current beacon ward value is Nadir-9-November.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact beacon ward. The current beacon ward value is Nadir-9-November. If asked later for beacon ward, answer Nadir-9-November only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current beacon ward value is Nadir-9-November.<|end|>"
+    ],
+    "turn": 70
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Pewter-5-Papa",
+    "campaign": "EB1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      116,
+      118
+    ],
+    "expected": [
+      "Pewter-5-Papa"
+    ],
+    "id": "EB1:t80",
+    "infer_calls": 8,
+    "mounted_ids": [
+      40
+    ],
+    "question": "Recall probe. What is the current tessera lock value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          40
+        ],
+        "ordinal": 0,
+        "planned": [
+          40
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_eb1/g5_run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 40,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact tessera lock. The current tessera lock value is Pewter-5-Papa. If asked later for tessera lock, answer Pewter-5-Papa only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current tessera lock value is Pewter-5-Papa.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact tessera lock. The current tessera lock value is Pewter-5-Papa. If asked later for tessera lock, answer Pewter-5-Papa only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current tessera lock value is Pewter-5-Papa.<|end|>"
+    ],
+    "turn": 80
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Kestrel-1-Romeo",
+    "campaign": "EB1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      135,
+      137
+    ],
+    "expected": [
+      "Kestrel-1-Romeo"
+    ],
+    "id": "EB1:t90",
+    "infer_calls": 9,
+    "mounted_ids": [
+      43
+    ],
+    "question": "Recall probe. What is the current verdant key value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          43
+        ],
+        "ordinal": 0,
+        "planned": [
+          43
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_eb1/g5_run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 43,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact verdant key. The current verdant key value is Kestrel-1-Romeo. If asked later for verdant key, answer Kestrel-1-Romeo only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current verdant key value is Kestrel-1-Romeo.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact verdant key. The current verdant key value is Kestrel-1-Romeo. If asked later for verdant key, answer Kestrel-1-Romeo only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current verdant key value is Kestrel-1-Romeo.<|end|>"
+    ],
+    "turn": 90
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Quartz-7-Tango",
+    "campaign": "EB1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      154,
+      156
+    ],
+    "expected": [
+      "Quartz-7-Tango"
+    ],
+    "id": "EB1:t100",
+    "infer_calls": 6,
+    "mounted_ids": [
+      46
+    ],
+    "question": "Recall probe. What is the current obsidian tag value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          46
+        ],
+        "ordinal": 0,
+        "planned": [
+          46
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_eb1/g5_run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 46,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact obsidian tag. The current obsidian tag value is Quartz-7-Tango. If asked later for obsidian tag, answer Quartz-7-Tango only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current obsidian tag value is Quartz-7-Tango.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact obsidian tag. The current obsidian tag value is Quartz-7-Tango. If asked later for obsidian tag, answer Quartz-7-Tango only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current obsidian tag value is Quartz-7-Tango.<|end|>"
+    ],
+    "turn": 100
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Auric-4-Alpha",
+    "campaign": "WC1-64",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      10,
+      11
+    ],
+    "expected": [
+      "Auric-4-Alpha"
+    ],
+    "id": "WC1-64:t05",
+    "infer_calls": 7,
+    "mounted_ids": [
+      1
+    ],
+    "question": "Recall probe. What is the current orion pin value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          1
+        ],
+        "ordinal": 0,
+        "planned": [
+          1
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_64/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 0,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact orion pin. The current orion pin value is Auric-4-Alpha. If asked later for orion pin, answer Auric-4-Alpha only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Auric-4-Alpha.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact orion pin. The current orion pin value is Auric-4-Alpha."
+    ],
+    "turn": 5
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Vortex-3-Sierra",
+    "campaign": "WC1-64",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      24,
+      25
+    ],
+    "expected": [
+      "Vortex-3-Sierra"
+    ],
+    "id": "WC1-64:t09",
+    "infer_calls": 7,
+    "mounted_ids": [
+      13
+    ],
+    "question": "Recall probe. What is the current cypher bridge value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          13
+        ],
+        "ordinal": 0,
+        "planned": [
+          13
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_64/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 12,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact cypher bridge. The current cypher bridge value is Vortex-3-Sierra. If asked later for cypher bridge, answer Vortex-3-Sierra only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current cypher bridge value is Vortex-3-Sierra.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact cypher bridge. The current cypher bridge value is Vortex-3-Sierra."
+    ],
+    "turn": 9
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Kestrel-9-Tango",
+    "campaign": "WC1-64",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      35,
+      36
+    ],
+    "expected": [
+      "Kestrel-9-Tango"
+    ],
+    "id": "WC1-64:t13",
+    "infer_calls": 8,
+    "mounted_ids": [
+      17
+    ],
+    "question": "Recall probe. What is the current orion pin value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          17
+        ],
+        "ordinal": 0,
+        "planned": [
+          17
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_64/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 19,
+    "source_node_text": "The current orion pin value is Kestrel-9-Tango.",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact orion pin. The current orion pin value is Kestrel-9-Tango. This is the current value."
+    ],
+    "turn": 13
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Zenith-2-Echo",
+    "campaign": "WC1-64",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      42,
+      43
+    ],
+    "expected": [
+      "Zenith-2-Echo"
+    ],
+    "id": "WC1-64:t16",
+    "infer_calls": 7,
+    "mounted_ids": [
+      31,
+      33
+    ],
+    "question": "Recall probe. What is the current lyra dock value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          31,
+          33
+        ],
+        "ordinal": 0,
+        "planned": [
+          31,
+          33
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_64/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 33,
+    "source_node_text": "The current lyra dock value is Zenith-2-Echo.",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact lyra dock. The current lyra dock value is Zenith-2-Echo. This is the current value.",
+      "The current lyra dock value is Zenith-2-Echo."
+    ],
+    "turn": 16
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Quartz-5-Bravo",
+    "campaign": "WC1-64",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      50,
+      51
+    ],
+    "expected": [
+      "Quartz-5-Bravo"
+    ],
+    "id": "WC1-64:t19",
+    "infer_calls": 6,
+    "mounted_ids": [
+      21
+    ],
+    "question": "Recall probe. What is the current nova key value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          21
+        ],
+        "ordinal": 0,
+        "planned": [
+          21
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_64/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 15,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current orion pin value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Auric-4-Alpha<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact nova key. The current nova key value is Quartz-5-Bravo."
+    ],
+    "turn": 19
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Gold-7-Foxtrot",
+    "campaign": "WC1-64",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      57,
+      58
+    ],
+    "expected": [
+      "Gold-7-Foxtrot"
+    ],
+    "id": "WC1-64:t22",
+    "infer_calls": 8,
+    "mounted_ids": [
+      46
+    ],
+    "question": "Recall probe. What is the current mira seal value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          46
+        ],
+        "ordinal": 0,
+        "planned": [
+          46
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_64/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 48,
+    "source_node_text": "The current mira seal value is Gold-7-Foxtrot.",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact mira seal. The current mira seal value is Gold-7-Foxtrot. This is the current value."
+    ],
+    "turn": 22
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Harbor-8-Golf",
+    "campaign": "WC1-64",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      61,
+      62
+    ],
+    "expected": [
+      "Harbor-8-Golf"
+    ],
+    "id": "WC1-64:t24",
+    "infer_calls": 7,
+    "mounted_ids": [
+      39
+    ],
+    "question": "Recall probe. What is the current terra port value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          39
+        ],
+        "ordinal": 0,
+        "planned": [
+          39
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_64/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 37,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current orion pin value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Kestrel-9-Tango<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact terra port. The current terra port value is Harbor-8-Golf."
+    ],
+    "turn": 24
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Violet-2-Hotel",
+    "campaign": "WC1-64",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      65,
+      66
+    ],
+    "expected": [
+      "Violet-2-Hotel"
+    ],
+    "id": "WC1-64:t26",
+    "infer_calls": 7,
+    "mounted_ids": [
+      54
+    ],
+    "question": "Recall probe. What is the current ember code value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          54
+        ],
+        "ordinal": 0,
+        "planned": [
+          54
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_64/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 52,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current nova key value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Quartz-5-Bravo<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact ember code. The current ember code value is Violet-2-Hotel."
+    ],
+    "turn": 26
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Cobalt-1-India",
+    "campaign": "WC1-64",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      75,
+      76
+    ],
+    "expected": [
+      "Cobalt-1-India"
+    ],
+    "id": "WC1-64:t30",
+    "infer_calls": 7,
+    "mounted_ids": [
+      69
+    ],
+    "question": "Recall probe. What is the current atlas tone value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          69
+        ],
+        "ordinal": 0,
+        "planned": [
+          69
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_64/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 67,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current ember code value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Violet-2-Hotel<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact atlas tone. The current atlas tone value is Cobalt-1-India."
+    ],
+    "turn": 30
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Marble-4-Juliet",
+    "campaign": "WC1-64",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      79,
+      80
+    ],
+    "expected": [
+      "Marble-4-Juliet"
+    ],
+    "id": "WC1-64:t33",
+    "infer_calls": 7,
+    "mounted_ids": [
+      82
+    ],
+    "question": "Recall probe. What is the current polaris mark value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          82
+        ],
+        "ordinal": 0,
+        "planned": [
+          82
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_64/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 81,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact polaris mark. The current polaris mark value is Marble-4-Juliet. If asked later for polaris mark, answer Marble-4-Juliet only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current polaris mark value is Marble-4-Juliet.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact polaris mark. The current polaris mark value is Marble-4-Juliet."
+    ],
+    "turn": 33
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Nadir-9-November",
+    "campaign": "WC1-64",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      80,
+      84
+    ],
+    "expected": [
+      "Nadir-9-November"
+    ],
+    "id": "WC1-64:t70",
+    "infer_calls": 7,
+    "mounted_ids": [
+      86
+    ],
+    "question": "Recall probe. What is the current beacon ward value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          86
+        ],
+        "ordinal": 0,
+        "planned": [
+          86
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_64/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 85,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact beacon ward. The current beacon ward value is Nadir-9-November. If asked later for beacon ward, answer Nadir-9-November only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current beacon ward value is Nadir-9-November.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact beacon ward. The current beacon ward value is Nadir-9-November."
+    ],
+    "turn": 70
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Pewter-5-Papa",
+    "campaign": "WC1-64",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      84,
+      221
+    ],
+    "expected": [
+      "Pewter-5-Papa"
+    ],
+    "id": "WC1-64:t80",
+    "infer_calls": 8,
+    "mounted_ids": [
+      93
+    ],
+    "question": "Recall probe. What is the current tessera lock value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          93
+        ],
+        "ordinal": 0,
+        "planned": [
+          93
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_64/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 92,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact tessera lock. The current tessera lock value is Pewter-5-Papa. If asked later for tessera lock, answer Pewter-5-Papa only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current tessera lock value is Pewter-5-Papa.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact tessera lock. The current tessera lock value is Pewter-5-Papa."
+    ],
+    "turn": 80
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Kestrel-1-Romeo",
+    "campaign": "WC1-64",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      221,
+      258
+    ],
+    "expected": [
+      "Kestrel-1-Romeo"
+    ],
+    "id": "WC1-64:t90",
+    "infer_calls": 9,
+    "mounted_ids": [
+      100
+    ],
+    "question": "Recall probe. What is the current verdant key value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          100
+        ],
+        "ordinal": 0,
+        "planned": [
+          100
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_64/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 99,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact verdant key. The current verdant key value is Kestrel-1-Romeo. If asked later for verdant key, answer Kestrel-1-Romeo only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current verdant key value is Kestrel-1-Romeo.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact verdant key. The current verdant key value is Kestrel-1-Romeo."
+    ],
+    "turn": 90
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Quartz-7-Tango",
+    "campaign": "WC1-64",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      258,
+      295
+    ],
+    "expected": [
+      "Quartz-7-Tango"
+    ],
+    "id": "WC1-64:t100",
+    "infer_calls": 6,
+    "mounted_ids": [
+      107
+    ],
+    "question": "Recall probe. What is the current obsidian tag value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          107
+        ],
+        "ordinal": 0,
+        "planned": [
+          107
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_64/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 106,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact obsidian tag. The current obsidian tag value is Quartz-7-Tango. If asked later for obsidian tag, answer Quartz-7-Tango only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current obsidian tag value is Quartz-7-Tango.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact obsidian tag. The current obsidian tag value is Quartz-7-Tango."
+    ],
+    "turn": 100
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Auric-4-Alpha",
+    "campaign": "WC1-96",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      3,
+      4
+    ],
+    "expected": [
+      "Auric-4-Alpha"
+    ],
+    "id": "WC1-96:t05",
+    "infer_calls": 7,
+    "mounted_ids": [
+      0
+    ],
+    "question": "Recall probe. What is the current orion pin value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          0
+        ],
+        "ordinal": 0,
+        "planned": [
+          0
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_96/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 0,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact orion pin. The current orion pin value is Auric-4-Alpha. If asked later for orion pin, answer Auric-4-Alpha only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Auric-4-Alpha.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact orion pin. The current orion pin value is Auric-4-Alpha. If asked later for orion pin, answer Auric-4-Alpha only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Auric-4-Alpha.<|end|>"
+    ],
+    "turn": 5
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Vortex-3-Sierra",
+    "campaign": "WC1-96",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      8,
+      9
+    ],
+    "expected": [
+      "Vortex-3-Sierra"
+    ],
+    "id": "WC1-96:t09",
+    "infer_calls": 7,
+    "mounted_ids": [
+      4
+    ],
+    "question": "Recall probe. What is the current cypher bridge value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          4
+        ],
+        "ordinal": 0,
+        "planned": [
+          4
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_96/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 4,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact cypher bridge. The current cypher bridge value is Vortex-3-Sierra. If asked later for cypher bridge, answer Vortex-3-Sierra only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current cypher bridge value is Vortex-3-Sierra.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact cypher bridge. The current cypher bridge value is Vortex-3-Sierra. If asked later for cypher bridge, answer Vortex-3-Sierra only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current cypher bridge value is Vortex-3-Sierra.<|end|>"
+    ],
+    "turn": 9
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Kestrel-9-Tango",
+    "campaign": "WC1-96",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      12,
+      14
+    ],
+    "expected": [
+      "Kestrel-9-Tango"
+    ],
+    "id": "WC1-96:t13",
+    "infer_calls": 8,
+    "mounted_ids": [
+      6
+    ],
+    "question": "Recall probe. What is the current orion pin value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          6
+        ],
+        "ordinal": 0,
+        "planned": [
+          6,
+          7
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_96/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 7,
+    "source_node_text": "The current orion pin value is Kestrel-9-Tango.",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact orion pin. The current orion pin value is Kestrel-9-Tango. This is the current value. If asked later, answer Kestrel-9-Tango only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Kestrel-9-Tango.<|end|>"
+    ],
+    "turn": 13
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Zenith-2-Echo",
+    "campaign": "WC1-96",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      16,
+      17
+    ],
+    "expected": [
+      "Zenith-2-Echo"
+    ],
+    "id": "WC1-96:t16",
+    "infer_calls": 7,
+    "mounted_ids": [
+      12
+    ],
+    "question": "Recall probe. What is the current lyra dock value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          12
+        ],
+        "ordinal": 0,
+        "planned": [
+          12,
+          13
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_96/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 13,
+    "source_node_text": "The current lyra dock value is Zenith-2-Echo.",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact lyra dock. The current lyra dock value is Zenith-2-Echo. This is the current value. If asked later, answer Zenith-2-Echo only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current lyra dock value is Zenith-2-Echo.<|end|>"
+    ],
+    "turn": 16
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Quartz-5-Bravo",
+    "campaign": "WC1-96",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      19,
+      21
+    ],
+    "expected": [
+      "Quartz-5-Bravo"
+    ],
+    "id": "WC1-96:t19",
+    "infer_calls": 6,
+    "mounted_ids": [
+      8
+    ],
+    "question": "Recall probe. What is the current nova key value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          8
+        ],
+        "ordinal": 0,
+        "planned": [
+          8
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_96/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 5,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current orion pin value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Auric-4-Alpha<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact nova key. The current nova key value is Quartz-5-Bravo. If asked later for nova key, answer Quartz-5-Bravo only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current nova key value is Quartz-5-Bravo.<|end|>"
+    ],
+    "turn": 19
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Gold-7-Foxtrot",
+    "campaign": "WC1-96",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      23,
+      24
+    ],
+    "expected": [
+      "Gold-7-Foxtrot"
+    ],
+    "id": "WC1-96:t22",
+    "infer_calls": 8,
+    "mounted_ids": [
+      19
+    ],
+    "question": "Recall probe. What is the current mira seal value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          19
+        ],
+        "ordinal": 0,
+        "planned": [
+          19,
+          20
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_96/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 20,
+    "source_node_text": "The current mira seal value is Gold-7-Foxtrot.",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact mira seal. The current mira seal value is Gold-7-Foxtrot. This is the current value. If asked later, answer Gold-7-Foxtrot only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current mira seal value is Gold-7-Foxtrot.<|end|>"
+    ],
+    "turn": 22
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Harbor-8-Golf",
+    "campaign": "WC1-96",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      25,
+      26
+    ],
+    "expected": [
+      "Harbor-8-Golf"
+    ],
+    "id": "WC1-96:t24",
+    "infer_calls": 7,
+    "mounted_ids": [
+      16
+    ],
+    "question": "Recall probe. What is the current terra port value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          16
+        ],
+        "ordinal": 0,
+        "planned": [
+          16
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_96/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 15,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current orion pin value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Kestrel-9-Tango<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact terra port. The current terra port value is Harbor-8-Golf. If asked later for terra port, answer Harbor-8-Golf only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current terra port value is Harbor-8-Golf.<|end|>"
+    ],
+    "turn": 24
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Violet-2-Hotel",
+    "campaign": "WC1-96",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      27,
+      28
+    ],
+    "expected": [
+      "Violet-2-Hotel"
+    ],
+    "id": "WC1-96:t26",
+    "infer_calls": 7,
+    "mounted_ids": [
+      23
+    ],
+    "question": "Recall probe. What is the current ember code value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          23
+        ],
+        "ordinal": 0,
+        "planned": [
+          23
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_96/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 22,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current nova key value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Quartz-5-Bravo<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact ember code. The current ember code value is Violet-2-Hotel. If asked later for ember code, answer Violet-2-Hotel only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current ember code value is Violet-2-Hotel.<|end|>"
+    ],
+    "turn": 26
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Cobalt-1-India",
+    "campaign": "WC1-96",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      31,
+      32
+    ],
+    "expected": [
+      "Cobalt-1-India"
+    ],
+    "id": "WC1-96:t30",
+    "infer_calls": 7,
+    "mounted_ids": [
+      30
+    ],
+    "question": "Recall probe. What is the current atlas tone value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          30
+        ],
+        "ordinal": 0,
+        "planned": [
+          30
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_96/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 29,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current ember code value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Violet-2-Hotel<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact atlas tone. The current atlas tone value is Cobalt-1-India. If asked later for atlas tone, answer Cobalt-1-India only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current atlas tone value is Cobalt-1-India.<|end|>"
+    ],
+    "turn": 30
+  },
+  {
+    "abstain_reason": "identifier_unbound",
+    "answer": "Not in memory: no stored record matches polaris, mark.",
+    "campaign": "WC1-96",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      34,
+      35
+    ],
+    "expected": [
+      "Marble-4-Juliet"
+    ],
+    "id": "WC1-96:t33",
+    "infer_calls": 0,
+    "mounted_ids": [],
+    "question": "Recall probe. What is the current polaris mark value? Reply with only the value.",
+    "recorded_correct": false,
+    "recorded_trips": [],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_96/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 35,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact polaris mark. The current polaris mark value is Marble-4-Juliet. If asked later for polaris mark, answer Marble-4-Juliet only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current polaris mark value is Marble-4-Juliet.<|end|>",
+    "texts": [],
+    "turn": 33
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Nadir-9-November",
+    "campaign": "WC1-96",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      97,
+      99
+    ],
+    "expected": [
+      "Nadir-9-November"
+    ],
+    "id": "WC1-96:t70",
+    "infer_calls": 7,
+    "mounted_ids": [
+      37
+    ],
+    "question": "Recall probe. What is the current beacon ward value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          37
+        ],
+        "ordinal": 0,
+        "planned": [
+          37
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_96/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 37,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact beacon ward. The current beacon ward value is Nadir-9-November. If asked later for beacon ward, answer Nadir-9-November only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current beacon ward value is Nadir-9-November.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact beacon ward. The current beacon ward value is Nadir-9-November. If asked later for beacon ward, answer Nadir-9-November only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current beacon ward value is Nadir-9-November.<|end|>"
+    ],
+    "turn": 70
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Pewter-5-Papa",
+    "campaign": "WC1-96",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      116,
+      118
+    ],
+    "expected": [
+      "Pewter-5-Papa"
+    ],
+    "id": "WC1-96:t80",
+    "infer_calls": 8,
+    "mounted_ids": [
+      40
+    ],
+    "question": "Recall probe. What is the current tessera lock value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          40
+        ],
+        "ordinal": 0,
+        "planned": [
+          40
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_96/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 40,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact tessera lock. The current tessera lock value is Pewter-5-Papa. If asked later for tessera lock, answer Pewter-5-Papa only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current tessera lock value is Pewter-5-Papa.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact tessera lock. The current tessera lock value is Pewter-5-Papa. If asked later for tessera lock, answer Pewter-5-Papa only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current tessera lock value is Pewter-5-Papa.<|end|>"
+    ],
+    "turn": 80
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Kestrel-1-Romeo",
+    "campaign": "WC1-96",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      135,
+      137
+    ],
+    "expected": [
+      "Kestrel-1-Romeo"
+    ],
+    "id": "WC1-96:t90",
+    "infer_calls": 9,
+    "mounted_ids": [
+      43
+    ],
+    "question": "Recall probe. What is the current verdant key value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          43
+        ],
+        "ordinal": 0,
+        "planned": [
+          43
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_96/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 43,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact verdant key. The current verdant key value is Kestrel-1-Romeo. If asked later for verdant key, answer Kestrel-1-Romeo only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current verdant key value is Kestrel-1-Romeo.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact verdant key. The current verdant key value is Kestrel-1-Romeo. If asked later for verdant key, answer Kestrel-1-Romeo only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current verdant key value is Kestrel-1-Romeo.<|end|>"
+    ],
+    "turn": 90
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Quartz-7-Tango",
+    "campaign": "WC1-96",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      154,
+      156
+    ],
+    "expected": [
+      "Quartz-7-Tango"
+    ],
+    "id": "WC1-96:t100",
+    "infer_calls": 6,
+    "mounted_ids": [
+      46
+    ],
+    "question": "Recall probe. What is the current obsidian tag value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          46
+        ],
+        "ordinal": 0,
+        "planned": [
+          46
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_astra/width_96/longhorizon/run/lh-5/session/probe_scorecard.json",
+    "source_node_id": 46,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact obsidian tag. The current obsidian tag value is Quartz-7-Tango. If asked later for obsidian tag, answer Quartz-7-Tango only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current obsidian tag value is Quartz-7-Tango.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact obsidian tag. The current obsidian tag value is Quartz-7-Tango. If asked later for obsidian tag, answer Quartz-7-Tango only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current obsidian tag value is Quartz-7-Tango.<|end|>"
+    ],
+    "turn": 100
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Auric-4-Alpha",
+    "campaign": "WC1-128",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      3,
+      4
+    ],
+    "expected": [
+      "Auric-4-Alpha"
+    ],
+    "id": "WC1-128:t05",
+    "infer_calls": 7,
+    "mounted_ids": [
+      0
+    ],
+    "question": "Recall probe. What is the current orion pin value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          0
+        ],
+        "ordinal": 0,
+        "planned": [
+          0
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 0,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact orion pin. The current orion pin value is Auric-4-Alpha. If asked later for orion pin, answer Auric-4-Alpha only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Auric-4-Alpha.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact orion pin. The current orion pin value is Auric-4-Alpha. If asked later for orion pin, answer Auric-4-Alpha only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Auric-4-Alpha.<|end|>"
+    ],
+    "turn": 5
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Vortex-3-Sierra",
+    "campaign": "WC1-128",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      8,
+      9
+    ],
+    "expected": [
+      "Vortex-3-Sierra"
+    ],
+    "id": "WC1-128:t09",
+    "infer_calls": 7,
+    "mounted_ids": [
+      4
+    ],
+    "question": "Recall probe. What is the current cypher bridge value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          4
+        ],
+        "ordinal": 0,
+        "planned": [
+          4
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 4,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact cypher bridge. The current cypher bridge value is Vortex-3-Sierra. If asked later for cypher bridge, answer Vortex-3-Sierra only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current cypher bridge value is Vortex-3-Sierra.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact cypher bridge. The current cypher bridge value is Vortex-3-Sierra. If asked later for cypher bridge, answer Vortex-3-Sierra only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current cypher bridge value is Vortex-3-Sierra.<|end|>"
+    ],
+    "turn": 9
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Kestrel-9-Tango",
+    "campaign": "WC1-128",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      12,
+      14
+    ],
+    "expected": [
+      "Kestrel-9-Tango"
+    ],
+    "id": "WC1-128:t13",
+    "infer_calls": 8,
+    "mounted_ids": [
+      6,
+      7
+    ],
+    "question": "Recall probe. What is the current orion pin value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          6,
+          7
+        ],
+        "ordinal": 0,
+        "planned": [
+          6,
+          7
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 7,
+    "source_node_text": "The current orion pin value is Kestrel-9-Tango.",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact orion pin. The current orion pin value is Kestrel-9-Tango. This is the current value. If asked later, answer Kestrel-9-Tango only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Kestrel-9-Tango.<|end|>",
+      "The current orion pin value is Kestrel-9-Tango."
+    ],
+    "turn": 13
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Zenith-2-Echo",
+    "campaign": "WC1-128",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      16,
+      17
+    ],
+    "expected": [
+      "Zenith-2-Echo"
+    ],
+    "id": "WC1-128:t16",
+    "infer_calls": 7,
+    "mounted_ids": [
+      12,
+      13
+    ],
+    "question": "Recall probe. What is the current lyra dock value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          12,
+          13
+        ],
+        "ordinal": 0,
+        "planned": [
+          12,
+          13
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 13,
+    "source_node_text": "The current lyra dock value is Zenith-2-Echo.",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact lyra dock. The current lyra dock value is Zenith-2-Echo. This is the current value. If asked later, answer Zenith-2-Echo only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current lyra dock value is Zenith-2-Echo.<|end|>",
+      "The current lyra dock value is Zenith-2-Echo."
+    ],
+    "turn": 16
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Quartz-5-Bravo",
+    "campaign": "WC1-128",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      19,
+      21
+    ],
+    "expected": [
+      "Quartz-5-Bravo"
+    ],
+    "id": "WC1-128:t19",
+    "infer_calls": 6,
+    "mounted_ids": [
+      8
+    ],
+    "question": "Recall probe. What is the current nova key value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          8
+        ],
+        "ordinal": 0,
+        "planned": [
+          8
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 5,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current orion pin value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Auric-4-Alpha<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact nova key. The current nova key value is Quartz-5-Bravo. If asked later for nova key, answer Quartz-5-Bravo only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current nova key value is Quartz-5-Bravo.<|end|>"
+    ],
+    "turn": 19
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Gold-7-Foxtrot",
+    "campaign": "WC1-128",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      23,
+      24
+    ],
+    "expected": [
+      "Gold-7-Foxtrot"
+    ],
+    "id": "WC1-128:t22",
+    "infer_calls": 8,
+    "mounted_ids": [
+      19,
+      20
+    ],
+    "question": "Recall probe. What is the current mira seal value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          19,
+          20
+        ],
+        "ordinal": 0,
+        "planned": [
+          19,
+          20
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 20,
+    "source_node_text": "The current mira seal value is Gold-7-Foxtrot.",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact mira seal. The current mira seal value is Gold-7-Foxtrot. This is the current value. If asked later, answer Gold-7-Foxtrot only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current mira seal value is Gold-7-Foxtrot.<|end|>",
+      "The current mira seal value is Gold-7-Foxtrot."
+    ],
+    "turn": 22
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Harbor-8-Golf",
+    "campaign": "WC1-128",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      25,
+      26
+    ],
+    "expected": [
+      "Harbor-8-Golf"
+    ],
+    "id": "WC1-128:t24",
+    "infer_calls": 7,
+    "mounted_ids": [
+      16
+    ],
+    "question": "Recall probe. What is the current terra port value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          16
+        ],
+        "ordinal": 0,
+        "planned": [
+          16
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 15,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current orion pin value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Kestrel-9-Tango<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact terra port. The current terra port value is Harbor-8-Golf. If asked later for terra port, answer Harbor-8-Golf only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current terra port value is Harbor-8-Golf.<|end|>"
+    ],
+    "turn": 24
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Violet-2-Hotel",
+    "campaign": "WC1-128",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      27,
+      28
+    ],
+    "expected": [
+      "Violet-2-Hotel"
+    ],
+    "id": "WC1-128:t26",
+    "infer_calls": 7,
+    "mounted_ids": [
+      23
+    ],
+    "question": "Recall probe. What is the current ember code value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          23
+        ],
+        "ordinal": 0,
+        "planned": [
+          23
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 22,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current nova key value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Quartz-5-Bravo<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact ember code. The current ember code value is Violet-2-Hotel. If asked later for ember code, answer Violet-2-Hotel only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current ember code value is Violet-2-Hotel.<|end|>"
+    ],
+    "turn": 26
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Cobalt-1-India",
+    "campaign": "WC1-128",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      31,
+      32
+    ],
+    "expected": [
+      "Cobalt-1-India"
+    ],
+    "id": "WC1-128:t30",
+    "infer_calls": 7,
+    "mounted_ids": [
+      30
+    ],
+    "question": "Recall probe. What is the current atlas tone value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          30
+        ],
+        "ordinal": 0,
+        "planned": [
+          30
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 29,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current ember code value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Violet-2-Hotel<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact atlas tone. The current atlas tone value is Cobalt-1-India. If asked later for atlas tone, answer Cobalt-1-India only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current atlas tone value is Cobalt-1-India.<|end|>"
+    ],
+    "turn": 30
+  },
+  {
+    "abstain_reason": "identifier_unbound",
+    "answer": "Not in memory: no stored record matches polaris, mark.",
+    "campaign": "WC1-128",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      34,
+      35
+    ],
+    "expected": [
+      "Marble-4-Juliet"
+    ],
+    "id": "WC1-128:t33",
+    "infer_calls": 0,
+    "mounted_ids": [],
+    "question": "Recall probe. What is the current polaris mark value? Reply with only the value.",
+    "recorded_correct": false,
+    "recorded_trips": [],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 35,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact polaris mark. The current polaris mark value is Marble-4-Juliet. If asked later for polaris mark, answer Marble-4-Juliet only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current polaris mark value is Marble-4-Juliet.<|end|>",
+    "texts": [],
+    "turn": 33
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Nadir-9-November",
+    "campaign": "WC1-128",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      97,
+      99
+    ],
+    "expected": [
+      "Nadir-9-November"
+    ],
+    "id": "WC1-128:t70",
+    "infer_calls": 7,
+    "mounted_ids": [
+      37
+    ],
+    "question": "Recall probe. What is the current beacon ward value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          37
+        ],
+        "ordinal": 0,
+        "planned": [
+          37
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 37,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact beacon ward. The current beacon ward value is Nadir-9-November. If asked later for beacon ward, answer Nadir-9-November only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current beacon ward value is Nadir-9-November.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact beacon ward. The current beacon ward value is Nadir-9-November. If asked later for beacon ward, answer Nadir-9-November only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current beacon ward value is Nadir-9-November.<|end|>"
+    ],
+    "turn": 70
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Pewter-5-Papa",
+    "campaign": "WC1-128",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      116,
+      118
+    ],
+    "expected": [
+      "Pewter-5-Papa"
+    ],
+    "id": "WC1-128:t80",
+    "infer_calls": 8,
+    "mounted_ids": [
+      40
+    ],
+    "question": "Recall probe. What is the current tessera lock value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          40
+        ],
+        "ordinal": 0,
+        "planned": [
+          40
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 40,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact tessera lock. The current tessera lock value is Pewter-5-Papa. If asked later for tessera lock, answer Pewter-5-Papa only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current tessera lock value is Pewter-5-Papa.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact tessera lock. The current tessera lock value is Pewter-5-Papa. If asked later for tessera lock, answer Pewter-5-Papa only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current tessera lock value is Pewter-5-Papa.<|end|>"
+    ],
+    "turn": 80
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Kestrel-1-Romeo",
+    "campaign": "WC1-128",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      135,
+      137
+    ],
+    "expected": [
+      "Kestrel-1-Romeo"
+    ],
+    "id": "WC1-128:t90",
+    "infer_calls": 9,
+    "mounted_ids": [
+      43
+    ],
+    "question": "Recall probe. What is the current verdant key value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          43
+        ],
+        "ordinal": 0,
+        "planned": [
+          43
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 43,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact verdant key. The current verdant key value is Kestrel-1-Romeo. If asked later for verdant key, answer Kestrel-1-Romeo only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current verdant key value is Kestrel-1-Romeo.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact verdant key. The current verdant key value is Kestrel-1-Romeo. If asked later for verdant key, answer Kestrel-1-Romeo only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current verdant key value is Kestrel-1-Romeo.<|end|>"
+    ],
+    "turn": 90
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Quartz-7-Tango",
+    "campaign": "WC1-128",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      154,
+      156
+    ],
+    "expected": [
+      "Quartz-7-Tango"
+    ],
+    "id": "WC1-128:t100",
+    "infer_calls": 6,
+    "mounted_ids": [
+      46
+    ],
+    "question": "Recall probe. What is the current obsidian tag value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          46
+        ],
+        "ordinal": 0,
+        "planned": [
+          46
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 46,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact obsidian tag. The current obsidian tag value is Quartz-7-Tango. If asked later for obsidian tag, answer Quartz-7-Tango only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current obsidian tag value is Quartz-7-Tango.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact obsidian tag. The current obsidian tag value is Quartz-7-Tango. If asked later for obsidian tag, answer Quartz-7-Tango only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current obsidian tag value is Quartz-7-Tango.<|end|>"
+    ],
+    "turn": 100
+  },
+  {
+    "abstain_reason": null,
+    "answer": "The current orion pin value is Auric-4-Alpha.",
+    "campaign": "WC1-192",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      3,
+      4
+    ],
+    "expected": [
+      "Auric-4-Alpha"
+    ],
+    "id": "WC1-192:t05",
+    "infer_calls": 15,
+    "mounted_ids": [
+      0
+    ],
+    "question": "Recall probe. What is the current orion pin value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          0
+        ],
+        "ordinal": 0,
+        "planned": [
+          0
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 0,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact orion pin. The current orion pin value is Auric-4-Alpha. If asked later for orion pin, answer Auric-4-Alpha only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Auric-4-Alpha.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact orion pin. The current orion pin value is Auric-4-Alpha. If asked later for orion pin, answer Auric-4-Alpha only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Auric-4-Alpha.<|end|>"
+    ],
+    "turn": 5
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Vortex-3-Sierra",
+    "campaign": "WC1-192",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      8,
+      9
+    ],
+    "expected": [
+      "Vortex-3-Sierra"
+    ],
+    "id": "WC1-192:t09",
+    "infer_calls": 7,
+    "mounted_ids": [
+      4
+    ],
+    "question": "Recall probe. What is the current cypher bridge value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          4
+        ],
+        "ordinal": 0,
+        "planned": [
+          4
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 4,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact cypher bridge. The current cypher bridge value is Vortex-3-Sierra. If asked later for cypher bridge, answer Vortex-3-Sierra only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current cypher bridge value is Vortex-3-Sierra.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact cypher bridge. The current cypher bridge value is Vortex-3-Sierra. If asked later for cypher bridge, answer Vortex-3-Sierra only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current cypher bridge value is Vortex-3-Sierra.<|end|>"
+    ],
+    "turn": 9
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Kestrel-9-Tango",
+    "campaign": "WC1-192",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      12,
+      14
+    ],
+    "expected": [
+      "Kestrel-9-Tango"
+    ],
+    "id": "WC1-192:t13",
+    "infer_calls": 8,
+    "mounted_ids": [
+      6,
+      7
+    ],
+    "question": "Recall probe. What is the current orion pin value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          6,
+          7
+        ],
+        "ordinal": 0,
+        "planned": [
+          6,
+          7
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 7,
+    "source_node_text": "The current orion pin value is Kestrel-9-Tango.",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact orion pin. The current orion pin value is Kestrel-9-Tango. This is the current value. If asked later, answer Kestrel-9-Tango only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Kestrel-9-Tango.<|end|>",
+      "The current orion pin value is Kestrel-9-Tango."
+    ],
+    "turn": 13
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Zenith-2-Echo",
+    "campaign": "WC1-192",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      16,
+      17
+    ],
+    "expected": [
+      "Zenith-2-Echo"
+    ],
+    "id": "WC1-192:t16",
+    "infer_calls": 7,
+    "mounted_ids": [
+      12,
+      13
+    ],
+    "question": "Recall probe. What is the current lyra dock value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          12,
+          13
+        ],
+        "ordinal": 0,
+        "planned": [
+          12,
+          13
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 13,
+    "source_node_text": "The current lyra dock value is Zenith-2-Echo.",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact lyra dock. The current lyra dock value is Zenith-2-Echo. This is the current value. If asked later, answer Zenith-2-Echo only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current lyra dock value is Zenith-2-Echo.<|end|>",
+      "The current lyra dock value is Zenith-2-Echo."
+    ],
+    "turn": 16
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Quartz-5-Bravo",
+    "campaign": "WC1-192",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      19,
+      21
+    ],
+    "expected": [
+      "Quartz-5-Bravo"
+    ],
+    "id": "WC1-192:t19",
+    "infer_calls": 6,
+    "mounted_ids": [
+      8
+    ],
+    "question": "Recall probe. What is the current nova key value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          8
+        ],
+        "ordinal": 0,
+        "planned": [
+          8
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 5,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current orion pin value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>The current orion pin value is Auric-4-Alpha.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact nova key. The current nova key value is Quartz-5-Bravo. If asked later for nova key, answer Quartz-5-Bravo only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current nova key value is Quartz-5-Bravo.<|end|>"
+    ],
+    "turn": 19
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Gold-7-Foxtrot",
+    "campaign": "WC1-192",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      23,
+      24
+    ],
+    "expected": [
+      "Gold-7-Foxtrot"
+    ],
+    "id": "WC1-192:t22",
+    "infer_calls": 8,
+    "mounted_ids": [
+      19,
+      20
+    ],
+    "question": "Recall probe. What is the current mira seal value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          19,
+          20
+        ],
+        "ordinal": 0,
+        "planned": [
+          19,
+          20
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 20,
+    "source_node_text": "The current mira seal value is Gold-7-Foxtrot.",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact mira seal. The current mira seal value is Gold-7-Foxtrot. This is the current value. If asked later, answer Gold-7-Foxtrot only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current mira seal value is Gold-7-Foxtrot.<|end|>",
+      "The current mira seal value is Gold-7-Foxtrot."
+    ],
+    "turn": 22
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Harbor-8-Golf",
+    "campaign": "WC1-192",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      25,
+      26
+    ],
+    "expected": [
+      "Harbor-8-Golf"
+    ],
+    "id": "WC1-192:t24",
+    "infer_calls": 7,
+    "mounted_ids": [
+      16
+    ],
+    "question": "Recall probe. What is the current terra port value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          16
+        ],
+        "ordinal": 0,
+        "planned": [
+          16
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 15,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current orion pin value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Kestrel-9-Tango<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact terra port. The current terra port value is Harbor-8-Golf. If asked later for terra port, answer Harbor-8-Golf only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current terra port value is Harbor-8-Golf.<|end|>"
+    ],
+    "turn": 24
+  },
+  {
+    "abstain_reason": null,
+    "answer": "The ember code is Violet-2-Hotel.",
+    "campaign": "WC1-192",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      27,
+      28
+    ],
+    "expected": [
+      "Violet-2-Hotel"
+    ],
+    "id": "WC1-192:t26",
+    "infer_calls": 11,
+    "mounted_ids": [
+      23
+    ],
+    "question": "Recall probe. What is the current ember code value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          23
+        ],
+        "ordinal": 0,
+        "planned": [
+          23
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 22,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current nova key value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Quartz-5-Bravo<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact ember code. The current ember code value is Violet-2-Hotel. If asked later for ember code, answer Violet-2-Hotel only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current ember code value is Violet-2-Hotel.<|end|>"
+    ],
+    "turn": 26
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Cobalt-1-India",
+    "campaign": "WC1-192",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      31,
+      32
+    ],
+    "expected": [
+      "Cobalt-1-India"
+    ],
+    "id": "WC1-192:t30",
+    "infer_calls": 7,
+    "mounted_ids": [
+      30
+    ],
+    "question": "Recall probe. What is the current atlas tone value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          30
+        ],
+        "ordinal": 0,
+        "planned": [
+          30
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 29,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current ember code value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>The ember code is Violet-2-Hotel.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact atlas tone. The current atlas tone value is Cobalt-1-India. If asked later for atlas tone, answer Cobalt-1-India only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current atlas tone value is Cobalt-1-India.<|end|>"
+    ],
+    "turn": 30
+  },
+  {
+    "abstain_reason": "identifier_unbound",
+    "answer": "Not in memory: no stored record matches polaris, mark.",
+    "campaign": "WC1-192",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      34,
+      35
+    ],
+    "expected": [
+      "Marble-4-Juliet"
+    ],
+    "id": "WC1-192:t33",
+    "infer_calls": 0,
+    "mounted_ids": [],
+    "question": "Recall probe. What is the current polaris mark value? Reply with only the value.",
+    "recorded_correct": false,
+    "recorded_trips": [],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 35,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact polaris mark. The current polaris mark value is Marble-4-Juliet. If asked later for polaris mark, answer Marble-4-Juliet only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current polaris mark value is Marble-4-Juliet.<|end|>",
+    "texts": [],
+    "turn": 33
+  },
+  {
+    "abstain_reason": null,
+    "answer": "The current beacon ward value is Nadir-9-November.",
+    "campaign": "WC1-192",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      97,
+      99
+    ],
+    "expected": [
+      "Nadir-9-November"
+    ],
+    "id": "WC1-192:t70",
+    "infer_calls": 14,
+    "mounted_ids": [
+      37
+    ],
+    "question": "Recall probe. What is the current beacon ward value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          37
+        ],
+        "ordinal": 0,
+        "planned": [
+          37
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 37,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact beacon ward. The current beacon ward value is Nadir-9-November. If asked later for beacon ward, answer Nadir-9-November only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current beacon ward value is Nadir-9-November.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact beacon ward. The current beacon ward value is Nadir-9-November. If asked later for beacon ward, answer Nadir-9-November only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current beacon ward value is Nadir-9-November.<|end|>"
+    ],
+    "turn": 70
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Pewter-5-Papa",
+    "campaign": "WC1-192",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      116,
+      118
+    ],
+    "expected": [
+      "Pewter-5-Papa"
+    ],
+    "id": "WC1-192:t80",
+    "infer_calls": 8,
+    "mounted_ids": [
+      40
+    ],
+    "question": "Recall probe. What is the current tessera lock value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          40
+        ],
+        "ordinal": 0,
+        "planned": [
+          40
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 40,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact tessera lock. The current tessera lock value is Pewter-5-Papa. If asked later for tessera lock, answer Pewter-5-Papa only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current tessera lock value is Pewter-5-Papa.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact tessera lock. The current tessera lock value is Pewter-5-Papa. If asked later for tessera lock, answer Pewter-5-Papa only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current tessera lock value is Pewter-5-Papa.<|end|>"
+    ],
+    "turn": 80
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Kestrel-1-Romeo",
+    "campaign": "WC1-192",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      135,
+      137
+    ],
+    "expected": [
+      "Kestrel-1-Romeo"
+    ],
+    "id": "WC1-192:t90",
+    "infer_calls": 9,
+    "mounted_ids": [
+      43
+    ],
+    "question": "Recall probe. What is the current verdant key value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          43
+        ],
+        "ordinal": 0,
+        "planned": [
+          43
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 43,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact verdant key. The current verdant key value is Kestrel-1-Romeo. If asked later for verdant key, answer Kestrel-1-Romeo only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current verdant key value is Kestrel-1-Romeo.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact verdant key. The current verdant key value is Kestrel-1-Romeo. If asked later for verdant key, answer Kestrel-1-Romeo only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current verdant key value is Kestrel-1-Romeo.<|end|>"
+    ],
+    "turn": 90
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Quartz-7-Tango",
+    "campaign": "WC1-192",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      154,
+      156
+    ],
+    "expected": [
+      "Quartz-7-Tango"
+    ],
+    "id": "WC1-192:t100",
+    "infer_calls": 6,
+    "mounted_ids": [
+      46
+    ],
+    "question": "Recall probe. What is the current obsidian tag value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          46
+        ],
+        "ordinal": 0,
+        "planned": [
+          46
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 46,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact obsidian tag. The current obsidian tag value is Quartz-7-Tango. If asked later for obsidian tag, answer Quartz-7-Tango only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current obsidian tag value is Quartz-7-Tango.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact obsidian tag. The current obsidian tag value is Quartz-7-Tango. If asked later for obsidian tag, answer Quartz-7-Tango only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current obsidian tag value is Quartz-7-Tango.<|end|>"
+    ],
+    "turn": 100
+  },
+  {
+    "abstain_reason": null,
+    "answer": "The current orion pin value is Auric-4-Alpha.",
+    "campaign": "WC1-256",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      3,
+      4
+    ],
+    "expected": [
+      "Auric-4-Alpha"
+    ],
+    "id": "WC1-256:t05",
+    "infer_calls": 28,
+    "mounted_ids": [
+      0,
+      1,
+      2
+    ],
+    "question": "Recall probe. What is the current orion pin value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": false,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          0
+        ],
+        "ordinal": 0,
+        "planned": [
+          0
+        ],
+        "shuttle": false
+      },
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          0,
+          1,
+          2
+        ],
+        "ordinal": 1,
+        "planned": [
+          0,
+          2,
+          1
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 0,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact orion pin. The current orion pin value is Auric-4-Alpha. If asked later for orion pin, answer Auric-4-Alpha only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Auric-4-Alpha.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact orion pin. The current orion pin value is Auric-4-Alpha. If asked later for orion pin, answer Auric-4-Alpha only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Auric-4-Alpha.<|end|>",
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session continuity filler full alpha. Acknowledge briefly. Do not change any stored fact values.<|end|><|start|>assistant<|channel|>final<|message|>I think.<|end|>",
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact lyra dock. The current lyra dock value is Nadir-1-Delta. If asked later for lyra dock, answer Nadir-1-Delta only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current lyra dock value is Nadir-1-Delta.<|end|>"
+    ],
+    "turn": 5
+  },
+  {
+    "abstain_reason": null,
+    "answer": "The current cypher bridge value is Nadir-1-Delta.",
+    "campaign": "WC1-256",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      8,
+      9
+    ],
+    "expected": [
+      "Vortex-3-Sierra"
+    ],
+    "id": "WC1-256:t09",
+    "infer_calls": 28,
+    "mounted_ids": [
+      2,
+      4
+    ],
+    "question": "Recall probe. What is the current cypher bridge value? Reply with only the value.",
+    "recorded_correct": false,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": false,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          4
+        ],
+        "ordinal": 0,
+        "planned": [
+          4
+        ],
+        "shuttle": false
+      },
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          2,
+          4
+        ],
+        "ordinal": 1,
+        "planned": [
+          4,
+          2,
+          6
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 4,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact cypher bridge. The current cypher bridge value is Vortex-3-Sierra. If asked later for cypher bridge, answer Vortex-3-Sierra only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current cypher bridge value is Vortex-3-Sierra.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact lyra dock. The current lyra dock value is Nadir-1-Delta. If asked later for lyra dock, answer Nadir-1-Delta only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current lyra dock value is Nadir-1-Delta.<|end|>",
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact cypher bridge. The current cypher bridge value is Vortex-3-Sierra. If asked later for cypher bridge, answer Vortex-3-Sierra only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current cypher bridge value is Vortex-3-Sierra.<|end|>"
+    ],
+    "turn": 9
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Kestrel-9-Tango",
+    "campaign": "WC1-256",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      12,
+      14
+    ],
+    "expected": [
+      "Kestrel-9-Tango"
+    ],
+    "id": "WC1-256:t13",
+    "infer_calls": 8,
+    "mounted_ids": [
+      6,
+      7
+    ],
+    "question": "Recall probe. What is the current orion pin value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          6,
+          7
+        ],
+        "ordinal": 0,
+        "planned": [
+          6,
+          7
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 7,
+    "source_node_text": "The current orion pin value is Kestrel-9-Tango.",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact orion pin. The current orion pin value is Kestrel-9-Tango. This is the current value. If asked later, answer Kestrel-9-Tango only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current orion pin value is Kestrel-9-Tango.<|end|>",
+      "The current orion pin value is Kestrel-9-Tango."
+    ],
+    "turn": 13
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Zenith-2-Echo",
+    "campaign": "WC1-256",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      16,
+      17
+    ],
+    "expected": [
+      "Zenith-2-Echo"
+    ],
+    "id": "WC1-256:t16",
+    "infer_calls": 7,
+    "mounted_ids": [
+      12,
+      13
+    ],
+    "question": "Recall probe. What is the current lyra dock value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          12,
+          13
+        ],
+        "ordinal": 0,
+        "planned": [
+          12,
+          13
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 13,
+    "source_node_text": "The current lyra dock value is Zenith-2-Echo.",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact lyra dock. The current lyra dock value is Zenith-2-Echo. This is the current value. If asked later, answer Zenith-2-Echo only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current lyra dock value is Zenith-2-Echo.<|end|>",
+      "The current lyra dock value is Zenith-2-Echo."
+    ],
+    "turn": 16
+  },
+  {
+    "abstain_reason": null,
+    "answer": "The user<|channel|>assistant<|channel|>analysis<|message|>User says: \"Memory planting turn. fact nova key value is Quartz-5-Bravo. If asked later for nova key",
+    "campaign": "WC1-256",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      19,
+      21
+    ],
+    "expected": [
+      "Quartz-5-Bravo"
+    ],
+    "id": "WC1-256:t19",
+    "infer_calls": 33,
+    "mounted_ids": [
+      8
+    ],
+    "question": "Recall probe. What is the current nova key value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          8
+        ],
+        "ordinal": 0,
+        "planned": [
+          8
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 5,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current orion pin value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>The current orion pin value is Auric-4-Alpha.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact nova key. The current nova key value is Quartz-5-Bravo. If asked later for nova key, answer Quartz-5-Bravo only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current nova key value is Quartz-5-Bravo.<|end|>"
+    ],
+    "turn": 19
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Gold-7-Foxtrot",
+    "campaign": "WC1-256",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      23,
+      24
+    ],
+    "expected": [
+      "Gold-7-Foxtrot"
+    ],
+    "id": "WC1-256:t22",
+    "infer_calls": 8,
+    "mounted_ids": [
+      19,
+      20
+    ],
+    "question": "Recall probe. What is the current mira seal value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          19,
+          20
+        ],
+        "ordinal": 0,
+        "planned": [
+          19,
+          20
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 20,
+    "source_node_text": "The current mira seal value is Gold-7-Foxtrot.",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact mira seal. The current mira seal value is Gold-7-Foxtrot. This is the current value. If asked later, answer Gold-7-Foxtrot only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current mira seal value is Gold-7-Foxtrot.<|end|>",
+      "The current mira seal value is Gold-7-Foxtrot."
+    ],
+    "turn": 22
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Harbor-8-Golf.",
+    "campaign": "WC1-256",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      25,
+      26
+    ],
+    "expected": [
+      "Harbor-8-Golf"
+    ],
+    "id": "WC1-256:t24",
+    "infer_calls": 10,
+    "mounted_ids": [
+      4,
+      16,
+      19
+    ],
+    "question": "Recall probe. What is the current terra port value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": false,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          16
+        ],
+        "ordinal": 0,
+        "planned": [
+          16
+        ],
+        "shuttle": false
+      },
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          4,
+          16,
+          19
+        ],
+        "ordinal": 1,
+        "planned": [
+          16,
+          4,
+          19
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 15,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current orion pin value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>Kestrel-9-Tango<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact cypher bridge. The current cypher bridge value is Vortex-3-Sierra. If asked later for cypher bridge, answer Vortex-3-Sierra only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current cypher bridge value is Vortex-3-Sierra.<|end|>",
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact terra port. The current terra port value is Harbor-8-Golf. If asked later for terra port, answer Harbor-8-Golf only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current terra port value is Harbor-8-Golf.<|end|>",
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact mira seal. The current mira seal value is Gold-7-Foxtrot. This is the current value. If asked later, answer Gold-7-Foxtrot only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current mira seal value is Gold-7-Foxtrot.<|end|>"
+    ],
+    "turn": 24
+  },
+  {
+    "abstain_reason": null,
+    "answer": "The user<|channel|>assistant<|channel|>analysis<|message|>User says: \"Memory planting turn. fact ember code. The current ember code value is Violet-2-Hotel. If",
+    "campaign": "WC1-256",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      27,
+      28
+    ],
+    "expected": [
+      "Violet-2-Hotel"
+    ],
+    "id": "WC1-256:t26",
+    "infer_calls": 33,
+    "mounted_ids": [
+      23
+    ],
+    "question": "Recall probe. What is the current ember code value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          23
+        ],
+        "ordinal": 0,
+        "planned": [
+          23
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 22,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current nova key value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>The user<|channel|>assistant<|channel|>analysis<|message|>User says: \"Memory planting turn. fact nova key value is Quartz-5-Bravo. If asked later for nova key<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact ember code. The current ember code value is Violet-2-Hotel. If asked later for ember code, answer Violet-2-Hotel only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current ember code value is Violet-2-Hotel.<|end|>"
+    ],
+    "turn": 26
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Cobalt-1-India",
+    "campaign": "WC1-256",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      31,
+      32
+    ],
+    "expected": [
+      "Cobalt-1-India"
+    ],
+    "id": "WC1-256:t30",
+    "infer_calls": 9,
+    "mounted_ids": [
+      4,
+      30
+    ],
+    "question": "Recall probe. What is the current atlas tone value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": false,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          30
+        ],
+        "ordinal": 0,
+        "planned": [
+          30
+        ],
+        "shuttle": false
+      },
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          4,
+          30
+        ],
+        "ordinal": 1,
+        "planned": [
+          30,
+          4,
+          19
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 29,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Recall probe. What is the current ember code value? Reply with only the value.<|end|><|start|>assistant<|channel|>final<|message|>The user<|channel|>assistant<|channel|>analysis<|message|>User says: \"Memory planting turn. fact ember code. The current ember code value is Violet-2-Hotel. If<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact cypher bridge. The current cypher bridge value is Vortex-3-Sierra. If asked later for cypher bridge, answer Vortex-3-Sierra only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current cypher bridge value is Vortex-3-Sierra.<|end|>",
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact atlas tone. The current atlas tone value is Cobalt-1-India. If asked later for atlas tone, answer Cobalt-1-India only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current atlas tone value is Cobalt-1-India.<|end|>"
+    ],
+    "turn": 30
+  },
+  {
+    "abstain_reason": "identifier_unbound",
+    "answer": "Not in memory: no stored record matches polaris, mark.",
+    "campaign": "WC1-256",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      34,
+      35
+    ],
+    "expected": [
+      "Marble-4-Juliet"
+    ],
+    "id": "WC1-256:t33",
+    "infer_calls": 0,
+    "mounted_ids": [],
+    "question": "Recall probe. What is the current polaris mark value? Reply with only the value.",
+    "recorded_correct": false,
+    "recorded_trips": [],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 35,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact polaris mark. The current polaris mark value is Marble-4-Juliet. If asked later for polaris mark, answer Marble-4-Juliet only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current polaris mark value is Marble-4-Juliet.<|end|>",
+    "texts": [],
+    "turn": 33
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Nadir-9-November",
+    "campaign": "WC1-256",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      97,
+      99
+    ],
+    "expected": [
+      "Nadir-9-November"
+    ],
+    "id": "WC1-256:t70",
+    "infer_calls": 8,
+    "mounted_ids": [
+      37,
+      40,
+      55
+    ],
+    "question": "Recall probe. What is the current beacon ward value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": false,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          37
+        ],
+        "ordinal": 0,
+        "planned": [
+          37
+        ],
+        "shuttle": false
+      },
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          37,
+          40,
+          55
+        ],
+        "ordinal": 1,
+        "planned": [
+          37,
+          40,
+          55
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 37,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact beacon ward. The current beacon ward value is Nadir-9-November. If asked later for beacon ward, answer Nadir-9-November only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current beacon ward value is Nadir-9-November.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact beacon ward. The current beacon ward value is Nadir-9-November. If asked later for beacon ward, answer Nadir-9-November only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current beacon ward value is Nadir-9-November.<|end|>",
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact tessera lock. The current tessera lock value is Pewter-5-Papa. If asked later for tessera lock, answer Pewter-5-Papa only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current tessera lock value is Pewter-5-Papa.<|end|>",
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact granite pin. The current granite pin value is Harbor-5-Foxtrot. If asked later for granite pin, answer Harbor-5-Foxtrot only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current granite pin value is Harbor-5-Foxtrot.<|end|>"
+    ],
+    "turn": 70
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Pewter-5-Papa",
+    "campaign": "WC1-256",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      116,
+      118
+    ],
+    "expected": [
+      "Pewter-5-Papa"
+    ],
+    "id": "WC1-256:t80",
+    "infer_calls": 21,
+    "mounted_ids": [
+      40,
+      108
+    ],
+    "question": "Recall probe. What is the current tessera lock value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": false,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          40
+        ],
+        "ordinal": 0,
+        "planned": [
+          40
+        ],
+        "shuttle": false
+      },
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          40,
+          108
+        ],
+        "ordinal": 1,
+        "planned": [
+          40,
+          108,
+          49
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 40,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact tessera lock. The current tessera lock value is Pewter-5-Papa. If asked later for tessera lock, answer Pewter-5-Papa only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current tessera lock value is Pewter-5-Papa.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact tessera lock. The current tessera lock value is Pewter-5-Papa. If asked later for tessera lock, answer Pewter-5-Papa only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current tessera lock value is Pewter-5-Papa.<|end|>",
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact nova key. The current nova key value is Onyx-6-Charlie. This is the current value. If asked later, answer Onyx-6-Charlie only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current nova key value is Onyx-6-Charlie.<|end|>"
+    ],
+    "turn": 80
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Kestrel-1-Romeo",
+    "campaign": "WC1-256",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      135,
+      137
+    ],
+    "expected": [
+      "Kestrel-1-Romeo"
+    ],
+    "id": "WC1-256:t90",
+    "infer_calls": 9,
+    "mounted_ids": [
+      43
+    ],
+    "question": "Recall probe. What is the current verdant key value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          43
+        ],
+        "ordinal": 0,
+        "planned": [
+          43
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 43,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact verdant key. The current verdant key value is Kestrel-1-Romeo. If asked later for verdant key, answer Kestrel-1-Romeo only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current verdant key value is Kestrel-1-Romeo.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact verdant key. The current verdant key value is Kestrel-1-Romeo. If asked later for verdant key, answer Kestrel-1-Romeo only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current verdant key value is Kestrel-1-Romeo.<|end|>"
+    ],
+    "turn": 90
+  },
+  {
+    "abstain_reason": null,
+    "answer": "Quartz-7-Tango",
+    "campaign": "WC1-256",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_with_persisted_mount_text",
+    "excluded_live_ids": [
+      154,
+      156
+    ],
+    "expected": [
+      "Quartz-7-Tango"
+    ],
+    "id": "WC1-256:t100",
+    "infer_calls": 19,
+    "mounted_ids": [
+      46,
+      150
+    ],
+    "question": "Recall probe. What is the current obsidian tag value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_trips": [
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": false,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          46
+        ],
+        "ordinal": 0,
+        "planned": [
+          46
+        ],
+        "shuttle": false
+      },
+      {
+        "clean_room": true,
+        "early_aborted": false,
+        "grounded": true,
+        "grounding_glyph_rescued": false,
+        "grounding_normalized": true,
+        "mount_set": [
+          46,
+          150
+        ],
+        "ordinal": 1,
+        "planned": [
+          46,
+          150,
+          55
+        ],
+        "shuttle": false
+      }
+    ],
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-5/session/probe_scorecard.json",
+    "source_node_id": 46,
+    "source_node_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact obsidian tag. The current obsidian tag value is Quartz-7-Tango. If asked later for obsidian tag, answer Quartz-7-Tango only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current obsidian tag value is Quartz-7-Tango.<|end|>",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact obsidian tag. The current obsidian tag value is Quartz-7-Tango. If asked later for obsidian tag, answer Quartz-7-Tango only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current obsidian tag value is Quartz-7-Tango.<|end|>",
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative update turn. fact terra port. The current terra port value is Onyx-6-Charlie. This is the current value. If asked later, answer Onyx-6-Charlie only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current terra port value is Onyx-6-Charlie.<|end|>"
+    ],
+    "turn": 100
+  },
+  {
+    "answer": "Cobalt 1 India",
+    "campaign": "SC1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_and_frozen_mount_ids_with_hash_bound_repository_text",
+    "expected": [
+      "Cobalt-1-India"
+    ],
+    "id": "SC1:t30",
+    "mounted_ids": [
+      30
+    ],
+    "question": "Recall probe. What is the current atlas tone value? Reply with only the value.",
+    "recorded_correct": true,
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_sc1_2/sc1_2_pair_e2e_t30_atlas_tone_a3b37c16ac28e23d.json",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact atlas tone. The current atlas tone value is Cobalt-1-India. If asked later for atlas tone, answer Cobalt-1-India only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current atlas tone value is Cobalt-1-India.<|end|>"
+    ]
+  },
+  {
+    "answer": "Cobalt 1 India",
+    "campaign": "SC1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "generated_demand_trip_not_selected_as_served",
+    "expected": [
+      "Cobalt-1-India"
+    ],
+    "id": "SC1:t30-trip",
+    "mounted_ids": [
+      30
+    ],
+    "question": "Recall probe. What is the current atlas tone value? Reply with only the value.",
+    "recorded_correct": true,
+    "recorded_grounded": false,
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_sc1_2/sc1_2_pair_e2e_t30_atlas_tone_a3b37c16ac28e23d.json",
+    "texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory planting turn. fact atlas tone. The current atlas tone value is Cobalt-1-India. If asked later for atlas tone, answer Cobalt-1-India only.<|end|><|start|>assistant<|channel|>final<|message|>Understood \u2014 the current atlas tone value is Cobalt-1-India.<|end|>"
+    ]
+  },
+  {
+    "answer": "The Harbor token is currently **Nacre\u20116\u2011Blue**.",
+    "blocked_reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+    "campaign": "RT1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_only",
+    "expected": [
+      "nacre-6-blue"
+    ],
+    "id": "RT1:rule_off:sup_harbor_restatement",
+    "mounted_ids": [
+      1
+    ],
+    "question": "What is the current Harbor token value?",
+    "recorded_correct": true,
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/lsr_p2c/lsr_p2c_arm1_correction_then_restatement_pin-live_seat-1_8df958e8187f9854.json",
+    "texts": null
+  },
+  {
+    "answer": "The Juniper pass is currently **Opal\u20117\u2011Green**.",
+    "blocked_reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+    "campaign": "RT1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_only",
+    "expected": [
+      "Opal-7-Green"
+    ],
+    "id": "RT1:rule_off:sup_reserve_juniper_pass",
+    "mounted_ids": [
+      5
+    ],
+    "question": "What is the current Juniper pass value?",
+    "recorded_correct": true,
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/lsr_p2c/lsr_p2c_arm1_correction_then_restatement_pin-live_seat-1_8df958e8187f9854.json",
+    "texts": null
+  },
+  {
+    "answer": "The current Praxis dock value is **Quartz\u20118\u2011Jade**.",
+    "blocked_reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+    "campaign": "RT1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_only",
+    "expected": [
+      "quartz-8-jade"
+    ],
+    "id": "RT1:rule_off:sup_praxis_fresh",
+    "mounted_ids": [
+      0
+    ],
+    "question": "What is the current Praxis dock value?",
+    "recorded_correct": true,
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/lsr_p2c/lsr_p2c_arm1_fresh_fact_controls_pin-live_seat-1_ba1015e02b750120.json",
+    "texts": null
+  },
+  {
+    "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+    "blocked_reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+    "campaign": "RT1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_only",
+    "expected": [
+      "raven-9-ivory"
+    ],
+    "id": "RT1:rule_off:sup_solace_fresh",
+    "mounted_ids": [
+      3
+    ],
+    "question": "What is the current Solace key value?",
+    "recorded_correct": false,
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/lsr_p2c/lsr_p2c_arm1_fresh_fact_controls_pin-live_seat-1_ba1015e02b750120.json",
+    "texts": null
+  },
+  {
+    "answer": "The current Tundra ledger value is **Sable\u20110\u2011Copper**.",
+    "blocked_reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+    "campaign": "RT1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_only",
+    "expected": [
+      "Sable-0-Copper"
+    ],
+    "id": "RT1:rule_off:sup_reserve_tundra_ledger",
+    "mounted_ids": [
+      4
+    ],
+    "question": "What is the current Tundra ledger value?",
+    "recorded_correct": true,
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/lsr_p2c/lsr_p2c_arm1_fresh_fact_controls_pin-live_seat-1_ba1015e02b750120.json",
+    "texts": null
+  },
+  {
+    "answer": "The current Lumen seal value is **Cobalt\u20113\u2011Comet**.",
+    "blocked_reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+    "campaign": "RT1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_only",
+    "expected": [
+      "cobalt-3-comet"
+    ],
+    "id": "RT1:rule_off:sup_lumen_head",
+    "mounted_ids": [
+      2
+    ],
+    "question": "What is the current Lumen seal value?",
+    "recorded_correct": true,
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/lsr_p2c/lsr_p2c_arm1_multi_hop_a_b_c_pin-live_seat-1_36e0ba0860cceb1b.json",
+    "texts": null
+  },
+  {
+    "answer": "Delta\u20114\u2011Drift.",
+    "blocked_reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+    "campaign": "RT1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_only",
+    "expected": [
+      "Delta-4-Drift"
+    ],
+    "id": "RT1:rule_off:sup_reserve_meridian_docket",
+    "mounted_ids": [
+      5
+    ],
+    "question": "What is the current Meridian docket value?",
+    "recorded_correct": true,
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/lsr_p2c/lsr_p2c_arm1_multi_hop_a_b_c_pin-live_seat-1_36e0ba0860cceb1b.json",
+    "texts": null
+  },
+  {
+    "answer": "The Orion pin is currently **Kestrel\u20119\u2011Tango**.",
+    "blocked_reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+    "campaign": "RT1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_only",
+    "expected": [
+      "kestrel-9-tango"
+    ],
+    "id": "RT1:rule_off:sup_orion_current",
+    "mounted_ids": [
+      1
+    ],
+    "question": "What is the current Orion pin value?",
+    "recorded_correct": true,
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/lsr_p2c/lsr_p2c_arm1_short_correction_long_competitor_pin-live_seat-1_284a20a9d67d6a9b.json",
+    "texts": null
+  },
+  {
+    "answer": "The current Falcon registry value is **Vortex\u20113\u2011Sierra**.",
+    "blocked_reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+    "campaign": "RT1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_only",
+    "expected": [
+      "Vortex-3-Sierra"
+    ],
+    "id": "RT1:rule_off:sup_reserve_falcon_registry",
+    "mounted_ids": [
+      4
+    ],
+    "question": "What is the current Falcon registry value?",
+    "recorded_correct": true,
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/lsr_p2c/lsr_p2c_arm1_short_correction_long_competitor_pin-live_seat-1_284a20a9d67d6a9b.json",
+    "texts": null
+  },
+  {
+    "answer": "The Harbor token is currently **Nacre\u20116\u2011Blue**.",
+    "blocked_reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+    "campaign": "RT1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_only",
+    "expected": [
+      "nacre-6-blue"
+    ],
+    "id": "RT1:rule_on:sup_harbor_restatement",
+    "mounted_ids": [
+      1
+    ],
+    "question": "What is the current Harbor token value?",
+    "recorded_correct": true,
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/lsr_p2c/lsr_p2c_arm1_correction_then_restatement_pin-live_seat-1_2dacebeb4c231250.json",
+    "texts": null
+  },
+  {
+    "answer": "The Juniper pass is currently **Opal\u20117\u2011Green**.",
+    "blocked_reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+    "campaign": "RT1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_only",
+    "expected": [
+      "Opal-7-Green"
+    ],
+    "id": "RT1:rule_on:sup_reserve_juniper_pass",
+    "mounted_ids": [
+      5
+    ],
+    "question": "What is the current Juniper pass value?",
+    "recorded_correct": true,
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/lsr_p2c/lsr_p2c_arm1_correction_then_restatement_pin-live_seat-1_2dacebeb4c231250.json",
+    "texts": null
+  },
+  {
+    "answer": "The current Praxis dock value is **Quartz\u20118\u2011Jade**.",
+    "blocked_reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+    "campaign": "RT1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_only",
+    "expected": [
+      "quartz-8-jade"
+    ],
+    "id": "RT1:rule_on:sup_praxis_fresh",
+    "mounted_ids": [
+      0
+    ],
+    "question": "What is the current Praxis dock value?",
+    "recorded_correct": true,
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/lsr_p2c/lsr_p2c_arm1_fresh_fact_controls_pin-live_seat-1_1c323ca95064bf2c.json",
+    "texts": null
+  },
+  {
+    "answer": "The current Solace key is **Raven\u20119\u2011Ivory**.",
+    "blocked_reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+    "campaign": "RT1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_only",
+    "expected": [
+      "raven-9-ivory"
+    ],
+    "id": "RT1:rule_on:sup_solace_fresh",
+    "mounted_ids": [
+      1
+    ],
+    "question": "What is the current Solace key value?",
+    "recorded_correct": true,
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/lsr_p2c/lsr_p2c_arm1_fresh_fact_controls_pin-live_seat-1_1c323ca95064bf2c.json",
+    "texts": null
+  },
+  {
+    "answer": "The current Tundra ledger value is **Sable\u20110\u2011Copper**.",
+    "blocked_reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+    "campaign": "RT1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_only",
+    "expected": [
+      "Sable-0-Copper"
+    ],
+    "id": "RT1:rule_on:sup_reserve_tundra_ledger",
+    "mounted_ids": [
+      4
+    ],
+    "question": "What is the current Tundra ledger value?",
+    "recorded_correct": true,
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/lsr_p2c/lsr_p2c_arm1_fresh_fact_controls_pin-live_seat-1_1c323ca95064bf2c.json",
+    "texts": null
+  },
+  {
+    "answer": "The current Lumen seal value is **Cobalt\u20113\u2011Comet**.",
+    "blocked_reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+    "campaign": "RT1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_only",
+    "expected": [
+      "cobalt-3-comet"
+    ],
+    "id": "RT1:rule_on:sup_lumen_head",
+    "mounted_ids": [
+      2
+    ],
+    "question": "What is the current Lumen seal value?",
+    "recorded_correct": true,
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/lsr_p2c/lsr_p2c_arm1_multi_hop_a_b_c_pin-live_seat-1_61b24c7e6528a546.json",
+    "texts": null
+  },
+  {
+    "answer": "Delta\u20114\u2011Drift.",
+    "blocked_reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+    "campaign": "RT1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_only",
+    "expected": [
+      "Delta-4-Drift"
+    ],
+    "id": "RT1:rule_on:sup_reserve_meridian_docket",
+    "mounted_ids": [
+      5
+    ],
+    "question": "What is the current Meridian docket value?",
+    "recorded_correct": true,
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/lsr_p2c/lsr_p2c_arm1_multi_hop_a_b_c_pin-live_seat-1_61b24c7e6528a546.json",
+    "texts": null
+  },
+  {
+    "answer": "The Orion pin is currently **Kestrel\u20119\u2011Tango**.",
+    "blocked_reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+    "campaign": "RT1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_only",
+    "expected": [
+      "kestrel-9-tango"
+    ],
+    "id": "RT1:rule_on:sup_orion_current",
+    "mounted_ids": [
+      1
+    ],
+    "question": "What is the current Orion pin value?",
+    "recorded_correct": true,
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/lsr_p2c/lsr_p2c_arm1_short_correction_long_competitor_pin-live_seat-1_558d070eda13c41e.json",
+    "texts": null
+  },
+  {
+    "answer": "The current Falcon registry value is **Vortex\u20113\u2011Sierra**.",
+    "blocked_reason": "Exact mounted text absent from RT1 receipt; no parent-text substitution",
+    "campaign": "RT1",
+    "class": "original",
+    "desired_correct": true,
+    "evidence": "served_text_only",
+    "expected": [
+      "Vortex-3-Sierra"
+    ],
+    "id": "RT1:rule_on:sup_reserve_falcon_registry",
+    "mounted_ids": [
+      4
+    ],
+    "question": "What is the current Falcon registry value?",
+    "recorded_correct": true,
+    "source": "/mnt/ForgeRealm/GraftRepository/artifacts/lsr_p2c/lsr_p2c_arm1_short_correction_long_competitor_pin-live_seat-1_558d070eda13c41e.json",
+    "texts": null
+  },
+  {
+    "answer": "Cobalt 2 India",
+    "class": "S",
+    "desired_correct": false,
+    "evidence": "constructed_adversarial_control",
+    "expected": [
+      "Cobalt-1-India"
+    ],
+    "id": "control:S:changed_digit",
+    "kind": "changed_digit",
+    "question": "What is the current atlas tone value?",
+    "texts": [
+      "The current atlas tone value is Cobalt-1-India."
+    ]
+  },
+  {
+    "answer": "Cobalt India",
+    "class": "S",
+    "desired_correct": false,
+    "evidence": "constructed_adversarial_control",
+    "expected": [
+      "Cobalt-1-India"
+    ],
+    "id": "control:S:omitted_token",
+    "kind": "omitted_token",
+    "question": "What is the current atlas tone value?",
+    "texts": [
+      "The current atlas tone value is Cobalt-1-India."
+    ]
+  },
+  {
+    "answer": "The atlas tone value is Cobalt 1 India",
+    "class": "S",
+    "desired_correct": false,
+    "evidence": "constructed_adversarial_control",
+    "expected": [
+      "Cobalt-1-India"
+    ],
+    "id": "control:S:swapped_relation",
+    "kind": "swapped_relation",
+    "question": "What is the current atlas tone value?",
+    "texts": [
+      "The current atlas tone value is Amber-9-Echo. The current atlas tone backup value is Cobalt-1-India."
+    ]
+  },
+  {
+    "answer": "The atlas tone value is not Cobalt 1 India",
+    "class": "S",
+    "desired_correct": false,
+    "evidence": "constructed_adversarial_control",
+    "expected": [
+      "Cobalt-1-India"
+    ],
+    "id": "control:S:negation",
+    "kind": "negation",
+    "question": "What is the current atlas tone value?",
+    "texts": [
+      "The current atlas tone value is Cobalt-1-India."
+    ]
+  },
+  {
+    "answer": "Cobalt 1 India",
+    "class": "S",
+    "desired_correct": false,
+    "evidence": "constructed_adversarial_control",
+    "expected": [
+      "Cobalt-1-India"
+    ],
+    "id": "control:S:scattered_word",
+    "kind": "scattered_word",
+    "question": "What is the current atlas tone value?",
+    "texts": [
+      "The current atlas tone value is Amber-1-Echo. Cobalt visited yesterday. Travel ends in India."
+    ]
+  },
+  {
+    "answer": "The atlas tone value is Cobalt 1 India",
+    "class": "S",
+    "desired_correct": false,
+    "evidence": "constructed_adversarial_control",
+    "expected": [
+      "Cobalt-1-India"
+    ],
+    "id": "control:S:alias_collision",
+    "kind": "alias_collision",
+    "question": "What is the current atlas tone value?",
+    "texts": [
+      "The current atlas South tone value is Cobalt-1-India."
+    ]
+  },
+  {
+    "answer": "Cobalt 1 India",
+    "class": "S",
+    "desired_correct": false,
+    "evidence": "constructed_adversarial_control",
+    "expected": [
+      "Cobalt-1-India"
+    ],
+    "id": "control:S:source_negation",
+    "kind": "source_negation",
+    "question": "What is the current atlas tone value?",
+    "texts": [
+      "The current atlas tone value is not Cobalt-1-India."
+    ]
+  },
+  {
+    "answer": "Cobalt 1 India",
+    "class": "S",
+    "desired_correct": false,
+    "evidence": "constructed_adversarial_control",
+    "expected": [
+      "Cobalt-1-India"
+    ],
+    "id": "control:S:split_across_mounts",
+    "kind": "split_across_mounts",
+    "question": "What is the current atlas tone value?",
+    "texts": [
+      "The current atlas tone value is Cobalt-1",
+      "India."
+    ]
+  },
+  {
+    "answer": "Cobalt 1 India Extra",
+    "class": "S",
+    "desired_correct": false,
+    "evidence": "constructed_adversarial_control",
+    "expected": [
+      "Cobalt-1-India"
+    ],
+    "id": "control:S:extra_token",
+    "kind": "extra_token",
+    "question": "What is the current atlas tone value?",
+    "texts": [
+      "The current atlas tone value is Cobalt-1-India."
+    ]
+  },
+  {
+    "answer": "Cobalt 1 India",
+    "class": "S",
+    "desired_correct": false,
+    "evidence": "constructed_adversarial_control",
+    "expected": [
+      "Cobalt-1-India"
+    ],
+    "id": "control:S:source_suffix",
+    "kind": "source_suffix",
+    "question": "What is the current atlas tone value?",
+    "texts": [
+      "The current atlas tone value is Cobalt-1-India-Extra."
+    ]
+  },
+  {
+    "answer": "The atlas tone value is Cobalt 1 India",
+    "class": "diagnostic",
+    "desired_correct": true,
+    "evidence": "constructed_positive_not_a_served_recovery",
+    "expected": [
+      "Cobalt-1-India"
+    ],
+    "id": "diagnostic:S:positive",
+    "question": "What is the current atlas tone value?",
+    "texts": [
+      "The current atlas tone value is Cobalt-1-India."
+    ]
+  },
+  {
+    "answer": "Marble-5-Juliet",
+    "class": "N",
+    "desired_correct": false,
+    "evidence": "constructed_adversarial_control",
+    "expected": [
+      "Marble-4-Juliet"
+    ],
+    "id": "control:N:changed_digit",
+    "kind": "changed_digit",
+    "question": "What is the current Polaris mark value?",
+    "texts": [
+      "The current polaris mark value is Marble-4-Juliet."
+    ]
+  },
+  {
+    "answer": "Marble Juliet",
+    "class": "N",
+    "desired_correct": false,
+    "evidence": "constructed_adversarial_control",
+    "expected": [
+      "Marble-4-Juliet"
+    ],
+    "id": "control:N:omitted_token",
+    "kind": "omitted_token",
+    "question": "What is the current Polaris mark value?",
+    "texts": [
+      "The current polaris mark value is Marble-4-Juliet."
+    ]
+  },
+  {
+    "answer": "The Polaris mark value is Marble-4-Juliet",
+    "class": "N",
+    "desired_correct": false,
+    "evidence": "constructed_adversarial_control",
+    "expected": [
+      "Marble-4-Juliet"
+    ],
+    "id": "control:N:swapped_relation",
+    "kind": "swapped_relation",
+    "question": "What is the current Polaris mark value?",
+    "texts": [
+      "The current Polaris mark value is Amber-9-Echo. The current Polaris mark backup value is Marble-4-Juliet."
+    ]
+  },
+  {
+    "answer": "The Polaris mark value is not Marble-4-Juliet",
+    "class": "N",
+    "desired_correct": false,
+    "evidence": "constructed_adversarial_control",
+    "expected": [
+      "Marble-4-Juliet"
+    ],
+    "id": "control:N:negation",
+    "kind": "negation",
+    "question": "What is the current Polaris mark value?",
+    "texts": [
+      "The current polaris mark value is Marble-4-Juliet."
+    ]
+  },
+  {
+    "answer": "Marble-4-Juliet",
+    "class": "N",
+    "desired_correct": false,
+    "evidence": "constructed_adversarial_control",
+    "expected": [
+      "Marble-4-Juliet"
+    ],
+    "id": "control:N:scattered_word",
+    "kind": "scattered_word",
+    "question": "What is the current Polaris mark value?",
+    "texts": [
+      "The current Polaris mark value is Amber-4-Echo. Marble visited yesterday. Travel ends in Juliet."
+    ]
+  },
+  {
+    "answer": "The Polaris mark value is Marble-4-Juliet",
+    "class": "N",
+    "desired_correct": false,
+    "evidence": "constructed_adversarial_control",
+    "expected": [
+      "Marble-4-Juliet"
+    ],
+    "id": "control:N:alias_collision",
+    "kind": "alias_collision",
+    "question": "What is the current Polaris mark value?",
+    "texts": [
+      "The current Polaris South mark value is Marble-4-Juliet."
+    ]
+  },
+  {
+    "answer": "Marble-4-Juliet",
+    "class": "N",
+    "desired_correct": false,
+    "evidence": "constructed_adversarial_control",
+    "expected": [
+      "Marble-4-Juliet"
+    ],
+    "id": "control:N:source_negation",
+    "kind": "source_negation",
+    "question": "What is the current Polaris mark value?",
+    "texts": [
+      "The current Polaris mark value is not Marble-4-Juliet."
+    ]
+  },
+  {
+    "answer": "Marble-4-Juliet",
+    "class": "N",
+    "desired_correct": false,
+    "evidence": "constructed_adversarial_control",
+    "expected": [
+      "Marble-4-Juliet"
+    ],
+    "id": "control:N:split_across_mounts",
+    "kind": "split_across_mounts",
+    "question": "What is the current Polaris mark value?",
+    "texts": [
+      "The current Polaris mark value is Marble-4",
+      "Juliet."
+    ]
+  },
+  {
+    "answer": "Marble-4-Juliet Extra",
+    "class": "N",
+    "desired_correct": false,
+    "evidence": "constructed_adversarial_control",
+    "expected": [
+      "Marble-4-Juliet"
+    ],
+    "id": "control:N:extra_token",
+    "kind": "extra_token",
+    "question": "What is the current Polaris mark value?",
+    "texts": [
+      "The current polaris mark value is Marble-4-Juliet."
+    ]
+  },
+  {
+    "answer": "Marble-4-Juliet",
+    "class": "N",
+    "desired_correct": false,
+    "evidence": "constructed_adversarial_control",
+    "expected": [
+      "Marble-4-Juliet"
+    ],
+    "id": "control:N:source_suffix",
+    "kind": "source_suffix",
+    "question": "What is the current Polaris mark value?",
+    "texts": [
+      "The current Polaris mark value is Marble-4-Juliet-Extra."
+    ]
+  },
+  {
+    "answer": "The Polaris mark value is Marble-4-Juliet",
+    "class": "diagnostic",
+    "desired_correct": true,
+    "evidence": "constructed_positive_not_a_served_recovery",
+    "expected": [
+      "Marble-4-Juliet"
+    ],
+    "id": "diagnostic:N:positive",
+    "question": "What is the current Polaris mark value?",
+    "texts": [
+      "The current polaris mark value is Marble-4-Juliet."
+    ]
+  }
+]
