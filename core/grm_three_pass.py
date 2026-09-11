@@ -692,6 +692,7 @@ def build_route_receipt(
                 if info.get("admission_margin_threshold") is not None
                 else None),
             "rule_sha256": info.get("admission_rule_sha256"),
+            "admission_rule": (admission_profile or {}).get("admission_rule", info.get("admission_rule", "all_tokens_bind")),
             # Prior art: LSR-P2B projection and RT1 receipts (project, 2026).
             # Carry existing RT1 evidence additively; absence is not False.
             **{key.removeprefix("admission_"): info[key]

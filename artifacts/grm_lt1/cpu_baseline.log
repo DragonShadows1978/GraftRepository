@@ -1,0 +1,41 @@
+......FFF.                                                               [100%]
+=================================== FAILURES ===================================
+____________ test_full_fixture_fake_mounts_answers_and_restarts[A] _____________
+tests/test_grm_lt1.py:89: in test_full_fixture_fake_mounts_answers_and_restarts
+    assert not failures,failures
+E   AssertionError: [{'answer': 'Not in memory: no stored record matches settle, promenade, lamp, spacing.', 'id': 'recall_1_10', 'mounts'... stored record matches settle, hauler, cargo, allowance.', 'id': 'recall_6_10', 'mounts': [], 'sources': [4, 16]}, ...]
+E   assert not [{'answer': 'Not in memory: no stored record matches settle, promenade, lamp, spacing.', 'id': 'recall_1_10', 'mounts'... stored record matches settle, hauler, cargo, allowance.', 'id': 'recall_6_10', 'mounts': [], 'sources': [4, 16]}, ...]
+____________ test_full_fixture_fake_mounts_answers_and_restarts[B] _____________
+tests/test_grm_lt1.py:89: in test_full_fixture_fake_mounts_answers_and_restarts
+    assert not failures,failures
+E   AssertionError: [{'answer': 'Not in memory: no stored record matches settle, promenade, lamp, spacing.', 'id': 'recall_1_10', 'mounts'... stored record matches settle, hauler, cargo, allowance.', 'id': 'recall_6_10', 'mounts': [], 'sources': [4, 16]}, ...]
+E   assert not [{'answer': 'Not in memory: no stored record matches settle, promenade, lamp, spacing.', 'id': 'recall_1_10', 'mounts'... stored record matches settle, hauler, cargo, allowance.', 'id': 'recall_6_10', 'mounts': [], 'sources': [4, 16]}, ...]
+_________________ test_c7_checkpoint_roundtrip_and_corruption __________________
+tests/test_grm_lt1.py:95: in test_c7_checkpoint_roundtrip_and_corruption
+    lt.checkpoint(tmp_path,dict(next_turn=71,transcript=['natural dialogue']),binding)
+scripts/grm_c7_common.py:222: in checkpoint
+    'next_turn': state['next_turn'], 'process_id': state['process_id']})
+                                                   ^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'process_id'
+=============================== warnings summary ===============================
+tests/test_grm_lt1.py::test_registration_and_frozen_fixture
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+tests/test_grm_lt1.py::test_registration_and_frozen_fixture
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_grm_lt1.py::test_registration_and_frozen_fixture
+PASSED tests/test_grm_lt1.py::test_recency_gate_rejects_recent_source
+PASSED tests/test_grm_lt1.py::test_instruction_collision_and_missing_oracle_are_rejected
+PASSED tests/test_grm_lt1.py::test_value_span_and_disjoint_error_categories
+PASSED tests/test_grm_lt1.py::test_fake_attention_matches_actual_constructor
+PASSED tests/test_grm_lt1.py::test_visible_reader_requires_sources_and_current_revision
+PASSED tests/test_grm_lt1.py::test_empty_summary_and_budget_fail_closed
+FAILED tests/test_grm_lt1.py::test_full_fixture_fake_mounts_answers_and_restarts[A]
+FAILED tests/test_grm_lt1.py::test_full_fixture_fake_mounts_answers_and_restarts[B]
+FAILED tests/test_grm_lt1.py::test_c7_checkpoint_roundtrip_and_corruption - K...
+3 failed, 7 passed, 2 warnings in 36.06s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

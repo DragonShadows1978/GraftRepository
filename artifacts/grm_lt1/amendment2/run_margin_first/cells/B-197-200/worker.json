@@ -1,0 +1,2240 @@
+{
+  "admission_rule": "margin_first",
+  "binding": {
+    "admission_rule": "margin_first",
+    "amendment_sha256": "809f906c5e7d057f8cffcf067d4eee7ec990a996f62a05f789916d2f8d47e193",
+    "arm": "B",
+    "core_shas": {
+      "core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "core/deepseek_v2_lite_tc.py": "96e371754496eb2ca467ad199bebed07c354cf5eae4b0a08daf571c6f04f0d07",
+      "core/gemma4_tc.py": "c9a8cc1d01c30bb2b20e9c2e477d4bedf21072d0b1b6b157f3ba75c78a271d8b",
+      "core/gpt_oss20b_tc.py": "da8ca3bc8c961d731d9e32bf4558702ad1b8b10c8ecc37b18326e7df4ade74a1",
+      "core/graft_arena.py": "83a2d4a2bc0ed2c8e0fc06f937f59d94f48ca5a70a65a96c33b1ba6eaa2e6aed",
+      "core/graft_quant.py": "ebe40790286a719db38de403210aa20e17e7e4d2699f7b7dae452e014f4fa130",
+      "core/graft_repository.py": "fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db",
+      "core/grm_admission.py": "d1afc26a68b4b1c8236fc01c7db62065ab49173a89d7f2853989eedfadb48fe0",
+      "core/grm_cuda_router.py": "8dfd7a6ff5395eb846996c67b1570c9fb0e8b26dd78e84f28059f1b291766ce5",
+      "core/grm_demand.py": "daf787a95abbfd206638f5fbf74de2ee57efaaa54b4eac39509402e1386650e0",
+      "core/grm_frame.py": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2",
+      "core/grm_native.py": "1f5a69716d751c670f37328cf012544b800f86226ad4549a0781bac654aaf3df",
+      "core/grm_runtime.py": "39f823cbdb98e32528fb5240777cb8c0144f3be77fa86466a67f1f636505c13e",
+      "core/grm_supersession.py": "c8e9baf7c69e41ebdcf05fda84a2895ed7d2b6f7ff67903fdb655924510fdd5e",
+      "core/grm_text_norm.py": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8",
+      "core/grm_three_pass.py": "312f4bc0e4922449b9231ea2d9c3e6fff3a116aef6d0a48712f530d9c419742f",
+      "core/kv_graft.py": "d8d44d032c5398c4606b1b6f1b547a94baa2415e36225cb04dd6ef313622ef2d",
+      "core/minicpm3_tc.py": "3d19734f51d28eb48dc20a62658f2bfc250fdac4fce2cb906116d034b1371a69",
+      "core/mistral7b_tc.py": "49430e5920508d740a2f8be7b6ba0caadd0442c7798454cf6fa2a808204bf1c4",
+      "core/paging_telemetry.py": "4eb484b1f6b512962b18d08cb714dd61346980a8af550c1fd814bcbad474097c",
+      "core/qwen35_tc.py": "3f84f8e99f5cf8932440e5d6ff29df41cbf3fdaf13d27f3bbe8fb1dc3a7ec41b",
+      "core/qwen35_translation_poc.py": "5a7f364aa7a4ff24bb9299671fc945626037cff44595f0b80364ebe9d1cfa3d1",
+      "core/qwen38_tc.py": "39875f97f09906ccdfcdf6f510c9ed2f7cad01e85007363a8d7ad00869f9d67e",
+      "core/qwen3_1p7b_tc.py": "1a563f502753a86b57abff8710440ae0e1921ed083481dee8232872704093c0f",
+      "core/qwen3_tc.py": "ba0e2d9ab68716922b9f942bc4bb8cd2c4a791abe2a2fabd42a65799212d95aa",
+      "core/qwen_tc.py": "1353e44f727fc24d1638e4e238d160619fea561602c921259b010af5f63478e3"
+    },
+    "fixture_sha256": "ad61c9488f722ae7ce248aee34cda688c13a5f0d3ec47b62954da2a3c146855c",
+    "registration_sha256": "e1913b144087ea79e6eea4a0b8eceae0bedd2a4853cd931db5f24c795488300c"
+  },
+  "capture": {
+    "rows": [
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 0
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 1
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 2
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 3
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 4
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 5
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 6
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 7
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 8
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 9
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 10
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 11
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 12
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 13
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 14
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 15
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 16
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 17
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 18
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 19
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 20
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 21
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 22
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 23
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 24
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 25
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 26
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 27
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 28
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 29
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 30
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 31
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 32
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 33
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 34
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 35
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 36
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 37
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 38
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 39
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 40
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 41
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 42
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 43
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 44
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 45
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 46
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 47
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 48
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 49
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 50
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 51
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 52
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 53
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 54
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 55
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 56
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 57
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 58
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 59
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 60
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 61
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 62
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 63
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 64
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 65
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 66
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 67
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 68
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 69
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 70
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 71
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 72
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 73
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 74
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 75
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 76
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 77
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 78
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 79
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 80
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 81
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 82
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 83
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 84
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 85
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 86
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 87
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 88
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 89
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 90
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 91
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 92
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 93
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 94
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 95
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 96
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 97
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 98
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 99
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 100
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 101
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 102
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 103
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 104
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 105
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 106
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 107
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 108
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 109
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 110
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 111
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 112
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 113
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 114
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 115
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 116
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 117
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 118
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 119
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 120
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 121
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 122
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 123
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 124
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 125
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 126
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 127
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 128
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 129
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 130
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 131
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 132
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 133
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 134
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 135
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": 275,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 136
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 137
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 138
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 139
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 140
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 141
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 142
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 143
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 144
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 145
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 146
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 147
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 148
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 149
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 150
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 151
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 152
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 153
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 154
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 155
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 156
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 157
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 158
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 159
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 160
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 161
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 162
+      },
+      {
+        "capture": {
+          "arena_width": 256,
+          "capture_pin": "off",
+          "capture_shift": null,
+          "capture_shift_derived_from": "not pinned; live_shift left exactly as the caller's state had it (legacy, byte-identical)",
+          "capture_shift_observed": null,
+          "live_shift": 275,
+          "n_sink": 19
+        },
+        "grade": "FRESH_UNPINNED",
+        "node": 163
+      }
+    ],
+    "valid": true
+  },
+  "cell": {
+    "arm": "B",
+    "cooldown_seconds": 30,
+    "depends": "B-189-196",
+    "estimate_seconds": 147.77818628566678,
+    "id": "B-197-200",
+    "lease_seconds": 285,
+    "outer_seconds": 590,
+    "restart_sentinel_calls": 0,
+    "start": 197,
+    "stop": 200,
+    "worker_seconds": 280
+  },
+  "checkpoint_sha256": "a51506fa8a3880f8a4c69457a10fedb79cd82e7d159bcb1507c3f0d62a79631e",
+  "evidence_class": "GPU worker E2E",
+  "execution_amendment_sha256": "cbde1678f65310fec5dbdc0195dd58812b007af3454ab51cc8513013dc839c5d",
+  "metadata_retained": true,
+  "model_info": {
+    "expert_mode": "resident_packed_mxfp4",
+    "framework": "tensor_cuda GptOss20B_TC",
+    "full_attention_layers": [
+      1,
+      3,
+      5,
+      7,
+      9,
+      11,
+      13,
+      15,
+      17,
+      19,
+      21,
+      23
+    ],
+    "head_dim": 64,
+    "hidden_dim": 2880,
+    "layers": 24,
+    "loaded": "GPT-OSS-20B (resident_packed_mxfp4)",
+    "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "num_heads": 64,
+    "num_kv_heads": 8,
+    "repository": "openai/gpt-oss-20b",
+    "revision": "6cee5e81ee83917806bbde320786a8fb61efebee",
+    "sliding_attention_layers": [
+      0,
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      16,
+      18,
+      20,
+      22
+    ]
+  },
+  "pid": 3025436,
+  "previous_pid": 3024991,
+  "previous_process_id": "dfb2cd82-544b-4b6d-8c10-eb06212c5707",
+  "process_id": "b0968962-884f-414f-9e1f-81bce43bffaf",
+  "restart_before": null,
+  "restart_retained_scores": null,
+  "rows": 0
+}

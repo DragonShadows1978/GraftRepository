@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Prior art: GRM C7/C2 foreground stop-on-RED resume (contributors, 2026).
+set -euo pipefail
+cd /mnt/ForgeRealm/wt/grm-lt1
+export PYTHONDONTWRITEBYTECODE=1
+export GRM_ADMISSION_RULE=margin_first
+case "${1:---resume}" in
+  --preflight|--dry-run) exec python -m scripts.grm_lt1 "$1" ;;
+  --resume) ;;
+  *) echo "usage: $0 [--preflight|--dry-run|--resume]" >&2; exit 2 ;;
+esac
+python -m scripts.grm_lt1 --preflight
+# Amendment 4: retain eight completed cells; the exact SHA-bound A-033-040
+# failure alone retries in A-033-040-retry-amendment4. Keep its original cost.
+# Orphans and any further RED remain stop conditions.
+# Registered Rule2 in both arms; infrastructure RED stops execution.
+python -m scripts.grm_lt1 --resume
+python -m scripts.grm_lt1 --summary both > artifacts/grm_lt1/amendment4/comparison.json

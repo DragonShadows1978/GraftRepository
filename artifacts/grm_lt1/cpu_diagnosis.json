@@ -1,0 +1,422 @@
+{
+  "A": {
+    "admission_refusal_texts": 35,
+    "any_mounted": 0,
+    "by_distance": [
+      {
+        "distance": 10,
+        "memory_exact": 0,
+        "n": 7,
+        "oracle_exact": 7
+      },
+      {
+        "distance": 25,
+        "memory_exact": 0,
+        "n": 7,
+        "oracle_exact": 7
+      },
+      {
+        "distance": 50,
+        "memory_exact": 0,
+        "n": 7,
+        "oracle_exact": 7
+      },
+      {
+        "distance": 100,
+        "memory_exact": 0,
+        "n": 7,
+        "oracle_exact": 7
+      },
+      {
+        "distance": 150,
+        "memory_exact": 0,
+        "n": 7,
+        "oracle_exact": 7
+      }
+    ],
+    "evidence_class": "CPU fake serving-path experiment only",
+    "first_row": {
+      "answer": "Not in memory: no stored record matches settle, promenade, lamp, spacing.",
+      "expected": "9 voxels",
+      "memory_initial_inputs": [],
+      "memory_score": {
+        "abstention_error": 1,
+        "abstention_style": true,
+        "answer": "Not in memory: no stored record matches settle, promenade, lamp, spacing.",
+        "category": "abstention",
+        "exact_correct": false,
+        "refusal_error": 0,
+        "refusal_style": false,
+        "wrong_value_error": 0
+      },
+      "mounted_ids": [],
+      "oracle_score": {
+        "abstention_error": 0,
+        "abstention_style": false,
+        "answer": "9 voxels\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026",
+        "category": "correct",
+        "exact_correct": true,
+        "refusal_error": 0,
+        "refusal_style": false,
+        "wrong_value_error": 0
+      },
+      "probe_id": "recall_1_10",
+      "rare_tokens": [],
+      "recency_ids": [
+        19,
+        20
+      ],
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              11,
+              6,
+              0,
+              1,
+              2,
+              3
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "settle",
+              "promenade",
+              "lamp",
+              "spacing"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              11,
+              6,
+              0
+            ],
+            "ranking": [
+              11,
+              6,
+              0,
+              1,
+              2,
+              3
+            ],
+            "rare_identifier_tokens": [],
+            "route_backend": "python",
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": false,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            19,
+            20
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "settle",
+          "promenade",
+          "lamp",
+          "spacing"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          11,
+          6,
+          0
+        ],
+        "admission_ranking_before_demotion": [
+          11,
+          6,
+          0,
+          1,
+          2,
+          3
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          11,
+          6,
+          0,
+          1,
+          2,
+          3
+        ],
+        "recency_mounted_ids": [
+          19,
+          20
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            19,
+            20
+          ],
+          "nominated_ntok": 92
+        },
+        "trip": 0
+      },
+      "source_ids": [
+        11
+      ],
+      "turn": 22,
+      "wrapped_oracle_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 12] Promenade's lamp spacing will be 9 voxels.\nUse only those records.\nWhat did we settle on for Promenade's lamp spacing?<|end|><|start|>assistant<|channel|>final<|message|>"
+    },
+    "memory": {
+      "abstention": 35
+    },
+    "next_turn": 201,
+    "numerical_memory_reader_calls": 0,
+    "oracle": {
+      "correct": 35
+    },
+    "policy_refusal_style": 0,
+    "process_ids": [
+      29,
+      54,
+      79
+    ],
+    "wrong_value_errors": 0
+  },
+  "B": {
+    "admission_refusal_texts": 35,
+    "any_mounted": 0,
+    "by_distance": [
+      {
+        "distance": 10,
+        "memory_exact": 0,
+        "n": 7,
+        "oracle_exact": 7
+      },
+      {
+        "distance": 25,
+        "memory_exact": 0,
+        "n": 7,
+        "oracle_exact": 7
+      },
+      {
+        "distance": 50,
+        "memory_exact": 0,
+        "n": 7,
+        "oracle_exact": 7
+      },
+      {
+        "distance": 100,
+        "memory_exact": 0,
+        "n": 7,
+        "oracle_exact": 7
+      },
+      {
+        "distance": 150,
+        "memory_exact": 0,
+        "n": 7,
+        "oracle_exact": 7
+      }
+    ],
+    "evidence_class": "CPU fake serving-path experiment only",
+    "first_row": {
+      "answer": "Not in memory: no stored record matches settle, promenade, lamp, spacing.",
+      "expected": "9 voxels",
+      "memory_initial_inputs": [],
+      "memory_score": {
+        "abstention_error": 1,
+        "abstention_style": true,
+        "answer": "Not in memory: no stored record matches settle, promenade, lamp, spacing.",
+        "category": "abstention",
+        "exact_correct": false,
+        "refusal_error": 0,
+        "refusal_style": false,
+        "wrong_value_error": 0
+      },
+      "mounted_ids": [],
+      "oracle_score": {
+        "abstention_error": 0,
+        "abstention_style": false,
+        "answer": "9 voxels\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026",
+        "category": "correct",
+        "exact_correct": true,
+        "refusal_error": 0,
+        "refusal_style": false,
+        "wrong_value_error": 0
+      },
+      "probe_id": "recall_1_10",
+      "rare_tokens": [],
+      "recency_ids": [
+        19,
+        20
+      ],
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              11,
+              6,
+              0,
+              1,
+              2,
+              3
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "settle",
+              "promenade",
+              "lamp",
+              "spacing"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              11,
+              6,
+              0
+            ],
+            "ranking": [
+              11,
+              6,
+              0,
+              1,
+              2,
+              3
+            ],
+            "rare_identifier_tokens": [],
+            "route_backend": "python",
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": false,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            19,
+            20
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "settle",
+          "promenade",
+          "lamp",
+          "spacing"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          11,
+          6,
+          0
+        ],
+        "admission_ranking_before_demotion": [
+          11,
+          6,
+          0,
+          1,
+          2,
+          3
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          11,
+          6,
+          0,
+          1,
+          2,
+          3
+        ],
+        "recency_mounted_ids": [
+          19,
+          20
+        ],
+        "recency_seats": {
+          "arena_width": 256,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            19,
+            20
+          ],
+          "nominated_ntok": 92
+        },
+        "trip": 0
+      },
+      "source_ids": [
+        11
+      ],
+      "turn": 22,
+      "wrapped_oracle_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Exact source records, in chronological order:\n[turn 12] Promenade's lamp spacing will be 9 voxels.\nUse only those records.\nWhat did we settle on for Promenade's lamp spacing?<|end|><|start|>assistant<|channel|>final<|message|>"
+    },
+    "memory": {
+      "abstention": 35
+    },
+    "next_turn": 201,
+    "numerical_memory_reader_calls": 0,
+    "oracle": {
+      "correct": 35
+    },
+    "policy_refusal_style": 0,
+    "process_ids": [
+      104,
+      129,
+      154
+    ],
+    "wrong_value_errors": 0
+  }
+}

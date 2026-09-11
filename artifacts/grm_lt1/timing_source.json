@@ -1,0 +1,19 @@
+{
+  "actual_cell_rule": "at most nominal turns, greedily shorten to <=280s and boundaries 100/200; corrections use historical max",
+  "deduplication": "only final cumulative lh-5 receipt; earlier cumulative checkpoints excluded",
+  "derivation": "floor((280-60 reload/IO-60 fold reserve)/(1.25*mean turn +1.25*max probe))",
+  "evidence_class": "historical EB1 E2E receipt; not C7 benchmark",
+  "forced_fold_allowance_seconds": 60,
+  "max_correction_seconds": 30.732458161190152,
+  "max_probe_seconds": 7.369622647762299,
+  "max_turn_seconds": 30.732458161190152,
+  "mean_turn_seconds": 8.343608947430486,
+  "n_turns": 104,
+  "nominal_turns_per_cell": 8,
+  "pressure_allowance_seconds": 20,
+  "reload_io_allowance_seconds_per_cell": 60,
+  "safety_factor": 1.25,
+  "sha256": "ec626c53e5ba9ca5aac2f33a8084edafd2a584efed926eb4131fe7b0171358c5",
+  "source": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_eb1/g5_run/lh-5/session/instrumentation.jsonl",
+  "uncertainty": "reload/IO, extra folds and pressure unmeasured; B width256 uses A proxy, no measured B speed claim"
+}
