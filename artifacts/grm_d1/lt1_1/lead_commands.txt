@@ -1,18 +1,47 @@
-# LT1.1 -- arm A only, 26 cells, budget 6120 s (1.70 GPU-h)
-# registration sha256: 02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8
-# fixture     sha256: 470da44b3a570684bd24c9f3b96f434468d7914094222ed5867c1382fbc94d26
+# LT1.1 — arm A and arm A+ (amendment 1)
+# base registration sha256: 02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8
+# amendment 1   sha256: 0a5754cd3e5bc91c4c5428228ed4164534c5d281d2aa0c7410e8c7f8b145ce0e
+# fixture       sha256: 470da44b3a570684bd24c9f3b96f434468d7914094222ed5867c1382fbc94d26
 #
-# The alias flag GRM_ALIAS_FOLD_MERGE is ABSENT on this tree and is NOT set.
-# Pin it ONLY if a later merge introduces it:
-#   export GRM_ALIAS_FOLD_MERGE=1
+# 26 cells per arm. Budget 6120 s (1.70 GPU-h) PER ARM; 3.40 GPU-h for both.
+# The arms are separately resumable: run either alone.
 #
-export GRM_ADMISSION_RULE=margin_first
-export GRM_PROFILE=eb1_c2
+# CPU gates first (no GPU, no lease):
 cd /mnt/ForgeRealm/wt/grm-d1
-python3 -m pytest -q tests/test_grm_d1_supersession_fixture.py \
-  tests/test_grm_d1_recap.py tests/test_grm_d1_registration.py
-python3 scripts/grm_d1_recap.py
-flock --wait 7200 /var/lock/grm_gpu.lock \
+python3 -m pytest -q tests/test_grm_d1*.py tests/test_grm_a1_alias_fold.py \
+  tests/test_grm_scout_fix4.py tests/test_grm_admission.py
+python3 scripts/grm_d1_recap.py          # oracle 5/5 PASS
+python3 scripts/grm_d1_alias_cpu.py      # A+ alias fold/admit/mount
+
+# ---------------- arm A (alias fold OFF, as base-registered) -------
+# environment(flags) strips every ambient GRM_*; pin the rule only.
+env -u GRM_ALIAS_FOLD_MERGE \
+  GRM_ADMISSION_RULE=margin_first GRM_PROFILE=eb1_c2 \
+  flock --wait 7200 /var/lock/grm_gpu.lock \
   python3 scripts/grm_lt1.py --run --arm A \
     --registration artifacts/grm_d1/lt1_1/registration.json \
-    --fixture artifacts/grm_d1/lt1_1/dialogue.json
+    --amendment artifacts/grm_d1/lt1_1/amendment1.json \
+    --fixture artifacts/grm_d1/lt1_1/dialogue.json \
+    --out artifacts/grm_d1/lt1_1/run_A
+
+# ---------------- arm A+ (GRM_ALIAS_FOLD_MERGE=1 pinned) -----------
+# R1 pin idiom: the flag is set AFTER the ambient strip, read back by
+# core.grm_alias_fold.alias_fold_enabled(), and restored on exit.
+# `env` scopes the pin to this command; the parent shell keeps its
+# environment, which is the restoration.
+env GRM_ALIAS_FOLD_MERGE=1 \
+  GRM_ADMISSION_RULE=margin_first GRM_PROFILE=eb1_c2 \
+  flock --wait 7200 /var/lock/grm_gpu.lock \
+  python3 scripts/grm_lt1.py --run --arm A \
+    --registration artifacts/grm_d1/lt1_1/registration.json \
+    --amendment artifacts/grm_d1/lt1_1/amendment1.json \
+    --fixture artifacts/grm_d1/lt1_1/dialogue.json \
+    --out artifacts/grm_d1/lt1_1/run_Aplus
+
+# Readback the harness must print for A+ (and must NOT for A):
+#   alias_fold_enabled() -> True
+#   admission_rule()     -> margin_first
+
+# Registered predictions (before any run):
+#   A   {"aliases": "0/5 wrong rows fixed (recall_7_* stay wrong)", "corrections": "5/5", "fresh": "6/7", "recap": "unpredicted memory-side; oracle 5/5 gated on CPU"}
+#   A+  {"aliases": "4/5 of the wrong rows fixed; the lead proposed >= 3/5 and that bar is also met", "corrections": "5/5", "fresh": "6/7", "prediction_note": "The lead proposed aliases >= 3/5. I register 4/5 and state why: the D1 CPU check (artifacts/grm_d1/alias_cpu_aplus.json) shows the fold firing, the digest naming BOTH names, being ADMITTED and MOUNTED, and serving the right value for 10/10 alias probes at every distance, with a 78-token digest inside the 96 width. The one reservation that keeps me off 5/5 is that the CPU reader is a regex double: the GPU reader must still choose the digest value over the surrounding prose, and LT1 already showed one long-distance ladder drop (recall_3_150) that no lineage change addresses. 4/5 prices exactly one such drop.", "recap": ">= 3/5 memory-side"}

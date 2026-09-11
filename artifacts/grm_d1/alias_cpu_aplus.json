@@ -1,0 +1,1618 @@
+{
+  "A": {
+    "alias_fold_history": [],
+    "alias_fold_pending_after": 0,
+    "alias_fold_pending_before": 0,
+    "arm": "A",
+    "evidence_class": "CPU fake session (lineage/routing/admission only; NOT a language-model quality measurement)",
+    "merges_executed": 0,
+    "pinned": {
+      "admission_rule": "margin_first",
+      "alias_fold_merge": false
+    },
+    "rows": [
+      {
+        "admission_identified_candidates": [
+          16
+        ],
+        "admission_rank_plan": [
+          4
+        ],
+        "admitted": false,
+        "alias": "the Hauler",
+        "digest_identifiers": [],
+        "digest_mounted": false,
+        "digest_names_both": false,
+        "digest_nodes": [],
+        "distance": 10,
+        "edge_node": 16,
+        "edge_turn": 17,
+        "entity": "Kestrel",
+        "expected": "37 crates",
+        "fold_decisions": [],
+        "fold_job_fired": false,
+        "mounted_ids": [
+          4
+        ],
+        "probe_id": "recall_6_10",
+        "question": "What did we settle on for the Hauler's cargo allowance?",
+        "ranking_ids": [
+          4,
+          16,
+          60,
+          88,
+          130,
+          152
+        ],
+        "served": "unknown\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026",
+        "served_correct": false
+      },
+      {
+        "admission_identified_candidates": [
+          17,
+          55
+        ],
+        "admission_rank_plan": [
+          5
+        ],
+        "admitted": false,
+        "alias": "the Beacon",
+        "digest_identifiers": [],
+        "digest_mounted": false,
+        "digest_names_both": false,
+        "digest_nodes": [],
+        "distance": 10,
+        "edge_node": 17,
+        "edge_turn": 18,
+        "entity": "Lantern",
+        "expected": "18 October 2196",
+        "fold_decisions": [],
+        "fold_job_fired": false,
+        "mounted_ids": [
+          5
+        ],
+        "probe_id": "recall_7_10",
+        "question": "What did we settle on for the Beacon's launch date?",
+        "ranking_ids": [
+          5,
+          17,
+          31,
+          35,
+          55,
+          62
+        ],
+        "served": "unknown\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026",
+        "served_correct": false
+      },
+      {
+        "admission_identified_candidates": [
+          16
+        ],
+        "admission_rank_plan": [
+          4
+        ],
+        "admitted": false,
+        "alias": "the Hauler",
+        "digest_identifiers": [],
+        "digest_mounted": false,
+        "digest_names_both": false,
+        "digest_nodes": [],
+        "distance": 25,
+        "edge_node": 16,
+        "edge_turn": 17,
+        "entity": "Kestrel",
+        "expected": "37 crates",
+        "fold_decisions": [],
+        "fold_job_fired": false,
+        "mounted_ids": [
+          4
+        ],
+        "probe_id": "recall_6_25",
+        "question": "What did we settle on for the Hauler's cargo allowance?",
+        "ranking_ids": [
+          4,
+          16,
+          60,
+          88,
+          130,
+          152
+        ],
+        "served": "unknown\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026",
+        "served_correct": false
+      },
+      {
+        "admission_identified_candidates": [
+          17,
+          55
+        ],
+        "admission_rank_plan": [
+          5
+        ],
+        "admitted": false,
+        "alias": "the Beacon",
+        "digest_identifiers": [],
+        "digest_mounted": false,
+        "digest_names_both": false,
+        "digest_nodes": [],
+        "distance": 25,
+        "edge_node": 17,
+        "edge_turn": 18,
+        "entity": "Lantern",
+        "expected": "18 October 2196",
+        "fold_decisions": [],
+        "fold_job_fired": false,
+        "mounted_ids": [
+          5
+        ],
+        "probe_id": "recall_7_25",
+        "question": "What did we settle on for the Beacon's launch date?",
+        "ranking_ids": [
+          5,
+          17,
+          31,
+          35,
+          55,
+          62
+        ],
+        "served": "unknown\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026",
+        "served_correct": false
+      },
+      {
+        "admission_identified_candidates": [
+          16
+        ],
+        "admission_rank_plan": [
+          4
+        ],
+        "admitted": false,
+        "alias": "the Hauler",
+        "digest_identifiers": [],
+        "digest_mounted": false,
+        "digest_names_both": false,
+        "digest_nodes": [],
+        "distance": 50,
+        "edge_node": 16,
+        "edge_turn": 17,
+        "entity": "Kestrel",
+        "expected": "37 crates",
+        "fold_decisions": [],
+        "fold_job_fired": false,
+        "mounted_ids": [
+          4
+        ],
+        "probe_id": "recall_6_50",
+        "question": "What did we settle on for the Hauler's cargo allowance?",
+        "ranking_ids": [
+          4,
+          16,
+          60,
+          88,
+          130,
+          152
+        ],
+        "served": "unknown\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026",
+        "served_correct": false
+      },
+      {
+        "admission_identified_candidates": [
+          17,
+          55
+        ],
+        "admission_rank_plan": [
+          5
+        ],
+        "admitted": false,
+        "alias": "the Beacon",
+        "digest_identifiers": [],
+        "digest_mounted": false,
+        "digest_names_both": false,
+        "digest_nodes": [],
+        "distance": 50,
+        "edge_node": 17,
+        "edge_turn": 18,
+        "entity": "Lantern",
+        "expected": "18 October 2196",
+        "fold_decisions": [],
+        "fold_job_fired": false,
+        "mounted_ids": [
+          5
+        ],
+        "probe_id": "recall_7_50",
+        "question": "What did we settle on for the Beacon's launch date?",
+        "ranking_ids": [
+          5,
+          17,
+          31,
+          35,
+          55,
+          62
+        ],
+        "served": "unknown\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026",
+        "served_correct": false
+      },
+      {
+        "admission_identified_candidates": [
+          16
+        ],
+        "admission_rank_plan": [
+          4
+        ],
+        "admitted": false,
+        "alias": "the Hauler",
+        "digest_identifiers": [],
+        "digest_mounted": false,
+        "digest_names_both": false,
+        "digest_nodes": [],
+        "distance": 100,
+        "edge_node": 16,
+        "edge_turn": 17,
+        "entity": "Kestrel",
+        "expected": "37 crates",
+        "fold_decisions": [],
+        "fold_job_fired": false,
+        "mounted_ids": [
+          4
+        ],
+        "probe_id": "recall_6_100",
+        "question": "What did we settle on for the Hauler's cargo allowance?",
+        "ranking_ids": [
+          4,
+          16,
+          60,
+          88,
+          130,
+          152
+        ],
+        "served": "unknown\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026",
+        "served_correct": false
+      },
+      {
+        "admission_identified_candidates": [
+          17,
+          55
+        ],
+        "admission_rank_plan": [
+          5
+        ],
+        "admitted": false,
+        "alias": "the Beacon",
+        "digest_identifiers": [],
+        "digest_mounted": false,
+        "digest_names_both": false,
+        "digest_nodes": [],
+        "distance": 100,
+        "edge_node": 17,
+        "edge_turn": 18,
+        "entity": "Lantern",
+        "expected": "18 October 2196",
+        "fold_decisions": [],
+        "fold_job_fired": false,
+        "mounted_ids": [
+          5
+        ],
+        "probe_id": "recall_7_100",
+        "question": "What did we settle on for the Beacon's launch date?",
+        "ranking_ids": [
+          5,
+          17,
+          31,
+          35,
+          55,
+          62
+        ],
+        "served": "unknown\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026",
+        "served_correct": false
+      },
+      {
+        "admission_identified_candidates": [
+          16
+        ],
+        "admission_rank_plan": [
+          4
+        ],
+        "admitted": false,
+        "alias": "the Hauler",
+        "digest_identifiers": [],
+        "digest_mounted": false,
+        "digest_names_both": false,
+        "digest_nodes": [],
+        "distance": 150,
+        "edge_node": 16,
+        "edge_turn": 17,
+        "entity": "Kestrel",
+        "expected": "37 crates",
+        "fold_decisions": [],
+        "fold_job_fired": false,
+        "mounted_ids": [
+          4
+        ],
+        "probe_id": "recall_6_150",
+        "question": "What did we settle on for the Hauler's cargo allowance?",
+        "ranking_ids": [
+          4,
+          16,
+          60,
+          88,
+          130,
+          152
+        ],
+        "served": "unknown\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026",
+        "served_correct": false
+      },
+      {
+        "admission_identified_candidates": [
+          17,
+          55
+        ],
+        "admission_rank_plan": [
+          5
+        ],
+        "admitted": false,
+        "alias": "the Beacon",
+        "digest_identifiers": [],
+        "digest_mounted": false,
+        "digest_names_both": false,
+        "digest_nodes": [],
+        "distance": 150,
+        "edge_node": 17,
+        "edge_turn": 18,
+        "entity": "Lantern",
+        "expected": "18 October 2196",
+        "fold_decisions": [],
+        "fold_job_fired": false,
+        "mounted_ids": [
+          5
+        ],
+        "probe_id": "recall_7_150",
+        "question": "What did we settle on for the Beacon's launch date?",
+        "ranking_ids": [
+          5,
+          17,
+          31,
+          35,
+          55,
+          62
+        ],
+        "served": "unknown\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026",
+        "served_correct": false
+      }
+    ],
+    "turns_replayed": 164
+  },
+  "A+": {
+    "alias_fold_history": [
+      {
+        "alias": "the Hauler",
+        "base": 4,
+        "base_identifiers_missing": [],
+        "base_name": "Kestrel",
+        "base_shared_with_edges": [],
+        "consolidation": {
+          "accepted": true,
+          "best_cov": 1.0,
+          "hit_count": 1,
+          "need_count": 1
+        },
+        "digest": 164,
+        "digest_text": "For the archive: the Let's call Kestrel 'the Hauler' from now on; it sounds more like a place our crew would use. Kestrel's cargo allowance will be 37 crates. the Hauler is an alias for Kestrel.",
+        "edge": 16,
+        "lineage": "digest_supersedes_edge_and_base",
+        "reason": "alias_merged",
+        "reassignment_retired": [],
+        "width": {
+          "arena_width": 96,
+          "digest_tokens": 76,
+          "fits": true,
+          "single_mount_claimable": true
+        }
+      },
+      {
+        "alias": "the Beacon",
+        "base": 5,
+        "base_identifiers_missing": [],
+        "base_name": "Lantern",
+        "base_shared_with_edges": [],
+        "consolidation": {
+          "accepted": true,
+          "best_cov": 1.0,
+          "hit_count": 2,
+          "need_count": 2
+        },
+        "digest": 165,
+        "digest_text": "For the archive: the Let's call Lantern 'the Beacon' from now on; it sounds more like a place our crew would use. Lantern's launch date will be 18 October 2196. the Beacon is an alias for Lantern.",
+        "edge": 17,
+        "lineage": "digest_supersedes_edge_and_base",
+        "reason": "alias_merged",
+        "reassignment_retired": [],
+        "width": {
+          "arena_width": 96,
+          "digest_tokens": 78,
+          "fits": true,
+          "single_mount_claimable": true
+        }
+      },
+      {
+        "alias": "the Forge",
+        "base": 28,
+        "base_identifiers_missing": [],
+        "base_name": "Foundry",
+        "base_shared_with_edges": [],
+        "consolidation": {
+          "accepted": true,
+          "best_cov": 1.0,
+          "hit_count": 1,
+          "need_count": 1
+        },
+        "digest": 166,
+        "digest_text": "For the archive: the Let's call Foundry 'the Forge' from now on. That fits its role in the expansion. Actually, Foundry's iron reserve will be 91 ingots, replacing the earlier choice. the Forge is an alias for Foundry.",
+        "edge": 40,
+        "lineage": "digest_supersedes_edge_and_base",
+        "reason": "alias_merged",
+        "reassignment_retired": [],
+        "width": {
+          "arena_width": 96,
+          "digest_tokens": 80,
+          "fits": true,
+          "single_mount_claimable": true
+        }
+      },
+      {
+        "alias": "the Cistern",
+        "base": 30,
+        "base_identifiers_missing": [],
+        "base_name": "Orchard",
+        "base_shared_with_edges": [],
+        "consolidation": {
+          "accepted": true,
+          "best_cov": 1.0,
+          "hit_count": 1,
+          "need_count": 1
+        },
+        "digest": 167,
+        "digest_text": "For the archive: the Let's call Orchard 'the Cistern' from now on. That fits its role in the expansion. Actually, Orchard's water reserve will be 152 litres, replacing the earlier choice. the Cistern is an alias for Orchard.",
+        "edge": 47,
+        "lineage": "digest_supersedes_edge_and_base",
+        "reason": "alias_merged",
+        "reassignment_retired": [],
+        "width": {
+          "arena_width": 96,
+          "digest_tokens": 80,
+          "fits": true,
+          "single_mount_claimable": true
+        }
+      },
+      {
+        "alias": "the Lookout",
+        "base": 32,
+        "base_identifiers_missing": [],
+        "base_name": "Aster",
+        "base_shared_with_edges": [],
+        "consolidation": {
+          "accepted": true,
+          "best_cov": 1.0,
+          "hit_count": 2,
+          "need_count": 2
+        },
+        "digest": 168,
+        "digest_text": "For the archive: the Let's call Aster 'the Lookout' from now on. That fits its role in the expansion. Actually, Aster's survey lead will be Neri Ash, replacing the earlier choice. the Lookout is an alias for Aster.",
+        "edge": 49,
+        "lineage": "digest_supersedes_edge_and_base",
+        "reason": "alias_merged",
+        "reassignment_retired": [],
+        "width": {
+          "arena_width": 96,
+          "digest_tokens": 80,
+          "fits": true,
+          "single_mount_claimable": true
+        }
+      },
+      {
+        "alias": "the Workshop",
+        "base": 33,
+        "base_identifiers_missing": [],
+        "base_name": "Tern",
+        "base_shared_with_edges": [],
+        "consolidation": {
+          "accepted": true,
+          "best_cov": 1.0,
+          "hit_count": 1,
+          "need_count": 1
+        },
+        "digest": 169,
+        "digest_text": "For the archive: the Let's call Tern 'the Workshop' from now on. That fits its role in the expansion. Actually, Tern's repair budget will be 438 credits, replacing the earlier choice. the Workshop is an alias for Tern.",
+        "edge": 51,
+        "lineage": "digest_supersedes_edge_and_base",
+        "reason": "alias_merged",
+        "reassignment_retired": [],
+        "width": {
+          "arena_width": 96,
+          "digest_tokens": 80,
+          "fits": true,
+          "single_mount_claimable": true
+        }
+      },
+      {
+        "alias": "the Gate",
+        "base": 35,
+        "base_identifiers_missing": [],
+        "base_name": "Morrow",
+        "base_shared_with_edges": [],
+        "consolidation": {
+          "accepted": true,
+          "best_cov": 1.0,
+          "hit_count": 2,
+          "need_count": 2
+        },
+        "digest": 170,
+        "digest_text": "For the archive: the Let's call Morrow 'the Gate' from now on. That fits its role in the expansion. Actually, Morrow's arrival date will be 24 November 2196, replacing the earlier choice. the Gate is an alias for Morrow.",
+        "edge": 53,
+        "lineage": "digest_supersedes_edge_and_base",
+        "reason": "alias_merged",
+        "reassignment_retired": [],
+        "width": {
+          "arena_width": 96,
+          "digest_tokens": 82,
+          "fits": true,
+          "single_mount_claimable": true
+        }
+      },
+      {
+        "alias": "the Needle",
+        "base": 37,
+        "base_identifiers_missing": [],
+        "base_name": "Spindle",
+        "base_shared_with_edges": [],
+        "consolidation": {
+          "accepted": true,
+          "best_cov": 1.0,
+          "hit_count": 3,
+          "need_count": 3
+        },
+        "digest": 171,
+        "digest_text": "For the archive: the Let's call Spindle 'the Needle' from now on. That fits its role in the expansion. Actually, Spindle's map position will be (64, -17, 8), replacing the earlier choice. the Needle is an alias for Spindle.",
+        "edge": 54,
+        "lineage": "digest_supersedes_edge_and_base",
+        "reason": "alias_merged",
+        "reassignment_retired": [],
+        "width": {
+          "arena_width": 96,
+          "digest_tokens": 82,
+          "fits": true,
+          "single_mount_claimable": true
+        }
+      },
+      {
+        "alias": "the Pit",
+        "base": 39,
+        "base_identifiers_missing": [],
+        "base_name": "Quarry",
+        "base_shared_with_edges": [],
+        "consolidation": {
+          "accepted": true,
+          "best_cov": 1.0,
+          "hit_count": 1,
+          "need_count": 1
+        },
+        "digest": 172,
+        "digest_text": "For the archive: the Let's call Quarry 'the Pit' from now on. That fits its role in the expansion. Actually, Quarry's drill count will be 9 drills, replacing the earlier choice. the Pit is an alias for Quarry.",
+        "edge": 56,
+        "lineage": "digest_supersedes_edge_and_base",
+        "reason": "alias_merged",
+        "reassignment_retired": [],
+        "width": {
+          "arena_width": 96,
+          "digest_tokens": 80,
+          "fits": true,
+          "single_mount_claimable": true
+        }
+      },
+      {
+        "alias": "the Kitchen",
+        "base": 42,
+        "base_identifiers_missing": [],
+        "base_name": "Saffron",
+        "base_shared_with_edges": [],
+        "consolidation": {
+          "accepted": true,
+          "best_cov": 1.0,
+          "hit_count": 1,
+          "need_count": 1
+        },
+        "digest": 173,
+        "digest_text": "For the archive: the Let's call Saffron 'the Kitchen' from now on. That fits its role in the expansion. Actually, Saffron's galley stock will be 58 meals, replacing the earlier choice. the Kitchen is an alias for Saffron.",
+        "edge": 58,
+        "lineage": "digest_supersedes_edge_and_base",
+        "reason": "alias_merged",
+        "reassignment_retired": [],
+        "width": {
+          "arena_width": 96,
+          "digest_tokens": 80,
+          "fits": true,
+          "single_mount_claimable": true
+        }
+      }
+    ],
+    "alias_fold_pending_after": 0,
+    "alias_fold_pending_before": 1,
+    "arm": "A+",
+    "evidence_class": "CPU fake session (lineage/routing/admission only; NOT a language-model quality measurement)",
+    "merges_executed": 10,
+    "pinned": {
+      "admission_rule": "margin_first",
+      "alias_fold_merge": true
+    },
+    "rows": [
+      {
+        "admission_identified_candidates": [
+          164
+        ],
+        "admission_rank_plan": [
+          164
+        ],
+        "admitted": true,
+        "alias": "the Hauler",
+        "digest_identifiers": [
+          "37",
+          "a",
+          "alias",
+          "allowance",
+          "an",
+          "archive",
+          "be",
+          "call",
+          "cargo",
+          "crates",
+          "crew",
+          "for",
+          "from",
+          "hauler",
+          "is",
+          "it",
+          "kestrel",
+          "let",
+          "like",
+          "more",
+          "note",
+          "now",
+          "on",
+          "our",
+          "place",
+          "s",
+          "sounds",
+          "the",
+          "use",
+          "will",
+          "would"
+        ],
+        "digest_mounted": true,
+        "digest_names_both": true,
+        "digest_nodes": [
+          164
+        ],
+        "distance": 10,
+        "edge_node": 16,
+        "edge_turn": 17,
+        "entity": "Kestrel",
+        "expected": "37 crates",
+        "fold_decisions": [
+          {
+            "alias": "the Hauler",
+            "base": 4,
+            "base_identifiers_missing": [],
+            "base_name": "Kestrel",
+            "base_shared_with_edges": [],
+            "consolidation": {
+              "accepted": true,
+              "best_cov": 1.0,
+              "hit_count": 1,
+              "need_count": 1
+            },
+            "digest": 164,
+            "digest_text": "For the archive: the Let's call Kestrel 'the Hauler' from now on; it sounds more like a place our crew would use. Kestrel's cargo allowance will be 37 crates. the Hauler is an alias for Kestrel.",
+            "edge": 16,
+            "lineage": "digest_supersedes_edge_and_base",
+            "reason": "alias_merged",
+            "reassignment_retired": [],
+            "width": {
+              "arena_width": 96,
+              "digest_tokens": 76,
+              "fits": true,
+              "single_mount_claimable": true
+            }
+          }
+        ],
+        "fold_job_fired": true,
+        "mounted_ids": [
+          164
+        ],
+        "probe_id": "recall_6_10",
+        "question": "What did we settle on for the Hauler's cargo allowance?",
+        "ranking_ids": [
+          164,
+          60,
+          88,
+          130,
+          152,
+          0
+        ],
+        "served": "37 crates\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026",
+        "served_correct": true
+      },
+      {
+        "admission_identified_candidates": [
+          165,
+          55
+        ],
+        "admission_rank_plan": [
+          165
+        ],
+        "admitted": true,
+        "alias": "the Beacon",
+        "digest_identifiers": [
+          "18",
+          "2196",
+          "a",
+          "alias",
+          "an",
+          "archive",
+          "be",
+          "beacon",
+          "call",
+          "crew",
+          "date",
+          "for",
+          "from",
+          "is",
+          "it",
+          "lantern",
+          "launch",
+          "let",
+          "like",
+          "more",
+          "note",
+          "now",
+          "october",
+          "on",
+          "our",
+          "place",
+          "s",
+          "sounds",
+          "the",
+          "use",
+          "will",
+          "would"
+        ],
+        "digest_mounted": true,
+        "digest_names_both": true,
+        "digest_nodes": [
+          165
+        ],
+        "distance": 10,
+        "edge_node": 17,
+        "edge_turn": 18,
+        "entity": "Lantern",
+        "expected": "18 October 2196",
+        "fold_decisions": [
+          {
+            "alias": "the Beacon",
+            "base": 5,
+            "base_identifiers_missing": [],
+            "base_name": "Lantern",
+            "base_shared_with_edges": [],
+            "consolidation": {
+              "accepted": true,
+              "best_cov": 1.0,
+              "hit_count": 2,
+              "need_count": 2
+            },
+            "digest": 165,
+            "digest_text": "For the archive: the Let's call Lantern 'the Beacon' from now on; it sounds more like a place our crew would use. Lantern's launch date will be 18 October 2196. the Beacon is an alias for Lantern.",
+            "edge": 17,
+            "lineage": "digest_supersedes_edge_and_base",
+            "reason": "alias_merged",
+            "reassignment_retired": [],
+            "width": {
+              "arena_width": 96,
+              "digest_tokens": 78,
+              "fits": true,
+              "single_mount_claimable": true
+            }
+          }
+        ],
+        "fold_job_fired": true,
+        "mounted_ids": [
+          165
+        ],
+        "probe_id": "recall_7_10",
+        "question": "What did we settle on for the Beacon's launch date?",
+        "ranking_ids": [
+          165,
+          31,
+          55,
+          62,
+          78,
+          92
+        ],
+        "served": "18 October 2196\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026",
+        "served_correct": true
+      },
+      {
+        "admission_identified_candidates": [
+          164
+        ],
+        "admission_rank_plan": [
+          164
+        ],
+        "admitted": true,
+        "alias": "the Hauler",
+        "digest_identifiers": [
+          "37",
+          "a",
+          "alias",
+          "allowance",
+          "an",
+          "archive",
+          "be",
+          "call",
+          "cargo",
+          "crates",
+          "crew",
+          "for",
+          "from",
+          "hauler",
+          "is",
+          "it",
+          "kestrel",
+          "let",
+          "like",
+          "more",
+          "note",
+          "now",
+          "on",
+          "our",
+          "place",
+          "s",
+          "sounds",
+          "the",
+          "use",
+          "will",
+          "would"
+        ],
+        "digest_mounted": true,
+        "digest_names_both": true,
+        "digest_nodes": [
+          164
+        ],
+        "distance": 25,
+        "edge_node": 16,
+        "edge_turn": 17,
+        "entity": "Kestrel",
+        "expected": "37 crates",
+        "fold_decisions": [
+          {
+            "alias": "the Hauler",
+            "base": 4,
+            "base_identifiers_missing": [],
+            "base_name": "Kestrel",
+            "base_shared_with_edges": [],
+            "consolidation": {
+              "accepted": true,
+              "best_cov": 1.0,
+              "hit_count": 1,
+              "need_count": 1
+            },
+            "digest": 164,
+            "digest_text": "For the archive: the Let's call Kestrel 'the Hauler' from now on; it sounds more like a place our crew would use. Kestrel's cargo allowance will be 37 crates. the Hauler is an alias for Kestrel.",
+            "edge": 16,
+            "lineage": "digest_supersedes_edge_and_base",
+            "reason": "alias_merged",
+            "reassignment_retired": [],
+            "width": {
+              "arena_width": 96,
+              "digest_tokens": 76,
+              "fits": true,
+              "single_mount_claimable": true
+            }
+          }
+        ],
+        "fold_job_fired": true,
+        "mounted_ids": [
+          164
+        ],
+        "probe_id": "recall_6_25",
+        "question": "What did we settle on for the Hauler's cargo allowance?",
+        "ranking_ids": [
+          164,
+          60,
+          88,
+          130,
+          152,
+          0
+        ],
+        "served": "37 crates\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026",
+        "served_correct": true
+      },
+      {
+        "admission_identified_candidates": [
+          165,
+          55
+        ],
+        "admission_rank_plan": [
+          165
+        ],
+        "admitted": true,
+        "alias": "the Beacon",
+        "digest_identifiers": [
+          "18",
+          "2196",
+          "a",
+          "alias",
+          "an",
+          "archive",
+          "be",
+          "beacon",
+          "call",
+          "crew",
+          "date",
+          "for",
+          "from",
+          "is",
+          "it",
+          "lantern",
+          "launch",
+          "let",
+          "like",
+          "more",
+          "note",
+          "now",
+          "october",
+          "on",
+          "our",
+          "place",
+          "s",
+          "sounds",
+          "the",
+          "use",
+          "will",
+          "would"
+        ],
+        "digest_mounted": true,
+        "digest_names_both": true,
+        "digest_nodes": [
+          165
+        ],
+        "distance": 25,
+        "edge_node": 17,
+        "edge_turn": 18,
+        "entity": "Lantern",
+        "expected": "18 October 2196",
+        "fold_decisions": [
+          {
+            "alias": "the Beacon",
+            "base": 5,
+            "base_identifiers_missing": [],
+            "base_name": "Lantern",
+            "base_shared_with_edges": [],
+            "consolidation": {
+              "accepted": true,
+              "best_cov": 1.0,
+              "hit_count": 2,
+              "need_count": 2
+            },
+            "digest": 165,
+            "digest_text": "For the archive: the Let's call Lantern 'the Beacon' from now on; it sounds more like a place our crew would use. Lantern's launch date will be 18 October 2196. the Beacon is an alias for Lantern.",
+            "edge": 17,
+            "lineage": "digest_supersedes_edge_and_base",
+            "reason": "alias_merged",
+            "reassignment_retired": [],
+            "width": {
+              "arena_width": 96,
+              "digest_tokens": 78,
+              "fits": true,
+              "single_mount_claimable": true
+            }
+          }
+        ],
+        "fold_job_fired": true,
+        "mounted_ids": [
+          165
+        ],
+        "probe_id": "recall_7_25",
+        "question": "What did we settle on for the Beacon's launch date?",
+        "ranking_ids": [
+          165,
+          31,
+          55,
+          62,
+          78,
+          92
+        ],
+        "served": "18 October 2196\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026",
+        "served_correct": true
+      },
+      {
+        "admission_identified_candidates": [
+          164
+        ],
+        "admission_rank_plan": [
+          164
+        ],
+        "admitted": true,
+        "alias": "the Hauler",
+        "digest_identifiers": [
+          "37",
+          "a",
+          "alias",
+          "allowance",
+          "an",
+          "archive",
+          "be",
+          "call",
+          "cargo",
+          "crates",
+          "crew",
+          "for",
+          "from",
+          "hauler",
+          "is",
+          "it",
+          "kestrel",
+          "let",
+          "like",
+          "more",
+          "note",
+          "now",
+          "on",
+          "our",
+          "place",
+          "s",
+          "sounds",
+          "the",
+          "use",
+          "will",
+          "would"
+        ],
+        "digest_mounted": true,
+        "digest_names_both": true,
+        "digest_nodes": [
+          164
+        ],
+        "distance": 50,
+        "edge_node": 16,
+        "edge_turn": 17,
+        "entity": "Kestrel",
+        "expected": "37 crates",
+        "fold_decisions": [
+          {
+            "alias": "the Hauler",
+            "base": 4,
+            "base_identifiers_missing": [],
+            "base_name": "Kestrel",
+            "base_shared_with_edges": [],
+            "consolidation": {
+              "accepted": true,
+              "best_cov": 1.0,
+              "hit_count": 1,
+              "need_count": 1
+            },
+            "digest": 164,
+            "digest_text": "For the archive: the Let's call Kestrel 'the Hauler' from now on; it sounds more like a place our crew would use. Kestrel's cargo allowance will be 37 crates. the Hauler is an alias for Kestrel.",
+            "edge": 16,
+            "lineage": "digest_supersedes_edge_and_base",
+            "reason": "alias_merged",
+            "reassignment_retired": [],
+            "width": {
+              "arena_width": 96,
+              "digest_tokens": 76,
+              "fits": true,
+              "single_mount_claimable": true
+            }
+          }
+        ],
+        "fold_job_fired": true,
+        "mounted_ids": [
+          164
+        ],
+        "probe_id": "recall_6_50",
+        "question": "What did we settle on for the Hauler's cargo allowance?",
+        "ranking_ids": [
+          164,
+          60,
+          88,
+          130,
+          152,
+          0
+        ],
+        "served": "37 crates\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026",
+        "served_correct": true
+      },
+      {
+        "admission_identified_candidates": [
+          165,
+          55
+        ],
+        "admission_rank_plan": [
+          165
+        ],
+        "admitted": true,
+        "alias": "the Beacon",
+        "digest_identifiers": [
+          "18",
+          "2196",
+          "a",
+          "alias",
+          "an",
+          "archive",
+          "be",
+          "beacon",
+          "call",
+          "crew",
+          "date",
+          "for",
+          "from",
+          "is",
+          "it",
+          "lantern",
+          "launch",
+          "let",
+          "like",
+          "more",
+          "note",
+          "now",
+          "october",
+          "on",
+          "our",
+          "place",
+          "s",
+          "sounds",
+          "the",
+          "use",
+          "will",
+          "would"
+        ],
+        "digest_mounted": true,
+        "digest_names_both": true,
+        "digest_nodes": [
+          165
+        ],
+        "distance": 50,
+        "edge_node": 17,
+        "edge_turn": 18,
+        "entity": "Lantern",
+        "expected": "18 October 2196",
+        "fold_decisions": [
+          {
+            "alias": "the Beacon",
+            "base": 5,
+            "base_identifiers_missing": [],
+            "base_name": "Lantern",
+            "base_shared_with_edges": [],
+            "consolidation": {
+              "accepted": true,
+              "best_cov": 1.0,
+              "hit_count": 2,
+              "need_count": 2
+            },
+            "digest": 165,
+            "digest_text": "For the archive: the Let's call Lantern 'the Beacon' from now on; it sounds more like a place our crew would use. Lantern's launch date will be 18 October 2196. the Beacon is an alias for Lantern.",
+            "edge": 17,
+            "lineage": "digest_supersedes_edge_and_base",
+            "reason": "alias_merged",
+            "reassignment_retired": [],
+            "width": {
+              "arena_width": 96,
+              "digest_tokens": 78,
+              "fits": true,
+              "single_mount_claimable": true
+            }
+          }
+        ],
+        "fold_job_fired": true,
+        "mounted_ids": [
+          165
+        ],
+        "probe_id": "recall_7_50",
+        "question": "What did we settle on for the Beacon's launch date?",
+        "ranking_ids": [
+          165,
+          31,
+          55,
+          62,
+          78,
+          92
+        ],
+        "served": "18 October 2196\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026",
+        "served_correct": true
+      },
+      {
+        "admission_identified_candidates": [
+          164
+        ],
+        "admission_rank_plan": [
+          164
+        ],
+        "admitted": true,
+        "alias": "the Hauler",
+        "digest_identifiers": [
+          "37",
+          "a",
+          "alias",
+          "allowance",
+          "an",
+          "archive",
+          "be",
+          "call",
+          "cargo",
+          "crates",
+          "crew",
+          "for",
+          "from",
+          "hauler",
+          "is",
+          "it",
+          "kestrel",
+          "let",
+          "like",
+          "more",
+          "note",
+          "now",
+          "on",
+          "our",
+          "place",
+          "s",
+          "sounds",
+          "the",
+          "use",
+          "will",
+          "would"
+        ],
+        "digest_mounted": true,
+        "digest_names_both": true,
+        "digest_nodes": [
+          164
+        ],
+        "distance": 100,
+        "edge_node": 16,
+        "edge_turn": 17,
+        "entity": "Kestrel",
+        "expected": "37 crates",
+        "fold_decisions": [
+          {
+            "alias": "the Hauler",
+            "base": 4,
+            "base_identifiers_missing": [],
+            "base_name": "Kestrel",
+            "base_shared_with_edges": [],
+            "consolidation": {
+              "accepted": true,
+              "best_cov": 1.0,
+              "hit_count": 1,
+              "need_count": 1
+            },
+            "digest": 164,
+            "digest_text": "For the archive: the Let's call Kestrel 'the Hauler' from now on; it sounds more like a place our crew would use. Kestrel's cargo allowance will be 37 crates. the Hauler is an alias for Kestrel.",
+            "edge": 16,
+            "lineage": "digest_supersedes_edge_and_base",
+            "reason": "alias_merged",
+            "reassignment_retired": [],
+            "width": {
+              "arena_width": 96,
+              "digest_tokens": 76,
+              "fits": true,
+              "single_mount_claimable": true
+            }
+          }
+        ],
+        "fold_job_fired": true,
+        "mounted_ids": [
+          164
+        ],
+        "probe_id": "recall_6_100",
+        "question": "What did we settle on for the Hauler's cargo allowance?",
+        "ranking_ids": [
+          164,
+          60,
+          88,
+          130,
+          152,
+          0
+        ],
+        "served": "37 crates\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026",
+        "served_correct": true
+      },
+      {
+        "admission_identified_candidates": [
+          165,
+          55
+        ],
+        "admission_rank_plan": [
+          165
+        ],
+        "admitted": true,
+        "alias": "the Beacon",
+        "digest_identifiers": [
+          "18",
+          "2196",
+          "a",
+          "alias",
+          "an",
+          "archive",
+          "be",
+          "beacon",
+          "call",
+          "crew",
+          "date",
+          "for",
+          "from",
+          "is",
+          "it",
+          "lantern",
+          "launch",
+          "let",
+          "like",
+          "more",
+          "note",
+          "now",
+          "october",
+          "on",
+          "our",
+          "place",
+          "s",
+          "sounds",
+          "the",
+          "use",
+          "will",
+          "would"
+        ],
+        "digest_mounted": true,
+        "digest_names_both": true,
+        "digest_nodes": [
+          165
+        ],
+        "distance": 100,
+        "edge_node": 17,
+        "edge_turn": 18,
+        "entity": "Lantern",
+        "expected": "18 October 2196",
+        "fold_decisions": [
+          {
+            "alias": "the Beacon",
+            "base": 5,
+            "base_identifiers_missing": [],
+            "base_name": "Lantern",
+            "base_shared_with_edges": [],
+            "consolidation": {
+              "accepted": true,
+              "best_cov": 1.0,
+              "hit_count": 2,
+              "need_count": 2
+            },
+            "digest": 165,
+            "digest_text": "For the archive: the Let's call Lantern 'the Beacon' from now on; it sounds more like a place our crew would use. Lantern's launch date will be 18 October 2196. the Beacon is an alias for Lantern.",
+            "edge": 17,
+            "lineage": "digest_supersedes_edge_and_base",
+            "reason": "alias_merged",
+            "reassignment_retired": [],
+            "width": {
+              "arena_width": 96,
+              "digest_tokens": 78,
+              "fits": true,
+              "single_mount_claimable": true
+            }
+          }
+        ],
+        "fold_job_fired": true,
+        "mounted_ids": [
+          165
+        ],
+        "probe_id": "recall_7_100",
+        "question": "What did we settle on for the Beacon's launch date?",
+        "ranking_ids": [
+          165,
+          31,
+          55,
+          62,
+          78,
+          92
+        ],
+        "served": "18 October 2196\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026",
+        "served_correct": true
+      },
+      {
+        "admission_identified_candidates": [
+          164
+        ],
+        "admission_rank_plan": [
+          164
+        ],
+        "admitted": true,
+        "alias": "the Hauler",
+        "digest_identifiers": [
+          "37",
+          "a",
+          "alias",
+          "allowance",
+          "an",
+          "archive",
+          "be",
+          "call",
+          "cargo",
+          "crates",
+          "crew",
+          "for",
+          "from",
+          "hauler",
+          "is",
+          "it",
+          "kestrel",
+          "let",
+          "like",
+          "more",
+          "note",
+          "now",
+          "on",
+          "our",
+          "place",
+          "s",
+          "sounds",
+          "the",
+          "use",
+          "will",
+          "would"
+        ],
+        "digest_mounted": true,
+        "digest_names_both": true,
+        "digest_nodes": [
+          164
+        ],
+        "distance": 150,
+        "edge_node": 16,
+        "edge_turn": 17,
+        "entity": "Kestrel",
+        "expected": "37 crates",
+        "fold_decisions": [
+          {
+            "alias": "the Hauler",
+            "base": 4,
+            "base_identifiers_missing": [],
+            "base_name": "Kestrel",
+            "base_shared_with_edges": [],
+            "consolidation": {
+              "accepted": true,
+              "best_cov": 1.0,
+              "hit_count": 1,
+              "need_count": 1
+            },
+            "digest": 164,
+            "digest_text": "For the archive: the Let's call Kestrel 'the Hauler' from now on; it sounds more like a place our crew would use. Kestrel's cargo allowance will be 37 crates. the Hauler is an alias for Kestrel.",
+            "edge": 16,
+            "lineage": "digest_supersedes_edge_and_base",
+            "reason": "alias_merged",
+            "reassignment_retired": [],
+            "width": {
+              "arena_width": 96,
+              "digest_tokens": 76,
+              "fits": true,
+              "single_mount_claimable": true
+            }
+          }
+        ],
+        "fold_job_fired": true,
+        "mounted_ids": [
+          164
+        ],
+        "probe_id": "recall_6_150",
+        "question": "What did we settle on for the Hauler's cargo allowance?",
+        "ranking_ids": [
+          164,
+          60,
+          88,
+          130,
+          152,
+          0
+        ],
+        "served": "37 crates\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026",
+        "served_correct": true
+      },
+      {
+        "admission_identified_candidates": [
+          165,
+          55
+        ],
+        "admission_rank_plan": [
+          165
+        ],
+        "admitted": true,
+        "alias": "the Beacon",
+        "digest_identifiers": [
+          "18",
+          "2196",
+          "a",
+          "alias",
+          "an",
+          "archive",
+          "be",
+          "beacon",
+          "call",
+          "crew",
+          "date",
+          "for",
+          "from",
+          "is",
+          "it",
+          "lantern",
+          "launch",
+          "let",
+          "like",
+          "more",
+          "note",
+          "now",
+          "october",
+          "on",
+          "our",
+          "place",
+          "s",
+          "sounds",
+          "the",
+          "use",
+          "will",
+          "would"
+        ],
+        "digest_mounted": true,
+        "digest_names_both": true,
+        "digest_nodes": [
+          165
+        ],
+        "distance": 150,
+        "edge_node": 17,
+        "edge_turn": 18,
+        "entity": "Lantern",
+        "expected": "18 October 2196",
+        "fold_decisions": [
+          {
+            "alias": "the Beacon",
+            "base": 5,
+            "base_identifiers_missing": [],
+            "base_name": "Lantern",
+            "base_shared_with_edges": [],
+            "consolidation": {
+              "accepted": true,
+              "best_cov": 1.0,
+              "hit_count": 2,
+              "need_count": 2
+            },
+            "digest": 165,
+            "digest_text": "For the archive: the Let's call Lantern 'the Beacon' from now on; it sounds more like a place our crew would use. Lantern's launch date will be 18 October 2196. the Beacon is an alias for Lantern.",
+            "edge": 17,
+            "lineage": "digest_supersedes_edge_and_base",
+            "reason": "alias_merged",
+            "reassignment_retired": [],
+            "width": {
+              "arena_width": 96,
+              "digest_tokens": 78,
+              "fits": true,
+              "single_mount_claimable": true
+            }
+          }
+        ],
+        "fold_job_fired": true,
+        "mounted_ids": [
+          165
+        ],
+        "probe_id": "recall_7_150",
+        "question": "What did we settle on for the Beacon's launch date?",
+        "ranking_ids": [
+          165,
+          31,
+          55,
+          62,
+          78,
+          92
+        ],
+        "served": "18 October 2196\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026",
+        "served_correct": true
+      }
+    ],
+    "turns_replayed": 164
+  }
+}
