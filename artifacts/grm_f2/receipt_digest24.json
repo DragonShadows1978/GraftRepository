@@ -1,0 +1,24 @@
+{
+  "digest_node": 24,
+  "digest_ntok": 39,
+  "digest_text": "ARCHIVE NOTE. For the archive: the  maintenance crew of the Beacon is located at Iona Vale, and the map position of the Beacon is (-31, 48, 12).\n",
+  "receipt": "artifacts/grm_d1/lt1_1/run_A/cells/A-025-032/session/repository/manifest.json",
+  "source_ntok": {
+    "13": 49,
+    "14": 53,
+    "17": 66,
+    "18": 63
+  },
+  "source_texts": {
+    "13": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Commtower's maintenance crew will be Iona Vale.<|end|><|start|>assistant<|channel|>final<|message|>That gives this area a clearer identity.<|end|>",
+    "14": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Breakwater's map position will be (-31, 48, 12).<|end|><|start|>assistant<|channel|>final<|message|>Sounds good; I'm following the direction.<|end|>",
+    "17": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Let's call Kestrel 'the Hauler' from now on; it sounds more like a place our crew would use.<|end|><|start|>assistant<|channel|>final<|message|>I like that shorthand. I'll use it in our discussion.<|end|>",
+    "18": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Let's call Lantern 'the Beacon' from now on; it sounds more like a place our crew would use.<|end|><|start|>assistant<|channel|>final<|message|>I like that shorthand. I'll use it in our discussion.<|end|>"
+  },
+  "sources": [
+    13,
+    14,
+    17,
+    18
+  ]
+}

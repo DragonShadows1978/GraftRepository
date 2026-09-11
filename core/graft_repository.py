@@ -51,6 +51,8 @@ from core.graft_quant import (
 from core.grm_admission import mountable_budget
 from core import grm_alias_fold as _alias_fold
 from core.grm_alias_fold import alias_fold_enabled
+from core import grm_fold_alias_guard as _fold_guard
+from core.grm_fold_alias_guard import fold_alias_guard_enabled
 from core.grm_runtime import GRMRuntime
 from core.mistral7b_tc import tc
 from core import kv_graft
@@ -257,6 +259,7 @@ class GraftRepository:
                  rubric="v1",
                  spill_policy="lru", fold_order="age",
                  alias_fold_merge=None,
+                 fold_alias_guard=None,
                  **arena_kw):
         self.path = path
         self.autosave = autosave
@@ -327,6 +330,18 @@ class GraftRepository:
         #: from the ordinary librarian window. Without this the sweep retries
         #: the identical failing pair until `max_jobs` runs out.
         self._alias_exempt_pairs = set()
+        # GRM-F2: chronicle-fold alias guard. DEFAULT OFF. Resolved ONCE here
+        # (explicit constructor value > GRM_FOLD_ALIAS_GUARD > OFF), the same
+        # freeze A1 / L2 / A-DEC take: a mid-session environment change must
+        # not alter a repository's fold semantics halfway through a
+        # conversation.
+        self.fold_alias_guard = fold_alias_guard_enabled(fold_alias_guard)
+        #: Append-only receipt of every guard DECISION — exclusions and
+        #: attribution rejections alike. NEVER SILENT (SCOUT-FIX-9's rule):
+        #: present from construction, so an empty list means "checked,
+        #: nothing to report" and not "never ran". Never consulted by a
+        #: serving path.
+        self.fold_guard_history = []
         # "inline": folds run inside chat/add_turn when thresholds trip
         # (simple; a fold stalls that turn ~3s). "deferred": the hot path
         # NEVER folds — due work is computed statelessly and executed by
@@ -341,6 +356,12 @@ class GraftRepository:
         # reaches the arena constructor, where an explicit bool outranks the
         # GRM_PERSISTENT_BOAT escape.
         self.arena = arena_cls(model, encode, decode, **arena_kw)
+        # GRM-F2 (b): install the attribution QC hook ONLY when the flag is
+        # ON. With it OFF the attribute keeps its class default of None and
+        # `ArenaCache.consolidate` takes the identical pre-F2 path — there is
+        # no per-fold branch to pay and nothing to configure.
+        if self.fold_alias_guard:
+            self.arena.fold_attribution_guard = self._fold_attribution_receipt
         self.dialect_desc = DialectDescriptor.from_model(model, self.arena)
         self.dialect = self.dialect_desc.dialect_id
         self.dirty_nodes = {}
@@ -4080,9 +4101,10 @@ class GraftRepository:
         plan = self._native_librarian_plan(
             turns, digests, deferred_backpressure=deferred_backpressure)
         if plan is None:
-            return self._fallback_librarian_jobs(
-                turns, digests,
-                deferred_backpressure=deferred_backpressure)
+            return self._guard_fold_windows(
+                self._fallback_librarian_jobs(
+                    turns, digests,
+                    deferred_backpressure=deferred_backpressure))
         jobs = []
         digest_n = min(int(plan.get("digest_source_count", 0)), len(turns))
         era_n = min(int(plan.get("era_source_count", 0)), len(digests))
@@ -4090,7 +4112,121 @@ class GraftRepository:
             jobs.append(("digest", turns[:digest_n]))
         if era_n:
             jobs.append(("era", digests[:era_n]))
-        return jobs
+        return self._guard_fold_windows(jobs)
+
+    # --------------------------------------------------------------- GRM-F2
+    def _guard_fold_windows(self, jobs):
+        """F2 (a): drop FACT-LESS alias/rename turns from each fold window.
+
+        Reached from BOTH ``_librarian_jobs`` return paths (native plan and
+        fallback) so the treatment cannot depend on which planner ran.  With
+        ``fold_alias_guard`` False this returns ``jobs`` unchanged, by
+        identity, from its first line — the window plan keeps its pre-F2
+        bytes and no method below is ever called.
+
+        WHY THIS AND NOT A COVERAGE TWEAK.  Measured on the receipt
+        (``artifacts/grm_f2/receipt_digest24.json``): the two alias turns in
+        that window contribute ZERO facts to ``_fact_set``, so FIX-5's
+        ``[source N]`` enumeration and the fold's ``need`` are byte-identical
+        with and without them.  Their only contribution is the K/V mount
+        ``consolidate`` makes over every source, which is what the model read
+        "the Beacon" from.  Removing them removes the contamination and
+        changes nothing the fold was asked to preserve.
+
+        A window is never emptied: ``fold_window_excludes`` returns nothing
+        when every source is a fact-less alias turn, and a window reduced to
+        a single source is still a legal fold (``consolidate`` handles
+        ``len(idxs) == 1`` on its existing path).  The excluded node is NOT
+        marked ``no_fold``: it stays an ordinary active turn, which is where
+        A1's ``_alias_fold_jobs`` looks for an alias edge, so F2's exclusion
+        and A1's merge compose instead of competing.
+
+        Prior art: the job list is FIX-3/FIX-5's own (``_librarian_jobs``),
+        unchanged; the alias detector is A1's ``parse_alias_edge``, unchanged.
+        Full annotation in ``core/grm_fold_alias_guard.py``.
+        """
+        # ``getattr`` with an OFF default, not ``self.fold_alias_guard``: a
+        # planner-only stub built by ``object.__new__(GraftRepository)`` sets
+        # a minimal attribute set and never runs ``__init__`` (the existing
+        # idiom in ``tests/test_grm_s4_fold_order.py::_planner_repo``, which
+        # ``_librarian_jobs`` already honours for ``fold_order``).  Such a
+        # stub must keep the pre-F2 plan, and an AttributeError here would
+        # break a caller that is not asking for this treatment at all.
+        if not getattr(self, "fold_alias_guard", False):
+            return jobs
+        out = []
+        for kind, idxs in jobs:
+            idxs = list(idxs)
+            texts = [str(self.arena.grafts[int(i)].get("text", "") or "")
+                     for i in idxs]
+            drop = _fold_guard.fold_window_excludes(
+                self.arena._fact_set, texts)
+            if not drop:
+                out.append((kind, idxs))
+                continue
+            dropped = {idxs[p] for p in drop}
+            kept = [i for i in idxs if i not in dropped]
+            self._record_fold_guard(
+                _fold_guard.REASON_WINDOW_EXCLUDED,
+                kind=kind, window=[int(i) for i in idxs],
+                excluded=sorted(int(i) for i in dropped),
+                kept=[int(i) for i in kept])
+            out.append((kind, kept))
+        return out
+
+    def _fold_attribution_receipt(self, source_texts, digest_text):
+        """F2 (b): the attribution QC, as ``ArenaCache``'s hook wants it.
+
+        Installed on the arena ONLY when ``fold_alias_guard`` is True, so this
+        is never reached with the flag OFF.
+
+        THE ENTITY CHECK, stated as the order states it: every
+        ``(entity, attribute, value)`` in the sources must appear in the
+        digest with the SAME entity, or with an alias registered for THAT
+        entity only.  The implementation is in
+        ``core/grm_fold_alias_guard.attribution_violations``; the fact
+        vocabulary passed in is ``ArenaCache._fact_set``, so the values this
+        check reasons about are exactly the values FIX-5 enumerated and
+        ``_coverage`` scored — the two gates cannot disagree about what a
+        value is.
+
+        A rejection is a FIDELITY ABORT, not a new failure mode: it returns
+        through ``consolidate``'s existing ``(None, None)`` path, so
+        ``_fold_once`` takes the branch it already had — sources stay
+        unfolded, active and routable, and are marked ``no_fold`` so the
+        planner advances instead of retrying the identical window.  That is
+        FIX-3's own "recall > compression" stance applied to attribution
+        rather than to coverage.
+        """
+        receipt = _fold_guard.guard_receipt(
+            self.arena._fact_set, source_texts, digest_text)
+        if not receipt["attribution_ok"]:
+            self._record_fold_guard(
+                _fold_guard.REASON_ATTRIBUTION,
+                violations=receipt["violations"],
+                alias_bindings=receipt["alias_bindings"],
+                digest_text=str(digest_text or "")[:1200])
+        return receipt
+
+    def _record_fold_guard(self, reason, **fields):
+        """Append one F2 decision to ``fold_guard_history`` (dedup'd).
+
+        Window plans are STATELESS and recomputed every librarian pass, so an
+        unexecuted plan would otherwise write the identical exclusion record
+        on every call.  Collapsing an identical consecutive record is exactly
+        what ``_record_alias_decision`` does, and for the same reason.
+        """
+        record = {"reason": str(reason)}
+        record.update(fields)
+        # Same stub tolerance as ``_guard_fold_windows``: a repository built
+        # without ``__init__`` has no history list to append to.
+        history = getattr(self, "fold_guard_history", None)
+        if history is None:
+            self.fold_guard_history = history = []
+        if history and history[-1] == record:
+            return record
+        history.append(record)
+        return record
 
     def _due(self):
         return self._librarian_jobs()
