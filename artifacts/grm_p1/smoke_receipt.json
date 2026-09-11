@@ -1,0 +1,167 @@
+{
+  "admission_rule": "margin_first",
+  "checks": {
+    "mounts_happen": true,
+    "no_live_history_leak": true,
+    "post_restart_routes": true,
+    "recap_not_deposited": true,
+    "recap_present": true,
+    "restart_recorded": true,
+    "restart_retained": true,
+    "route_receipt_schema_every_turn": true,
+    "turns_recorded": true
+  },
+  "evidence_class": "CPU fake model; PLUMBING only, not answer quality",
+  "leak_test": {
+    "consolidation_note": "librarian folds quote their source grafts by design; they are a separate operation from a served chat turn",
+    "consolidation_prompts_excluded": 9,
+    "prior_turn_texts_checked": 20,
+    "prompts_checked": 24,
+    "rule": "prompt == harmony_turn(this turn's user text, None)"
+  },
+  "ledger": "/mnt/ForgeRealm/wt/grm-p1/artifacts/grm_p1/smoke_session/session_ledger.jsonl",
+  "mounted_turns": [
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+  ],
+  "post_restart_mounted": [
+    16,
+    17,
+    18,
+    19
+  ],
+  "profile": "eb1_c2",
+  "repo": "/mnt/ForgeRealm/wt/grm-p1/artifacts/grm_p1/smoke_session",
+  "restart": [
+    {
+      "in_process": true,
+      "kind": "restart",
+      "nodes_after": 15,
+      "nodes_before": 15,
+      "previous_process_id": "9277e20c-15f8-4d0e-b97c-4ea8b9f25e31",
+      "process_id": "c22b4977-03ee-4359-81e9-e0388f87de34",
+      "retained": true,
+      "schema": "grm.chat_event.v1"
+    }
+  ],
+  "restart_events": [
+    {
+      "command": "/restart",
+      "in_process": true,
+      "kind": "restart",
+      "nodes_after": 15,
+      "nodes_before": 15,
+      "previous_process_id": "9277e20c-15f8-4d0e-b97c-4ea8b9f25e31",
+      "process_id": "c22b4977-03ee-4359-81e9-e0388f87de34",
+      "retained": true
+    }
+  ],
+  "status": "PASS",
+  "transcript": "/mnt/ForgeRealm/wt/grm-p1/fixtures/grm_p1/smoke_transcript.txt",
+  "turns": 19,
+  "value_span_correct": 7,
+  "value_span_of": 7,
+  "value_span_scores": [
+    {
+      "answer": "Auric-4-Alpha",
+      "category": "correct",
+      "correct": true,
+      "distance": 5,
+      "expected": "Auric-4-Alpha",
+      "klass": "fresh",
+      "mounted_ids": [
+        0
+      ],
+      "turn": 6
+    },
+    {
+      "answer": "Kestrel-9-Tango",
+      "category": "correct",
+      "correct": true,
+      "distance": 3,
+      "expected": "Kestrel-9-Tango",
+      "klass": "correction",
+      "mounted_ids": [
+        0,
+        5,
+        7
+      ],
+      "turn": 11
+    },
+    {
+      "answer": "Gold-7-Foxtrot",
+      "category": "correct",
+      "correct": true,
+      "distance": 7,
+      "expected": "Gold-7-Foxtrot",
+      "klass": "fresh",
+      "mounted_ids": [
+        6
+      ],
+      "turn": 14
+    },
+    {
+      "answer": "Zenith-2-Echo",
+      "category": "correct",
+      "correct": true,
+      "distance": 2,
+      "expected": "Zenith-2-Echo",
+      "klass": "correction",
+      "mounted_ids": [
+        12
+      ],
+      "turn": 15
+    },
+    {
+      "answer": "Nadir-1-Delta",
+      "category": "correct",
+      "correct": true,
+      "distance": 14,
+      "expected": "Nadir-1-Delta",
+      "klass": "fresh",
+      "mounted_ids": [
+        1,
+        11
+      ],
+      "turn": 16
+    },
+    {
+      "answer": "Vortex-3-Sierra",
+      "category": "correct",
+      "correct": true,
+      "distance": 14,
+      "expected": "Vortex-3-Sierra",
+      "klass": "fresh",
+      "mounted_ids": [
+        2
+      ],
+      "turn": 17
+    },
+    {
+      "answer": "Nadir-1-Delta",
+      "category": "correct",
+      "correct": true,
+      "distance": 6,
+      "expected": "Nadir-1-Delta",
+      "klass": "alias",
+      "mounted_ids": [
+        11
+      ],
+      "turn": 18
+    }
+  ]
+}

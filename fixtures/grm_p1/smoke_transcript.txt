@@ -1,0 +1,49 @@
+# GRM-P1 fake-model smoke transcript: one user turn per line.
+# 20 turns: 6 facts, 2 corrections, 1 alias, recalls at 5/10/15 turns back,
+# one /restart, one /recap.
+#
+# The fake model (scripts/grm_c7_diagnose.Model) copies a value it can SEE,
+# matching `current <name> value is <VALUE>`. That phrasing is the stimulus
+# the deposited turn carries, so a recall is correct only when the routed
+# graft actually mounted. The target here is PLUMBING, not answer quality.
+#
+# turn 1 (fact 1)
+The current orion pin value is Auric-4-Alpha. Remember it.
+# turn 2 (fact 2)
+The current lyra dock value is Nadir-1-Delta. Remember it.
+# turn 3 (fact 3)
+The current cypher bridge value is Vortex-3-Sierra. Remember it.
+# turn 4 (ordinary)
+Thanks, that is everything for the docking section.
+# turn 5 (fact 4)
+The current nova key value is Quartz-5-Bravo. Remember it.
+# turn 6 (recall of turn 1 — 5 turns back)
+What is the current orion pin value?
+# turn 7 (fact 5)
+The current mira seal value is Gold-7-Foxtrot. Remember it.
+# turn 8 (correction 1, supersedes turn 1)
+Correction: the current orion pin value is Kestrel-9-Tango now.
+# turn 9 (ordinary)
+Understood, keep going with the hull notes.
+# turn 10 (fact 6)
+The current terra port value is Harbor-8-Golf. Remember it.
+# turn 11 (recall of turn 1 — 10 turns back, after the correction)
+What is the current orion pin value?
+# turn 12 (alias)
+Let us call the lyra dock the Hub from now on; the current Hub value is Nadir-1-Delta.
+# turn 13 (correction 2, supersedes turn 5)
+Correction: the current nova key value is Zenith-2-Echo now.
+# turn 14 (recall of turn 7 — 7 turns back, never corrected)
+What is the current mira seal value?
+# turn 15 (recall of turn 5 — 10 turns back, after the correction)
+What is the current nova key value?
+# turn 16 (restart: close and reopen the repository in-process)
+/restart
+# turn 17 (recall of turn 2 — 15 turns back, across the restart)
+What is the current lyra dock value?
+# turn 18 (recall of turn 3 — 15 turns back, across the restart)
+What is the current cypher bridge value?
+# turn 19 (recall of the alias, turn 12)
+What is the current Hub value?
+# turn 20 (recap)
+/recap
