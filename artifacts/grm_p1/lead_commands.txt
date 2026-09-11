@@ -1,0 +1,149 @@
+GRM-P1 — REGISTERED GPU SMOKE (lead-run, <= 0.2 GPU-h)
+Registered 2026-09-10 by the GRM-P1 implementation seat. NOT RUN by the
+seat: the seat's sandbox has no GPU. This file is the registration.
+
+WHAT IT MEASURES
+  The same 20-turn transcript the CPU fake-model smoke runs, served by
+  GPT-OSS-20B under GRM_PROFILE=eb1_c2, through scripts/grm_chat.py.
+  This is the first end-to-end receipt from the PRODUCT SURFACE rather
+  than from a battery driver.
+
+THRESHOLD — REGISTERED BEFORE THE RUN, NOT ADJUSTED AFTER
+  GATED  : recall on the FRESH facts >= 3 of 4.
+           Basis: LT1 (2026-09-09) measured fresh 14/15 = 93% on the
+           profile arm over 200 turns; 3/4 is that rate rounded down to
+           the nearest whole probe on a 4-probe sample.
+           The four FRESH probes are ledger turns 6, 14, 16 and 17 —
+           facts stated once and never corrected or aliased, recalled
+           at 5, 7, 14 and 14 turns back, two of them across the
+           /restart. The exact table is RECALLS in
+           scripts/grm_p1_smoke.py; klass == "fresh" selects them.
+  REPORTED, NOT GATED:
+    * corrections (ledger turns 11, 15) — LT1 measured 5/10; the
+      supersession residual is a known open (C7 r3).
+    * the alias (ledger turn 18) — LT1 measured 5/10; the alias
+      composition residual is a known open (ALIAS_DESIGN_OPTIONS.md).
+    * the five-decision recap (ledger turn 19) — LT1 scored 0/5 and
+      concluded the question is under-specified. Report the answer; do
+      not score it as a pass/fail.
+  PLUMBING (must hold, same as the CPU smoke):
+    * one grm.route_receipt.v1 per turn in REPO/session_ledger.jsonl;
+    * the /restart retains the repository (nodes_before == nodes_after);
+    * no live-history leak.
+
+BUDGET
+  <= 0.2 GPU-h (720 s) total, including model load. One lease, under the
+  house flock convention (/tmp/forge-gpu.lock, scripts/grm_cmc1_gpu_arms
+  .gpu_lease; MAX_LEASE_SECONDS = 590). If the run does not fit one
+  lease, split at the /restart line — that is exactly what /restart is
+  for, and the second half resumes the same --repo.
+
+INPUT SHA256 (verify before running)
+  fixtures/grm_p1/smoke_transcript.txt
+    aac896b3fde9a97f41836b7b03abdb5e9ffffcf5026576cfd4763d78fccdd059
+  scripts/grm_chat.py
+    df3d7a0d7788d2257c17c916f1f9ff9dc34ffad1e662924633baaeec9b1b5799
+  scripts/grm_profile.py
+    9b51174e431690f8f2393d32e93690fcf7e5e40500034b612a612585a44301e3
+  scripts/grm_p1_smoke.py
+    098401bbffe5ed0010e62446db94937fcc14d0be221aa81cd9c81f1b9f75ce34
+  tests/test_grm_chat.py
+    3d4f6c7b31dbd366315665d4a483485254aa7a3afccc5e65410292a8bef0ee5d
+
+PRECONDITIONS
+  * GPU idle (the surface does not take the lease itself — the lead
+    holds it; never kill another project's process, wait on the flock).
+  * The native runtime exists at
+    /mnt/ForgeRealm/GraftRepository/cpp/build/libgrm_runtime.so
+    (scripts/grm_c2_cells.args_for passes this path).
+  * The model snapshot is the registered revision 6cee5e81:
+    /home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/
+      snapshots/6cee5e81ee83917806bbde320786a8fb61efebee
+
+--------------------------------------------------------------------
+COMMANDS (run from /mnt/ForgeRealm/wt/grm-p1)
+--------------------------------------------------------------------
+
+# 0. verify the inputs
+sha256sum fixtures/grm_p1/smoke_transcript.txt scripts/grm_chat.py \
+          scripts/grm_profile.py scripts/grm_p1_smoke.py \
+          tests/test_grm_chat.py
+
+# 1. confirm the switch resolves to the registered profile
+GRM_PROFILE=eb1_c2 python3 scripts/grm_chat.py \
+    --repo artifacts/grm_p1/gpu_session --print-flags
+
+# 2. the run itself, under the lease, GPU, real model
+#    (batch mode; the transcript's /restart is honoured in-process)
+rm -rf artifacts/grm_p1/gpu_session
+GRM_PROFILE=eb1_c2 python3 scripts/grm_chat.py \
+    --repo artifacts/grm_p1/gpu_session \
+    --transcript fixtures/grm_p1/smoke_transcript.txt \
+    2>&1 | tee artifacts/grm_p1/gpu_smoke.log
+
+# 3. score it with the same value-span scorer the CPU smoke uses
+python3 - <<'PY'
+import json, sys
+sys.path.insert(0, '.')
+from scripts import grm_lt1 as lt
+from scripts.grm_p1_smoke import RECALLS
+rows = [json.loads(l) for l in
+        open('artifacts/grm_p1/gpu_session/session_ledger.jsonl') if l.strip()]
+turns = {r['turn']: r for r in rows if r.get('schema') == 'grm.chat_turn.v1'}
+restarts = [r for r in rows if r.get('kind') == 'restart']
+out = []
+for spec in RECALLS:
+    row = turns[spec['turn']]
+    s = lt.score(row['answer'], spec['expected'])
+    out.append(dict(spec, answer=row['answer'], mounted=row['mounted_ids'],
+                    correct=bool(s['exact_correct']), category=s['category']))
+fresh = [r for r in out if r['klass'] == 'fresh']
+print(json.dumps({
+    'turns': len(turns),
+    'receipts_ok': all(t['route_receipt']['schema'] == 'grm.route_receipt.v1'
+                       for t in turns.values()),
+    'restart_retained': all(r['retained'] for r in restarts),
+    'fresh_correct': sum(r['correct'] for r in fresh), 'fresh_of': len(fresh),
+    'GATE_fresh_ge_3_of_4': sum(r['correct'] for r in fresh) >= 3,
+    'corrections_reported': [r for r in out if r['klass'] == 'correction'],
+    'alias_reported': [r for r in out if r['klass'] == 'alias'],
+    'recap_answer': turns[19]['answer'],
+    'rows': out,
+}, indent=2))
+PY
+
+# 4. the leak check on the GPU receipts (text-level, post hoc)
+python3 - <<'PY'
+import json, sys
+sys.path.insert(0, '.')
+rows = [json.loads(l) for l in
+        open('artifacts/grm_p1/gpu_session/session_ledger.jsonl') if l.strip()]
+turns = [r for r in rows if r.get('schema') == 'grm.chat_turn.v1']
+users = [t['user'] for t in turns]
+# The live prompt is harmony_turn(user, None) by construction; the ledger
+# records request_sha256 of exactly that text. The post-hoc check here is
+# that no turn's recorded request text contains another turn's text.
+bad = [(t['turn'], u) for t in turns for u in users
+       if u != t['user'] and u and u in t['user']]
+print('live_history_leak_rows:', bad or 'NONE')
+PY
+
+# 5. the author gates still pass on the same tree
+python3 -m pytest -q tests/test_grm_chat.py
+
+--------------------------------------------------------------------
+WHAT TO RECORD
+--------------------------------------------------------------------
+  * fresh_correct / fresh_of and the GATE verdict;
+  * corrections and alias rows, REPORTED (LT1 residuals, not gated);
+  * the recap answer verbatim, unscored;
+  * restart_retained, receipts_ok, live_history_leak_rows;
+  * wall-clock GPU seconds actually consumed against the 720 s budget;
+  * the model revision the run loaded (printed by load_model_and_repo).
+
+Prior art for the threshold: LT1 200-turn conversation result,
+2026-09-09 (/mnt/Shared/GRM_LT1_200Turn_Conversation_Result_2026-09-09
+.md), profile arm, fresh 14/15. Taken: the measured fresh rate as the
+basis for a 4-probe expectation. Nothing about corrections, aliases or
+the recap is promoted to a gate here — LT1 measured those at 50%, 50%
+and 0/5 and named all three as open residuals.

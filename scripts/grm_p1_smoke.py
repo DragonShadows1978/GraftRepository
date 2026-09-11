@@ -1,0 +1,247 @@
+#!/usr/bin/env python3
+"""GRM-P1 fake-model transcript smoke — PLUMBING, never answer quality.
+
+Runs ``scripts/grm_chat.py --fake-model --transcript`` over the registered
+20-turn smoke transcript and checks the things a product surface must get
+right no matter what the model says:
+
+  * mounts happen (at least one turn mounted a routed graft);
+  * one ``grm.route_receipt.v1`` per turn is in ``REPO/session_ledger.jsonl``;
+  * the restart retained the repository (node count before == after) and the
+    post-restart turns still route;
+  * NO LIVE HISTORY LEAK — every live prompt the model saw is exactly
+    ``harmony_turn(that turn's user text, None)``, so no prior turn's text
+    was fed live.
+
+The value-span scorer (``scripts.grm_lt1.score``, the C5 arm-S contiguous
+ordered span rule) is applied to the recall turns and REPORTED.  It is not
+gated: the fake model is a regex that copies a visible value, and its answer
+rate is a statement about the stub, not about GRM.  Quality lives in the
+registered GPU smoke (``artifacts/grm_p1/lead_commands.txt``).
+
+Prior art
+---------
+``grm_lt1_cpu.run`` / ``grm_c7_diagnose`` (GRM contributors, 2026): a CPU
+author gate that runs the real repository/admission/ladder against a stub
+reader, explicitly not a quality measurement.  Taken: that discipline and
+the scorer.  Ours: the leak assertion and the ledger/restart checks.  No
+prior art known to me for this exact gate composition.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import shutil
+import sys
+from pathlib import Path
+from typing import Any
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+TRANSCRIPT = ROOT / "fixtures/grm_p1/smoke_transcript.txt"
+OUT = ROOT / "artifacts/grm_p1"
+
+#: Recall turns and the value each should surface. ``turn`` is the LEDGER
+#: turn number: ``/restart`` and ``/status`` are session events, not chat
+#: turns, so they do not advance the counter — the transcript's 20 lines
+#: become 19 ledger turns.  ``distance`` is how many turns back the value
+#: currently in force was stated.
+RECALLS = (
+    {"turn": 6, "expected": "Auric-4-Alpha", "distance": 5,
+     "klass": "fresh"},
+    {"turn": 11, "expected": "Kestrel-9-Tango", "distance": 3,
+     "klass": "correction"},
+    {"turn": 14, "expected": "Gold-7-Foxtrot", "distance": 7,
+     "klass": "fresh"},
+    {"turn": 15, "expected": "Zenith-2-Echo", "distance": 2,
+     "klass": "correction"},
+    {"turn": 16, "expected": "Nadir-1-Delta", "distance": 14,
+     "klass": "fresh"},
+    {"turn": 17, "expected": "Vortex-3-Sierra", "distance": 14,
+     "klass": "fresh"},
+    {"turn": 18, "expected": "Nadir-1-Delta", "distance": 6,
+     "klass": "alias"},
+)
+
+
+def _leak_probe(session, seen: list[dict[str, Any]]):
+    """Record every live prompt string the model is asked to read.
+
+    The choke point is ``ArenaCache._attempt``:
+    ``prompt_ids = self.encode(self._format_step_prompt(user_text))``.
+    Wrapping ``_format_step_prompt`` on the instance captures exactly the
+    text that becomes live tokens — grafts arrive as K/V and never pass
+    through here, which is the whole point.
+    """
+    arena = session.repo.arena
+    original = arena._format_step_prompt
+
+    def traced(user_text):
+        text = original(user_text)
+        seen.append({"user_text": str(user_text), "prompt": str(text)})
+        return text
+
+    arena._format_step_prompt = traced
+    return original
+
+
+def assert_no_live_history(seen: list[dict[str, Any]],
+                           user_turns: list[str]) -> dict[str, Any]:
+    """THE LEAK ASSERTION.
+
+    For every live prompt: it must equal ``harmony_turn(its own user text,
+    None)`` exactly, and it must not contain any OTHER turn's user text.
+    Both halves matter — the first forbids any extra text at all, the second
+    names what we are actually afraid of.
+    """
+    from scripts.grm_e2e_session import harmony_turn
+
+    checked = 0
+    for row in seen:
+        prompt, user = row["prompt"], row["user_text"]
+        expected = harmony_turn(user, None)
+        if prompt != expected:
+            raise AssertionError(
+                "LIVE_HISTORY_LEAK: live prompt is not the current turn "
+                f"alone.\n  expected: {expected!r}\n  got:      {prompt!r}")
+        for other in user_turns:
+            if other != user and other and other in prompt:
+                raise AssertionError(
+                    "LIVE_HISTORY_LEAK: prior turn text found in the live "
+                    f"prompt.\n  prior turn: {other!r}\n  prompt: {prompt!r}")
+        checked += 1
+    if not checked:
+        raise AssertionError("LEAK_TEST_SAW_NO_PROMPTS: nothing was served")
+    return {"prompts_checked": checked,
+            "rule": "prompt == harmony_turn(this turn's user text, None)",
+            "prior_turn_texts_checked": len(user_turns)}
+
+
+def _user_turns(transcript: Path) -> list[str]:
+    """Transcript lines as a 1-based turn list (commands become '')."""
+    out = []
+    for raw in Path(transcript).read_text().splitlines():
+        text = raw.strip()
+        if not text or text.startswith("#"):
+            continue
+        out.append("" if text.startswith("/") else text)
+    return out
+
+
+def run(repo_dir: Path, *, transcript: Path = TRANSCRIPT,
+        profile: str = "eb1_c2") -> dict[str, Any]:
+    from scripts import grm_chat
+    from scripts import grm_lt1 as lt
+    from scripts.grm_profile import resolve_profile
+
+    if repo_dir.exists():
+        shutil.rmtree(repo_dir)
+    resolved = resolve_profile(selection=profile)
+    os.environ.update(resolved["env"])
+
+    session = grm_chat.ChatSession(repo_dir, resolved, fake=True)
+    session.open()
+    seen: list[dict[str, Any]] = []
+    _leak_probe(session, seen)
+    # ``/restart`` builds a NEW arena, so re-install the probe whenever the
+    # session reopens; otherwise the post-restart prompts go untraced and
+    # the leak assertion would silently cover only half the run.
+    original_restart = session.restart
+
+    def traced_restart():
+        record = original_restart()
+        _leak_probe(session, seen)
+        return record
+
+    session.restart = traced_restart
+    try:
+        result = grm_chat.run_transcript(session, transcript)
+    finally:
+        grm_chat._save_fake_codec(session)
+        session.close()
+
+    ledger = [json.loads(line) for line in
+              (repo_dir / grm_chat.LEDGER_NAME).read_text().splitlines()
+              if line.strip()]
+    turns = [r for r in ledger if r.get("schema") == "grm.chat_turn.v1"]
+    restarts = [r for r in ledger if r.get("kind") == "restart"]
+    restart_events = [e for e in result["events"]
+                      if e.get("command") == "/restart"]
+
+    leak = assert_no_live_history(seen, _user_turns(transcript))
+
+    receipts_ok = all(
+        (r.get("route_receipt") or {}).get("schema") == "grm.route_receipt.v1"
+        for r in turns)
+    mounted_turns = [r["turn"] for r in turns if r["mounted_ids"]]
+    by_turn = {r["turn"]: r for r in turns}
+    scored = []
+    for spec in RECALLS:
+        row = by_turn.get(spec["turn"])
+        if row is None:
+            continue
+        verdict = lt.score(row["answer"], spec["expected"])
+        scored.append({**spec, "answer": row["answer"],
+                       "mounted_ids": row["mounted_ids"],
+                       "correct": bool(verdict["exact_correct"]),
+                       "category": verdict["category"]})
+
+    # The restart lands after ledger turn 15 (it is an event, not a turn).
+    post_restart_mounted = [r["turn"] for r in turns
+                            if r["turn"] > 15 and r["mounted_ids"]]
+    recap_rows = [r for r in turns if r["user"] == grm_chat.RECAP_QUESTION]
+
+    checks = {
+        "turns_recorded": len(turns) == 19,
+        "route_receipt_schema_every_turn": receipts_ok,
+        "mounts_happen": bool(mounted_turns),
+        "restart_recorded": len(restarts) == 1,
+        "restart_retained": bool(restarts) and all(
+            r["retained"] for r in restarts),
+        "post_restart_routes": bool(post_restart_mounted),
+        "no_live_history_leak": True,
+        "recap_present": bool(recap_rows),
+        "recap_not_deposited": all(
+            r["deposited_node_id"] is None for r in recap_rows),
+    }
+    return {
+        "status": "PASS" if all(checks.values()) else "RED",
+        "evidence_class": "CPU fake model; PLUMBING only, not answer quality",
+        "profile": resolved["profile"],
+        "admission_rule": resolved["admission_rule"],
+        "checks": checks,
+        "leak_test": leak,
+        "turns": len(turns),
+        "mounted_turns": mounted_turns,
+        "post_restart_mounted": post_restart_mounted,
+        "restart": restarts,
+        "restart_events": restart_events,
+        "value_span_scores": scored,
+        "value_span_correct": sum(s["correct"] for s in scored),
+        "value_span_of": len(scored),
+        "repo": str(repo_dir),
+        "ledger": str(repo_dir / grm_chat.LEDGER_NAME),
+        "transcript": str(transcript),
+    }
+
+
+def main(argv: list[str] | None = None) -> int:
+    p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    p.add_argument("--repo", type=Path, default=OUT / "smoke_session")
+    p.add_argument("--transcript", type=Path, default=TRANSCRIPT)
+    p.add_argument("--profile", default="eb1_c2")
+    p.add_argument("--receipt", type=Path, default=OUT / "smoke_receipt.json")
+    args = p.parse_args(argv)
+    result = run(args.repo, transcript=args.transcript, profile=args.profile)
+    args.receipt.parent.mkdir(parents=True, exist_ok=True)
+    args.receipt.write_text(json.dumps(result, indent=2, sort_keys=True,
+                                       default=str) + "\n")
+    print(json.dumps(result, indent=2, sort_keys=True, default=str))
+    return 0 if result["status"] == "PASS" else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
