@@ -178,9 +178,11 @@ finding.
 | `scripts/grm_d1_register_lt11.py` | the LT1.1 fixture amendment and immutable registration |
 | `scripts/grm_d1_cause_table.py` | the per-row diagnosis |
 | `scripts/grm_d1_emit_report.py` | this report and the ledger |
+| `tests/test_grm_d1_alias_cpu.py` | 14 tests |
+| `tests/test_grm_d1_amendment1.py` | 17 tests |
 | `tests/test_grm_d1_cause_table.py` | 12 tests |
 | `tests/test_grm_d1_recap.py` | 10 tests |
-| `tests/test_grm_d1_registration.py` | 17 tests |
+| `tests/test_grm_d1_registration.py` | 18 tests |
 | `tests/test_grm_d1_supersession_fixture.py` | 4 tests |
 
 **RED -> GREEN proof for the supersession fix.** Both arms run the SAME
@@ -326,6 +328,112 @@ routed. It cannot, by construction.
   failures are order- and luck-dependent rather than categorical.
 - **Cause-table shape and the per-row receipt join** — no prior art
   known to me.
+
+## 5b. Follow-up (A1 merged): amendment 1 and the A+ CPU check
+
+A1 landed `GRM_ALIAS_FOLD_MERGE` in core, so the alias class this
+report STOPPED on now has a mechanism. Three things changed.
+
+**(1) The absent-flag test became a present-flag test.** D1 asserted
+the absence rather than assuming it, so the assertion failed the
+moment A1 merged — which is the point. It is replaced by
+`test_alias_flag_is_present_and_really_read_on_this_tree` (the reader
+exists, switches in both directions, and an unknown token fails
+CLOSED to OFF) and `test_p1_profile_now_pins_the_flag_instead_of_
+recording_it_absent`. The BASE registration is deliberately NOT
+rewritten: it is sha-bound at `02b44d02…` and truthfully records
+what was true when it was written; the amendment supersedes it.
+
+**(2) LT1.1 amendment 1** — `artifacts/grm_d1/lt1_1/amendment1.json`,
+sha256 `0a5754cd3e5bc91c4c5428228ed4164534c5d281d2aa0c7410e8c7f8b145ce0e`,
+chained to registration `02b44d02e3fbb82c…` and order `6ae0f52af0059f0a…`.
+
+*Core rebind.* The lead named two changed files; the receipts show
+**five** core inputs differ from the LT1 run, and all five are
+rebound with attribution — pinning only two would silently accept
+the other three:
+
+| core input | before | after | attribution |
+|---|---|---|---|
+| `core/graft_arena.py` | `83a2d4a2bc0e…` | `918f5d0b202b…` | pre-A1 drift on grm-merge, not attributable to A1 |
+| `core/graft_repository.py` | `fc6b9448efb4…` | `591657233106…` | A1 (alias fold-merge hooks) |
+| `core/grm_admission.py` | `d1afc26a68b4…` | `ebdfd84af435…` | pre-A1 drift on grm-merge, not attributable to A1 |
+| `core/grm_runtime.py` | `39f823cbdb98…` | `973addc491a2…` | A1 (alias fold-merge hooks) |
+| `core/grm_text_norm.py` | `c4e496848b01…` | `e968d6879195…` | pre-A1 drift on grm-merge, not attributable to A1 |
+| `core/grm_alias_fold.py` | — (new) | `147ea9687112…` | A1 (new module; did not exist at the LT1 run) |
+
+21 of the 26 pinned core inputs are unchanged. The A1 attribution is
+checkable and checked: `test_a1_files_are_attributed_to_a1_and_the_
+others_are_not` requires every A1-attributed file to reference
+`alias_fold` and every other changed file NOT to.
+
+*Two arms.* Same frozen conversation, same 26-cell schedule,
+separately resumable into distinct output directories:
+
+| arm | alias flag | env after `environment(flags)` | out dir | budget |
+|---|---|---|---|---|
+| `A` | OFF | `GRM_ADMISSION_RULE=margin_first` | `artifacts/grm_d1/lt1_1/run_A` | 1.70 GPU-h |
+| `A+` | **ON** | `GRM_ADMISSION_RULE=margin_first GRM_ALIAS_FOLD_MERGE=1` | `artifacts/grm_d1/lt1_1/run_Aplus` | 1.70 GPU-h |
+
+Total 3.40 GPU-h; the lead may run A+ alone (1.70) and read A off
+the existing LT1 arm-A receipts, or run both for a same-tree
+contrast — running both is the only way to attribute a change to
+the flag rather than to the core rebind.
+
+*Registered predictions, before any run.* I disagree with one of
+the lead's numbers and say so rather than substituting silently:
+the lead proposed A+ aliases **≥ 3/5**; I register **4/5** (which
+also meets ≥ 3/5). Reason: the CPU check below is unambiguous at
+every distance, but the CPU reader is a regex double and LT1
+already showed one long-distance ladder drop (`recall_3_150`) that
+no lineage change addresses. 4/5 prices exactly one such drop.
+
+**(3) The A+ CPU alias check** — `artifacts/grm_d1/alias_cpu_aplus.md`
+/ `.json`. Flag and rule pinned and **read back** (R1 `pin_rule`
+idiom); 164 turns replayed; 10 merges executed.
+
+| probe | d | alias -> base | LT1 arm A | fold fired? | digest | admitted? | mounted | served (CPU double) |
+|---|---|---|---|---|---|---|---|---|
+| `recall_6_10` | 10 | the Hauler -> Kestrel | correct | yes | [164] | yes | [164] | `37 crates` |
+| `recall_7_10` | 10 | the Beacon -> Lantern | WRONG | yes | [165] | yes | [165] | `18 October 2196` |
+| `recall_6_25` | 25 | the Hauler -> Kestrel | correct | yes | [164] | yes | [164] | `37 crates` |
+| `recall_7_25` | 25 | the Beacon -> Lantern | WRONG | yes | [165] | yes | [165] | `18 October 2196` |
+| `recall_6_50` | 50 | the Hauler -> Kestrel | correct | yes | [164] | yes | [164] | `37 crates` |
+| `recall_7_50` | 50 | the Beacon -> Lantern | WRONG | yes | [165] | yes | [165] | `18 October 2196` |
+| `recall_6_100` | 100 | the Hauler -> Kestrel | correct | yes | [164] | yes | [164] | `37 crates` |
+| `recall_7_100` | 100 | the Beacon -> Lantern | WRONG | yes | [165] | yes | [165] | `18 October 2196` |
+| `recall_6_150` | 150 | the Hauler -> Kestrel | correct | yes | [164] | yes | [164] | `37 crates` |
+| `recall_7_150` | 150 | the Beacon -> Lantern | WRONG | yes | [165] | yes | [165] | `18 October 2196` |
+
+- A+ fold fired **10/10**, digest names both names **10/10**, admitted **10/10**, mounted **10/10**, served-correct **10/10**.
+- A (flag OFF) fold fired **0/10**, served-correct **0/10** — the
+  default-OFF contract holds and the LT1 failure reproduces.
+
+The digest for `recall_7_*` reads: *"For the archive: the Let's call
+Lantern 'the Beacon' from now on… Lantern's launch date will be 18
+October 2196. the Beacon is an alias for Lantern."* — coverage 1.0,
+lineage `digest_supersedes_edge_and_base`, **78 tokens inside the 96**
+arena width. That is RD2's width wall (49+61=110 > 96, which killed
+the FIX-7 co-mount) solved by moving the join to write time.
+
+**RED I hit and had to work through, reported plainly.** My first
+A+ run showed **0/10 folds fired**. The cause was mine, not A1's:
+`ArenaCache.consolidate` gates the digest on fact coverage, and the
+C7 CPU double answers every generation with the probe reader, which
+returns "unknown" for a summarization request — coverage 0.0, so
+every fold correctly aborted with `alias_fold_fidelity_abort`. The
+fix was to route the two request kinds to two readers (probe reader
+for probes, faithful extractive digest for consolidation), which
+exercises the coverage gate rather than bypassing it. Worth
+recording because a seat that stopped at the first run would have
+reported A1 as non-functional on entirely harness-side grounds.
+
+**What this does and does not show.** It shows the fold fires, the
+digest names both entities under the same FIX-8 projection routing
+uses, routing admits it, the ladder mounts it, and it fits the
+width. It does **not** show language-model recall: the reader is a
+regex stub. The GPU A+ arm is the test of sufficiency, and it is
+registered, not run.
 
 ## 6. Deviations, RED items, process safety
 

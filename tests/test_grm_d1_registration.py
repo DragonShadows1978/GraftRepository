@@ -126,43 +126,68 @@ def test_registration_is_arm_a_only_within_budget():
     assert reg['fixture']['sha256'] == digest
 
 
-def test_registration_records_the_alias_flag_as_absent_not_applied():
-    """The flag does not exist on this tree; the registration must say so."""
+def test_base_registration_is_frozen_at_its_pre_a1_wording():
+    """The base LT1.1 registration is sha-bound; it is NOT edited in place.
+
+    It was written before A1 merged and truthfully recorded the flag as
+    absent-at-that-time. Amendment 1 (a separate, sha-chained document) is
+    what flips the flag to present and pinned -- see
+    tests/test_grm_d1_amendment1.py. Rewriting the base would break its
+    sha `02b44d02…` and every receipt that cites it.
+    """
     digest = hashlib.sha256(reg11.fixture_bytes()).hexdigest()
     reg = reg11.registration(digest)
     flags = {f['name']: f for f in reg['optional_named_flags']}
     assert reg11.ALIAS_FLAG in flags
     assert flags[reg11.ALIAS_FLAG]['present_on_tree'] is False
     assert 'NOT pinned' in flags[reg11.ALIAS_FLAG]['disposition']
-    # It must never appear in the env the run actually sets.
+    # The base arm never sets it; only the amendment's A+ arm does.
     assert reg11.ALIAS_FLAG not in reg['required_env']
 
 
-def test_alias_flag_really_is_absent_from_this_tree():
-    """Verify the registration's own claim against the source tree.
+def test_alias_flag_is_present_and_really_read_on_this_tree():
+    """A1 landed: the flag now EXISTS and a real reader consumes it.
 
-    GRM-D1's own files name the flag in order to RECORD it as absent; that is
-    documentation, not an implementation that reads it. Everything else in
-    core/, scripts/ and tests/ must not mention it at all.
+    This replaces D1's original `…_is_absent_from_this_tree`. That test was
+    correct on the pre-A1 tree and correctly failed the moment A1 merged --
+    which is the point of asserting an absence instead of assuming one.
+    The obligation now inverts: the registration may only pin the flag
+    because a reader for it genuinely exists, so prove the reader.
     """
-    hits = []
-    for sub in ('core', 'scripts', 'tests'):
+    import core.grm_alias_fold as af
+
+    # 1. The module and its env contract exist.
+    assert af.ENV_NAME == reg11.ALIAS_FLAG
+    assert (ROOT / 'core/grm_alias_fold.py').exists()
+
+    # 2. Some file OUTSIDE D1's own is a real consumer, not a mention.
+    consumers = []
+    for sub in ('core', 'scripts'):
         for path in (ROOT / sub).rglob('*.py'):
             if path.name.startswith(('grm_d1_', 'test_grm_d1_')):
-                continue          # D1's own documentation of the absence
+                continue                # D1's own registration bookkeeping
             if reg11.ALIAS_FLAG in path.read_text(errors='ignore'):
-                hits.append(str(path))
-    assert hits == [], 'flag unexpectedly present in %r' % hits
+                consumers.append(path.name)
+    assert 'grm_alias_fold.py' in consumers, (
+        'the flag must be read by core; consumers=%r' % sorted(consumers))
 
-    # And no D1 file may actually READ it from the environment -- naming it in
-    # a docstring or a registration record is fine; consuming it is not.
-    import re
-    reader = re.compile(r'(?:environ(?:\.get)?|getenv)\s*[(\[]\s*[\'"]?%s'
-                        % re.escape(reg11.ALIAS_FLAG))
-    for path in (ROOT / 'scripts').glob('grm_d1_*.py'):
-        assert not reader.search(path.read_text()), (
-            '%s reads %s from the environment; the flag is absent and must not '
-            'be consumed' % (path, reg11.ALIAS_FLAG))
+    # 3. The reader actually switches on the value, in both directions, and
+    #    an unknown token fails CLOSED to OFF (A1's stated contract).
+    assert af.alias_fold_enabled(environ={reg11.ALIAS_FLAG: '1'}) is True
+    assert af.alias_fold_enabled(environ={reg11.ALIAS_FLAG: '0'}) is False
+    assert af.alias_fold_enabled(environ={}) is False
+    assert af.alias_fold_enabled(environ={reg11.ALIAS_FLAG: 'maybe'}) is False
+
+
+def test_p1_profile_now_pins_the_flag_instead_of_recording_it_absent():
+    """P1's named-flag surface must agree that the flag became real."""
+    from scripts.grm_profile import _flag_is_read, resolve_profile
+    assert _flag_is_read(reg11.ALIAS_FLAG) is True
+    resolved = resolve_profile(selection='eb1_c2', pinned=[reg11.ALIAS_FLAG])
+    assert resolved['env'].get(reg11.ALIAS_FLAG) == '1'
+    assert any(reg11.ALIAS_FLAG in entry
+               for entry in resolved['named_flags_applied'])
+    assert not any('ABSENT' in note.upper() for note in resolved['notes'])
 
 
 def test_registration_names_the_core_gap_it_does_not_fix():

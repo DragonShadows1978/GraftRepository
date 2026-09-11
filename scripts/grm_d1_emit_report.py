@@ -410,6 +410,138 @@ def report():
     add('  known to me.')
     add('')
 
+    # ---------------------------------------------------------- follow-up
+    amend_path = OUT / 'lt1_1/amendment1.json'
+    alias_path = OUT / 'alias_cpu_aplus.json'
+    if amend_path.exists() and alias_path.exists():
+        amend = json.loads(amend_path.read_text())
+        alias = json.loads(alias_path.read_text())
+        plus, off = alias['A+'], alias['A']
+        amend_sha = (OUT / 'lt1_1/amendment1.sha256').read_text().split()[0]
+        add('## 5b. Follow-up (A1 merged): amendment 1 and the A+ CPU check')
+        add('')
+        add('A1 landed `GRM_ALIAS_FOLD_MERGE` in core, so the alias class this')
+        add('report STOPPED on now has a mechanism. Three things changed.')
+        add('')
+        add('**(1) The absent-flag test became a present-flag test.** D1 asserted')
+        add('the absence rather than assuming it, so the assertion failed the')
+        add('moment A1 merged — which is the point. It is replaced by')
+        add('`test_alias_flag_is_present_and_really_read_on_this_tree` (the reader')
+        add('exists, switches in both directions, and an unknown token fails')
+        add('CLOSED to OFF) and `test_p1_profile_now_pins_the_flag_instead_of_')
+        add('recording_it_absent`. The BASE registration is deliberately NOT')
+        add('rewritten: it is sha-bound at `02b44d02…` and truthfully records')
+        add('what was true when it was written; the amendment supersedes it.')
+        add('')
+        add('**(2) LT1.1 amendment 1** — `artifacts/grm_d1/lt1_1/amendment1.json`,')
+        add('sha256 `%s`,' % amend_sha)
+        add('chained to registration `%s…` and order `%s…`.'
+            % (amend['registration_sha256'][:16], amend['order_sha256'][:16]))
+        add('')
+        add('*Core rebind.* The lead named two changed files; the receipts show')
+        add('**five** core inputs differ from the LT1 run, and all five are')
+        add('rebound with attribution — pinning only two would silently accept')
+        add('the other three:')
+        add('')
+        add('| core input | before | after | attribution |')
+        add('|---|---|---|---|')
+        for name, change in sorted(amend['core_rebind']['changed'].items()):
+            add('| `%s` | `%s…` | `%s…` | %s |'
+                % (name, change['before_sha256'][:12],
+                   change['after_sha256'][:12], change['attribution']))
+        for name, entry in sorted(amend['core_rebind']['new_inputs'].items()):
+            add('| `%s` | — (new) | `%s…` | %s |'
+                % (name, entry['sha256'][:12], entry['attribution']))
+        add('')
+        add('%d of the 26 pinned core inputs are unchanged. The A1 attribution is'
+            % amend['core_rebind']['unchanged_count'])
+        add('checkable and checked: `test_a1_files_are_attributed_to_a1_and_the_')
+        add('others_are_not` requires every A1-attributed file to reference')
+        add('`alias_fold` and every other changed file NOT to.')
+        add('')
+        add('*Two arms.* Same frozen conversation, same 26-cell schedule,')
+        add('separately resumable into distinct output directories:')
+        add('')
+        add('| arm | alias flag | env after `environment(flags)` | out dir | budget |')
+        add('|---|---|---|---|---|')
+        for name in ('A', 'A+'):
+            arm = amend['arms'][name]
+            add('| `%s` | %s | `%s` | `%s` | %.2f GPU-h |'
+                % (name, 'OFF' if not arm['alias_fold_merge'] else '**ON**',
+                   ' '.join('%s=%s' % kv for kv in
+                            sorted(arm['env_after_environment_flags'].items())),
+                   arm['out_dir'], arm['budget_gpu_hours']))
+        add('')
+        add('Total %.2f GPU-h; the lead may run A+ alone (1.70) and read A off'
+            % amend['budget_gpu_hours_total'])
+        add('the existing LT1 arm-A receipts, or run both for a same-tree')
+        add('contrast — running both is the only way to attribute a change to')
+        add('the flag rather than to the core rebind.')
+        add('')
+        add('*Registered predictions, before any run.* I disagree with one of')
+        add("the lead's numbers and say so rather than substituting silently:")
+        add('the lead proposed A+ aliases **≥ 3/5**; I register **4/5** (which')
+        add('also meets ≥ 3/5). Reason: the CPU check below is unambiguous at')
+        add('every distance, but the CPU reader is a regex double and LT1')
+        add('already showed one long-distance ladder drop (`recall_3_150`) that')
+        add('no lineage change addresses. 4/5 prices exactly one such drop.')
+        add('')
+        add('**(3) The A+ CPU alias check** — `artifacts/grm_d1/alias_cpu_aplus.md`')
+        add('/ `.json`. Flag and rule pinned and **read back** (R1 `pin_rule`')
+        add('idiom); %d turns replayed; %d merges executed.'
+            % (plus['turns_replayed'], plus['merges_executed']))
+        add('')
+        add('| probe | d | alias -> base | LT1 arm A | fold fired? | digest | admitted? | mounted | served (CPU double) |')
+        add('|---|---|---|---|---|---|---|---|---|')
+        for r in plus['rows']:
+            was = 'WRONG' if r['probe_id'].startswith('recall_7') else 'correct'
+            add('| `%s` | %d | %s -> %s | %s | %s | %s | %s | %s | `%s` |'
+                % (r['probe_id'], r['distance'], r['alias'], r['entity'], was,
+                   'yes' if r['fold_job_fired'] else 'no',
+                   r['digest_nodes'] or '—',
+                   'yes' if r['admitted'] else 'no',
+                   r['mounted_ids'], r['served'].strip('…')[:24]))
+        add('')
+        n = len(plus['rows'])
+        add('- A+ fold fired **%d/%d**, digest names both names **%d/%d**, '
+            'admitted **%d/%d**, mounted **%d/%d**, served-correct **%d/%d**.'
+            % (sum(1 for r in plus['rows'] if r['fold_job_fired']), n,
+               sum(1 for r in plus['rows'] if r['digest_names_both']), n,
+               sum(1 for r in plus['rows'] if r['admitted']), n,
+               sum(1 for r in plus['rows'] if r['digest_mounted']), n,
+               sum(1 for r in plus['rows'] if r['served_correct']), n))
+        add('- A (flag OFF) fold fired **%d/%d**, served-correct **%d/%d** — the'
+            % (sum(1 for r in off['rows'] if r['fold_job_fired']), n,
+               sum(1 for r in off['rows'] if r['served_correct']), n))
+        add('  default-OFF contract holds and the LT1 failure reproduces.')
+        add('')
+        add('The digest for `recall_7_*` reads: *"For the archive: the Let\'s call')
+        add('Lantern \'the Beacon\' from now on… Lantern\'s launch date will be 18')
+        add('October 2196. the Beacon is an alias for Lantern."* — coverage 1.0,')
+        add('lineage `digest_supersedes_edge_and_base`, **78 tokens inside the 96**')
+        add('arena width. That is RD2\'s width wall (49+61=110 > 96, which killed')
+        add('the FIX-7 co-mount) solved by moving the join to write time.')
+        add('')
+        add('**RED I hit and had to work through, reported plainly.** My first')
+        add('A+ run showed **0/10 folds fired**. The cause was mine, not A1\'s:')
+        add('`ArenaCache.consolidate` gates the digest on fact coverage, and the')
+        add('C7 CPU double answers every generation with the probe reader, which')
+        add('returns "unknown" for a summarization request — coverage 0.0, so')
+        add('every fold correctly aborted with `alias_fold_fidelity_abort`. The')
+        add('fix was to route the two request kinds to two readers (probe reader')
+        add('for probes, faithful extractive digest for consolidation), which')
+        add('exercises the coverage gate rather than bypassing it. Worth')
+        add('recording because a seat that stopped at the first run would have')
+        add('reported A1 as non-functional on entirely harness-side grounds.')
+        add('')
+        add('**What this does and does not show.** It shows the fold fires, the')
+        add('digest names both entities under the same FIX-8 projection routing')
+        add('uses, routing admits it, the ladder mounts it, and it fits the')
+        add('width. It does **not** show language-model recall: the reader is a')
+        add('regex stub. The GPU A+ arm is the test of sufficiency, and it is')
+        add('registered, not run.')
+        add('')
+
     add('## 6. Deviations, RED items, process safety')
     add('')
     add('**Deviations from the order**')
