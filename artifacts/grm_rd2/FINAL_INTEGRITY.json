@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "checks": {
+    "16_rows": true,
+    "report_16_table_rows": true,
+    "all_question_expected_served_quoted": true,
+    "8_refusals_8_stale": true,
+    "all_retirement_checks": true,
+    "inputs_unchanged": true,
+    "registered_inputs_unchanged": true,
+    "registration_unchanged": true,
+    "diagnostic_syntax": true,
+    "all_required_sections": true,
+    "c2_nine_questions_no_abstention_clause": true
+  },
+  "scope": "artifact/source integrity only, no new model or routing experiment"
+}

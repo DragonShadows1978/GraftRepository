@@ -1,0 +1,5 @@
+{
+  "error": "ValueError: BLOCKED_NO_GPU_IN_SANDBOX",
+  "model_effect": "NOT_MEASURED",
+  "status": "RED"
+}

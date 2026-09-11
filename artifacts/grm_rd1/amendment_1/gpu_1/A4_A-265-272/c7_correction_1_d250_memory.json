@@ -1,0 +1,158 @@
+{
+  "amendment_sha256": "72f7ba59d705e2107627321557ab047de762cb149d29143380bcacfcc3634593",
+  "arm": "A4",
+  "cell_id": "A-265-272",
+  "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-257-264/checkpoint",
+  "checkpoint_sha256": "51785e3f8429367eb388686a8fe9611636e76f2ff317fe24a67f2f5b98b968e4",
+  "class": "correction",
+  "difference": {
+    "actual_utf8_hex": "4d6963612d343332",
+    "expected_utf8_hex": "556e6b6e6f776e2e",
+    "reason": "production fixed-mount raw _attempt text differs from historical served text; no normalization waiver"
+  },
+  "evidence_class": "checkpoint production attempt; numerical backend identified in worker receipt",
+  "historical_served_from": null,
+  "mounted_ids": [
+    0,
+    14
+  ],
+  "mounted_payload_sha256": {
+    "0": "c0e5d7df6165a903050f9d61f998d80dff2d4c87765205008f1f1bf7ec729912",
+    "14": "95106f64ae0693f506a3ad9902d1b7f2823a9b6990068de7700a6ade6c544c34"
+  },
+  "probe_id": "c7_correction_1_d250",
+  "production_attempt_info": {
+    "_deferred_memory": {
+      "deposited": false,
+      "importance_committed": false,
+      "picks": [
+        0,
+        14
+      ],
+      "route_key_prepared": true,
+      "route_key_token": 2,
+      "seg_cache_ntok": 54,
+      "turn_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>Mica-432<|end|>",
+      "user_text": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer."
+    },
+    "evicted": 0,
+    "live_tokens": 54,
+    "mounts": [
+      1,
+      15
+    ],
+    "resident": 149
+  },
+  "prompt_token_ids": [
+    200006,
+    17360,
+    200008,
+    3575,
+    553,
+    17554,
+    162016,
+    13,
+    57369,
+    289,
+    25,
+    14093,
+    13,
+    13888,
+    9334,
+    25,
+    1721,
+    13,
+    200007,
+    200006,
+    1428,
+    200008,
+    8188,
+    722,
+    81976,
+    11,
+    1412,
+    382,
+    290,
+    2208,
+    363,
+    22,
+    19674,
+    53255,
+    12,
+    16,
+    1432,
+    30,
+    40500,
+    1606,
+    483,
+    290,
+    6052,
+    13,
+    200007,
+    200006,
+    173781,
+    200005,
+    17196,
+    200008
+  ],
+  "r2_byte_equal": false,
+  "r2_served_text": "Unknown.",
+  "raw_attempt_text": "Mica-432",
+  "request": {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-265-272",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-257-264/checkpoint",
+    "checkpoint_sha256": "51785e3f8429367eb388686a8fe9611636e76f2ff317fe24a67f2f5b98b968e4",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      0,
+      14
+    ],
+    "prefix_turns": [
+      265,
+      266,
+      267
+    ],
+    "probe_id": "c7_correction_1_d250",
+    "prompt": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 268,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  "schema": "grm.rd1.replay.row.1",
+  "scores": {
+    "control_case_fixed": {
+      "abstained": false,
+      "abstention_error": 0,
+      "answer": "Mica-432",
+      "exact_answer_error": 1,
+      "exact_correct": false,
+      "unsupported_answer_error": 0,
+      "wrong_value_error": 1
+    },
+    "frozen": {
+      "abstained": false,
+      "abstention_error": 0,
+      "answer": "Mica-432",
+      "exact_answer_error": 1,
+      "exact_correct": false,
+      "unsupported_answer_error": 0,
+      "wrong_value_error": 1
+    }
+  },
+  "served_from": "production_fixed_recorded_mounts",
+  "served_text": "Mica-432",
+  "side": "memory",
+  "turn": 268
+}

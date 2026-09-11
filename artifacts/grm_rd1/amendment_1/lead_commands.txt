@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Prior art: C7/C2 foreground leased cells (GRM contributors, 2026).
+# Lead-only GPU run. Fresh immutable campaign; no retries and no process kills.
+set -euo pipefail
+cd /mnt/ForgeRealm/wt/grm-rd1
+export PYTHONDONTWRITEBYTECODE=1
+python scripts/grm_rd1_replay.py dry-run
+export GRM_RD1_LEAD_GPU=1
+campaign=/mnt/ForgeRealm/wt/grm-rd1/artifacts/grm_rd1/amendment_1/gpu_1
+cells=(A-024-031 A-032-039 A-040-047 A-048-055 A-056-062 A-063-070 A-071-077 A-078-085 A-086-093 A-125-132 A-133-140 A-141-148 A-249-256 A-257-264 A-265-272 A-273-280)
+for cell in "${cells[@]}"; do
+  python scripts/grm_rd1_replay.py run-batch --batch "A0_${cell}" --campaign "$campaign"
+done
+python scripts/grm_rd1_replay.py verify-a0 --campaign "$campaign"
+for arm in A2 A4; do
+  for cell in "${cells[@]}"; do
+    python scripts/grm_rd1_replay.py run-batch --batch "${arm}_${cell}" --campaign "$campaign"
+  done
+done
+python scripts/grm_rd1_replay.py summary --campaign "$campaign" --output "$campaign/summary.json"

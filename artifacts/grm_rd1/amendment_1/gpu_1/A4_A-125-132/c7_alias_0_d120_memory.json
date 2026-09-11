@@ -1,0 +1,151 @@
+{
+  "amendment_sha256": "72f7ba59d705e2107627321557ab047de762cb149d29143380bcacfcc3634593",
+  "arm": "A4",
+  "cell_id": "A-125-132",
+  "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+  "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+  "class": "alias",
+  "difference": {
+    "actual_utf8_hex": "5468652063757272656e742076616c756520666f72202a2a4337e280915369676e616ce28091302a2a206973202a2a302a2a2e",
+    "expected_utf8_hex": "756e6b6e6f776e",
+    "reason": "production fixed-mount raw _attempt text differs from historical served text; no normalization waiver"
+  },
+  "evidence_class": "checkpoint production attempt; numerical backend identified in worker receipt",
+  "historical_served_from": null,
+  "mounted_ids": [
+    8
+  ],
+  "mounted_payload_sha256": {
+    "8": "6b81df7ff4c7d95bd3a3cc769528cab5607f5724d02d139b24cc316966f065b0"
+  },
+  "probe_id": "c7_alias_0_d120",
+  "production_attempt_info": {
+    "_deferred_memory": {
+      "deposited": false,
+      "importance_committed": false,
+      "picks": [
+        8
+      ],
+      "route_key_prepared": true,
+      "route_key_token": 4,
+      "seg_cache_ntok": 64,
+      "turn_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-0? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>The current value for **C7\u2011Signal\u20110** is **0**.<|end|>",
+      "user_text": "What is the current value for C7-Signal-0? Reply only with the answer."
+    },
+    "evicted": 0,
+    "live_tokens": 64,
+    "mounts": [
+      9
+    ],
+    "resident": 132
+  },
+  "prompt_token_ids": [
+    200006,
+    17360,
+    200008,
+    3575,
+    553,
+    17554,
+    162016,
+    13,
+    57369,
+    289,
+    25,
+    14093,
+    13,
+    13888,
+    9334,
+    25,
+    1721,
+    13,
+    200007,
+    200006,
+    1428,
+    200008,
+    4827,
+    382,
+    290,
+    2208,
+    1432,
+    395,
+    363,
+    22,
+    6968,
+    50301,
+    12,
+    15,
+    30,
+    40500,
+    1606,
+    483,
+    290,
+    6052,
+    13,
+    200007,
+    200006,
+    173781,
+    200005,
+    17196,
+    200008
+  ],
+  "r2_byte_equal": false,
+  "r2_served_text": "unknown",
+  "raw_attempt_text": "The current value for **C7\u2011Signal\u20110** is **0**.",
+  "request": {
+    "answer_budget": 32,
+    "arm": "A4",
+    "cell_id": "A-125-132",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+    "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      8
+    ],
+    "prefix_turns": [
+      125,
+      126,
+      127,
+      128
+    ],
+    "probe_id": "c7_alias_0_d120",
+    "prompt": "What is the current value for C7-Signal-0? Reply only with the answer.",
+    "reasoning": "medium",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 129,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: medium. Valid channel: final.<|end|><|start|>user<|message|>What is the current value for C7-Signal-0? Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  "schema": "grm.rd1.replay.row.1",
+  "scores": {
+    "control_case_fixed": {
+      "abstained": false,
+      "abstention_error": 0,
+      "answer": "The current value for **C7\u2011Signal\u20110** is **0**.",
+      "exact_answer_error": 1,
+      "exact_correct": false,
+      "unsupported_answer_error": 0,
+      "wrong_value_error": 1
+    },
+    "frozen": {
+      "abstained": false,
+      "abstention_error": 0,
+      "answer": "The current value for **C7\u2011Signal\u20110** is **0**.",
+      "exact_answer_error": 1,
+      "exact_correct": false,
+      "unsupported_answer_error": 0,
+      "wrong_value_error": 1
+    }
+  },
+  "served_from": "production_fixed_recorded_mounts",
+  "served_text": "The current value for **C7\u2011Signal\u20110** is **0**.",
+  "side": "memory",
+  "turn": 129
+}

@@ -1,0 +1,363 @@
+{
+  "receipt": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/scores/sup.json",
+  "overall_status": "RED",
+  "arms": {
+    "defaults": {
+      "fresh": {
+        "correct": 4,
+        "rows": 9,
+        "probes": [
+          {
+            "probe_id": "sup_harbor_restatement",
+            "correct": true,
+            "served_answer": "The current Harbor token value is **Nacre‑6‑Blue**.",
+            "mounted_ids": [
+              1,
+              3
+            ],
+            "metadata_retained": null
+          },
+          {
+            "probe_id": "sup_lumen_head",
+            "correct": false,
+            "served_answer": "Sure.",
+            "mounted_ids": [
+              2
+            ],
+            "metadata_retained": null
+          },
+          {
+            "probe_id": "sup_orion_current",
+            "correct": false,
+            "served_answer": "The current value.",
+            "mounted_ids": [
+              1
+            ],
+            "metadata_retained": null
+          },
+          {
+            "probe_id": "sup_praxis_fresh",
+            "correct": false,
+            "served_answer": "I’m sorry, but I don’t have that information.",
+            "mounted_ids": [
+              0,
+              2
+            ],
+            "metadata_retained": null
+          },
+          {
+            "probe_id": "sup_reserve_falcon_registry",
+            "correct": true,
+            "served_answer": "The current Falcon registry value is **“Vortex‑3‑Sierra.”**",
+            "mounted_ids": [
+              2
+            ],
+            "metadata_retained": null
+          },
+          {
+            "probe_id": "sup_reserve_juniper_pass",
+            "correct": false,
+            "served_answer": "I’m sorry, but I can’t help with that.",
+            "mounted_ids": [
+              3
+            ],
+            "metadata_retained": null
+          },
+          {
+            "probe_id": "sup_reserve_meridian_docket",
+            "correct": true,
+            "served_answer": "The current Meridian docket value is **Delta‑4‑Drift**.",
+            "mounted_ids": [
+              3
+            ],
+            "metadata_retained": null
+          },
+          {
+            "probe_id": "sup_reserve_tundra_ledger",
+            "correct": true,
+            "served_answer": "The current Tundra ledger value is Sable-0-Copper.",
+            "mounted_ids": [
+              2
+            ],
+            "metadata_retained": null
+          },
+          {
+            "probe_id": "sup_solace_fresh",
+            "correct": false,
+            "served_answer": "I’m sorry, but I can’t help with that.",
+            "mounted_ids": [
+              1,
+              2
+            ],
+            "metadata_retained": null
+          }
+        ]
+      },
+      "restart": {
+        "correct": 3,
+        "rows": 9,
+        "probes": [
+          {
+            "probe_id": "sup_harbor_restatement",
+            "correct": false,
+            "served_answer": "The token.",
+            "mounted_ids": [
+              1
+            ],
+            "metadata_retained": true
+          },
+          {
+            "probe_id": "sup_lumen_head",
+            "correct": false,
+            "served_answer": "Sure.",
+            "mounted_ids": [
+              2
+            ],
+            "metadata_retained": true
+          },
+          {
+            "probe_id": "sup_orion_current",
+            "correct": false,
+            "served_answer": "The current.",
+            "mounted_ids": [
+              1
+            ],
+            "metadata_retained": true
+          },
+          {
+            "probe_id": "sup_praxis_fresh",
+            "correct": false,
+            "served_answer": "I’m sorry, but I don’t have that information.",
+            "mounted_ids": [
+              0,
+              2
+            ],
+            "metadata_retained": true
+          },
+          {
+            "probe_id": "sup_reserve_falcon_registry",
+            "correct": true,
+            "served_answer": "The current Falcon registry value is **“Vortex‑3‑Sierra.”**",
+            "mounted_ids": [
+              2
+            ],
+            "metadata_retained": true
+          },
+          {
+            "probe_id": "sup_reserve_juniper_pass",
+            "correct": false,
+            "served_answer": "I’m sorry, but I can’t help with that.",
+            "mounted_ids": [
+              3
+            ],
+            "metadata_retained": true
+          },
+          {
+            "probe_id": "sup_reserve_meridian_docket",
+            "correct": true,
+            "served_answer": "The current Meridian docket value is **Delta‑4‑Drift**.",
+            "mounted_ids": [
+              3
+            ],
+            "metadata_retained": true
+          },
+          {
+            "probe_id": "sup_reserve_tundra_ledger",
+            "correct": true,
+            "served_answer": "The current Tundra ledger value is Sable-0-Copper.",
+            "mounted_ids": [
+              2
+            ],
+            "metadata_retained": true
+          },
+          {
+            "probe_id": "sup_solace_fresh",
+            "correct": false,
+            "served_answer": "I’m sorry, but I can’t help with that.",
+            "mounted_ids": [
+              1,
+              2
+            ],
+            "metadata_retained": true
+          }
+        ]
+      }
+    },
+    "profile": {
+      "fresh": {
+        "correct": 9,
+        "rows": 9,
+        "probes": [
+          {
+            "probe_id": "sup_harbor_restatement",
+            "correct": true,
+            "served_answer": "The Harbor token is currently **Nacre‑6‑Blue**.",
+            "mounted_ids": [
+              1
+            ],
+            "metadata_retained": null
+          },
+          {
+            "probe_id": "sup_lumen_head",
+            "correct": true,
+            "served_answer": "The current Lumen seal value is **Cobalt‑3‑Comet**.",
+            "mounted_ids": [
+              2
+            ],
+            "metadata_retained": null
+          },
+          {
+            "probe_id": "sup_orion_current",
+            "correct": true,
+            "served_answer": "The Orion pin is currently **Kestrel‑9‑Tango**.",
+            "mounted_ids": [
+              1
+            ],
+            "metadata_retained": null
+          },
+          {
+            "probe_id": "sup_praxis_fresh",
+            "correct": true,
+            "served_answer": "The current Praxis dock value is **Quartz‑8‑Jade**.",
+            "mounted_ids": [
+              0
+            ],
+            "metadata_retained": null
+          },
+          {
+            "probe_id": "sup_reserve_falcon_registry",
+            "correct": true,
+            "served_answer": "The current Falcon registry value is **Vortex‑3‑Sierra**.",
+            "mounted_ids": [
+              4
+            ],
+            "metadata_retained": null
+          },
+          {
+            "probe_id": "sup_reserve_juniper_pass",
+            "correct": true,
+            "served_answer": "The Juniper pass is currently **Opal‑7‑Green**.",
+            "mounted_ids": [
+              5
+            ],
+            "metadata_retained": null
+          },
+          {
+            "probe_id": "sup_reserve_meridian_docket",
+            "correct": true,
+            "served_answer": "Delta‑4‑Drift.",
+            "mounted_ids": [
+              5
+            ],
+            "metadata_retained": null
+          },
+          {
+            "probe_id": "sup_reserve_tundra_ledger",
+            "correct": true,
+            "served_answer": "The current Tundra ledger value is **Sable‑0‑Copper**.",
+            "mounted_ids": [
+              4
+            ],
+            "metadata_retained": null
+          },
+          {
+            "probe_id": "sup_solace_fresh",
+            "correct": true,
+            "served_answer": "The current Solace key is **Raven‑9‑Ivory**.",
+            "mounted_ids": [
+              1
+            ],
+            "metadata_retained": null
+          }
+        ]
+      },
+      "restart": {
+        "correct": 9,
+        "rows": 9,
+        "probes": [
+          {
+            "probe_id": "sup_harbor_restatement",
+            "correct": true,
+            "served_answer": "The Harbor token is currently **Nacre‑6‑Blue**.",
+            "mounted_ids": [
+              1
+            ],
+            "metadata_retained": true
+          },
+          {
+            "probe_id": "sup_lumen_head",
+            "correct": true,
+            "served_answer": "The current Lumen seal value is **Cobalt‑3‑Comet**.",
+            "mounted_ids": [
+              2
+            ],
+            "metadata_retained": true
+          },
+          {
+            "probe_id": "sup_orion_current",
+            "correct": true,
+            "served_answer": "The Orion pin is currently set to **Kestrel‑9‑Tango**.",
+            "mounted_ids": [
+              1
+            ],
+            "metadata_retained": true
+          },
+          {
+            "probe_id": "sup_praxis_fresh",
+            "correct": true,
+            "served_answer": "The current Praxis dock value is **Quartz‑8‑Jade**.",
+            "mounted_ids": [
+              0
+            ],
+            "metadata_retained": true
+          },
+          {
+            "probe_id": "sup_reserve_falcon_registry",
+            "correct": true,
+            "served_answer": "The current Falcon registry value is **Vortex‑3‑Sierra**.",
+            "mounted_ids": [
+              4
+            ],
+            "metadata_retained": true
+          },
+          {
+            "probe_id": "sup_reserve_juniper_pass",
+            "correct": true,
+            "served_answer": "The Juniper pass is currently **Opal‑7‑Green**.",
+            "mounted_ids": [
+              5
+            ],
+            "metadata_retained": true
+          },
+          {
+            "probe_id": "sup_reserve_meridian_docket",
+            "correct": true,
+            "served_answer": "Delta‑4‑Drift.",
+            "mounted_ids": [
+              5
+            ],
+            "metadata_retained": true
+          },
+          {
+            "probe_id": "sup_reserve_tundra_ledger",
+            "correct": true,
+            "served_answer": "The current Tundra ledger value is **Sable‑0‑Copper**.",
+            "mounted_ids": [
+              4
+            ],
+            "metadata_retained": true
+          },
+          {
+            "probe_id": "sup_solace_fresh",
+            "correct": true,
+            "served_answer": "The current Solace key is **Raven‑9‑Ivory**.",
+            "mounted_ids": [
+              1
+            ],
+            "metadata_retained": true
+          }
+        ]
+      }
+    }
+  }
+}

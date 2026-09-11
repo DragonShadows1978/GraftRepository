@@ -1,0 +1,15 @@
+{
+  "broken_report_links": [],
+  "checkpoint_files_checked_in_cpu_gate": 1637,
+  "core_sha256": {
+    "core/graft_arena.py": "0892508ae840b2134cf99417cbd051342f100e68955623f2bc0f9ef15f25324c",
+    "core/graft_repository.py": "fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db"
+  },
+  "cpu_gate_status": "PARTIAL_CPU_PASS_REPLAY_BLOCKED",
+  "gpu_executed": false,
+  "model_effect": "NOT_RUN",
+  "registered_input_files_rechecked": 113,
+  "registration_sha256": "941f0d9db78a4748c80165da9456601731c5b0b3c651c68ec449c70da74310a1",
+  "result_slots": 520,
+  "status": "PASS_DELIVERABLE_INTEGRITY_ONLY"
+}

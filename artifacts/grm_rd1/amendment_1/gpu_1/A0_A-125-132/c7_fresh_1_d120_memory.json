@@ -1,0 +1,150 @@
+{
+  "amendment_sha256": "72f7ba59d705e2107627321557ab047de762cb149d29143380bcacfcc3634593",
+  "arm": "A0",
+  "cell_id": "A-125-132",
+  "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+  "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+  "class": "fresh",
+  "difference": null,
+  "evidence_class": "checkpoint production attempt; numerical backend identified in worker receipt",
+  "historical_served_from": null,
+  "mounted_ids": [
+    6
+  ],
+  "mounted_payload_sha256": {
+    "6": "29eda11b1d74a33914dbfccf96b7e991b96fa07f0f98d4685016d97bcff86687"
+  },
+  "probe_id": "c7_fresh_1_d120",
+  "production_attempt_info": {
+    "_deferred_memory": {
+      "deposited": false,
+      "importance_committed": false,
+      "picks": [
+        6
+      ],
+      "route_key_prepared": true,
+      "route_key_token": 2,
+      "seg_cache_ntok": 54,
+      "turn_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>Unknown.<|end|>",
+      "user_text": "What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply unknown."
+    },
+    "evicted": 0,
+    "live_tokens": 54,
+    "mounts": [
+      7
+    ],
+    "resident": 119
+  },
+  "prompt_token_ids": [
+    200006,
+    17360,
+    200008,
+    3575,
+    553,
+    17554,
+    162016,
+    13,
+    57369,
+    289,
+    25,
+    4465,
+    13,
+    13888,
+    9334,
+    25,
+    1721,
+    13,
+    200007,
+    200006,
+    1428,
+    200008,
+    4827,
+    382,
+    290,
+    2208,
+    363,
+    22,
+    8074,
+    3485,
+    12,
+    16,
+    1432,
+    30,
+    40500,
+    1606,
+    483,
+    290,
+    6052,
+    26,
+    538,
+    146213,
+    11,
+    16794,
+    17927,
+    13,
+    200007,
+    200006,
+    173781,
+    200005,
+    17196,
+    200008
+  ],
+  "r2_byte_equal": true,
+  "r2_served_text": "Unknown.",
+  "raw_attempt_text": "Unknown.",
+  "request": {
+    "answer_budget": 32,
+    "arm": "A0",
+    "cell_id": "A-125-132",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint",
+    "checkpoint_sha256": "919d1ee088aa0137f8bacd88a5f09e68e90877e44847732f8007784bf3708017",
+    "defer_memory": true,
+    "deposit": false,
+    "mounted_ids": [
+      6
+    ],
+    "prefix_turns": [
+      125,
+      126
+    ],
+    "probe_id": "c7_fresh_1_d120",
+    "prompt": "What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply unknown.",
+    "reasoning": "low",
+    "served_from": "fixed_recorded_mounts",
+    "served_from_recorded": null,
+    "side": "memory",
+    "stops": [
+      "<|return|>",
+      "<|end|>",
+      "<|start|>user",
+      "<|start|>assistant"
+    ],
+    "turn": 127,
+    "wrapped_prompt": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply unknown.<|end|><|start|>assistant<|channel|>final<|message|>"
+  },
+  "schema": "grm.rd1.replay.row.1",
+  "scores": {
+    "control_case_fixed": {
+      "abstained": true,
+      "abstention_error": 1,
+      "answer": "Unknown.",
+      "exact_answer_error": 1,
+      "exact_correct": false,
+      "unsupported_answer_error": 0,
+      "wrong_value_error": 0
+    },
+    "frozen": {
+      "abstained": true,
+      "abstention_error": 1,
+      "answer": "Unknown.",
+      "exact_answer_error": 1,
+      "exact_correct": false,
+      "unsupported_answer_error": 0,
+      "wrong_value_error": 0
+    }
+  },
+  "served_from": "production_fixed_recorded_mounts",
+  "served_text": "Unknown.",
+  "side": "memory",
+  "turn": 127
+}

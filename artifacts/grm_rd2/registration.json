@@ -1,0 +1,28 @@
+{
+  "schema": "grm.rd2.registration.1",
+  "created_utc": "2026-09-09T16:53:43.541766+00:00",
+  "plan": "orders/GRM_RD2_STALE_VALUE_DIAGNOSIS.md",
+  "scope": "16 A2 memory alias/correction wrong rows; receipt inspection and CPU-only metadata replay; no core edits",
+  "gates": [
+    "exactly 8 alias and 8 correction A2 wrong rows; quote exact questions/expected/served and all mounted texts",
+    "join original route/residency receipts and before-turn metadata; distinguish snapshot from reconstruction",
+    "check retirement, revision resolution, RT1 and arena order; compare C2 and production prompts",
+    "verify input hashes and report completeness"
+  ],
+  "stop": "On established core cause stop experimentation and report file/lines; finish required receipt reporting only; no fixes or GPU",
+  "classes": {
+    "a": "only superseded mounted, current absent",
+    "b": "both mounted and served old value",
+    "c": "alias edge/base incomplete",
+    "d": "other; explain"
+  },
+  "thresholds": "No performance gate; missing evidence stays RED; no inferred metadata presented as observed",
+  "input_sha256": {
+    "orders/GRM_RD2_STALE_VALUE_DIAGNOSIS.md": "79e8b65bee6ae94eead7bea70a91d6fab693acd59951937f4658b6c6ddd3e45d",
+    "AGENTS.md": "c162213c8ef2dd37a857dedb004c09cbaa73ff55f9afa87a1a5c1ed324e86a7f",
+    "/mnt/Shared/HOUSE_RULES.md": "fe5ce1643b8c96b145ade6b0ce13b85b6f6da5f57e2777ab9dac1356d079a6d6",
+    "artifacts/grm_rd1/cohort.json": "781642a08fa8d07a8cd6616e770585ee33c5826b1942c6568000dbe977c405cc",
+    "artifacts/grm_rd1/amendment_1/gpu_1/summary.json": "92b405a1d54c54216b90a74c85474d5cd4d240cc99331572615bbe800f931d74"
+  },
+  "prior_art": "Local GRM RD1/C7 receipt joining and fixed-mount replay, GRM contributors 2026; reused evidence contracts. No prior art known to me for this exact diagnostic composition."
+}

@@ -1,0 +1,10 @@
+# GRM-RD1 lead commands; run in foreground. CPU/read-only source verification only.
+# Registration is immutable. Do not rerun --register or overwrite receipts.
+# The requested GPU contrast is NON_FIT. There is no enabled model worker.
+cd /mnt/ForgeRealm/wt/grm-rd1
+PYTHONDONTWRITEBYTECODE=1 python scripts/grm_rd1.py --dry-run
+# Use this fresh output path once. Choose another new path for a later audit.
+PYTHONDONTWRITEBYTECODE=1 python scripts/grm_rd1.py --cpu-gates --output /tmp/grm-rd1-lead-cpu-20260909
+# Expected exit code 2, BLOCKED_NON_FIT; this checks the launch refusal only.
+PYTHONDONTWRITEBYTECODE=1 python scripts/grm_rd1.py --run
+# Stop. A separately registered timing/replay amendment is required before GPU launch.
