@@ -1,0 +1,234 @@
+{
+  "admission_rule": "margin_first",
+  "binding": {
+    "admission_rule": "margin_first",
+    "alias_fold_merge": true,
+    "amendment1_sha256": "0a5754cd3e5bc91c4c5428228ed4164534c5d281d2aa0c7410e8c7f8b145ce0e",
+    "arm": "A",
+    "campaign_arm": "A+",
+    "fixture_sha256": "470da44b3a570684bd24c9f3b96f434468d7914094222ed5867c1382fbc94d26",
+    "label": "A",
+    "rebound_core_shas": {
+      "core/graft_arena.py": "ee455a6a8b77016f5ad4c9047d9b02376e655eab596b9cb790d7bde7faa1c6da",
+      "core/graft_repository.py": "092cca898f20b0c1350aeb129f364c6fd5e55ecca8a6a796fd030e72efb9b50e",
+      "core/grm_admission.py": "ebdfd84af435a163dfe4a37281d489047acd974bf76190b79622340c29af7ab6",
+      "core/grm_alias_fold.py": "8e3810106d0e93a5da7bcf1c09dc80bcc4c561c5c334b634a96419ce475c97a5",
+      "core/grm_runtime.py": "973addc491a29eda9bac611a9c3f0cc25cd1033395ecc39b84b19c6f1b8f0646",
+      "core/grm_text_norm.py": "e968d68791950adb3a59bc83f43d75a75e31879a2f77c379b44bf711ccecc30a"
+    },
+    "registration_sha256": "02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8"
+  },
+  "capture": {
+    "rows": [
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 0
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 1
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 2
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 3
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 4
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 5
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 6
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 7
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 8
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 9
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 10
+      }
+    ],
+    "valid": true
+  },
+  "cell": {
+    "arm": "A",
+    "cooldown_seconds": 30,
+    "depends": "A-009-016",
+    "estimate_seconds": 171.07217440341347,
+    "id": "A-017-024",
+    "lease_seconds": 285,
+    "outer_seconds": 590,
+    "restart_sentinel_calls": 0,
+    "start": 17,
+    "stop": 24,
+    "worker_seconds": 280
+  },
+  "checkpoint_sha256": "2f5af4d9a46e75775c3960b1a3e1e823e7d664eb8afa580017acdba1c7d0b197",
+  "evidence_class": "GPU worker E2E",
+  "execution_amendment_sha256": "cbde1678f65310fec5dbdc0195dd58812b007af3454ab51cc8513013dc839c5d",
+  "metadata_retained": true,
+  "model_info": {
+    "expert_mode": "resident_packed_mxfp4",
+    "framework": "tensor_cuda GptOss20B_TC",
+    "full_attention_layers": [
+      1,
+      3,
+      5,
+      7,
+      9,
+      11,
+      13,
+      15,
+      17,
+      19,
+      21,
+      23
+    ],
+    "head_dim": 64,
+    "hidden_dim": 2880,
+    "layers": 24,
+    "loaded": "GPT-OSS-20B (resident_packed_mxfp4)",
+    "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "num_heads": 64,
+    "num_kv_heads": 8,
+    "repository": "openai/gpt-oss-20b",
+    "revision": "6cee5e81ee83917806bbde320786a8fb61efebee",
+    "sliding_attention_layers": [
+      0,
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      16,
+      18,
+      20,
+      22
+    ]
+  },
+  "pid": 3444819,
+  "previous_pid": 3444562,
+  "previous_process_id": "8a004543-dbb2-4a28-be93-c6522cecc0e3",
+  "process_id": "49f3c4d5-9da3-476d-860a-6b60b4bb5ffb",
+  "restart_before": null,
+  "restart_retained_scores": null,
+  "rows": 3
+}
