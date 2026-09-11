@@ -271,6 +271,15 @@ class GraftRepository:
         self._flush_error = None
         self._wal_lsn = 0
         self.last_wal_repair = None
+        # SCOUT-FIX-9: NEVER SILENT — the width guard's last rejection
+        # receipt (or None when the last split plan was sound). Present
+        # from construction so a reader cannot mistake a missing
+        # attribute for "nothing was rejected".
+        self.last_width_guard_rejection = None
+        # SCOUT-FIX-9: descent-key republishes owed to the native router
+        # (see _rebuild_child_keys / _republish_route_keys).
+        self._pending_route_republish = set()
+        self._native_route_republish_held = False
         self.review_buffer = []
         self.fold_history = []
         self._dirty_generation = 0
@@ -1235,6 +1244,109 @@ class GraftRepository:
             return None
         return spans
 
+    # SCOUT-FIX-9 — WHEN A WIDTH-GUARD SPLIT IS DEGENERATE.
+    #
+    # Scope matters as much as the predicate. A long document legitimately
+    # splits into many chunks, and some of them carry no identifier at all:
+    # LSR-P2C pins "Third section is filler prose about the loading dock
+    # schedule" and a two-token "dock schedule." tail as REAL readers of a
+    # 5-way split. Rejecting a whole split because one chunk is fact-less
+    # would destroy those, so a fact-less chunk alone is NOT the defect.
+    #
+    # The receipt's defect is narrower and has a shape: a SPLIT IN TWO whose
+    # first child is a fact-less fragment. Node 18 (97 tokens, seven facts,
+    # one token over a 96-token budget) became "ARCHIVE NOTE." (4 tokens,
+    # zero facts) plus the whole body. That split bought nothing — the body
+    # child still carries every fact and still needs its own seat — while
+    # depositing an addressable node that answers nothing. A binary split
+    # whose header child is a fragment is the guard misfiring on a one-token
+    # overflow, not a librarian doing useful work.
+    #
+    # So the rule is: reject when the plan cuts the parent in TWO and one of
+    # the two is a fact-less fragment, or when NO child carries any of the
+    # parent's facts (the split preserves nothing at all).
+    WIDTH_GUARD_FRAGMENT_FRACTION = 0.25
+
+    def _width_guard_degenerate_spans(self, idx, spans, budget=None):
+        """Receipt for a split plan that would deposit a fact-less child.
+
+        SCOUT-FIX-9 defect 1.  Returns ``None`` when every planned child
+        carries at least one of the parent's facts (the plan is sound), else
+        a dict naming the offending child span and why — the caller then
+        leaves the parent untouched rather than depositing the split.
+
+        Facts are FIX-5's `ArenaCache._fact_set`: identifiers and multi-word
+        named entities, minus `_FACT_STOP` (which already drops "archive"
+        and "note").  A parent with no facts has nothing a child could drop,
+        so it is never degenerate.  Child text is derived by the SAME
+        `_decode_token_span` the deposit uses, so the QC judges exactly the
+        text that would be written.
+
+        Prior art: see `_guard_deposit_width`.  The predicate itself is the
+        project's own fold-fidelity vocabulary; no prior art known to me for
+        applying it to a width-guard span plan.
+        """
+        parent = self.arena.grafts[int(idx)]
+        parent_text = str(parent.get("text", "") or "")
+        need = self.arena._fact_set([parent_text])
+        # A fact-less child counts as a FRAGMENT only below this ceiling.
+        # Measured against the receipt: 4 tokens vs a 96-token budget.
+        span_budget = int(budget) if budget else max(
+            (int(e) - int(b) for b, e in spans), default=0)
+        fragment_ceiling = span_budget * self.WIDTH_GUARD_FRAGMENT_FRACTION
+        # Which children carry facts, and which are fact-less fragments.
+        texts = [self._decode_token_span(parent_text, int(b), int(e))
+                 for b, e in spans]
+        carries = [bool(need and (self.arena._fact_set([t]) & need))
+                   for t in texts]
+        binary = len(spans) == 2
+        preserves_nothing = bool(need) and not any(carries)
+        for order, (start, end) in enumerate(spans):
+            start, end = int(start), int(end)
+            text = texts[order]
+            reason = None
+            # Shape A — the RECEIPT's shape: a child that carries none of
+            # its parent's facts. "ARCHIVE NOTE." (4 tokens, `_fact_set`
+            # empty by `_FACT_STOP`) cut off a 97-token era of seven facts.
+            # A parent with no facts of its own cannot produce this, so the
+            # check is skipped there rather than rejecting every split of
+            # fact-less prose.
+            if need and not carries[order] and (
+                    preserves_nothing
+                    or (binary and end - start <= fragment_ceiling)):
+                reason = ("degenerate_split_preserves_no_facts"
+                          if preserves_nothing
+                          else "degenerate_child_no_parent_facts")
+            # Shape B — a child whose text is the WHOLE parent plus a token
+            # marker. Reached when `_decode_token_span` cannot decode the
+            # span (its `.strip()` empties a span that is pure whitespace —
+            # measured: a trailing bare-newline token) and falls through to
+            # its `f"{text} [tokens {start}:{end}]"` placeholder. Such a
+            # child is not a PART of the parent, it IS the parent with a
+            # marker glued on: it duplicates every fact into a rival routing
+            # surface while owning a one-token payload. Degenerate by
+            # construction, so it is matched on the placeholder exactly —
+            # a span that legitimately decodes to the parent's full text
+            # (e.g. the only omitted token is trailing whitespace) is a real
+            # reader and is NOT rejected.
+            elif text == f"{parent_text} [tokens {start}:{end}]":
+                reason = "degenerate_child_whole_parent_text"
+            if reason is None:
+                continue
+            return {
+                "action": "width_guard_rejected",
+                "reason": reason,
+                "parent": int(idx),
+                "cull_index": int(order),
+                "token_start": start,
+                "token_end": end,
+                "child_text": text,
+                "parent_fact_count": len(need),
+                "fragment_ceiling": float(fragment_ceiling),
+                "spans": [(int(a), int(b)) for a, b in spans],
+            }
+        return None
+
     def _guard_deposit_width(self, idx, *, boundary="section", budget=None):
         """Apply the width guard to one freshly deposited node.
 
@@ -1270,6 +1382,48 @@ class GraftRepository:
         spans = self._width_guard_spans(idx, budget, boundary=boundary)
         if spans is None:
             return None
+        # SCOUT-FIX-9 defect 1 — DEGENERATE SPLIT CHILD.
+        #
+        # Receipt: P1 GPU smoke r2 (artifacts/grm_p1/gpu_smoke_r2.log and
+        # gpu_session/), turn 19.  Node 18 was an era fold of ntok=97 against
+        # a width budget of 96 — ONE token over.  `_width_fitting_chunks`
+        # ran the sentence fallback, which cut at the "ARCHIVE NOTE."
+        # sentence boundary, and the greedy re-pack could not merge that
+        # header back in (4 + 93 > 96).  The guard deposited child 20 with
+        # text exactly "ARCHIVE NOTE.", ntok=4, and ZERO of its parent's
+        # facts, then handed it a full inherited route surface — an active
+        # node that is addressable but answers nothing.  The CPU fixture
+        # reaches the same defect class through the fixed-width fallback
+        # (a 1-token orphan tail), so this is the split PLAN's defect, not
+        # one chunker's.
+        #
+        # The rule (lead ruling, SCOUT-FIX-9): a split child that carries
+        # none of its parent's facts is REJECTED — the parent stays exactly
+        # as it was (active, unsplit, its sources untouched) and the receipt
+        # says why.  Never deposited.  A parent with no facts at all has
+        # nothing to preserve, so the guard is unchanged there; only a
+        # fact-bearing parent can produce a fact-less child, and that child
+        # is the defect.  The vocabulary is FIX-5's own `_fact_set`, so
+        # "ARCHIVE NOTE." scores empty by the same `_FACT_STOP` that already
+        # excludes "archive" and "note" from fold coverage.
+        #
+        # Prior art: document-chunking minimum-information filters are
+        # standard in retrieval pipelines (e.g. LlamaIndex/LangChain drop
+        # sub-threshold splits, 2023-2025), and the "reject rather than
+        # deposit a lossy derivative" stance is the FIX-3/FIX-5 fold QC's
+        # own, reused here.  What is ours: keying the rejection on the
+        # project's existing `_fact_set` fidelity vocabulary rather than a
+        # token-count floor, so a SHORT child that does carry a fact still
+        # passes.  Unverified against the wider literature (no network in
+        # this sandbox) — lead to check; search terms: "chunk splitting
+        # minimum information filter", "retrieval chunk quality gate",
+        # "degenerate chunk rejection".
+        degenerate = self._width_guard_degenerate_spans(
+            idx, spans, budget=budget)
+        if degenerate is not None:
+            self.last_width_guard_rejection = degenerate
+            return None
+        self.last_width_guard_rejection = None
         parent_kind = parent.get("kind", "doc")
         out = self._cull_graft_direct(
             idx, spans=spans, retire_parent=True,
@@ -5459,6 +5613,18 @@ class GraftRepository:
         return self.flush_now()
 
     def load(self):
+        # SCOUT-FIX-9: hold the native descent-key republish for the whole
+        # load. Every `_rebuild_child_keys` call reached from here runs
+        # before the native store has adopted the checkpoint's nodes, so the
+        # work is QUEUED and drained once below, after the store knows them.
+        self._native_route_republish_held = True
+        try:
+            return self._load_locked(man=None)
+        finally:
+            self._native_route_republish_held = False
+            self._republish_route_keys()
+
+    def _load_locked(self, man=None):
         with open(os.path.join(self.path, "manifest.json")) as fh:
             man = json.load(fh)
         if man["dialect"] != self.dialect:
@@ -5549,18 +5715,83 @@ class GraftRepository:
         self._bind_s4_ledger()
 
     def _rebuild_child_keys(self):
-        """Descent keys rebuild from lineage (recursive: eras reach leaves)."""
-        def cents_of(i, depth=0):
+        """Descent keys rebuild from lineage (recursive: eras reach leaves).
+
+        SCOUT-FIX-9 defect 2 — ONE ROUTE-KEY SET, BOTH ROUTERS.
+
+        Receipt: P1 GPU smoke r2, turn 19.  `decisive_admission_profile`
+        raised `AdmissionPolicyError` because the native router and the
+        Python A-DEC reconstruction ranked the SAME eligible set differently
+        (production=[18, 21, 13, 8, 15, 16] vs reference=[18, 21, 20, 13, 8,
+        15]).  Reproduced host-only on the saved `gpu_session/` repository
+        (no GPU): nodes 18, 20 and 21 scored IDENTICALLY under Python
+        (11.435731 each) and the two routers broke that block differently.
+
+        Two causes, both here, both fixed below.
+
+        (1) CYCLIC LINEAGE.  `_guard_deposit_width` points the index parent
+        AT its children (`parent["sources"] = children`) while each child
+        points back at the parent (`child["sources"] = [idx]`).  The old walk
+        had a depth cap but no VISITED set, so it re-entered the cycle:
+        measured on the receipt, node 18 collected its own key seven times
+        and node 20's three times, and every member of the split family ended
+        up holding the family's maximal key.  A 4-token header child
+        therefore routed as if it were the 97-token era it was cut from —
+        the exact node the guard fired on.  The depth cap is KEPT (it is the
+        generational reach the descent contract promises); the visited set
+        only stops a node from inheriting a key it already owns, so an
+        acyclic lineage rebuilds byte-identically.
+
+        (2) STALE NATIVE KEYS.  This method mutates `child_cents` for every
+        node with sources, and `_native_set_route` publishes exactly
+        `[cent] + child_cents` to the native store.  But the callers only
+        re-synced SOME nodes (`_guard_deposit_width` syncs the parent;
+        `load()` syncs only WAL-replayed nodes), so after a width-guard split
+        the native store kept each child's deposit-time single key while
+        Python held the rebuilt set.  The two routers were ranking from
+        different key multisets — which is the whole defect the integrity
+        guard exists to catch.  Publishing the rebuilt keys HERE makes this
+        the single choke point for both routers, the same way the epoch bump
+        below is already the single choke point for the CUDA bank.
+
+        Lead ruling (SCOUT-FIX-9): route eligibility and the route key set
+        are ONE rule, so the guard compares identical candidate sets.
+
+        Prior art: cycle-safe graph traversal with a visited set is textbook
+        (Tarjan 1972; any DFS treatment); write-through cache invalidation at
+        a single mutation choke point is equally standard, and this file
+        already applies it to `_bump_cuda_route_epoch`.  Ours is only the
+        application: recognizing that the width guard's parent<->child edge
+        makes the descent-key walk cyclic, and that the native route store is
+        a second reader of `child_cents` that the rebuild must serve.  No
+        prior art known to me for this specific defect; unverified against
+        the wider literature (no network in this sandbox) — lead to check;
+        search terms: "hierarchical retrieval index stale key invalidation",
+        "parent-child chunk cycle descent keys".
+        """
+        def cents_of(i, depth=0, seen=None):
+            if seen is None:
+                seen = set()
+            i = int(i)
+            if i in seen:
+                return []
+            seen.add(i)
             g = self.arena.grafts[i]
             out = [g["cent"]]
             if depth < 3:
                 for s in g.get("sources", ()):
-                    out += cents_of(s, depth + 1)
+                    out += cents_of(s, depth + 1, seen)
             return out
-        for g in self.arena.grafts:
-            if g.get("sources"):
-                g["child_cents"] = [c for s in g["sources"]
-                                    for c in cents_of(s)]
+        changed = []
+        for idx, g in enumerate(self.arena.grafts):
+            if not g.get("sources"):
+                continue
+            seen = {int(idx)}
+            rebuilt = [c for s in g["sources"] for c in cents_of(s, seen=seen)]
+            before = g.get("child_cents")
+            g["child_cents"] = rebuilt
+            if not self._same_cent_list(before, rebuilt):
+                changed.append(int(idx))
         # child_cents is a signature field (CUDA route bank eligibility walk
         # excludes any graft with child_cents set). Called from
         # _cull_graft_direct (after its own _mark_mutations already ran),
@@ -5568,6 +5799,64 @@ class GraftRepository:
         # once so every caller is covered without duplicating the bump at
         # each call site.
         self._bump_cuda_route_epoch()
+        # Republish the rebuilt descent keys to the native router so both
+        # routers rank from one key set (cause 2 above). Only nodes whose
+        # keys actually moved are republished, so an unchanged repository
+        # does no native work at all and stays byte-identical.
+        #
+        # `load()` calls this BEFORE the native checkpoint has assigned node
+        # ids, so a node with no id yet is DEFERRED rather than published
+        # into a store that does not know it. `_republish_route_keys` is
+        # re-run at the end of load() once the ids exist, so nothing is lost.
+        self._pending_route_republish = (
+            getattr(self, "_pending_route_republish", set()) | set(changed))
+        self._republish_route_keys()
+
+    def _republish_route_keys(self):
+        """Publish deferred descent-key changes to the native router.
+
+        SCOUT-FIX-9 defect 2. Nodes whose native id is not yet assigned stay
+        queued; every other queued node is published and dequeued. Safe to
+        call repeatedly — the queue is the receipt of what is still owed.
+        """
+        pending = getattr(self, "_pending_route_republish", None)
+        if not pending or self.native_store is None:
+            return
+        # While load() is still assembling the repository the native store
+        # has not adopted the checkpoint's nodes yet, so publishing into it
+        # would raise "unknown GRM node id". Stay queued; load() drains the
+        # queue itself once the store knows every node.
+        if getattr(self, "_native_route_republish_held", False):
+            return
+        done = set()
+        for idx in sorted(pending):
+            if self._native_node_ids.get(int(idx)) is None:
+                continue
+            self._native_set_route(int(idx))
+            done.add(int(idx))
+        self._pending_route_republish = pending - done
+
+    @staticmethod
+    def _same_cent_list(before, after):
+        """True when two descent-key lists are element-wise identical.
+
+        SCOUT-FIX-9: used only to decide whether the native router needs a
+        republish, so it is deliberately conservative — anything it cannot
+        compare counts as CHANGED (republish, never silently skip).
+        """
+        if before is None:
+            return False
+        try:
+            if len(before) != len(after):
+                return False
+            for a, b in zip(before, after):
+                a = np.asarray(a)
+                b = np.asarray(b)
+                if a.shape != b.shape or not np.array_equal(a, b):
+                    return False
+        except Exception:
+            return False
+        return True
 
     def migrate(self, src_path):
         """Rebuild THIS (empty) repository from another repository's TEXTS.
