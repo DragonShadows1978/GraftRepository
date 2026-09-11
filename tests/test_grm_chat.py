@@ -76,12 +76,64 @@ def test_profile_strips_ambient_grm_switches():
     assert resolved["env"]["GRM_CAPTURE_PIN"] == "live"
 
 
-def test_absent_named_flag_is_recorded_not_claimed():
-    """GRM_ALIAS_FOLD_MERGE does not exist on this tree; say so."""
+def test_alias_fold_merge_is_effective_when_pinned():
+    """A1 landed, so GRM_ALIAS_FOLD_MERGE now has a reader and works.
+
+    Before A1 this same resolver reported the flag absent-and-not-effective
+    (the previous revision of this test asserted that).  The resolver was
+    not changed for the transition: ``_flag_is_read`` finds the reader that
+    A1 added, so the flag became effective on its own.
+    """
     resolved = resolve_profile(selection="eb1_c2",
                                pinned=["GRM_ALIAS_FOLD_MERGE"])
-    assert resolved["named_flags_applied"] == []
+    assert "GRM_ALIAS_FOLD_MERGE=1" in resolved["named_flags_applied"]
+    assert resolved["env"]["GRM_ALIAS_FOLD_MERGE"] == "1"
+    assert resolved["notes"] == []
+
+
+def test_alias_fold_merge_is_off_unless_pinned():
+    """Unset stays OFF — the profile does not turn A1 on by itself."""
+    resolved = resolve_profile(selection="eb1_c2")
     assert "GRM_ALIAS_FOLD_MERGE" not in resolved["env"]
+    assert resolved["named_flags_applied"] == []
+
+
+def test_the_pinned_flag_reaches_the_repository(tmp_path):
+    """The arm must ARM the mechanism, not merely set a string.
+
+    ``GraftRepository.__init__`` resolves ``alias_fold_merge`` from the env
+    at construction, so the only proof the A+ arm is real is the flag on
+    the live repository object.
+    """
+    from scripts.grm_p1_smoke import pinned_environment
+    for pins, expected in (([], False), (["GRM_ALIAS_FOLD_MERGE"], True)):
+        resolved = resolve_profile(selection="eb1_c2", pinned=pins)
+        with pinned_environment(resolved["env"]):
+            session = grm_chat.ChatSession(
+                tmp_path / f"s{expected}", resolved, fake=True)
+            session.open()
+            try:
+                assert session.repo.alias_fold_merge is expected
+            finally:
+                grm_chat._save_fake_codec(session)
+                session.close()
+
+
+def test_pinned_value_is_a_true_token_for_a1():
+    """The value we pin must be one A1 actually reads as ON."""
+    from core.grm_alias_fold import env_alias_fold_override
+    resolved = resolve_profile(selection="eb1_c2",
+                               pinned=["GRM_ALIAS_FOLD_MERGE"])
+    assert env_alias_fold_override(resolved["env"]) is True
+    assert env_alias_fold_override({}) is None          # unset = no opinion
+
+
+def test_a_flag_with_no_reader_is_recorded_not_claimed():
+    """The absent-flag path still exists, on a name nothing reads."""
+    resolved = resolve_profile(selection="eb1_c2",
+                               pinned=["GRM_NO_SUCH_FLAG"])
+    assert resolved["named_flags_applied"] == []
+    assert "GRM_NO_SUCH_FLAG" not in resolved["env"]
     assert any("ABSENT on this tree" in n for n in resolved["notes"])
 
 
@@ -97,6 +149,19 @@ def test_describe_profile_names_the_delta():
     delta = describe_profile("eb1_c2")["changes"]
     assert delta["arena_width"] == {"default": 256, "profile": 96}
     assert delta["capture_pin"] == {"default": "off", "profile": "live"}
+
+
+def test_printout_says_pinned_effective(tmp_path):
+    text = grm_chat.format_resolved(resolve_profile(
+        selection="eb1_c2", pinned=["GRM_ALIAS_FOLD_MERGE"]))
+    assert "GRM_ALIAS_FOLD_MERGE=1 (pinned, effective)" in text
+
+
+def test_printout_does_not_claim_an_unread_flag():
+    text = grm_chat.format_resolved(resolve_profile(
+        selection="eb1_c2", pinned=["GRM_NO_SUCH_FLAG"]))
+    assert "(pinned, effective)" not in text
+    assert "ABSENT on this tree" in text
 
 
 def test_resolved_flag_printout_names_the_frame():
@@ -218,7 +283,32 @@ def test_live_prompt_is_the_current_turn_only():
 @pytest.fixture(scope="module")
 def smoke(tmp_path_factory):
     repo = tmp_path_factory.mktemp("grm_p1_smoke") / "session"
-    return grm_p1_smoke.run(repo)
+    return grm_p1_smoke.run(repo, arm="A")
+
+
+@pytest.fixture(scope="module")
+def smoke_aplus(tmp_path_factory):
+    repo = tmp_path_factory.mktemp("grm_p1_smoke_aplus") / "session"
+    return grm_p1_smoke.run(repo, arm="A+")
+
+
+def test_both_arms_pass_on_plumbing(smoke, smoke_aplus):
+    """r3 registers two arms; both must be GREEN on plumbing.
+
+    The A+ arm arms A1's alias fold-merge. On the CPU fake it changes no
+    node count — the stub conversation produces no alias edge the fold can
+    merge — so this asserts the PLUMBING holds under the flag, and claims
+    nothing about the mechanism's effect. That is the GPU arms' job.
+    """
+    assert smoke["status"] == "PASS"
+    assert smoke_aplus["status"] == "PASS"
+    assert smoke["named_flags_applied"] == []
+    assert "GRM_ALIAS_FOLD_MERGE=1" in smoke_aplus["named_flags_applied"]
+
+
+def test_neither_arm_had_a_failed_turn(smoke, smoke_aplus):
+    assert smoke["failed_turns"] == []
+    assert smoke_aplus["failed_turns"] == []
 
 
 def test_smoke_passes(smoke):
@@ -357,6 +447,87 @@ def test_ledger_rows_are_one_per_turn(tmp_path):
         assert receipt["schema"] == "grm.route_receipt.v1"
         assert receipt["session_id"] == turns[0]["route_receipt"]["session_id"]
         assert "route" in receipt and "admission" in receipt
+
+
+def test_a_failing_turn_is_recorded_not_lost(tmp_path):
+    """The r2 GPU lesson: a raising turn must still leave a receipt.
+
+    r2 crashed on the recap (core AdmissionPolicyError), the exception
+    escaped run_transcript, and the ledger simply had no row — the scorer
+    then died with KeyError looking for a turn that was never written.
+    """
+    resolved = resolve_profile(selection="eb1_c2")
+    repo = tmp_path / "session"
+    session = grm_chat.ChatSession(repo, resolved, fake=True)
+    session.open()
+    try:
+        session.ask("The current orion pin value is Auric-4-Alpha.")
+        boom = RuntimeError("production route ranking differs")
+        row = session.record_failed_turn("recap the five", boom)
+    finally:
+        grm_chat._save_fake_codec(session)
+        session.close()
+
+    assert row["answer"] is None
+    assert "production route ranking differs" in row["error"]
+    assert row["route_receipt"] is None
+    rows = [json.loads(line) for line
+            in (repo / grm_chat.LEDGER_NAME).read_text().splitlines()
+            if line.strip()]
+    turns = [r for r in rows if r.get("schema") == "grm.chat_turn.v1"]
+    assert len(turns) == 2
+    assert turns[-1]["error"]
+
+
+def test_transcript_survives_a_failing_turn(tmp_path, monkeypatch):
+    """A batch run completes and keeps going after one turn raises."""
+    resolved = resolve_profile(selection="eb1_c2")
+    repo = tmp_path / "session"
+    script = tmp_path / "t.txt"
+    script.write_text(
+        "The current orion pin value is Auric-4-Alpha.\n"
+        "BOOM\n"
+        "What is the current orion pin value?\n")
+    session = grm_chat.ChatSession(repo, resolved, fake=True)
+    session.open()
+    real_ask = session.ask
+
+    def ask(user_text, **kwargs):
+        if user_text == "BOOM":
+            session.turn_idx += 1
+            raise RuntimeError("simulated core guard")
+        return real_ask(user_text, **kwargs)
+
+    session.ask = ask
+    try:
+        result = grm_chat.run_transcript(session, script)
+    finally:
+        grm_chat._save_fake_codec(session)
+        session.close()
+
+    assert len(result["rows"]) == 3, "the run continued past the failure"
+    assert result["rows"][1]["error"]
+    assert result["rows"][2]["answer"], "the turn after the failure ran"
+
+
+def test_recap_is_found_by_question_not_by_index(tmp_path):
+    """The r2 scorer defect: turns[19] assumed the recap is the last turn.
+
+    It is the last turn only when nothing before it failed. Looking it up
+    by RECAP_QUESTION works either way, and returns None honestly when the
+    recap never landed — which is exactly what the r2 ledger holds.
+    """
+    r2 = ROOT / "artifacts/grm_p1/gpu_session/session_ledger.jsonl"
+    if not r2.is_file():
+        pytest.skip("r2 GPU receipts not present in this worktree")
+    rows = [json.loads(line) for line in r2.read_text().splitlines()
+            if line.strip()]
+    turns = {r["turn"]: r for r in rows
+             if r.get("schema") == "grm.chat_turn.v1"}
+    assert 19 not in turns, "r2 has 18 chat turns; index 19 is the defect"
+    recap = next((t for t in turns.values()
+                  if t["user"] == grm_chat.RECAP_QUESTION), None)
+    assert recap is None, "r2's recap crashed before it could be written"
 
 
 def test_open_refuses_a_geometry_mismatch(tmp_path):

@@ -270,6 +270,34 @@ class ChatSession:
         self._append_ledger(row)
         return row
 
+    def record_failed_turn(self, user_text: str,
+                           exc: BaseException) -> dict[str, Any]:
+        """Write a ledger row for a turn that raised.
+
+        The turn number is already spent (``ask`` increments before it
+        serves), so the ledger keeps a contiguous sequence with an explicit
+        hole rather than a silent gap a later reader would misattribute.
+        ``answer`` is None and ``error`` names the exception — a scorer can
+        then report the turn as a failure instead of failing itself.
+        """
+        row = {
+            "schema": "grm.chat_turn.v1",
+            "turn": self.turn_idx,
+            "process_id": self.process_id,
+            "user": user_text,
+            "answer": None,
+            "error": f"{type(exc).__name__}: {exc}",
+            "mounted_ids": [],
+            "deposited_node_id": None,
+            "repository_nodes": (
+                int(len(self.repo.arena.grafts)) if self.repo else None),
+            "admission_rule": self.resolved["admission_rule"],
+            "profile": self.resolved["profile"],
+            "route_receipt": None,
+        }
+        self._append_ledger(row)
+        return row
+
     def recap(self) -> dict[str, Any]:
         """The LT1-style five-decision recap, asked over memory.
 
@@ -453,7 +481,10 @@ def format_resolved(resolved: dict[str, Any]) -> str:
         f"  topk / ngen      : {flags['topk']} / {flags['ngen']}",
     ]
     for name in resolved.get("named_flags_applied", ()):
-        lines.append(f"  named flag       : {name} (pinned)")
+        # "effective" is earned, not asserted: the resolver only lists a flag
+        # here after finding a reader for it in core/ or scripts/. A flag
+        # nothing reads lands in `notes` as absent instead.
+        lines.append(f"  named flag       : {name} (pinned, effective)")
     for note in resolved.get("notes", ()):
         lines.append(f"  note             : {note}")
     lines.append("  env:")
@@ -501,13 +532,19 @@ def run_interactive(session: ChatSession, *, stream=sys.stdout) -> int:
         if text == "/restart":
             print(json.dumps(session.restart(), indent=2), file=stream)
             continue
-        if text == "/recap":
-            print(f"grm> {session.recap()['answer']}", file=stream)
-            continue
-        if text.startswith("/"):
+        if text.startswith("/") and text != "/recap":
             print(f"unknown command {text!r}; /help for the list", file=stream)
             continue
-        print(f"grm> {session.ask(text)['answer']}", file=stream)
+        # One bad turn must not end the session and lose the repository:
+        # the memory is on disk and every other turn still works, so report
+        # the error and hand the prompt back.
+        try:
+            row = session.recap() if text == "/recap" else session.ask(text)
+        except Exception as exc:                # noqa: BLE001 - recorded
+            row = session.record_failed_turn(text, exc)
+            print(f"grm! turn failed: {row['error']}", file=stream)
+            continue
+        print(f"grm> {row['answer']}", file=stream)
 
 
 def run_transcript(session: ChatSession, transcript: Path, *,
@@ -527,10 +564,21 @@ def run_transcript(session: ChatSession, transcript: Path, *,
         if text == "/status":
             events.append({"command": "/status", **session.status()})
             continue
-        if text == "/recap":
-            row = session.recap()
-        else:
-            row = session.ask(text)
+        # A turn that RAISES must still leave a receipt. The r2 GPU smoke
+        # crashed on the recap (core AdmissionPolicyError, see below) and,
+        # because the exception escaped this loop, the ledger simply had no
+        # row for it — the scorer then failed with KeyError looking for a
+        # turn that was never written. A batch gate that loses the evidence
+        # of its own failure is worse than one that fails: record the error
+        # as the turn's outcome and keep going, so the ledger says what
+        # happened and the remaining turns still run.
+        try:
+            row = session.recap() if text == "/recap" else session.ask(text)
+        except Exception as exc:                # noqa: BLE001 - recorded
+            row = session.record_failed_turn(text, exc)
+            rows.append(row)
+            print(f"you> {text}\ngrm! {row['error']}", file=stream)
+            continue
         rows.append(row)
         print(f"you> {text}\ngrm> {row['answer']}", file=stream)
     return {"rows": rows, "events": events}

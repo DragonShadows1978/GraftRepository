@@ -51,11 +51,18 @@ PROFILES: dict[str, str | None] = {
 NON_ENV_FLAGS = ("arena_width", "topk", "ngen", "max_trips", "live_turns",
                  "max_live", "turn_pipeline", "vram_budget_mb", "ephemeral")
 
-#: Optional named flags a lead may pin when they exist on the merged tree.
+#: Optional named flags a lead may pin.  Whether a flag is EFFECTIVE is
+#: decided at resolve time by ``_flag_is_read`` — never by this list — so a
+#: flag that lands on the tree later starts working with no edit here, and
+#: one that is removed stops claiming to.
+#:
 #: ``GRM_ALIAS_FOLD_MERGE`` is the alias fold-merge mechanism from the C7 r3
-#: alias design memo; it is NOT present on this tree (grep of core/ and
-#: scripts/ finds no reader), so pinning it records an explicit
-#: "absent on this tree" note rather than silently claiming it is active.
+#: alias design memo.  It landed with A1 (``core/grm_alias_fold.py``, hooks
+#: in ``core/graft_repository.py`` and ``core/grm_runtime.py``) and is
+#: DEFAULT OFF there: ``env_alias_fold_override`` returns ``None`` when the
+#: variable is unset, and unknown tokens fail CLOSED to OFF.  Pinning it
+#: sets ``=1``, one of A1's true tokens.  Before A1 this same code reported
+#: it as absent-and-not-effective; that transition needed no change here.
 KNOWN_NAMED_FLAGS = ("GRM_ALIAS_FOLD_MERGE",)
 
 
