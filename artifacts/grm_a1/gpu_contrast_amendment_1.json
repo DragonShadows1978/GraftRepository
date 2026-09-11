@@ -1,0 +1,108 @@
+{
+ "amendment": 1,
+ "authorized_by": "lead follow-up message, 2026-09-10",
+ "binds_to_registration_prefix": "329d5865",
+ "changed_inputs": {
+  "/mnt/ForgeRealm/wt/grm-a1/tests/test_grm_a1_alias_fold.py": {
+   "after": "583bf1277b168ae96fd91e2fcb78e1769c51c8e51cbc268f25319cb0acc58053",
+   "before": "a469ad3d306d844f82c08384188324b1d3dcd1ec60e674df500b1a60e2e57e25"
+  }
+ },
+ "fake_run_receipt": {
+  "note": "Structural gate only. verdict=FAKE_RUN_NOT_A_PREDICTION, prediction_met=null; aliases_exact on CPU doubles is meaningless (entity-blind reader, compound RD2 base).",
+  "rows": 23,
+  "summary": "artifacts/grm_a1/gpu_fake/summary.json",
+  "summary_sha256": "a307c90f75a104fd2e23e1e3a2ae4659c4a598313aad6c9fdccfea6e31848487"
+ },
+ "lt1_correction": {
+  "cause_of_the_wrong_reading": "The measurement did not pin GRM_ADMISSION_RULE, so it ran under the default all_tokens_bind. LT1 is registered at margin_first (scripts/grm_lt1.py:98, enforced :197, exported grm_lt1_worker.py:245); grm_c2_cells.environment() strips every GRM_* key and re-pins a fixed set that does NOT include GRM_ADMISSION_RULE, so the pin must come AFTER it (contract recorded verbatim at grm_scout_fix6_replay.py:55).",
+  "corrected_reading": "Under margin_first, 10/10 LT1 alias probes are ADMITTED, each mounting exactly ONE merged digest (branch fit_margin_decisive_rank1), and the fixture-blind alias reader answers 10/10 exact. The ideal-digest arm and the A1-merged arm agree probe for probe.",
+  "receipt": "artifacts/grm_a1/lt1_margin_first.json",
+  "receipt_sha256": "556cbe462cb3ad220f51fe038708f5d3445edece2035357c47684958c430b25c",
+  "scope": "LT1 remains OUT of the GPU contrast: its rows have no pinned C7 r3 checkpoint. The correction changes the seat report, not the registered GPU prediction.",
+  "status": "RETRACTED",
+  "supersedes": "RED item 1 of the seat report: \"LT1 alias probes abstain identifier_unbound; pre-existing, not A1's\"."
+ },
+ "new_inputs": {
+  "artifacts/grm_a1/lt1_margin_first.json": "556cbe462cb3ad220f51fe038708f5d3445edece2035357c47684958c430b25c",
+  "scripts/grm_a1_gpu_contrast.py": "1ad44ff1eb28406f2d8718f252c77b8f7aecdd35d3fccfe233d6e9290313ec1d",
+  "tests/test_grm_a1_gpu_contrast.py": "d4ed94216771647074fc60ac1e042de8122de9d6a187ec37ed47a2f99f043248"
+ },
+ "pinned_inputs_sha256": {
+  "/mnt/ForgeRealm/wt/grm-a1/artifacts/grm_a1/alias_fixture.json": "e8119ce85b9a8e944fe0a3d78ee1ad049a6b8100f04d8c7f83f469955887af41",
+  "/mnt/ForgeRealm/wt/grm-a1/artifacts/grm_a1/lt1_margin_first.json": "556cbe462cb3ad220f51fe038708f5d3445edece2035357c47684958c430b25c",
+  "/mnt/ForgeRealm/wt/grm-a1/artifacts/grm_a1/off_parity.json": "7e2610a4df7eb989b70c05c3489f185209a5849e0e4688eb9d279f64c35eb33e",
+  "/mnt/ForgeRealm/wt/grm-a1/artifacts/grm_a1/width_receipts.json": "96170784d022452c8b32d9425d3b8c57b9e31e2cd299093fa9a33d88ed90da8f",
+  "/mnt/ForgeRealm/wt/grm-a1/core/graft_arena.py": "918f5d0b202b4efabfaa1c37c965cdf3ce8fbd7e6b69045c4dafd985bee820a9",
+  "/mnt/ForgeRealm/wt/grm-a1/core/graft_repository.py": "59165723310605d599088718b486066cdfad90e16c15d9af83cf64726a52c2e4",
+  "/mnt/ForgeRealm/wt/grm-a1/core/grm_admission.py": "ebdfd84af435a163dfe4a37281d489047acd974bf76190b79622340c29af7ab6",
+  "/mnt/ForgeRealm/wt/grm-a1/core/grm_alias_fold.py": "147ea9687112e9ccd61aaaf63c16404c5175a08d6733da2df22d4e591f1203e7",
+  "/mnt/ForgeRealm/wt/grm-a1/core/grm_runtime.py": "973addc491a29eda9bac611a9c3f0cc25cd1033395ecc39b84b19c6f1b8f0646",
+  "/mnt/ForgeRealm/wt/grm-a1/scripts/grm_a1_gpu_contrast.py": "1ad44ff1eb28406f2d8718f252c77b8f7aecdd35d3fccfe233d6e9290313ec1d",
+  "/mnt/ForgeRealm/wt/grm-a1/scripts/grm_a1_off_parity.py": "c45db4a88fe2cafbef3fcd33d41ee020563e9c6c8bb57fa0b0cb91af05714a48",
+  "/mnt/ForgeRealm/wt/grm-a1/scripts/grm_a1_width_receipts.py": "4873dd0ea18ca3754fd044815762e93a9e43309f4e7613ecdf22cd6d9857183d",
+  "/mnt/ForgeRealm/wt/grm-a1/tests/test_grm_a1_alias_fold.py": "583bf1277b168ae96fd91e2fcb78e1769c51c8e51cbc268f25319cb0acc58053",
+  "/mnt/ForgeRealm/wt/grm-a1/tests/test_grm_a1_gpu_contrast.py": "d4ed94216771647074fc60ac1e042de8122de9d6a187ec37ed47a2f99f043248",
+  "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/ALIAS_DESIGN_OPTIONS.md": "f8486fee2f516bac338bbff8ef757c75e7906de3a66a791cf4b43fe7ce8e3e4f",
+  "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/SHA256SUMS": "8496db79a1651fa3fbec772bcaea60313131a30a88613eddd73a083682a26a35",
+  "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/effective_questions.json": "355f5c6a2f1948c46f3a172ce0bd5576863b18b32f199f5d497834b187125b5b",
+  "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/fixture.json": "b648ebb71072d1c357146f6cedb22f6d93dd259a69cb50d912e1e9b564624c17",
+  "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/registration.json": "65c543b1904e6e3bd81d95316dbc092fd72f70ae164044cce036ce8a6ec04b1c",
+  "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/registration.sha256": "3de5da39d52a63d41070531e78ad9206a36965a7c2997ca168b58f3e707c93f5",
+  "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/stop_receipt.json": "99de4e999b7686a8a18b13da7eb4466e3f4896f977019a52405dcabd02f8a714",
+  "/mnt/ForgeRealm/wt/grm-rd1/artifacts/grm_rd2/rows.json": "26d72f3545743ab0f4104826a758feb23d7c171daceec0de402c4d5a026a3971"
+ },
+ "registration": {
+  "path": "/mnt/ForgeRealm/wt/grm-a1/artifacts/grm_a1/gpu_contrast_registration.json",
+  "sha256": "329d5865d437598f41fe9569fe8c06a4c2da64544476cf3ee73eb5e3efa9d8cd"
+ },
+ "registration_sha256": "329d5865d437598f41fe9569fe8c06a4c2da64544476cf3ee73eb5e3efa9d8cd",
+ "schema": "grm.a1.lead-amendment.v1",
+ "title": "A1 amendment 1 — GPU worker becomes a pinned input; LT1 RED retracted",
+ "unchanged": {
+  "budget": {
+   "basis": "RD2 amortized proxy 22.680409907679 s/call; 18 alias probes + 18 controls = 36 calls ~= 816.5 s ~= 0.2268 GPU-h, plus load/merge/re-tokenize overhead. The 0.5 GPU-h ceiling is the order's, not a measurement.",
+   "calls_alias": 18,
+   "calls_control": 18,
+   "gpu_hours_max": 0.5
+  },
+  "model": {
+   "engine": "tensor_cuda GptOss20B_TC",
+   "id": "openai/gpt-oss-20b",
+   "quant": "resident_packed_mxfp4",
+   "revision": "6cee5e81ee83917806bbde320786a8fb61efebee",
+   "source": "RD2 REPORT.md \"Model under test\""
+  },
+  "note": "The prediction, budget, rows, prompt and procedure are NOT touched by this amendment. Only the input set moves.",
+  "procedure": [
+   "1. Load each pinned C7 r3 checkpoint below (sha-verified) with A1 OFF.",
+   "2. Apply the merge to the LOADED state: repo.alias_fold_merge = True, then repo.alias_fold_pass(). Record every decision receipt (reason, lineage, width, base_shared_with_edges).",
+   "3. Re-tokenize each produced digest with the GPT-OSS tokenizer and record digest_tokens vs arena width 96 BEFORE claiming single-mount fit. Over-width digests take the existing LSR-P2C width-guard split; the receipt must say so.",
+   "4. Read each alias probe under the plain production prompt.",
+   "5. Read the NON-alias controls unchanged; any control that moves is a STOP."
+  ],
+  "read_prompt": "PLAIN PRODUCTION probe template, scripts/grm_e2e_session.py:188-190 — \"Recall probe. What is the current {fact_id} value? Reply with only the value.\" NO C7 abstention clause is added (RD2 \"Production ladder / EB1 prompt\").",
+  "registered_prediction": {
+   "aliases_exact_from_single_digest_mount": ">= 5 of 8 (RD2 rows)",
+   "controls_broken": 0,
+   "note": "The CPU gates establish EVIDENCE SUFFICIENCY only (the mounted digest contains alias, base and value, under width). Whether GPT-OSS-20B READS it correctly is exactly what this contrast measures and is NOT claimed by any CPU receipt.",
+   "registered_before_any_gpu_run": true
+  },
+  "rows": "23 unchanged (8 RD2 + 10 C7 answerable + 5 C7 controls)",
+  "worker_contract": {
+   "gpu_contention": "flock --wait; operator has right of way",
+   "leased": true,
+   "never_kill_foreign_processes": true,
+   "receipts": "create-only (never overwrite)",
+   "resumable": true
+  }
+ },
+ "worker": {
+  "fake_vs_real": "Identical control flow; the ONLY difference is the loader (_load_fake vs _load_gpu) and which tokenizer measures the width receipt.",
+  "gate": "python3 scripts/grm_a1_gpu_contrast.py --fake — drives every branch on the CPU doubles: all 23 rows, resume-after-interrupt, drift RED, over-width path. See tests/test_grm_a1_gpu_contrast.py.",
+  "path": "scripts/grm_a1_gpu_contrast.py",
+  "reason": "The registration previously named no worker because the seat had not written one. It is now an INPUT and is sha-pinned like every other input, so the lead runs the exact bytes the fake-path gate exercised.",
+  "self_pin_note": "The worker EXCLUDES its own path from the drift set and checks it separately (verify_self), recording worker_provenance on every row. A self-pinned file inside its own drift set can never be edited without a same-breath re-amendment, and the two failures — \"an input moved\" vs \"the worker is not the reviewed bytes\" — are different facts.",
+  "sha256": "1ad44ff1eb28406f2d8718f252c77b8f7aecdd35d3fccfe233d6e9290313ec1d"
+ }
+}

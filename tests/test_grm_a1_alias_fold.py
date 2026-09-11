@@ -32,12 +32,29 @@ repository's metadata — to show the chain is followable.  ``test_rd2_``
 ``fake_reader_entity_blind_limit`` pins the stub's limitation explicitly so
 it can never be mistaken for a pass.
 
+ADMISSION RULE — PIN IT OR MEASURE THE WRONG ONE.
+``grm_c2_cells.environment()`` strips every ``GRM_*`` key and re-pins a FIXED
+set that does NOT include ``GRM_ADMISSION_RULE``, so any check that does not
+re-pin the rule AFTERWARDS silently measures the default
+``all_tokens_bind``.  LT1 is registered at ``margin_first``
+(``scripts/grm_lt1.py:98``, enforced at ``:197``, exported at
+``grm_lt1_worker.py:245``; the contract is recorded verbatim at
+``scripts/grm_scout_fix6_replay.py:55``).  An earlier revision of this file
+measured LT1 serving WITHOUT that pin, recorded 10/10 abstaining
+``identifier_unbound``, and reported it as a pre-existing RED.  That reading
+was wrong about WHICH RULE was under test and has been RETRACTED — see
+``test_lt1_serves_under_its_registered_margin_first_rule`` and
+``test_lt1_default_rule_abstention_is_the_rule_not_the_repository``.  Use
+``pin_admission_rule()`` for every LT1 serving assertion.
+
 Prior art: ``tests/test_grm_scout_fix5.py`` (GRM contributors, 2026) supplies
 the ``EnumeratedModel`` stimulus contract and the repository fixture shape,
 reused here verbatim in spirit — the fold output is derived ONLY from the
 enumerated ``[source N]`` spans the production prompt itself emits, never
 from expected answers.  ``scripts/grm_c7_diagnose.py`` supplies the CPU
-doubles.  No prior art known to me for this exact alias gate composition.
+doubles.  The rule-pinning discipline is ``grm_scout_fix6_replay``'s
+(GRM contributors, 2026), applied verbatim.  No prior art known to me for
+this exact alias gate composition.
 """
 
 import json
@@ -507,12 +524,12 @@ def _lt1_repo(tmp_path, monkeypatch, flag, name, model=EnumeratedModel):
 
 @pytest.mark.parametrize('row', LT1_ROWS, ids=[r['probe_id'] for r in LT1_ROWS])
 def test_lt1_alias_red_before_flag_off(tmp_path, monkeypatch, row):
-    """RED: with A1 OFF no node anywhere joins the alias to its value.
+    """RED: with A1 OFF no node joins the alias to its value, and no mount does.
 
-    Asserted on the NODE TABLE, not on the mount, because LT1's probes
-    abstain before mounting on both arms (see
-    ``test_lt1_admission_blocker_is_pre_existing_RED``) — a mount-based RED
-    here would pass for the wrong reason and hide the real distinction.
+    Measured under LT1's REGISTERED ``margin_first`` rule, so the OFF arm is
+    compared to the ON arm on the same footing — an unpinned measurement here
+    would abstain for a reason that has nothing to do with the flag and would
+    pass for the wrong reason.
     """
     repo = _lt1_repo(tmp_path, monkeypatch, '0', row['probe_id'] + '-off')
     try:
@@ -521,9 +538,13 @@ def test_lt1_alias_red_before_flag_off(tmp_path, monkeypatch, row):
         for graft in repo.arena.grafts:
             assert not af.names_present(str(graft.get('text', '')),
                                         alias, row['expected'])
+        pin_admission_rule(monkeypatch)
         repo.arena.m.fold_output = None
         repo.arena.step(row['question'], ngen=8, deposit=False)
-        assert not evidence_sufficient(mounted_text(repo), row['expected'])
+        # Admitted and mounted under margin_first, but the mount is a bare
+        # turn node that cannot join the alias to the value.
+        assert not evidence_sufficient(mounted_text(repo), alias,
+                                       row['expected'])
     finally:
         repo.close()
 
@@ -533,10 +554,11 @@ def test_lt1_alias_green_after_flag_on(tmp_path, monkeypatch, row):
     """LT1's aliases are NATURAL language ("Let's call Kestrel 'the Hauler'").
 
     GREEN here is the merge and its receipt: one digest, naming alias, base
-    and value, under the arena width.  It is deliberately NOT a served
-    answer — see ``test_lt1_admission_blocker_is_pre_existing_RED`` directly
-    below, which pins the separate, PRE-EXISTING reason LT1's alias probes
-    cannot reach a mount at all on this branch or its parent.
+    and value, under the arena width.  The SERVED side is covered by
+    ``test_lt1_serves_under_its_registered_margin_first_rule`` and
+    ``test_lt1_margin_first_serves_exact_from_the_single_mount`` below, which
+    pin LT1's registered ``margin_first`` rule and get 10/10 admitted,
+    single-mount, exact.
     """
     repo = _lt1_repo(tmp_path, monkeypatch, '1', row['probe_id'] + '-on')
     try:
@@ -560,50 +582,193 @@ def test_lt1_alias_green_after_flag_on(tmp_path, monkeypatch, row):
         repo.close()
 
 
-@pytest.mark.parametrize('row', LT1_ROWS, ids=[r['probe_id'] for r in LT1_ROWS])
-def test_lt1_admission_blocker_is_pre_existing_RED(tmp_path, monkeypatch, row):
-    """RED, PINNED, AND NOT A1's: LT1 alias probes never reach a mount.
+#: LT1's REGISTERED admission rule.  ``scripts/grm_lt1.py:98`` sets
+#: ``effective_admission_rule = 'margin_first'`` and ``:197`` STOPS the run
+#: unless the environment agrees; ``scripts/grm_lt1_worker.py:245`` exports it.
+#: ``scripts/grm_scout_fix6_replay.py:55`` records the pinning contract in
+#: one line: "Pin GRM_ADMISSION_RULE after environment(flags), which removes
+#: ambient GRM variables."  ``grm_c2_cells.environment()`` strips every
+#: ``GRM_*`` key and re-pins a FIXED set that does NOT include
+#: ``GRM_ADMISSION_RULE`` — so a check that does not re-pin it afterwards
+#: silently measures the DEFAULT ``all_tokens_bind`` rule instead of LT1's.
+LT1_ADMISSION_RULE = 'margin_first'
 
-    MEASURED, on this branch AND on its parent ``grm-merge`` with an IDEAL
-    hand-written merged digest already in the repository: the probe abstains
-    ``identifier_unbound`` with an EMPTY mount list, so no retrieval change —
-    A1's or anyone's — can be observed through a served answer.
 
-    The cause is the frozen ADM1 predicate
-    ``grm_admission.is_identifier_binding``.  "What did we settle on for the
-    Hauler's cargo allowance?" has ``_rare_tokens == set()`` (no digit-bearing
-    or ALLCAPS token), so binding falls to the ordered path, which requires
-    the literal word sequence ``current <token> value`` in the candidate's
-    text.  LT1's natural prose ("Kestrel's cargo allowance will be 37
-    crates.") contains no such sequence, so ZERO candidates bind and
-    ``identifier_unbound_abstention`` fires BEFORE any mount work.
+def pin_admission_rule(monkeypatch, rule=LT1_ADMISSION_RULE):
+    """Pin GRM_ADMISSION_RULE the way the R1/C2 workers do: LAST.
 
-    That predicate is FROZEN (``FROZEN_RULE_SHA256``
-    ``c304609f81475bd2…``), and the GRM-A1 order authorizes alias fold-merge,
-    not a change to the admission rule.  Changing it here would silently
-    move a registered decision boundary that governs every other probe class.
-    So this stays RED and is reported as RED; the merge receipts asserted by
-    the test above are what A1 actually delivers for LT1.
-
-    This also explains LT1's own registered 5/10 alias result under the
-    profile without invoking any retrieval defect.
+    ``monkeypatch`` restores the previous environment at teardown, which is
+    the "restore the env after" half of the contract.
     """
-    repo = _lt1_repo(tmp_path, monkeypatch, '1', row['probe_id'] + '-red')
+    monkeypatch.setenv('GRM_ADMISSION_RULE', rule)
+
+
+@pytest.mark.parametrize('row', LT1_ROWS, ids=[r['probe_id'] for r in LT1_ROWS])
+def test_lt1_serves_under_its_registered_margin_first_rule(
+        tmp_path, monkeypatch, row):
+    """CORRECTED READING (lead, 2026-09-10).  Supersedes an earlier RED.
+
+    An earlier version of this file measured LT1 serving WITHOUT pinning
+    ``GRM_ADMISSION_RULE``, so it ran under today's default
+    ``all_tokens_bind`` and recorded 10/10 abstaining ``identifier_unbound``.
+    That was reported as "RED, pre-existing, not A1's".  The reading was
+    WRONG ABOUT WHICH RULE WAS UNDER TEST: LT1 is registered at
+    ``margin_first`` (FIX-6), where the identifier is only a TIE-BREAKER and
+    ``margin_first_plan`` never takes a zero-hit abstention branch at all.
+
+    Re-measured with the rule pinned, on BOTH arms (an ideal hand-written
+    merged digest, and A1's own merged digest), all ten probes are ADMITTED
+    and each mounts exactly one merged digest:
+
+        branch = fit_margin_decisive_rank1,  mounts = [<one digest>]
+
+    So the abstention was an artifact of the unpinned measurement, not a
+    property of the repository.  RED item 1 is RETRACTED.
+    """
+    repo = _lt1_repo(tmp_path, monkeypatch, '1', row['probe_id'] + '-mf')
+    try:
+        merged = [m for m in repo.alias_fold_pass()
+                  if m['reason'] == af.REASON_MERGED]
+        assert merged
+        pin_admission_rule(monkeypatch)
+        repo.arena.m.fold_output = None
+        _, info = repo.arena.step(row['question'], ngen=12, deposit=False)
+        assert info.get('abstained') is not True, info
+        assert info.get('abstain_reason') is None, info
+        mounts = list(repo.arena.cur_mounts or ())
+        assert len(mounts) == 1, (mounts, info)
+        assert repo.arena.grafts[mounts[0]].get('kind') == 'digest'
+        assert mounts[0] in {m['digest'] for m in merged}
+        # The single mount carries the whole chain.
+        alias = re.search(r"for the (\w+)'s", row['question']).group(1)
+        assert evidence_sufficient(mounted_text(repo), alias, row['expected'])
+    finally:
+        repo.close()
+
+
+@pytest.mark.parametrize('row', LT1_ROWS, ids=[r['probe_id'] for r in LT1_ROWS])
+def test_lt1_margin_first_serves_exact_from_the_single_mount(
+        tmp_path, monkeypatch, row):
+    """Under margin_first, the fixture-blind reader answers from the mount.
+
+    The ``grm_c7_diagnose`` stub returns UNKNOWN here — its regex is
+    ``current X value is Y`` and LT1's prose is ``X's attr will be Y``.  That
+    is the stub's shape, not the repository's: it returns UNKNOWN on the
+    IDEAL hand-written digest too (see
+    ``test_lt1_margin_first_ideal_and_merged_arms_agree``).
+    """
+    repo = _lt1_repo(tmp_path, monkeypatch, '1', row['probe_id'] + '-mfx',
+                     model=AliasResolvingModel)
     try:
         assert [m for m in repo.alias_fold_pass()
                 if m['reason'] == af.REASON_MERGED]
+        pin_admission_rule(monkeypatch)
         repo.arena.m.fold_output = None
-        _, info = repo.arena.step(row['question'], ngen=12, deposit=False)
-        assert info.get('abstained') is True
-        assert info.get('abstain_reason') == 'identifier_unbound'
-        assert list(repo.arena.cur_mounts or ()) == []
-        # The merged digest IS in the rank plan — it is admission, not
-        # routing, that refuses it.
-        assert info.get('admission_rank_plan'), info
-        for idx in info['admission_rank_plan']:
-            assert repo.arena.grafts[int(idx)].get('kind') == 'digest'
+        answer, info = repo.arena.step(row['question'], ngen=12, deposit=False)
+        assert len(list(repo.arena.cur_mounts or ())) == 1, info
+        assert answer.strip() == row['expected'], (answer, mounted_text(repo))
     finally:
         repo.close()
+
+
+def test_lt1_margin_first_ideal_and_merged_arms_agree(tmp_path, monkeypatch):
+    """The A1 merge matches an IDEAL hand-written digest, probe for probe.
+
+    The ideal arm is built with the flag OFF and hand-written digests, so it
+    measures the CEILING the merge is trying to reach.  Agreement on both
+    admission and served value is what licenses the claim that A1's digest is
+    as good as the best digest anyone could write for these rows.
+    """
+    ideal_texts = [
+        harmony("Kestrel's cargo allowance will be 37 crates."),
+        harmony("Lantern's launch date will be 18 October 2196."),
+        'ARCHIVE NOTE. the Hauler is an alias for Kestrel. '
+        "Kestrel's cargo allowance will be 37 crates.\n",
+        'ARCHIVE NOTE. the Beacon is an alias for Lantern. '
+        "Lantern's launch date will be 18 October 2196.\n",
+    ]
+
+    def arm(name, flag, seeds, merge):
+        repo = build(tmp_path, monkeypatch, flag, name=name,
+                     model=AliasResolvingModel)
+        try:
+            seed(repo, seeds)
+            if merge:
+                assert [m for m in repo.alias_fold_pass()
+                        if m['reason'] == af.REASON_MERGED]
+            pin_admission_rule(monkeypatch)
+            repo.arena.m.fold_output = None
+            out = []
+            for row in LT1_ROWS:
+                answer, info = repo.arena.step(row['question'], ngen=12,
+                                               deposit=False)
+                out.append((row['probe_id'],
+                            info.get('abstained') is not True,
+                            len(list(repo.arena.cur_mounts or ())),
+                            answer.strip()))
+            return out
+        finally:
+            repo.close()
+
+    lt1_seeds, seen = [], set()
+    for row in LT1_ROWS:
+        for src in row['source_texts']:
+            if src not in seen:
+                seen.add(src)
+                lt1_seeds.append(harmony(src))
+
+    ideal = arm('mf-ideal', '0', ideal_texts, merge=False)
+    mergd = arm('mf-merged', '1', lt1_seeds, merge=True)
+    assert ideal == mergd, (ideal, mergd)
+    assert all(admitted and mounts == 1 for _, admitted, mounts, _ in mergd)
+    assert [a for _, _, _, a in mergd] == [r['expected'] for r in LT1_ROWS]
+
+
+def test_lt1_default_rule_abstention_is_the_rule_not_the_repository(
+        tmp_path, monkeypatch):
+    """Why the earlier RED was wrong: the abstention is the RULE's, not A1's.
+
+    Under the DEFAULT ``all_tokens_bind`` the same repository abstains, and
+    it abstains IDENTICALLY with an ideal hand-written digest.  Pinning
+    ``margin_first`` — LT1's registered rule — admits both.  Holding the
+    repository fixed and moving only the rule is what isolates the cause.
+    """
+    lt1_seeds, seen = [], set()
+    for row in LT1_ROWS:
+        for src in row['source_texts']:
+            if src not in seen:
+                seen.add(src)
+                lt1_seeds.append(harmony(src))
+    question = LT1_ROWS[0]['question']
+
+    def observe(rule):
+        repo = build(tmp_path, monkeypatch, '1', name='rule-' + str(rule))
+        try:
+            seed(repo, lt1_seeds)
+            assert [m for m in repo.alias_fold_pass()
+                    if m['reason'] == af.REASON_MERGED]
+            if rule is None:
+                monkeypatch.delenv('GRM_ADMISSION_RULE', raising=False)
+            else:
+                pin_admission_rule(monkeypatch, rule)
+            repo.arena.m.fold_output = None
+            _, info = repo.arena.step(question, ngen=12, deposit=False)
+            return (info.get('abstained') is True,
+                    info.get('abstain_reason'),
+                    info.get('admission_policy_branch'),
+                    len(list(repo.arena.cur_mounts or ())))
+        finally:
+            repo.close()
+
+    assert observe(None) == (True, 'identifier_unbound',
+                             'ambiguous_zero_identifier_hits_k3', 0)
+    abstained, reason, branch, mounts = observe('margin_first')
+    assert abstained is False and reason is None
+    assert branch == 'fit_margin_decisive_rank1' and mounts == 1
+    # And the production resolver agrees the pinned value is what is in force.
+    monkeypatch.setenv('GRM_ADMISSION_RULE', 'margin_first')
+    from core.grm_admission import admission_rule
+    assert admission_rule() == 'margin_first'
 
 
 @pytest.mark.parametrize('row', LT1_ROWS, ids=[r['probe_id'] for r in LT1_ROWS])

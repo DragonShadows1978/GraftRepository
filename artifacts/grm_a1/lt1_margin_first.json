@@ -1,0 +1,1028 @@
+{
+ "arms": {
+  "ideal|rule=default_all_tokens_bind|reader=alias_reader": {
+   "admitted": 0,
+   "exact": 0,
+   "n": 10,
+   "rows": [
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 10,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [],
+     "probe_id": "recall_6_10",
+     "served": "Not in memory: no stored record matches settle, hauler, cargo, allowance."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 10,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [],
+     "probe_id": "recall_7_10",
+     "served": "Not in memory: no stored record matches settle, beacon, launch, date."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 25,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [],
+     "probe_id": "recall_6_25",
+     "served": "Not in memory: no stored record matches settle, hauler, cargo, allowance."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 25,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [],
+     "probe_id": "recall_7_25",
+     "served": "Not in memory: no stored record matches settle, beacon, launch, date."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 50,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [],
+     "probe_id": "recall_6_50",
+     "served": "Not in memory: no stored record matches settle, hauler, cargo, allowance."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 50,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [],
+     "probe_id": "recall_7_50",
+     "served": "Not in memory: no stored record matches settle, beacon, launch, date."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 100,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [],
+     "probe_id": "recall_6_100",
+     "served": "Not in memory: no stored record matches settle, hauler, cargo, allowance."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 100,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [],
+     "probe_id": "recall_7_100",
+     "served": "Not in memory: no stored record matches settle, beacon, launch, date."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 150,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [],
+     "probe_id": "recall_6_150",
+     "served": "Not in memory: no stored record matches settle, hauler, cargo, allowance."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 150,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [],
+     "probe_id": "recall_7_150",
+     "served": "Not in memory: no stored record matches settle, beacon, launch, date."
+    }
+   ]
+  },
+  "ideal|rule=default_all_tokens_bind|reader=c7_stub": {
+   "admitted": 0,
+   "exact": 0,
+   "n": 10,
+   "rows": [
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 10,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [],
+     "probe_id": "recall_6_10",
+     "served": "Not in memory: no stored record matches settle, hauler, cargo, allowance."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 10,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [],
+     "probe_id": "recall_7_10",
+     "served": "Not in memory: no stored record matches settle, beacon, launch, date."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 25,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [],
+     "probe_id": "recall_6_25",
+     "served": "Not in memory: no stored record matches settle, hauler, cargo, allowance."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 25,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [],
+     "probe_id": "recall_7_25",
+     "served": "Not in memory: no stored record matches settle, beacon, launch, date."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 50,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [],
+     "probe_id": "recall_6_50",
+     "served": "Not in memory: no stored record matches settle, hauler, cargo, allowance."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 50,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [],
+     "probe_id": "recall_7_50",
+     "served": "Not in memory: no stored record matches settle, beacon, launch, date."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 100,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [],
+     "probe_id": "recall_6_100",
+     "served": "Not in memory: no stored record matches settle, hauler, cargo, allowance."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 100,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [],
+     "probe_id": "recall_7_100",
+     "served": "Not in memory: no stored record matches settle, beacon, launch, date."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 150,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [],
+     "probe_id": "recall_6_150",
+     "served": "Not in memory: no stored record matches settle, hauler, cargo, allowance."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 150,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [],
+     "probe_id": "recall_7_150",
+     "served": "Not in memory: no stored record matches settle, beacon, launch, date."
+    }
+   ]
+  },
+  "ideal|rule=margin_first|reader=alias_reader": {
+   "admitted": 10,
+   "exact": 10,
+   "n": 10,
+   "rows": [
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 10,
+     "exact": true,
+     "expected": "37 crates",
+     "mounted_ids": [
+      2
+     ],
+     "probe_id": "recall_6_10",
+     "served": "37 crates"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 10,
+     "exact": true,
+     "expected": "18 October 2196",
+     "mounted_ids": [
+      3
+     ],
+     "probe_id": "recall_7_10",
+     "served": "18 October 2196"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 25,
+     "exact": true,
+     "expected": "37 crates",
+     "mounted_ids": [
+      2
+     ],
+     "probe_id": "recall_6_25",
+     "served": "37 crates"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 25,
+     "exact": true,
+     "expected": "18 October 2196",
+     "mounted_ids": [
+      3
+     ],
+     "probe_id": "recall_7_25",
+     "served": "18 October 2196"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 50,
+     "exact": true,
+     "expected": "37 crates",
+     "mounted_ids": [
+      2
+     ],
+     "probe_id": "recall_6_50",
+     "served": "37 crates"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 50,
+     "exact": true,
+     "expected": "18 October 2196",
+     "mounted_ids": [
+      3
+     ],
+     "probe_id": "recall_7_50",
+     "served": "18 October 2196"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 100,
+     "exact": true,
+     "expected": "37 crates",
+     "mounted_ids": [
+      2
+     ],
+     "probe_id": "recall_6_100",
+     "served": "37 crates"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 100,
+     "exact": true,
+     "expected": "18 October 2196",
+     "mounted_ids": [
+      3
+     ],
+     "probe_id": "recall_7_100",
+     "served": "18 October 2196"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 150,
+     "exact": true,
+     "expected": "37 crates",
+     "mounted_ids": [
+      2
+     ],
+     "probe_id": "recall_6_150",
+     "served": "37 crates"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 150,
+     "exact": true,
+     "expected": "18 October 2196",
+     "mounted_ids": [
+      3
+     ],
+     "probe_id": "recall_7_150",
+     "served": "18 October 2196"
+    }
+   ]
+  },
+  "ideal|rule=margin_first|reader=c7_stub": {
+   "admitted": 10,
+   "exact": 0,
+   "n": 10,
+   "rows": [
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 10,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [
+      2
+     ],
+     "probe_id": "recall_6_10",
+     "served": "UNKNOWN"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 10,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [
+      3
+     ],
+     "probe_id": "recall_7_10",
+     "served": "UNKNOWN"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 25,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [
+      2
+     ],
+     "probe_id": "recall_6_25",
+     "served": "UNKNOWN"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 25,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [
+      3
+     ],
+     "probe_id": "recall_7_25",
+     "served": "UNKNOWN"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 50,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [
+      2
+     ],
+     "probe_id": "recall_6_50",
+     "served": "UNKNOWN"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 50,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [
+      3
+     ],
+     "probe_id": "recall_7_50",
+     "served": "UNKNOWN"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 100,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [
+      2
+     ],
+     "probe_id": "recall_6_100",
+     "served": "UNKNOWN"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 100,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [
+      3
+     ],
+     "probe_id": "recall_7_100",
+     "served": "UNKNOWN"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 150,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [
+      2
+     ],
+     "probe_id": "recall_6_150",
+     "served": "UNKNOWN"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 150,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [
+      3
+     ],
+     "probe_id": "recall_7_150",
+     "served": "UNKNOWN"
+    }
+   ]
+  },
+  "merged|rule=default_all_tokens_bind|reader=alias_reader": {
+   "admitted": 0,
+   "exact": 0,
+   "n": 10,
+   "rows": [
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 10,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [],
+     "probe_id": "recall_6_10",
+     "served": "Not in memory: no stored record matches settle, hauler, cargo, allowance."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 10,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [],
+     "probe_id": "recall_7_10",
+     "served": "Not in memory: no stored record matches settle, beacon, launch, date."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 25,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [],
+     "probe_id": "recall_6_25",
+     "served": "Not in memory: no stored record matches settle, hauler, cargo, allowance."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 25,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [],
+     "probe_id": "recall_7_25",
+     "served": "Not in memory: no stored record matches settle, beacon, launch, date."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 50,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [],
+     "probe_id": "recall_6_50",
+     "served": "Not in memory: no stored record matches settle, hauler, cargo, allowance."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 50,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [],
+     "probe_id": "recall_7_50",
+     "served": "Not in memory: no stored record matches settle, beacon, launch, date."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 100,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [],
+     "probe_id": "recall_6_100",
+     "served": "Not in memory: no stored record matches settle, hauler, cargo, allowance."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 100,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [],
+     "probe_id": "recall_7_100",
+     "served": "Not in memory: no stored record matches settle, beacon, launch, date."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 150,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [],
+     "probe_id": "recall_6_150",
+     "served": "Not in memory: no stored record matches settle, hauler, cargo, allowance."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 150,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [],
+     "probe_id": "recall_7_150",
+     "served": "Not in memory: no stored record matches settle, beacon, launch, date."
+    }
+   ]
+  },
+  "merged|rule=default_all_tokens_bind|reader=c7_stub": {
+   "admitted": 0,
+   "exact": 0,
+   "n": 10,
+   "rows": [
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 10,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [],
+     "probe_id": "recall_6_10",
+     "served": "Not in memory: no stored record matches settle, hauler, cargo, allowance."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 10,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [],
+     "probe_id": "recall_7_10",
+     "served": "Not in memory: no stored record matches settle, beacon, launch, date."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 25,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [],
+     "probe_id": "recall_6_25",
+     "served": "Not in memory: no stored record matches settle, hauler, cargo, allowance."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 25,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [],
+     "probe_id": "recall_7_25",
+     "served": "Not in memory: no stored record matches settle, beacon, launch, date."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 50,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [],
+     "probe_id": "recall_6_50",
+     "served": "Not in memory: no stored record matches settle, hauler, cargo, allowance."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 50,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [],
+     "probe_id": "recall_7_50",
+     "served": "Not in memory: no stored record matches settle, beacon, launch, date."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 100,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [],
+     "probe_id": "recall_6_100",
+     "served": "Not in memory: no stored record matches settle, hauler, cargo, allowance."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 100,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [],
+     "probe_id": "recall_7_100",
+     "served": "Not in memory: no stored record matches settle, beacon, launch, date."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 150,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [],
+     "probe_id": "recall_6_150",
+     "served": "Not in memory: no stored record matches settle, hauler, cargo, allowance."
+    },
+    {
+     "abstain_reason": "identifier_unbound",
+     "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+     "admitted": false,
+     "distance": 150,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [],
+     "probe_id": "recall_7_150",
+     "served": "Not in memory: no stored record matches settle, beacon, launch, date."
+    }
+   ]
+  },
+  "merged|rule=margin_first|reader=alias_reader": {
+   "admitted": 10,
+   "exact": 10,
+   "n": 10,
+   "rows": [
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 10,
+     "exact": true,
+     "expected": "37 crates",
+     "mounted_ids": [
+      4
+     ],
+     "probe_id": "recall_6_10",
+     "served": "37 crates"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 10,
+     "exact": true,
+     "expected": "18 October 2196",
+     "mounted_ids": [
+      5
+     ],
+     "probe_id": "recall_7_10",
+     "served": "18 October 2196"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 25,
+     "exact": true,
+     "expected": "37 crates",
+     "mounted_ids": [
+      4
+     ],
+     "probe_id": "recall_6_25",
+     "served": "37 crates"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 25,
+     "exact": true,
+     "expected": "18 October 2196",
+     "mounted_ids": [
+      5
+     ],
+     "probe_id": "recall_7_25",
+     "served": "18 October 2196"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 50,
+     "exact": true,
+     "expected": "37 crates",
+     "mounted_ids": [
+      4
+     ],
+     "probe_id": "recall_6_50",
+     "served": "37 crates"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 50,
+     "exact": true,
+     "expected": "18 October 2196",
+     "mounted_ids": [
+      5
+     ],
+     "probe_id": "recall_7_50",
+     "served": "18 October 2196"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 100,
+     "exact": true,
+     "expected": "37 crates",
+     "mounted_ids": [
+      4
+     ],
+     "probe_id": "recall_6_100",
+     "served": "37 crates"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 100,
+     "exact": true,
+     "expected": "18 October 2196",
+     "mounted_ids": [
+      5
+     ],
+     "probe_id": "recall_7_100",
+     "served": "18 October 2196"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 150,
+     "exact": true,
+     "expected": "37 crates",
+     "mounted_ids": [
+      4
+     ],
+     "probe_id": "recall_6_150",
+     "served": "37 crates"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 150,
+     "exact": true,
+     "expected": "18 October 2196",
+     "mounted_ids": [
+      5
+     ],
+     "probe_id": "recall_7_150",
+     "served": "18 October 2196"
+    }
+   ]
+  },
+  "merged|rule=margin_first|reader=c7_stub": {
+   "admitted": 10,
+   "exact": 0,
+   "n": 10,
+   "rows": [
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 10,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [
+      4
+     ],
+     "probe_id": "recall_6_10",
+     "served": "UNKNOWN"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 10,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [
+      5
+     ],
+     "probe_id": "recall_7_10",
+     "served": "UNKNOWN"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 25,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [
+      4
+     ],
+     "probe_id": "recall_6_25",
+     "served": "UNKNOWN"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 25,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [
+      5
+     ],
+     "probe_id": "recall_7_25",
+     "served": "UNKNOWN"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 50,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [
+      4
+     ],
+     "probe_id": "recall_6_50",
+     "served": "UNKNOWN"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 50,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [
+      5
+     ],
+     "probe_id": "recall_7_50",
+     "served": "UNKNOWN"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 100,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [
+      4
+     ],
+     "probe_id": "recall_6_100",
+     "served": "UNKNOWN"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 100,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [
+      5
+     ],
+     "probe_id": "recall_7_100",
+     "served": "UNKNOWN"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 150,
+     "exact": false,
+     "expected": "37 crates",
+     "mounted_ids": [
+      4
+     ],
+     "probe_id": "recall_6_150",
+     "served": "UNKNOWN"
+    },
+    {
+     "abstain_reason": null,
+     "admission_policy_branch": "fit_margin_decisive_rank1",
+     "admitted": true,
+     "distance": 150,
+     "exact": false,
+     "expected": "18 October 2196",
+     "mounted_ids": [
+      5
+     ],
+     "probe_id": "recall_7_150",
+     "served": "UNKNOWN"
+    }
+   ]
+  }
+ },
+ "correction_of": "earlier RED item 1 (unpinned GRM_ADMISSION_RULE)",
+ "registered_rule_sources": {
+  "scripts/grm_c2_cells.py": "47 environment() strips all GRM_* and re-pins a fixed set WITHOUT GRM_ADMISSION_RULE",
+  "scripts/grm_lt1.py": "98 sets effective_admission_rule=margin_first; 197 STOPs on mismatch",
+  "scripts/grm_lt1_worker.py": "245 exports GRM_ADMISSION_RULE",
+  "scripts/grm_scout_fix6_replay.py": "55 records \"Pin GRM_ADMISSION_RULE after environment(flags)\""
+ },
+ "schema": "grm.a1.lt1_margin_first.v1"
+}
