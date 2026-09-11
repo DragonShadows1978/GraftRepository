@@ -1,0 +1,161 @@
+{
+ "dialect": "GptOss20B_TC:24x2880:g8x64",
+ "dialect_descriptor": {
+  "model_type": "GptOss20B_TC",
+  "num_layers": 24,
+  "hidden_dim": 2880,
+  "payload_kind": "gqa",
+  "vals_per_tok_layer": 1024,
+  "route_layer": 1,
+  "latent_rank": 0,
+  "rope_dim": 0,
+  "num_kv_heads": 8,
+  "head_dim": 64,
+  "position_law": "rope_full_yarn",
+  "state_kind": "kv",
+  "graftability": "seat_remountable",
+  "remountable": true,
+  "composition": "multi_mount"
+ },
+ "route_layer": 1,
+ "durability_mode": "session_safe",
+ "native_checkpoint": "native/grm_store.bin",
+ "wal_lsn": 1,
+ "review_buffer": [],
+ "nodes": [
+  {
+   "kind": "fact",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current Orion pin value is Auric-4-Alpha.<|end|><|start|>assistant<|channel|>final<|message|>Recorded: Orion pin is Auric-4-Alpha.<|end|>",
+   "ntok": 54,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "auric-4-alpha"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {},
+    "superseded_by": [
+     1
+    ]
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 0,
+   "provenance": [],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "fact",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Correction: the current Orion pin value is Kestrel-9-Tango, replacing Auric-4-Alpha.<|end|><|start|>assistant<|channel|>final<|message|>Updated: Orion pin is Kestrel-9-Tango.<|end|>",
+   "ntok": 66,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "auric-4-alpha",
+    "kestrel-9-tango"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [
+     0
+    ],
+    "active": true,
+    "importance": {},
+    "superseded_by": []
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 1,
+   "provenance": [],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "fact",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>This long archival note mentions the Orion pin only as a cross-reference, then records a separate operational fact. During the Tuesday migration review, the platform group checked the west bridge, compared the staging manifest, counted the sealed crates, discussed the overnight weather delay, confirmed the loading-bay schedule, reviewed the pager rotation, and read every checklist item aloud. None of those details changes the Orion pin. The actual fact owned by this note is that the current Falcon registry value is Vortex-3-Sierra, which the release crew must quote exactly on its paperwork.<|end|><|start|>assistant<|channel|>final<|message|>Archived the Falcon registry value as Vortex-3-Sierra with the surrounding migration notes.<|end|>",
+   "ntok": 159,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "vortex-3-sierra"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {},
+    "superseded_by": []
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 2,
+   "provenance": [],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  }
+ ]
+}
