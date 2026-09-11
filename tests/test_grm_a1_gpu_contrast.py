@@ -999,8 +999,15 @@ def test_alias_parser_repair_on_the_real_checkpoint_node():
     """Read the actual C7 r3 node 16 off disk and parse it."""
     from core import grm_alias_fold as af
 
-    manifest = W.read('/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/cells/'
-                      'A-032-039/checkpoint/repository/manifest.json')
+    # GRM-F6: was the absolute '/mnt/ForgeRealm/wt/grm-c7/...' path, pruned
+    # 2026-09-11. W.read() on a missing file raises FileNotFoundError, so
+    # this one failed LOUD rather than vacuously -- but it still could not
+    # run. The C7 r3 checkpoint manifest is canonical in-repo, so the read
+    # is rebound repo-relative and the assertion below is live again.
+    # Prior art: repo-root-from-__file__ (setuptools / pytest rootdir,
+    # 2009-). The registration this test is marked against is NOT touched.
+    manifest = W.read(ROOT / 'artifacts/grm_c7/r3/cells/'
+                             'A-032-039/checkpoint/repository/manifest.json')
     node = manifest['nodes'][16]
     assert '‑' in node['text'], 'the fixture must still carry U+2011'
     assert af.parse_alias_edge(node['text']) == ('C7-Signal-0',

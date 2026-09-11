@@ -1,0 +1,35 @@
+### GRM_C2_EPOCH_ROOT=/mnt/ForgeRealm/wt/PRUNED-worktree python3 -c 'import scripts.grm_lt1_offline'
+rc=1
+  scripts.grm_repo_paths.DeadReceiptPath: GRM_F6_DEAD_RECEIPT_PATH: GRM_C2_EPOCH_ROOT resolved to /mnt/ForgeRealm/wt/PRUNED-worktree/artifacts/grm_c2/epochs/scout-fix-2, which does not exist.
+    resolution: GRM_C2_EPOCH_ROOT=/mnt/ForgeRealm/wt/PRUNED-worktree + artifacts/grm_c2/epochs/scout-fix-2
+    pinned by: artifacts/grm_scout_fix8/green.json (c2[].source pins the absolute path)
+    pruned absolute path it replaced: /mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2
+
+### GRM_C2_EPOCH_ROOT=/mnt/ForgeRealm/wt/PRUNED-worktree python3 -c 'import scripts.grm_scout_fix8_cpu'
+rc=1
+  scripts.grm_repo_paths.DeadReceiptPath: GRM_F6_DEAD_RECEIPT_PATH: GRM_C2_EPOCH_ROOT resolved to /mnt/ForgeRealm/wt/PRUNED-worktree/artifacts/grm_c2/epochs/scout-fix-2, which does not exist.
+    resolution: GRM_C2_EPOCH_ROOT=/mnt/ForgeRealm/wt/PRUNED-worktree + artifacts/grm_c2/epochs/scout-fix-2
+    pinned by: artifacts/grm_scout_fix8/green.json (c2[].source pins the absolute path)
+    pruned absolute path it replaced: /mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2
+
+### GRM_C2_EPOCH_ROOT=/mnt/ForgeRealm/wt/PRUNED-worktree python3 -c 'import scripts.grm_r1_register'
+rc=1
+  scripts.grm_repo_paths.DeadReceiptPath: GRM_F6_DEAD_RECEIPT_PATH: GRM_C2_EPOCH_ROOT resolved to /mnt/ForgeRealm/wt/PRUNED-worktree/artifacts/grm_c2/epochs/scout-fix-2, which does not exist.
+    resolution: GRM_C2_EPOCH_ROOT=/mnt/ForgeRealm/wt/PRUNED-worktree + artifacts/grm_c2/epochs/scout-fix-2
+    pinned by: artifacts/grm_r1/registration.json (cell checkpoints pinned under the absolute path)
+    pruned absolute path it replaced: /mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2
+
+### GRM_C7_SOURCE_ROOT=/mnt/ForgeRealm/wt/PRUNED-worktree python3 -c 'import scripts.grm_rd1'
+rc=1
+  scripts.grm_repo_paths.DeadReceiptPath: GRM_F6_DEAD_RECEIPT_PATH: GRM_C7_SOURCE_ROOT resolved to /mnt/ForgeRealm/wt/PRUNED-worktree/artifacts/grm_c7/r2, which does not exist.
+    resolution: GRM_C7_SOURCE_ROOT=/mnt/ForgeRealm/wt/PRUNED-worktree + artifacts/grm_c7/r2
+    pinned by: artifacts/grm_rd1/registration.json (source_root = the absolute path)
+    pruned absolute path it replaced: /mnt/ForgeRealm/wt/grm-c7
+
+### GRM_LT1_CELLS_ROOT=/mnt/ForgeRealm/wt/PRUNED-worktree python3 -c 'import scripts.grm_d1_cause_table'
+rc=1
+  scripts.grm_repo_paths.DeadReceiptPath: GRM_F6_DEAD_RECEIPT_PATH: GRM_LT1_CELLS_ROOT resolved to /mnt/ForgeRealm/wt/PRUNED-worktree/artifacts/grm_lt1/amendment2/run_margin_first/cells, which does not exist.
+    resolution: GRM_LT1_CELLS_ROOT=/mnt/ForgeRealm/wt/PRUNED-worktree + artifacts/grm_lt1/amendment2/run_margin_first/cells
+    pinned by: scripts/grm_d1_recap.py's `receipt=` field (absolute .../grm-lt1/... path)
+    pruned absolute path it replaced: /mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells
+

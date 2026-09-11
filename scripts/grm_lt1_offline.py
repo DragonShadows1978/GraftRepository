@@ -14,8 +14,17 @@ from scripts import grm_lt1 as lt
 from scripts.grm_lt1_admission import snapshot,evaluate
 from scripts.grm_c7_run import emit
 from core.graft_arena import ArenaCache
+from scripts import grm_repo_paths as repo_paths
 OUT=lt.OUT/'amendment1/offline'
-C2=Path('/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2')
+# GRM-F6: was Path('/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/
+# scout-fix-2') -- a pruned seat worktree, so `C2.glob(...)` returned ZERO
+# rows and the census passed vacuously (F5's finding). The same epoch data
+# is canonical in-repo. Prior art: repo-root-from-__file__ (setuptools /
+# pytest rootdir, 2009-); vacuous-zero-is-an-error (dbt/Great Expectations
+# row-count assertions, 2018). See scripts/grm_repo_paths.py.
+C2=repo_paths.receipt_root('artifacts/grm_c2/epochs/scout-fix-2','GRM_C2_EPOCH_ROOT',
+    'artifacts/grm_scout_fix8/green.json (c2[].source pins the absolute path)',
+    '/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2')
 EB1=Path('/mnt/ForgeRealm/GraftRepository/artifacts/grm_eb1')
 WC1=Path('/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus')
 
@@ -80,7 +89,7 @@ def frozen_c2(row,checkpoint):
 
 def c2():
     rows=[]
-    for worker in sorted(C2.glob('cells/*/worker.json')):
+    for worker in repo_paths.require_rows(sorted(C2.glob('cells/*/worker.json')),C2,'cells/*/worker.json','C2 worker census'):
         w=lt.read(worker)
         for ordinal,row in enumerate(w['rows']):
             cell=w['cell'];pid=row['probe_id'];cp=C2/'checkpoints'/cell['side']/cell['battery']/pid/'checkpoint.json'

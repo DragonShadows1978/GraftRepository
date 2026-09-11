@@ -26,8 +26,20 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from scripts.grm_lt1 import score  # noqa: E402
 
-LT1 = Path('/mnt/ForgeRealm/wt/grm-lt1')
-CELLS = LT1 / 'artifacts/grm_lt1/amendment2/run_margin_first/cells'
+# GRM-F6: LT1 was Path('/mnt/ForgeRealm/wt/grm-lt1') -- a pruned seat
+# worktree. Here the dead path did not pass vacuously, it SKIPPED: the test
+# module carries `skipif(not ct.CELLS.exists())`, so 12 gates were quietly
+# deselected instead of run. The amendment-2 margin_first cells and the LT1
+# fixture are both canonical in THIS repo, so the rebind makes them live.
+# Prior art: repo-root-from-__file__ (setuptools / pytest rootdir, 2009-).
+# See scripts/grm_repo_paths.py.
+from scripts import grm_repo_paths as repo_paths  # noqa: E402
+
+LT1 = repo_paths.repo_root()
+CELLS = repo_paths.receipt_root(
+    'artifacts/grm_lt1/amendment2/run_margin_first/cells', 'GRM_LT1_CELLS_ROOT',
+    "scripts/grm_d1_recap.py's `receipt=` field (absolute .../grm-lt1/... path)",
+    '/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells')
 FIXTURE = LT1 / 'fixtures/lt1/dialogue.json'
 OUT = ROOT / 'artifacts/grm_d1'
 
@@ -58,7 +70,8 @@ def node_turn_map(fixture):
 
 def load_rows(arm):
     rows = []
-    for path in sorted(glob.glob(str(CELLS / f'{arm}-*/probes.jsonl'))):
+    # GRM-F6 vacuous-zero guard: 'no wrong rows' must not mean 'no rows'.
+    for path in repo_paths.require_rows(sorted(glob.glob(str(CELLS / f'{arm}-*/probes.jsonl'))), CELLS, f'{arm}-*/probes.jsonl', f'D1 LT1 arm-{arm} cell census'):
         ctl = Path(path).parent / 'controller.json'
         if not ctl.exists() or json.loads(ctl.read_text()).get('status') != 'COMPLETE':
             continue

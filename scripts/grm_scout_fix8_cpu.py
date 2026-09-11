@@ -16,7 +16,16 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from scripts.grm_c7_amendment7 import read, sha, write
 OUT = ROOT/'artifacts/grm_scout_fix8'
-C2 = Path('/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2')
+# GRM-F6: was Path('/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/
+# scout-fix-2') -- a pruned seat worktree (H2's finding); the glob below
+# returned ZERO rows and the C2 identity census passed vacuously. The epoch
+# is canonical in-repo. Prior art: repo-root-from-__file__ (setuptools /
+# pytest rootdir, 2009-); vacuous-zero-is-an-error (dbt / Great
+# Expectations row-count assertions, 2018). See scripts/grm_repo_paths.py.
+from scripts import grm_repo_paths as repo_paths
+C2 = repo_paths.receipt_root('artifacts/grm_c2/epochs/scout-fix-2', 'GRM_C2_EPOCH_ROOT',
+    'artifacts/grm_scout_fix8/green.json (c2[].source pins the absolute path)',
+    '/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2')
 
 
 def requests():
@@ -68,7 +77,7 @@ def c2_plans():
     from core import grm_admission as adm
     from core.graft_arena import ArenaCache
     rows=[]
-    for path in sorted(C2.glob('cells/*/worker.json')):
+    for path in repo_paths.require_rows(sorted(C2.glob('cells/*/worker.json')), C2, 'cells/*/worker.json', 'FIX8 C2 identity census'):
         w=read(path);c=w['cell']
         for ordinal,r in enumerate(w['rows']):
             pid=r['probe_id'];cp=C2/'checkpoints'/c['side']/c['battery']/pid/'checkpoint.json'

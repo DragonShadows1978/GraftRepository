@@ -63,7 +63,12 @@ def partial(question,rr):
 
 def c2_replay():
     rows=[]
-    for p in sorted(old.C2.glob('cells/*/worker.json')):
+    # GRM-F6: vacuous-zero guard. `old.C2` was a pruned worktree path, so
+    # this glob returned 0 rows and any 'every row agrees' gate over the
+    # result passed over nothing. Prior art: dbt/Great Expectations
+    # row-count assertions (2018); see scripts/grm_repo_paths.py.
+    from scripts import grm_repo_paths as repo_paths
+    for p in repo_paths.require_rows(sorted(old.C2.glob('cells/*/worker.json')),old.C2,'cells/*/worker.json','C2 replay census'):
         w=lt.read(p)
         for ordinal,r in enumerate(w['rows']):
             c=w['cell'];pid=r['probe_id'];cp=old.C2/'checkpoints'/c['side']/c['battery']/pid/'checkpoint.json'

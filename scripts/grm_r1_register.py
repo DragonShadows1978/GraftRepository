@@ -25,7 +25,20 @@ sys.path.insert(0, str(ROOT))
 from scripts.grm_c7_amendment7 import read, sha, write, need  # noqa: E402
 from scripts import grm_r1_replay as r1  # noqa: E402
 
-C2_EPOCH = Path('/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2')
+# GRM-F6: was Path('/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/
+# scout-fix-2') -- a pruned seat worktree; `C2_EPOCH.glob(...)` returned
+# ZERO controllers, so the measured-cost derivation silently divided a
+# receipt-free budget. The epoch is canonical in-repo. Prior art:
+# repo-root-from-__file__ (setuptools / pytest rootdir, 2009-);
+# vacuous-zero-is-an-error (dbt / Great Expectations, 2018).
+# NOTE: artifacts/grm_r1/registration.json is NOT touched -- it is a
+# sha-bound receipt of what was hashed on the day; only this consumer's
+# path resolution moves. See scripts/grm_repo_paths.py.
+from scripts import grm_repo_paths as repo_paths  # noqa: E402
+
+C2_EPOCH = repo_paths.receipt_root('artifacts/grm_c2/epochs/scout-fix-2', 'GRM_C2_EPOCH_ROOT',
+    'artifacts/grm_r1/registration.json (cell checkpoints pinned under the absolute path)',
+    '/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2')
 
 #: Immutable code + data inputs, sha-bound at registration time.
 INPUT_PATHS = (
@@ -63,7 +76,7 @@ def measured_c2_cost():
     four-probe cells give (load + 4 probes); the difference yields per-probe.
     """
     rows = []
-    for p in sorted(C2_EPOCH.glob('cells/*/controller.json')):
+    for p in repo_paths.require_rows(sorted(C2_EPOCH.glob('cells/*/controller.json')), C2_EPOCH, 'cells/*/controller.json', 'R1 C2 cost derivation'):
         c = read(p)
         if c['cell']['phase'] != 'restart' or c['status'] != 'COMPLETE':
             continue

@@ -1,0 +1,40 @@
+{
+  "r1_measured_c2_cost": {
+    "defaults_exact": true,
+    "profile_exact": true,
+    "restart_rows": 20,
+    "verdict": "PASS"
+  },
+  "rd1_census": {
+    "cells": 16,
+    "counts": {
+      "memory_failure_sides": 30,
+      "oracle_failure_sides": 16,
+      "probes": 52,
+      "requests": 520
+    },
+    "counts_match": true,
+    "input_sha_mismatches": 0,
+    "inputs_common": 100,
+    "inputs_reproduced": 100,
+    "registration_cells": 16,
+    "registration_counts": {
+      "memory_failure_sides": 30,
+      "oracle_failure_sides": 16,
+      "probes": 52,
+      "requests": 520
+    },
+    "requests_identical_modulo_root_prefix": "520/520",
+    "verdict": "PASS"
+  },
+  "scout_fix8_c2_plans": {
+    "hex_parity": 132,
+    "identical": 132,
+    "receipt_c2": 132,
+    "receipt_c2_identical": 132,
+    "receipt_count": 132,
+    "rows": 132,
+    "sha_parity": 132,
+    "verdict": "PASS"
+  }
+}

@@ -14,6 +14,7 @@ import ast
 import copy
 import hashlib
 import json
+import os
 from pathlib import Path
 import sys
 
@@ -22,7 +23,27 @@ sys.path.insert(0, str(ROOT))
 from scripts.grm_c7_common import normalize, score
 
 OUT = ROOT / 'artifacts/grm_rd1'
-SOURCE = Path('/mnt/ForgeRealm/wt/grm-c7')
+# GRM-F6: was Path('/mnt/ForgeRealm/wt/grm-c7') -- a pruned seat worktree
+# (H2's finding). `census()` globs
+# `<SOURCE>/artifacts/grm_c7/r2/fix4_attempt_1/cells/*/probes.jsonl`, which
+# returned ZERO cells against the dead root, so the 52-probe census came back
+# EMPTY and every downstream count agreed with nothing. The C7 r2 receipts
+# are canonical in THIS repo, so SOURCE is now the repo root itself.
+# artifacts/grm_rd1/registration.json is NOT touched: its `source_root` and
+# sha-bound `inputs` are the receipt of what was hashed on the day.
+# Prior art: repo-root-from-__file__ (setuptools / pytest rootdir, 2009-);
+# vacuous-zero-is-an-error (dbt / Great Expectations row-count assertions,
+# 2018). See scripts/grm_repo_paths.py.
+from scripts import grm_repo_paths as repo_paths  # noqa: E402
+
+# census() appends 'artifacts/grm_c7/...' to SOURCE itself, so SOURCE is a
+# SOURCE ROOT. receipt_root() proves the C7 r2 receipt tree is actually there
+# (loud RED naming the dead path if not) and GRM_C7_SOURCE_ROOT names the same
+# root the registration's `source_root` field names.
+_C7_R2 = repo_paths.receipt_root('artifacts/grm_c7/r2', 'GRM_C7_SOURCE_ROOT',
+    'artifacts/grm_rd1/registration.json (source_root = the absolute path)',
+    '/mnt/ForgeRealm/wt/grm-c7')
+SOURCE = Path(os.environ.get('GRM_C7_SOURCE_ROOT') or repo_paths.repo_root())
 ARMS = ('A0', 'A1', 'A2', 'A3', 'A4')
 CLASSES = ('fresh', 'alias', 'correction', 'folded')
 SIDES = ('memory', 'oracle')
@@ -69,7 +90,9 @@ def census(source):
     probes = {p['id']: p for p in fixture['probes']}
     inputs = {str(fixture_path): sha(fixture_path)}
     rows, cells = [], []
-    for path in sorted((source / 'artifacts/grm_c7/r2/fix4_attempt_1/cells').glob('*/probes.jsonl')):
+    cells_root = source / 'artifacts/grm_c7/r2/fix4_attempt_1/cells'
+    # GRM-F6 vacuous-zero guard: an empty census is RED, not 0 disagreements.
+    for path in repo_paths.require_rows(sorted(cells_root.glob('*/probes.jsonl')), cells_root, '*/probes.jsonl', 'RD1 C7 FIX4 continuation census'):
         raw = [json.loads(line) for line in path.read_text().splitlines()]
         if not raw:
             continue

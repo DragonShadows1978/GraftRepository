@@ -375,6 +375,81 @@ skips (12 `test_grm_d1_cause_table.py` `skipif`, 5 LT1.1 archive/full-run
 Tree totals after this pass: **321 marked test functions, 504 node ids,
 49 modules** (H1 left 164 / 232 / 31).
 
+## GRM-F6 rule: repo-relative paths, and a dead glob is RED (2026-09-11)
+
+**Scripts and registrations pin repo-relative paths; a dead-path glob is RED,
+never zero rows.**
+
+Round-1 seat worktrees `/mnt/ForgeRealm/wt/grm-*` were pruned on 2026-09-11.
+Several scripts still resolved receipt data through absolute paths into them,
+and the failure mode that matters is the SILENT one:
+
+```python
+C2 = Path('/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2')
+for worker in sorted(C2.glob('cells/*/worker.json')):   # dead root -> 0 rows
+    ...
+```
+
+A glob over a dead path raises nothing. The census loop produces zero rows,
+and any gate phrased "every row agrees" then passes over **nothing**. A gate
+that cannot fail is not a gate.
+
+The rule has three parts.
+
+1. **Resolve from `__file__`, never from the CWD and never from a worktree
+   name.** `scripts/grm_repo_paths.repo_root()` is
+   `Path(__file__).resolve().parents[1]`; a receipt root is
+   `repo_root() / 'artifacts/...'`. A seat worktree name in a path constant is
+   a bug with a fuse on it — `scripts/grm_f5_c2_replay_gate.py` "fixed" the
+   dead `grm-c2` path by hard-coding `grm-f5`, which is the same bug one
+   worktree later.
+
+2. **A missing receipt root fails LOUD, naming everything.**
+   `receipt_root(relative, env, pinned_by, dead_absolute)` raises
+   `GRM_F6_DEAD_RECEIPT_PATH` carrying the resolved path, the env var that
+   overrides it, the receipt that pinned the original, and the pruned path it
+   replaced — so the RED is diagnosable without reading the script. Each
+   script gets its own override var (`GRM_C2_EPOCH_ROOT`,
+   `GRM_C7_SOURCE_ROOT`, `GRM_LT1_CELLS_ROOT`), naming a ROOT that the
+   relative path is appended to.
+
+3. **Zero rows feeding a gate is RED.** Every glob/list that feeds a gate
+   goes through `require_rows(rows, path, pattern, what)`, which raises
+   `GRM_F6_VACUOUS_ZERO` naming the path and the pattern. "No disagreements"
+   must never be reachable from "no rows".
+
+**Registrations are NOT rewritten.** A `registration.json` that sha-binds
+`/mnt/ForgeRealm/wt/grm-c7/...` is a receipt of what was hashed on the day;
+editing it would forge the receipt. Only the *consumer's* path resolution
+moves. `scripts/grm_c7_register.py` keeps its absolute C3 order pin for
+exactly this reason, even though that order survives in-repo: it is a
+registration BUILDER, and rebinding it would change what a future
+registration hashes.
+
+`registration=` marker text that says "pins absolute /mnt/ForgeRealm/wt/...
+paths" is the receipt staying honest about what it was true at. It is prose,
+not a path, and must not be scrubbed.
+
+### Not everything can be rebound
+
+`scripts/apamq_fc_ppl.py` / `scripts/apamq_fbd1_diag.py` default the
+`apa_int4` leg to `/mnt/ForgeRealm/wt/apamq-fa/tensor_cuda` and *refuse* any
+other root; `artifacts/apamq_fc/apa_int4.json` pins
+`engine.compiled_module` to a `.so` inside that pruned worktree.
+`/mnt/ForgeRealm/wt/apamq-fa2` is a different Project-Tensor worktree, not
+that build. **No surviving copy** — reported, not repaired, and gated by
+`test_apamq_int4_leg_has_no_surviving_copy` so the classification fails
+loudly if a copy ever reappears.
+
+### Gates
+
+`tests/test_grm_f6_repo_relative_paths.py` walks the **AST** of every rebound
+script (comments and docstrings excluded, so the history stays readable) and
+asserts no `/mnt/ForgeRealm/wt/` path is bound as live code; plants a dead
+path per script and asserts the loud failure; and asserts the vacuous-zero
+guard. `tests/test_grm_f6_reproductions.py` pins each rebound script's number
+against its frozen receipt.
+
 ## Re-blessing a receipt
 
 A campaign receipt is never "fixed" by editing its assertions. When a campaign
