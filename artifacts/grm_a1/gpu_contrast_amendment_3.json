@@ -1,0 +1,197 @@
+{
+ "alias_parser_repair": {
+  "change": "scan is now normalize_glyphs(alias_scan_text(text))",
+  "evidence": "Checkpoint A-032-039 node 16 stores \"… and C7‑Signal‑0 is an alias for C7‑AliasBase‑0.\" with U+2011 NON-BREAKING HYPHEN. The identifier class [\\w.:-] does not contain U+2011, so the name shattered and the parser returned the SPURIOUS pair ('0', 'C7'). After the repair it returns ('C7-Signal-0', 'C7-AliasBase-0').",
+  "file": "core/grm_alias_fold.py",
+  "flag_scope": "Reached only under GRM_ALIAS_FOLD_MERGE; OFF stays byte-identical (off_parity re-run).",
+  "function": "parse_alias_edge",
+  "why_it_matters": "A spurious pair is worse than a missed one: it invents an alias relation for a node that asserts none and then tries to merge it. This is the same glyph-shattering SC1.1/FIX-8 was minted for; the module already depended on normalize_glyphs through identifier_set, the parser simply was not using it."
+ },
+ "amendment": 3,
+ "authorized_by": "lead follow-up message, 2026-09-11 (cudaMalloc OOM)",
+ "changed_inputs": {
+  "/mnt/ForgeRealm/wt/grm-a1/core/grm_alias_fold.py": {
+   "after": "8e3810106d0e93a5da7bcf1c09dc80bcc4c561c5c334b634a96419ce475c97a5",
+   "before": "147ea9687112e9ccd61aaaf63c16404c5175a08d6733da2df22d4e591f1203e7"
+  },
+  "/mnt/ForgeRealm/wt/grm-a1/scripts/grm_a1_gpu_contrast.py": {
+   "after": "d98dc4a996e19ad2d3d9a7096db5df53968c6b536397f454081c702245dc2c3d",
+   "before": "1cf8675547aee2b4be4f97ded2403758989ee7e9a03b69161002a2032117ad50"
+  }
+ },
+ "checkpoint_state_finding": {
+  "consequence_for_the_prediction": "The registered prediction (aliases >= 5/8 exact from a single merged-digest mount) cannot be tested on the d030-d250 rows as they stand: there is no edge for A1 to merge, so the ON and OFF arms are the SAME repository. Only the d005 cell exercises the treatment. This is a finding about the fixture, not a result about A1, and the lead decides what to do with it.",
+  "finding": "The C7 r3 checkpoints no longer contain unmerged alias edges at distance >= 30. The ordinary librarian has ALREADY folded the Signal edge and the Jasper base into separate ACTIVE digests (node 16 states the relation; nodes 27/89 hold the values), and the raw edge nodes 9/11/12 are retired=True, active=False. A1 correctly plans no job on a retired edge, so the merge is a NO-OP on 20 of the 23 registered rows.",
+  "options_for_the_lead": [
+   "Re-scope the contrast to the d005 cell plus fresh alias turns.",
+   "Replay the C7 fixture with A1 ON from turn 1 so the merge, not the ordinary librarian, is what consumes the alias edges.",
+   "Accept the rows as an OFF-vs-OFF null and register that."
+  ],
+  "per_cell_alias_edges_active": {
+   "A-009-016 (d005)": "3 raw edges ACTIVE — A1 has work to do",
+   "A-032-039 (d030)": "0 raw edges; 1 alias-stating digest (16)",
+   "A-040-047 (d030)": "0 raw edges; 1 alias-stating digest (16)",
+   "A-063-070 (d060)": "0 Signal edges (1 unrelated Handle-04 edge)",
+   "A-125-132 (d120)": "0 Signal edges (2 unrelated Handle edges)",
+   "A-257-264 (d250)": "0 Signal edges (2 unrelated Handle edges)"
+  },
+  "status": "REPORTED, NOT FIXED — a lead decision, not a seat repair"
+ },
+ "diagnosis": {
+  "log": "artifacts/grm_a1/gpu_contrast_a3_1.log",
+  "payload_accounting": {
+   "headline": "A d250 row pins ~659 MB of node payloads on load while its mount plan can seat at most arena_width 96 tokens = 4.5 MB — a 146x over-pin, against the ~1.3 GB the resident model leaves free.",
+   "method": "CPU-only, from the checkpoint manifests, using the repository's own _node_bytes formula: ntok * vals_per_tok_layer * 2 bytes * n_layers, with GPT-OSS-20B GQA geometry 8 kv heads x 64 head_dim x (K,V) = 1024 vals/token/layer over 24 layers.",
+   "per_class": {
+    "C7 answerable": {
+     "active_nodes_device_mb_max": 501.7,
+     "all_nodes_device_mb_max": 658.7,
+     "mount_plan_max_device_mb": 4.5,
+     "nodes_max": 241,
+     "over_pin_ratio_max": 146.4,
+     "payload_files_max": 241,
+     "rows": 10
+    },
+    "C7 control": {
+     "active_nodes_device_mb_max": 510.7,
+     "all_nodes_device_mb_max": 667.7,
+     "mount_plan_max_device_mb": 4.5,
+     "nodes_max": 244,
+     "over_pin_ratio_max": 148.4,
+     "payload_files_max": 244,
+     "rows": 5
+    },
+    "RD2": {
+     "active_nodes_device_mb_max": 501.7,
+     "all_nodes_device_mb_max": 658.7,
+     "mount_plan_max_device_mb": 4.5,
+     "nodes_max": 241,
+     "over_pin_ratio_max": 146.4,
+     "payload_files_max": 241,
+     "rows": 8
+    }
+   },
+   "receipt": "artifacts/grm_a1/payload_accounting.json"
+  },
+  "second_defect_found_in_the_receipts": "All 7 completed rows recorded merge.digests == 0 and decisions == 0 — the contrast was measuring NOTHING about A1. Two independent causes, both now fixed or reported: (a) a U+2011 parser bug, and (b) the checkpoints no longer contain unmerged alias edges at d030+. See alias_parser_repair and checkpoint_state_finding.",
+  "where_it_failed": "NOT the mount, and NOT the merge. The traceback ends in GptOss20B_TC.from_pretrained -> GptOssMoEDiagnosticTC.from_safetensors -> tc.tensor: the MODEL LOAD of row 8. Seven rows had already completed. The worker rebuilt the whole 20B model per row through rs1._load_lived_repo and never freed the previous one, so resident models accumulated until cudaMalloc failed. The lease was released cleanly at 163 s.",
+  "why_everything_was_pinned": "rs1._load_lived_repo passes vram_budget_mb=None. With it None, graft_repository._load_can_materialize_device returns True unconditionally (core/graft_repository.py:5479-5482), so load() unpacks EVERY non-retired payload onto the device (core/graft_repository.py:5504-5509); and _page() returns 0 on its first line, so nothing is ever spilled. The pager was never armed. No core change is needed to fix this."
+ },
+ "dry_run_receipt": {
+  "exit": 0,
+  "log": "artifacts/grm_a1/dry_run.log",
+  "note": "All declared inputs and preconditions present; no lease taken.",
+  "sha256": "db21115db5ffbbc121e28e1d97d7f2588cb6b3563025463c711a6dd5ef988bc3"
+ },
+ "fake_run_receipt": {
+  "aliases_single_mount": 8,
+  "controls_broken": 0,
+  "log": "artifacts/grm_a1/fake_run.log",
+  "log_sha256": "a260a691815b2043919442445cee78ff1bc6395e5648e1d2dbed948260432b8f",
+  "paging_observed": "1 payload device-resident after mount with page_ins=1 per row: the release-then-page-in cycle ran, and only the mounted node stayed resident.",
+  "rows": 23,
+  "rows_non_fit": 0,
+  "summary": "artifacts/grm_a1/gpu_fake/summary.json",
+  "summary_sha256": "d83665785893904cc476a632fb8eed5fd9d3fd3222302fb3b3feae972d749b87",
+  "verdict": "FAKE_RUN_NOT_A_PREDICTION"
+ },
+ "lt1_correction": {
+  "cause_of_the_wrong_reading": "The measurement did not pin GRM_ADMISSION_RULE, so it ran under the default all_tokens_bind. LT1 is registered at margin_first (scripts/grm_lt1.py:98, enforced :197, exported grm_lt1_worker.py:245); grm_c2_cells.environment() strips every GRM_* key and re-pins a fixed set that does NOT include GRM_ADMISSION_RULE, so the pin must come AFTER it (contract recorded verbatim at grm_scout_fix6_replay.py:55).",
+  "corrected_reading": "Under margin_first, 10/10 LT1 alias probes are ADMITTED, each mounting exactly ONE merged digest (branch fit_margin_decisive_rank1), and the fixture-blind alias reader answers 10/10 exact. The ideal-digest arm and the A1-merged arm agree probe for probe.",
+  "receipt": "artifacts/grm_a1/lt1_margin_first.json",
+  "receipt_sha256": "556cbe462cb3ad220f51fe038708f5d3445edece2035357c47684958c430b25c",
+  "scope": "LT1 remains OUT of the GPU contrast: its rows have no pinned C7 r3 checkpoint. The correction changes the seat report, not the registered GPU prediction.",
+  "status": "RETRACTED",
+  "supersedes": "RED item 1 of the seat report: \"LT1 alias probes abstain identifier_unbound; pre-existing, not A1's\"."
+ },
+ "memory_repair": {
+  "armed_pager": {
+   "mechanism": "With a budget set, load() stops materialising past it and _page() spills least-recently-mounted payloads to RAM; arena._ensure_h pages a mounted node back in through node_loader (wired at graft_repository.py:354). RAM copies are kept, so a reload is cheap — this is spill, not free.",
+   "node_vram_budget_mb": 64,
+   "rationale": "~14x the largest possible single mount plan (4.5 MB) so a plan always fits with room for the fold sources, and ~10x under the ~1.3 GB the resident model leaves free."
+  },
+  "device_memory_api_note": "tensor_cuda exposes empty_cache and synchronize but NO memory-info call (checked), so the device snapshot is read via nvidia-smi rather than a fabricated API.",
+  "fold_sources": "The FIX-5 digest capture still runs on the model, as registered. The sources' payloads are released immediately after the digest exists, before the mount plan is built.",
+  "model_reuse": "The model is loaded ONCE per invocation and carried in a cache dict; each row builds a fresh GraftRepository over it via _repo_over. Prior art: grm_c7_middle_replay.open_copy(q, session, r, loaded) (GRM contributors, 2026) — the loaded=(model, tok, info) carry that let FIX-8 fit 16/24 rows from THESE checkpoints in batches F1-F4. Taken verbatim in shape.",
+  "per_row_receipts": "Every row records memory.device_before / device_after (via nvidia-smi, read-only), residency_after_load, residency_after_mount (payloads device-resident, MB, page_ins) and payloads_released_after_merge.",
+  "release_between_rows": "release_payloads() drops device copies (g[\"h\"] = None plus the native device-copy eviction _page uses) after the merge and again in the row finally-block; tensor_cuda.empty_cache() runs after every row."
+ },
+ "new_inputs": {
+  "artifacts/grm_a1/payload_accounting.json": "c581d2ec3a764215f2c7441310eb8734a24a4dd0a51cdc47f183406d1ba4e36c"
+ },
+ "non_fit_rail": {
+  "accounting": "NON_FIT rows are UNMEASURED: excluded from the prediction numerator AND denominator, reported on their own summary line (rows_non_fit / non_fit_row_ids). If any SCORED row goes NON_FIT the verdict is WITHHELD (prediction_met=null, verdict=INCOMPLETE_NON_FIT, exit 5) rather than computed from a partial denominator.",
+  "behaviour": "A row whose load or serve raises an allocation failure writes a create-only NON_FIT receipt with the memory snapshot and the traceback, and the campaign CONTINUES to the next row.",
+  "exit_codes": {
+   "0": "prediction met",
+   "1": "prediction NOT met",
+   "2": "precondition failed",
+   "3": "unexpected",
+   "4": "rows pending — re-run with --resume",
+   "5": "incomplete: a scored row went NON_FIT"
+  }
+ },
+ "off_parity_receipt": {
+  "byte_identical": true,
+  "note": "Re-run AFTER the core parse_alias_edge repair: OFF is still byte-identical to parent grm-merge, so the fix lives entirely inside the flag.",
+  "path": "artifacts/grm_a1/off_parity.json",
+  "sha256": "7e2610a4df7eb989b70c05c3489f185209a5849e0e4688eb9d279f64c35eb33e"
+ },
+ "pinned_inputs_sha256": {
+  "/mnt/ForgeRealm/wt/grm-a1/artifacts/grm_a1/alias_fixture.json": "e8119ce85b9a8e944fe0a3d78ee1ad049a6b8100f04d8c7f83f469955887af41",
+  "/mnt/ForgeRealm/wt/grm-a1/artifacts/grm_a1/lt1_margin_first.json": "556cbe462cb3ad220f51fe038708f5d3445edece2035357c47684958c430b25c",
+  "/mnt/ForgeRealm/wt/grm-a1/artifacts/grm_a1/off_parity.json": "7e2610a4df7eb989b70c05c3489f185209a5849e0e4688eb9d279f64c35eb33e",
+  "/mnt/ForgeRealm/wt/grm-a1/artifacts/grm_a1/payload_accounting.json": "c581d2ec3a764215f2c7441310eb8734a24a4dd0a51cdc47f183406d1ba4e36c",
+  "/mnt/ForgeRealm/wt/grm-a1/artifacts/grm_a1/width_receipts.json": "96170784d022452c8b32d9425d3b8c57b9e31e2cd299093fa9a33d88ed90da8f",
+  "/mnt/ForgeRealm/wt/grm-a1/artifacts/grm_det1/run_20260831T160525Z_2/runtime_frame_28b3196f8fb04a41.json": "28b3196f8fb04a4123fcf21b1e61f8bb1b8a0e64fadcfc6643801f3e19c4ac02",
+  "/mnt/ForgeRealm/wt/grm-a1/core/graft_arena.py": "918f5d0b202b4efabfaa1c37c965cdf3ce8fbd7e6b69045c4dafd985bee820a9",
+  "/mnt/ForgeRealm/wt/grm-a1/core/graft_repository.py": "59165723310605d599088718b486066cdfad90e16c15d9af83cf64726a52c2e4",
+  "/mnt/ForgeRealm/wt/grm-a1/core/grm_admission.py": "ebdfd84af435a163dfe4a37281d489047acd974bf76190b79622340c29af7ab6",
+  "/mnt/ForgeRealm/wt/grm-a1/core/grm_alias_fold.py": "8e3810106d0e93a5da7bcf1c09dc80bcc4c561c5c334b634a96419ce475c97a5",
+  "/mnt/ForgeRealm/wt/grm-a1/core/grm_runtime.py": "973addc491a29eda9bac611a9c3f0cc25cd1033395ecc39b84b19c6f1b8f0646",
+  "/mnt/ForgeRealm/wt/grm-a1/scripts/grm_a1_gpu_contrast.py": "b91719f5eeb7c55961e6b62ca38167c7bc15dd01b8f68847c1f2c305bde613bc",
+  "/mnt/ForgeRealm/wt/grm-a1/scripts/grm_a1_off_parity.py": "c45db4a88fe2cafbef3fcd33d41ee020563e9c6c8bb57fa0b0cb91af05714a48",
+  "/mnt/ForgeRealm/wt/grm-a1/scripts/grm_a1_width_receipts.py": "4873dd0ea18ca3754fd044815762e93a9e43309f4e7613ecdf22cd6d9857183d",
+  "/mnt/ForgeRealm/wt/grm-a1/tests/test_grm_a1_alias_fold.py": "583bf1277b168ae96fd91e2fcb78e1769c51c8e51cbc268f25319cb0acc58053",
+  "/mnt/ForgeRealm/wt/grm-a1/tests/test_grm_a1_gpu_contrast.py": "e225304e4768fa08121f6c09cd74547c0184890f3389b2078bfac75a2bad552d",
+  "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/ALIAS_DESIGN_OPTIONS.md": "f8486fee2f516bac338bbff8ef757c75e7906de3a66a791cf4b43fe7ce8e3e4f",
+  "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/SHA256SUMS": "8496db79a1651fa3fbec772bcaea60313131a30a88613eddd73a083682a26a35",
+  "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/effective_questions.json": "355f5c6a2f1948c46f3a172ce0bd5576863b18b32f199f5d497834b187125b5b",
+  "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/fixture.json": "b648ebb71072d1c357146f6cedb22f6d93dd259a69cb50d912e1e9b564624c17",
+  "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/registration.json": "65c543b1904e6e3bd81d95316dbc092fd72f70ae164044cce036ce8a6ec04b1c",
+  "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/registration.sha256": "3de5da39d52a63d41070531e78ad9206a36965a7c2997ca168b58f3e707c93f5",
+  "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/stop_receipt.json": "99de4e999b7686a8a18b13da7eb4466e3f4896f977019a52405dcabd02f8a714",
+  "/mnt/ForgeRealm/wt/grm-rd1/artifacts/grm_rd2/rows.json": "26d72f3545743ab0f4104826a758feb23d7c171daceec0de402c4d5a026a3971"
+ },
+ "previous_amendment": {
+  "amendment": 2,
+  "path": "/mnt/ForgeRealm/wt/grm-a1/artifacts/grm_a1/gpu_contrast_amendment_2.json",
+  "sha256": "412c422b49571618ecb393f8b0a903d5883e4105045476c74fa2990612fbf065"
+ },
+ "previous_amendment_sha256": "412c422b49571618ecb393f8b0a903d5883e4105045476c74fa2990612fbf065",
+ "registration": {
+  "path": "/mnt/ForgeRealm/wt/grm-a1/artifacts/grm_a1/gpu_contrast_registration.json",
+  "sha256": "329d5865d437598f41fe9569fe8c06a4c2da64544476cf3ee73eb5e3efa9d8cd"
+ },
+ "registration_sha256": "329d5865d437598f41fe9569fe8c06a4c2da64544476cf3ee73eb5e3efa9d8cd",
+ "schema": "grm.a1.lead-amendment.v1",
+ "title": "A1 amendment 3 — OOM diagnosis, model reuse + armed pager, NON_FIT rail, and a U+2011 alias-parser repair",
+ "unchanged": {
+  "budget_gpu_hours_max": 0.5,
+  "lease": "unchanged from amendment 2: <=590 s each, looped with --resume",
+  "model": "openai/gpt-oss-20b rev 6cee5e81ee83917806bbde320786a8fb61efebee",
+  "note": "Prediction, budget, rows, prompt and lease shape are untouched. This amendment changes HOW the rows are loaded and what happens when one does not fit.",
+  "read_prompt": "plain production template, unchanged",
+  "registered_prediction": "aliases >= 5/8 exact from a single digest mount; 0 controls broken",
+  "rows": "23 unchanged (8 RD2 + 10 C7 answerable + 5 C7 controls)"
+ },
+ "worker": {
+  "fake_vs_real": "Identical control flow; the ONLY difference is the loader (_load_fake vs _load_gpu) and which tokenizer measures the width receipt.",
+  "gate": "python3 scripts/grm_a1_gpu_contrast.py --fake — drives every branch on the CPU doubles: all 23 rows, resume-after-interrupt, drift RED, over-width path. See tests/test_grm_a1_gpu_contrast.py.",
+  "path": "scripts/grm_a1_gpu_contrast.py",
+  "reason": "The registration previously named no worker because the seat had not written one. It is now an INPUT and is sha-pinned like every other input, so the lead runs the exact bytes the fake-path gate exercised.",
+  "rebound_reason": "rebound by amendment 3 (model reuse, armed pager, NON_FIT rail)",
+  "self_pin_note": "The worker EXCLUDES its own path from the drift set and checks it separately (verify_self), recording worker_provenance on every row. A self-pinned file inside its own drift set can never be edited without a same-breath re-amendment, and the two failures — \"an input moved\" vs \"the worker is not the reviewed bytes\" — are different facts.",
+  "sha256": "b91719f5eeb7c55961e6b62ca38167c7bc15dd01b8f68847c1f2c305bde613bc"
+ }
+}

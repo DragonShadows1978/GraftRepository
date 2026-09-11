@@ -65,6 +65,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import subprocess
 import sys
 import tempfile
 import time
@@ -92,6 +93,20 @@ RULE_ENV = 'GRM_ADMISSION_RULE'
 #: nothing: the operator re-runs the same line until pending=0.
 LEASE_SECONDS = 560
 LOCK_WAIT_SECONDS = 7200
+
+#: Device budget for NODE PAYLOADS (not the model). Arms the pager that
+#: ``vram_budget_mb=None`` leaves disabled: with a budget set,
+#: ``load()`` stops materialising payloads past it and ``_page()`` spills the
+#: least-recently-mounted ones, while ``arena._ensure_h`` pages a mounted node
+#: back in through ``node_loader``.
+#:
+#: 64 MiB is ~14x the largest possible single mount plan (arena_width 96
+#: tokens = 4.5 MiB at this dialect's 8 kv heads x 64 head_dim x (K,V) x 24
+#: layers x fp16), so a plan always fits with room for the fold's sources,
+#: and ~10x under the ~1.3 GB the resident model leaves free. The d250 rows
+#: would otherwise pin ~659 MB each — see artifacts/grm_a1/
+#: payload_accounting.json.
+NODE_VRAM_BUDGET_MB = 64
 
 
 def _lease_seconds(value):
@@ -410,7 +425,7 @@ def check_preconditions(registration, *, fake=False):
 
 # ------------------------------------------------------- 4. repository load
 
-def _load_gpu(checkpoint_dir, registration):
+def _load_gpu(checkpoint_dir, registration, cache=None):
     """The lived GPU build over a COPY of the pinned checkpoint.
 
     The checkpoint is copied to a scratch directory first: the pinned C7 r3
@@ -433,8 +448,31 @@ def _load_gpu(checkpoint_dir, registration):
     # frame keys (measured: KeyError 'ephemeral').
     frame = dict(load_runtime_frame(registration))
     frame['resolved_flags'] = flags
-    e2e, model, tokenizer, repo, model_info = rs1._load_lived_repo(
-        scratch, frame)
+
+    # ------------------------------------------------------------------
+    # MODEL REUSE. The 20B model is loaded ONCE for the whole invocation and
+    # handed to every subsequent row's repository. The first version rebuilt
+    # it per row and never freed the previous one; the lead's run completed 7
+    # rows and then died in `GptOss20B_TC.from_pretrained` for row 8
+    # (`cudaMalloc failed: out of memory`, lease released at 163 s).
+    #
+    # Prior art: `grm_c7_middle_replay.open_copy(q, session, r, loaded)` (GRM
+    # contributors, 2026) — the `loaded=(model, tok, info)` carry that let
+    # FIX-8's replay fit 16 of 24 rows from THESE checkpoints in batches
+    # F1-F4. Taken verbatim in shape: load once, then construct a fresh
+    # GraftRepository per row over the SAME model/tokenizer.
+    # ------------------------------------------------------------------
+    if cache is not None and cache.get('model') is not None:
+        e2e = cache['e2e']
+        model, tokenizer = cache['model'], cache['tokenizer']
+        model_info = cache['model_info']
+        repo = _repo_over(e2e, model, tokenizer, scratch, flags, frame)
+    else:
+        e2e, model, tokenizer, repo, model_info = rs1._load_lived_repo(
+            scratch, frame)
+        if cache is not None:
+            cache.update({'e2e': e2e, 'model': model, 'tokenizer': tokenizer,
+                          'model_info': model_info})
     encode = (lambda text: tokenizer.encode(text, add_special_tokens=False))
     return {
         'repo': repo, 'e2e': e2e, 'encode': encode, 'scratch': scratch,
@@ -442,7 +480,56 @@ def _load_gpu(checkpoint_dir, registration):
     }
 
 
-def _load_fake(checkpoint_dir, registration):
+def _repo_over(e2e, model, tokenizer, scratch, flags, frame):
+    """A fresh repository over an ALREADY-LOADED model, under a VRAM budget.
+
+    Shape taken from ``grm_c7_middle_replay.open_copy``'s reuse branch (GRM,
+    2026), with ONE deliberate difference, named here because it is the
+    second half of the OOM repair:
+
+    ``vram_budget_mb`` is SET rather than ``None``.  With it ``None``:
+      * ``GraftRepository.load()``'s ``_load_can_materialize_device`` returns
+        True unconditionally, so EVERY non-retired node's payload is unpacked
+        onto the device at load; and
+      * ``_page()`` returns 0 on its first line, so nothing is ever spilled.
+
+    Measured on the pinned checkpoints (artifacts/grm_a1/payload_accounting.
+    json, CPU-only, derived with the repository's own ``_node_bytes``
+    formula): the d250 cells pin ~659 MB of node payloads while the mount
+    plan can seat at most ``arena_width`` 96 tokens = 4.5 MB. With a budget
+    set, load() stops materialising past it and ``arena._ensure_h`` pages the
+    mounted nodes back in through ``node_loader`` (``_load_node``), which is
+    already wired at ``graft_repository.py:354``. No core change is needed —
+    the pager was simply never armed.
+    """
+    return e2e.GraftRepository(
+        model,
+        lambda text: tokenizer.encode(text, add_special_tokens=False),
+        lambda ids: tokenizer.decode(ids, clean_up_tokenization_spaces=False),
+        str(scratch / 'repository'),
+        autosave=False,
+        arena_cls=e2e.GptOssGQAArenaCache,
+        native_lib_path=str(frame.get('native_library', {}).get('path')
+                            or ROOT / 'cpp/build/libgrm_runtime.so'),
+        native_auto=False,
+        vram_budget_mb=NODE_VRAM_BUDGET_MB,
+        route_layer=int(
+            e2e.gpt_oss_grm_dialect_kwargs(model.config)['route_layer']),
+        arena_width=int(flags['arena_width']),
+        topk=int(flags['topk']),
+        live_turns=int(flags['live_turns']),
+        max_live=int(flags['max_live']),
+        ephemeral=bool(flags['ephemeral']),
+        sink_text=e2e.HARMONY_SINK,
+        prompt_template=e2e.harmony_turn,
+        stop_sequences=e2e.HARMONY_STOPS,
+        storage_bits=int(flags['graft_storage_bits']),
+        revision_resolution=bool(flags['sup_resolve']),
+        decisive_admission=bool(flags['adm_decisive']),
+    )
+
+
+def _load_fake(checkpoint_dir, registration, cache=None):
     """CPU doubles standing in for the checkpoint, same downstream code.
 
     Seeds the repository from the registration's OWN recorded texts (the
@@ -595,6 +682,101 @@ def apply_merge(repo, encode):
             'over_width': len(over)}
 
 
+# --------------------------------------------------- 5b. memory receipts
+
+def payload_residency(repo):
+    """How many node payloads are DEVICE-resident, and how many bytes.
+
+    ``g["h"] is not None`` is the device copy; ``host_payload`` is the RAM
+    copy the pager can spill to and reload from. Both are counted so a reader
+    can see that spilling moved payloads rather than losing them.
+    """
+    grafts = repo.arena.grafts
+    device = [i for i, g in enumerate(grafts) if g.get('h') is not None]
+    host = [i for i, g in enumerate(grafts)
+            if g.get('host_payload') is not None]
+    try:
+        device_bytes = sum(repo._node_bytes(grafts[i]) for i in device)
+    except Exception:
+        device_bytes = None
+    return {
+        'nodes': len(grafts),
+        'payloads_device_resident': len(device),
+        'payloads_host_resident': len(host),
+        'device_payload_bytes': device_bytes,
+        'device_payload_mb': (None if device_bytes is None
+                              else round(device_bytes / 2**20, 2)),
+        'vram_budget_mb': (None if repo.vram_budget is None
+                           else round(repo.vram_budget / 2**20, 2)),
+        'page_ins': int(getattr(repo.arena, 'page_ins', 0) or 0),
+    }
+
+
+def device_memory(fake=False):
+    """Free/used device MiB, or ``None`` on the CPU gate.
+
+    Read through ``nvidia-smi`` rather than the tensor_cuda module:
+    ``tensor_cuda`` exposes ``empty_cache`` and ``synchronize`` but no
+    memory-info call (checked), and inventing one would be a fabricated API.
+    A read-only query, never a mutation of any other process's state.
+    """
+    if fake:
+        return None
+    try:
+        out = subprocess.run(
+            ['nvidia-smi',
+             '--query-gpu=memory.free,memory.total,memory.used',
+             '--format=csv,noheader,nounits'],
+            capture_output=True, text=True, timeout=30, check=True)
+        free, total, used = (int(v.strip())
+                             for v in out.stdout.splitlines()[0].split(','))
+        return {'free_mb': free, 'total_mb': total, 'used_mb': used}
+    except Exception as exc:
+        return {'unavailable': f'{type(exc).__name__}: {exc}'}
+
+
+def release_payloads(repo, keep=()):
+    """Drop device payloads for every node except ``keep``.
+
+    The pager's own idiom: ``g["h"] = None`` plus the native device-copy
+    eviction ``_page`` uses, so a released node is reloadable through
+    ``node_loader`` exactly as a spilled one is. RAM (``host_payload``) is
+    deliberately left intact — that is what makes the reload cheap and is
+    why ``_page`` calls this "spill", not "free".
+    """
+    keep = {int(i) for i in keep}
+    released = 0
+    for i, g in enumerate(repo.arena.grafts):
+        if i in keep or g.get('h') is None:
+            continue
+        if g.get('host_payload') is None:
+            try:
+                repo._ensure_host_payload(i, g)
+            except Exception:
+                continue
+        g['h'] = None
+        released += 1
+        try:
+            repo._native_evict_device_copy(i)
+            repo._ensure_lifecycle(i, g)
+        except Exception:
+            pass
+    return released
+
+
+def empty_cache(fake=False):
+    """``tensor_cuda.empty_cache()`` after a row, when there is a card."""
+    if fake:
+        return False
+    try:
+        from core.mistral7b_tc import tc
+
+        tc.empty_cache()
+        return True
+    except Exception:
+        return False
+
+
 # ------------------------------------------------------------- 6. the serve
 
 def serve(repo, e2e, question, *, fake):
@@ -655,8 +837,32 @@ def receipt_path(out_dir, row):
     return Path(out_dir) / 'rows' / f'{stem}.json'
 
 
-def run_row(row, registration, out_dir, *, fake, rule, provenance=None):
-    """Execute ONE row end to end. Create-only, so a redo is impossible."""
+#: Exception types that mean "this row did not FIT on the card", as opposed
+#: to "this row is wrong". Matched on the message too, because tensor_cuda
+#: surfaces allocation failures as a plain RuntimeError.
+_NON_FIT_MARKERS = ('out of memory', 'cudamalloc', 'cuda_error_out_of_memory',
+                    'cublas_status_alloc_failed')
+
+
+def is_non_fit(exc):
+    """Is this exception an allocation failure rather than a defect?"""
+    if isinstance(exc, MemoryError):
+        return True
+    text = f'{type(exc).__name__}: {exc}'.casefold()
+    return any(marker in text for marker in _NON_FIT_MARKERS)
+
+
+def run_row(row, registration, out_dir, *, fake, rule, provenance=None,
+            cache=None):
+    """Execute ONE row end to end. Create-only, so a redo is impossible.
+
+    A row that cannot FIT on the card writes a create-only ``NON_FIT``
+    receipt carrying the memory snapshot and RETURNS, so the campaign
+    continues to the next row. A NON_FIT row is UNMEASURED: it is excluded
+    from the prediction's numerator AND its denominator, and reported on its
+    own line — silently shrinking the denominator would turn a capacity
+    failure into a better-looking score.
+    """
     path = receipt_path(out_dir, row)
     if path.exists():
         return {'row_id': row['row_id'], 'status': 'SKIPPED_ALREADY_DONE'}
@@ -667,17 +873,25 @@ def run_row(row, registration, out_dir, *, fake, rule, provenance=None):
         raise ContrastError(f'A1_CHECKPOINT_MISSING: {checkpoint}')
 
     started = time.monotonic()
-    loaded = loader(checkpoint, registration)
+    memory_before = device_memory(fake=fake)
+    loaded = None
     try:
+        loaded = loader(checkpoint, registration, cache)
+        repo = loaded['repo']
         pins = pin_flags(loaded['environment'], rule=rule)
-        merge = apply_merge(loaded['repo'], loaded['encode'])
+        residency_after_load = payload_residency(repo)
+        merge = apply_merge(repo, loaded['encode'])
+        # The fold's sources were paged in to be mounted for the digest
+        # capture (the FIX-5 path runs on the model). Release them the moment
+        # the digest exists — the mount plan below needs a handful of nodes,
+        # not the whole conversation.
+        released_after_merge = release_payloads(repo)
         question = effective_question(row['question'])
-        answer, info = serve(loaded['repo'], loaded['e2e'], question,
-                             fake=fake)
-        mounts = [int(i) for i in (loaded['repo'].arena.cur_mounts or ())]
+        answer, info = serve(repo, loaded['e2e'], question, fake=fake)
+        mounts = [int(i) for i in (repo.arena.cur_mounts or ())]
+        residency_after_mount = payload_residency(repo)
         mounted_text = '\n'.join(
-            str(loaded['repo'].arena.grafts[i].get('text', ''))
-            for i in mounts)
+            str(repo.arena.grafts[i].get('text', '')) for i in mounts)
         record = {
             'schema': 'grm.a1.gpu_contrast_row.v1',
             'row_id': row['row_id'], 'group': row['group'],
@@ -701,34 +915,94 @@ def run_row(row, registration, out_dir, *, fake, rule, provenance=None):
             'worker_provenance': provenance,
             'model': loaded['model_info'],
             'fake': bool(fake),
+            'non_fit': False,
+            'memory': {
+                'device_before': memory_before,
+                'device_after': device_memory(fake=fake),
+                'residency_after_load': residency_after_load,
+                'residency_after_mount': residency_after_mount,
+                'payloads_released_after_merge': released_after_merge,
+                'node_vram_budget_mb': NODE_VRAM_BUDGET_MB,
+            },
             'elapsed_s': round(time.monotonic() - started, 3),
         }
         record.update(score(answer, row))
         create(path, record)
         return record
+    except Exception as exc:
+        if not is_non_fit(exc):
+            raise
+        # CAPACITY, not correctness. Receipt it and let the campaign go on.
+        record = {
+            'schema': 'grm.a1.gpu_contrast_row.v1',
+            'row_id': row['row_id'], 'group': row['group'],
+            'probe_id': row['probe_id'], 'class': row['class'],
+            'answerable': row['answerable'],
+            'scored_for_prediction': row['scored_for_prediction'],
+            'cell': row.get('cell'), 'checkpoint_dir': checkpoint,
+            'question_registered': row['question'],
+            'expected': row['expected'],
+            'non_fit': True,
+            'status': 'NON_FIT',
+            'error': f'{type(exc).__name__}: {exc}',
+            'traceback': traceback.format_exc()[-4000:],
+            'worker_provenance': provenance,
+            'fake': bool(fake),
+            'memory': {
+                'device_before': memory_before,
+                'device_at_failure': device_memory(fake=fake),
+                'residency_at_failure': (
+                    payload_residency(loaded['repo'])
+                    if loaded and loaded.get('repo') else None),
+                'node_vram_budget_mb': NODE_VRAM_BUDGET_MB,
+            },
+            'exact_correct': None, 'control_broken': None,
+            'elapsed_s': round(time.monotonic() - started, 3),
+        }
+        create(path, record)
+        return record
     finally:
-        try:
-            loaded['repo'].close()
-        except Exception:
-            pass
-        if loaded.get('monkeypatch') is not None:
-            loaded['monkeypatch'].undo()
-        shutil.rmtree(loaded['scratch'], ignore_errors=True)
+        if loaded is not None:
+            try:
+                release_payloads(loaded['repo'])
+            except Exception:
+                pass
+            try:
+                loaded['repo'].close()
+            except Exception:
+                pass
+            if loaded.get('monkeypatch') is not None:
+                loaded['monkeypatch'].undo()
+            shutil.rmtree(loaded['scratch'], ignore_errors=True)
+        empty_cache(fake=fake)
 
 
 def summarize(out_dir):
     rows = [read(p) for p in
             sorted((Path(out_dir) / 'rows').glob('*.json'))]
-    scored = [r for r in rows if r.get('scored_for_prediction')]
-    controls = [r for r in rows if not r.get('answerable')]
+    non_fit = [r for r in rows if r.get('non_fit')]
+    measured = [r for r in rows if not r.get('non_fit')]
+    # NON_FIT rows are UNMEASURED: out of the numerator AND the denominator.
+    # Leaving them in the denominator would score a capacity failure as a
+    # wrong answer; dropping them silently would shrink the denominator and
+    # flatter the result. They get their own line instead.
+    scored = [r for r in measured if r.get('scored_for_prediction')]
+    controls = [r for r in measured if not r.get('answerable')]
     hits = sum(bool(r.get('exact_correct')) for r in scored)
     broken = sum(bool(r.get('control_broken')) for r in controls)
     single = sum(bool(r.get('single_mount')) for r in scored)
-    over = sum(int((r.get('merge') or {}).get('over_width', 0)) for r in rows)
+    over = sum(int((r.get('merge') or {}).get('over_width', 0))
+               for r in measured)
     fake = bool(rows) and all(r.get('fake') for r in rows)
     summary = {
         'schema': 'grm.a1.gpu_contrast_summary.v1',
         'rows': len(rows),
+        'rows_measured': len(measured),
+        'rows_non_fit': len(non_fit),
+        'non_fit_row_ids': sorted(r['row_id'] for r in non_fit),
+        'non_fit_note': ('NON_FIT rows are UNMEASURED: excluded from the '
+                         'prediction numerator AND denominator, never '
+                         'counted as wrong answers.'),
         'scored_rows': len(scored),
         'aliases_exact': hits,
         'aliases_single_mount': single,
@@ -736,8 +1010,16 @@ def summarize(out_dir):
         'controls_broken': broken,
         'digests_over_width': over,
         'prediction': 'aliases >= 5/8 exact AND 0 controls broken',
-        'prediction_met': bool(hits >= 5 and broken == 0),
-        'verdict': ('GREEN' if hits >= 5 and broken == 0 else 'RED'),
+        # A prediction over a PARTIAL denominator is not the registered
+        # prediction. If any scored row went NON_FIT, the verdict is withheld
+        # and named as such rather than computed from what survived.
+        'prediction_met': (
+            None if any(r.get('scored_for_prediction') for r in non_fit)
+            else bool(hits >= 5 and broken == 0)),
+        'verdict': (
+            'INCOMPLETE_NON_FIT'
+            if any(r.get('scored_for_prediction') for r in non_fit)
+            else ('GREEN' if hits >= 5 and broken == 0 else 'RED')),
         'fake': fake,
     }
     if fake:
@@ -749,7 +1031,10 @@ def summarize(out_dir):
         # test_rd2_fake_reader_entity_blind_limit. Reporting a fake
         # aliases_exact as though it were the contrast would be exactly the
         # false-success this arc keeps refusing.
-        summary['verdict'] = 'FAKE_RUN_NOT_A_PREDICTION'
+        # A NON_FIT scored row withholds the verdict on EITHER path: it is a
+        # stronger statement than "this was a fake run", so it wins.
+        if summary['verdict'] != 'INCOMPLETE_NON_FIT':
+            summary['verdict'] = 'FAKE_RUN_NOT_A_PREDICTION'
         summary['prediction_met'] = None
         summary['fake_note'] = (
             'CPU doubles. aliases_exact is NOT the registered measurement: '
@@ -832,13 +1117,24 @@ def main(argv=None):
     print(f'rows total={len(rows)} pending={len(pending)} '
           f'fake={bool(args.fake)} lease_s={args.lease_seconds}', flush=True)
 
+    # One model for the whole invocation (prior art: FIX-8's `open_copy`
+    # `loaded` carry). Rebuilding it per row is what OOM'd the lead's run.
+    cache = {}
+
     def execute():
         for row in rows:
             result = run_row(row, registration, out_dir, fake=args.fake,
-                             rule=args.rule, provenance=provenance)
+                             rule=args.rule, provenance=provenance,
+                             cache=cache)
             status = result.get('status') or (
                 'EXACT' if result.get('exact_correct') else 'MISS')
-            print(f"  {row['row_id']:34s} {status}", flush=True)
+            memory = (result.get('memory') or {}).get('residency_after_mount')
+            detail = ''
+            if memory:
+                detail = (f"  [payloads device={memory['payloads_device_resident']}"
+                          f" {memory['device_payload_mb']}MB"
+                          f" page_ins={memory['page_ins']}]")
+            print(f"  {row['row_id']:34s} {status}{detail}", flush=True)
 
     lease_expired = False
     if args.fake:
@@ -883,6 +1179,14 @@ def main(argv=None):
         # can tell "re-run me" apart from "the prediction failed" (1).
         print(f'pending={len(remaining)} — re-run with --resume', flush=True)
         return 4
+    if summary['rows_non_fit']:
+        print(f"NON_FIT rows (unmeasured): {summary['rows_non_fit']} "
+              f"{summary['non_fit_row_ids']}", flush=True)
+    if summary['prediction_met'] is None:
+        # A scored row did not fit: the denominator is incomplete, so there
+        # is no verdict to report. Exit 5, distinct from a RED result.
+        print('INCOMPLETE: a scored row went NON_FIT; no verdict', flush=True)
+        return 5
     return 0 if summary['prediction_met'] else 1
 
 

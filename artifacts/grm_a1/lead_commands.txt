@@ -1,27 +1,32 @@
 #!/usr/bin/env bash
 # GRM-A1 — LEAD GPU commands for the registered alias fold-merge contrast.
 #
-# REVISION 3 (2026-09-11). The previous revision told you to take ONE 2400 s
-# lease. That is above the 590 s house cap and died before a single row ran.
-# This revision drives a LOOP of <=590 s leases with --resume, which is what
-# the resumable create-only receipts were built for.
+# REVISION 4 (2026-09-11, amendment 3). Revision 3 OOM'd on a clear card:
+# the worker rebuilt the 20B model per row and never freed the previous one,
+# and underneath that a d250 row pinned ~659 MB of node payloads for a mount
+# plan needing 4.5 MB. Both are repaired; see "What changed" below.
 #
-# Registration (written BEFORE any GPU run):
-#   artifacts/grm_a1/gpu_contrast_registration.json
+# READ THIS FIRST — the contrast's premise has moved:
+#   The C7 r3 checkpoints no longer contain UNMERGED alias edges at distance
+#   >= 30. The ordinary librarian has already folded the Signal edge and the
+#   Jasper base into separate ACTIVE digests, and the raw edges are retired.
+#   A1 correctly plans no job on a retired edge, so on 20 of the 23 rows the
+#   ON and OFF arms are the SAME repository. Only the d005 cell
+#   (A-009-016, 3 live edges) exercises the treatment.
+#   This is a finding about the FIXTURE, not a result about A1, and it is a
+#   LEAD DECISION: see gpu_contrast_amendment_3.json ->
+#   checkpoint_state_finding.options_for_the_lead. Running the battery as it
+#   stands will produce a largely OFF-vs-OFF null.
+#
+# Registration: artifacts/grm_a1/gpu_contrast_registration.json
 #   sha256 329d5865d437598f41fe9569fe8c06a4c2da64544476cf3ee73eb5e3efa9d8cd
 # Amendment 1 — worker becomes a pinned input; LT1 RED retracted.
-# Amendment 2 — lease shape, declared frame/flags-source/preconditions, one
-#   shared flags+environment path (the three 2026-09-11 lead-run stops).
-#   Both chain to the registration sha above; .sha256 sidecars alongside.
+# Amendment 2 — lease shape; declared frame/flags-source/preconditions.
+# Amendment 3 — OOM diagnosis, model reuse + armed pager, NON_FIT rail,
+#               U+2011 alias-parser repair.
+# All chain to the registration sha above; .sha256 sidecars alongside.
 #
-# Registered prediction, UNCHANGED by either amendment:
-#   aliases >= 5/8 exact from a SINGLE digest mount; 0 controls broken.
-# Budget ceiling, UNCHANGED: 0.5 GPU-h TOTAL across invocations. Splitting
-# the lease does not change the budget.
-#
-# GPU CONTENTION: the worker leases through the SAME gpu_lease helper the
-# C7/R1 workers import. The operator has absolute right of way. NEVER kill or
-# signal a process this did not start.
+# Prediction, budget (0.5 GPU-h TOTAL), rows (23) and prompt: UNCHANGED.
 
 set -euo pipefail
 cd /mnt/ForgeRealm/wt/grm-a1
@@ -39,43 +44,41 @@ CUDA_VISIBLE_DEVICES='' python3 scripts/grm_a1_width_receipts.py \
     --json artifacts/grm_a1/width_receipts.json
 
 # All 23 rows on the CPU doubles, through the SAME loader helpers the GPU arm
-# uses (resolve_flags / build_environment / load_runtime_frame). Only the
-# model and tokenizer are stubbed, so a flags-shape or frame error fails here.
+# uses. Exercises the paging (only mounted payloads resident after mount) and
+# the NON_FIT continue path.
 CUDA_VISIBLE_DEVICES='' python3 scripts/grm_a1_gpu_contrast.py \
     --fake --out artifacts/grm_a1/gpu_fake
 
 # ---------------------------------------------------------------------------
-# 1. PRECONDITION CHECK — run this FIRST. No lease, no load, no card.
+# 1. PRECONDITION CHECK — run FIRST. No lease, no load, no card.
 # ---------------------------------------------------------------------------
-# Reports every declared input and precondition, and names the missing ones.
-# Exit 0 = ready; exit 2 = something is missing (it prints which).
 CUDA_VISIBLE_DEVICES='' python3 scripts/grm_a1_gpu_contrast.py \
     --dry-run --out artifacts/grm_a1/gpu
-
-# Checked by --dry-run:
-#   input        runtime_frame       artifacts/grm_det1/run_20260831T160525Z_2/
-#                                    runtime_frame_28b3196f8fb04a41.json  (sha-pinned)
-#   input        c7_r3_registration  /mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/
-#                                    r3/registration.json  (sha-pinned; arms.A.flags
-#                                    is THE flags source for these checkpoints)
-#   precondition native_runtime      cpp/build/libgrm_runtime.so  (build artifact,
-#                                    not sha-pinned; cpp/ unchanged by A1)
-#   precondition model_snapshot      ~/.cache/huggingface/hub/models--openai--
-#                                    gpt-oss-20b/snapshots/6cee5e81ee83917806bb...
-#   checkpoint   (all 15 pinned C7 r3 cells)
 
 # ---------------------------------------------------------------------------
 # 2. The GPU contrast (LEAD ONLY) — a LOOP of <=590 s leases
 # ---------------------------------------------------------------------------
-# Each invocation: verifies drift + preconditions (no lease yet), takes ONE
-# 560 s lease, runs as many rows as fit, writes create-only receipts, and
-# exits. An expired lease is caught and reported as a PAUSE, not a crash.
+# WHAT CHANGED IN AMENDMENT 3
+#   * The 20B model is loaded ONCE per invocation and reused for every row
+#     (prior art: FIX-8's grm_c7_middle_replay.open_copy `loaded` carry, the
+#     loader that fit 16/24 rows from THESE checkpoints in F1-F4).
+#   * Node payloads run under a 64 MiB device budget, which ARMS the pager:
+#     load() stops materialising past it and _page() spills to RAM;
+#     arena._ensure_h pages the mounted nodes back in. Previously
+#     vram_budget_mb=None left the pager disabled and every payload pinned.
+#   * Payloads are released right after the fold's digest capture, again in
+#     the row's finally-block, and tensor_cuda.empty_cache() runs per row.
+#   * Every row records device_before/after (nvidia-smi), residency after
+#     load and after mount, and payloads released.
+#   * A row that still cannot fit writes a create-only NON_FIT receipt and
+#     the campaign CONTINUES. NON_FIT rows are UNMEASURED — out of the
+#     numerator AND the denominator, reported on their own line. If a SCORED
+#     row goes NON_FIT the verdict is WITHHELD (exit 5), never computed from
+#     a partial denominator.
 #
-# Exit codes: 0 = prediction met · 1 = prediction NOT met (a real RED result)
-#             2 = precondition failed (drift/chain/pin/missing)
-#             3 = unexpected exception · 4 = rows still pending, re-run
-#
-# The loop stops on 0 or 1 (a verdict), retries on 4, and aborts on 2 or 3.
+# Exit codes: 0 = prediction met · 1 = prediction NOT met (a real RED)
+#             2 = precondition failed · 3 = unexpected exception
+#             4 = rows pending, re-run · 5 = incomplete, a scored row NON_FIT
 
 for attempt in $(seq 1 12); do
     set +e
@@ -87,39 +90,49 @@ for attempt in $(seq 1 12); do
     rc=$?
     set -e
     case "$rc" in
-        0|1) echo "verdict reached (exit $rc) after $attempt lease(s)"; break ;;
-        4)   echo "lease $attempt done, rows pending — continuing"; sleep 30 ;;
-        *)   echo "ABORT: exit $rc" >&2; exit "$rc" ;;
+        0|1|5) echo "run finished (exit $rc) after $attempt lease(s)"; break ;;
+        4)     echo "lease $attempt done, rows pending — continuing"; sleep 30 ;;
+        *)     echo "ABORT: exit $rc" >&2; exit "$rc" ;;
     esac
 done
 
 # ---------------------------------------------------------------------------
 # 3. Summary
 # ---------------------------------------------------------------------------
-# The worker writes artifacts/grm_a1/gpu/{summary.json,probes.jsonl} itself.
 CUDA_VISIBLE_DEVICES='' python3 - <<'SUMMARY'
 import json, pathlib
-summary = json.loads(
-    pathlib.Path('artifacts/grm_a1/gpu/summary.json').read_text())
-print(json.dumps(summary, indent=1, sort_keys=True))
-print('aliases exact %s/%s  single-mount %s/%s  controls broken %s/%s  pending %s'
-      % (summary['aliases_exact'], summary['scored_rows'],
-         summary['aliases_single_mount'], summary['scored_rows'],
-         summary['controls_broken'], summary['controls'],
-         summary.get('pending')))
-if summary.get('pending'):
+s = json.loads(pathlib.Path('artifacts/grm_a1/gpu/summary.json').read_text())
+print(json.dumps(s, indent=1, sort_keys=True))
+print('measured %s/%s   NON_FIT (unmeasured) %s %s'
+      % (s['rows_measured'], s['rows'], s['rows_non_fit'],
+         s['non_fit_row_ids'] or ''))
+print('aliases exact %s/%s   single-mount %s/%s   controls broken %s/%s'
+      % (s['aliases_exact'], s['scored_rows'],
+         s['aliases_single_mount'], s['scored_rows'],
+         s['controls_broken'], s['controls']))
+if s.get('pending'):
     print('INCOMPLETE — re-run the lease loop above')
+elif s['prediction_met'] is None:
+    print('NO VERDICT:', s['verdict'])
 else:
-    print('PREDICTION MET' if summary['prediction_met']
-          else 'PREDICTION NOT MET (RED)')
+    print('PREDICTION MET' if s['prediction_met'] else 'PREDICTION NOT MET (RED)')
 SUMMARY
 
 # ---------------------------------------------------------------------------
-# 4. Optional: LT1 under its REGISTERED margin_first rule
+# 4. Memory forensics, if a row still does not fit
 # ---------------------------------------------------------------------------
-# LT1 is NOT part of the GPU contrast (its rows have no pinned C7 r3
-# checkpoint). The CPU receipt for the retracted RED is
-# artifacts/grm_a1/lt1_margin_first.json. To pin the rule on a GPU row:
-#
-#   python3 scripts/grm_a1_gpu_contrast.py --rule margin_first \
-#       --lease-seconds 560 --out artifacts/grm_a1/gpu_margin_first --resume
+CUDA_VISIBLE_DEVICES='' python3 - <<'MEM'
+import json, pathlib
+for p in sorted(pathlib.Path('artifacts/grm_a1/gpu/rows').glob('*.json')):
+    r = json.loads(p.read_text())
+    m = r.get('memory') or {}
+    tag = 'NON_FIT' if r.get('non_fit') else 'ok'
+    mount = m.get('residency_after_mount') or m.get('residency_at_failure') or {}
+    print('%-34s %-8s device_before=%s resident=%s %sMB page_ins=%s'
+          % (r['row_id'], tag, (m.get('device_before') or {}).get('free_mb'),
+             mount.get('payloads_device_resident'),
+             mount.get('device_payload_mb'), mount.get('page_ins')))
+MEM
+
+# Baseline payload accounting (CPU-derived, no GPU):
+#   artifacts/grm_a1/payload_accounting.json

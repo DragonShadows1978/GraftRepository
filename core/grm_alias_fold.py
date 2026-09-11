@@ -207,8 +207,20 @@ def parse_alias_edge(text: str) -> tuple[str, str] | None:
     Only the FIRST match is honoured: a node declaring two alias relations is
     not a clean edge, and merging it would have to choose a base arbitrarily.
     Such a node yields no alias job and keeps the pre-A1 behaviour.
+
+    THE SCAN IS FIX-8 NORMALIZED.  Measured on the real C7 r3 checkpoints
+    (lead GPU run, 2026-09-11): a stored digest reading
+    ``"… and C7‑Signal‑0 is an alias for C7‑AliasBase‑0."``
+    — with U+2011 NON-BREAKING HYPHEN, which the model emits — was parsed as
+    the alias pair ``('0', 'C7')``, because the identifier class ``[\\w.:-]``
+    does not contain U+2011 and shatters the name.  That is the SAME
+    shattering SC1.1/FIX-8 was minted for ("value comparison is semantics,
+    not glyphs"), and this module already depends on ``normalize_glyphs``
+    through ``identifier_set``; the parser simply was not using it.  A
+    spurious pair is worse than a missed one: it invents an alias relation
+    for a node that asserts none, and then tries to merge it.
     """
-    scan = alias_scan_text(text)
+    scan = normalize_glyphs(alias_scan_text(text))
     for pattern in _ALIAS_PATTERNS:
         matches = pattern.findall(scan)
         if len(matches) != 1:
