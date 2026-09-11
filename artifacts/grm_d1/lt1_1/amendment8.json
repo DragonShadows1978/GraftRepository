@@ -1,0 +1,167 @@
+{
+  "amendment": 8,
+  "arms": {
+    "A": {
+      "alias_fold_merge": false,
+      "arm": "A",
+      "budget_gpu_hours": 2.06,
+      "budget_gpu_seconds": 7410,
+      "env_after_environment_flags": {
+        "GRM_ADMISSION_RULE": "margin_first"
+      },
+      "invocation": {
+        "dry_run": "python3 scripts/grm_lt1_1.py --arm A --dry-run",
+        "preflight": "python3 scripts/grm_lt1_1.py --arm A --preflight",
+        "resume": "python3 scripts/grm_lt1_1.py --arm A --resume",
+        "summary": "python3 scripts/grm_lt1_1.py --arm A --summary"
+      },
+      "out_dir": "artifacts/grm_d1/lt1_1/run_A",
+      "predictions": {
+        "aliases": "0/5 wrong rows fixed (recall_7_* stay wrong)",
+        "corrections": "5/5",
+        "fresh": "6/7",
+        "recap": "unpredicted memory-side; oracle 5/5 gated on CPU"
+      },
+      "superseded_budget_gpu_seconds": 6120
+    },
+    "A+": {
+      "alias_fold_merge": true,
+      "arm": "A+",
+      "budget_gpu_hours": 2.06,
+      "budget_gpu_seconds": 7410,
+      "env_after_environment_flags": {
+        "GRM_ADMISSION_RULE": "margin_first",
+        "GRM_ALIAS_FOLD_MERGE": "1"
+      },
+      "invocation": {
+        "dry_run": "python3 scripts/grm_lt1_1.py --arm A+ --dry-run",
+        "preflight": "python3 scripts/grm_lt1_1.py --arm A+ --preflight",
+        "resume": "python3 scripts/grm_lt1_1.py --arm A+ --resume",
+        "summary": "python3 scripts/grm_lt1_1.py --arm A+ --summary"
+      },
+      "out_dir": "artifacts/grm_d1/lt1_1/run_Aplus",
+      "predictions": {
+        "aliases": "4/5 of the wrong rows fixed; the lead proposed >= 3/5 and that bar is also met",
+        "corrections": "5/5",
+        "fresh": "6/7",
+        "prediction_note": "The lead proposed aliases >= 3/5. I register 4/5 and state why: the D1 CPU check (artifacts/grm_d1/alias_cpu_aplus.json) shows the fold firing, the digest naming BOTH names, being ADMITTED and MOUNTED, and serving the right value for 10/10 alias probes at every distance, with a 78-token digest inside the 96 width. The one reservation that keeps me off 5/5 is that the CPU reader is a regex double: the GPU reader must still choose the digest value over the surrounding prose, and LT1 already showed one long-distance ladder drop (recall_3_150) that no lineage change addresses. 4/5 prices exactly one such drop.",
+        "recap": ">= 3/5 memory-side"
+      },
+      "superseded_budget_gpu_seconds": 6120
+    }
+  },
+  "budget_gpu_hours_total": 4.12,
+  "budget_gpu_seconds_per_arm": 7410,
+  "budget_gpu_seconds_total": 14820,
+  "core_rebind": {
+    "attribution_note": "Three of amendment 1's six pins moved. Two are SCOUT-FIX-9 (core/graft_arena.py, core/graft_repository.py); one is A1 amendment 3 (core/grm_alias_fold.py). Every attribution was checked against the source at the named line, not accepted from the merge description. The remaining three pins (core/grm_admission.py, core/grm_runtime.py, core/grm_text_norm.py) are byte-identical to amendment 1 and are recorded as unchanged rather than silently dropped.",
+    "changed": {
+      "core/graft_arena.py": {
+        "after_sha256": "ee455a6a8b77016f5ad4c9047d9b02376e655eab596b9cb790d7bde7faa1c6da",
+        "attribution": "SCOUT-FIX-9 (lead-merged into grm-merge, fast-forwarded into this worktree). Verified at the code site by this seat, not taken on label: width-guard degenerate-split rejection (core/graft_repository.py:1247,1385,1400), cycle-safe child-key rebuild republished to the native store (:5616,:5720), and Python route eligibility requiring a cent (core/graft_arena.py:1453).",
+        "before_sha256": "918f5d0b202b4efabfaa1c37c965cdf3ce8fbd7e6b69045c4dafd985bee820a9"
+      },
+      "core/graft_repository.py": {
+        "after_sha256": "092cca898f20b0c1350aeb129f364c6fd5e55ecca8a6a796fd030e72efb9b50e",
+        "attribution": "SCOUT-FIX-9 (lead-merged into grm-merge, fast-forwarded into this worktree). Verified at the code site by this seat, not taken on label: width-guard degenerate-split rejection (core/graft_repository.py:1247,1385,1400), cycle-safe child-key rebuild republished to the native store (:5616,:5720), and Python route eligibility requiring a cent (core/graft_arena.py:1453).",
+        "before_sha256": "59165723310605d599088718b486066cdfad90e16c15d9af83cf64726a52c2e4"
+      },
+      "core/grm_alias_fold.py": {
+        "after_sha256": "8e3810106d0e93a5da7bcf1c09dc80bcc4c561c5c334b634a96419ce475c97a5",
+        "attribution": "A1 amendment 3. Verified at the code site by this seat: `parse_alias_edge` now scans `normalize_glyphs(alias_scan_text(text))`, so a stored digest written with U+2011 NON-BREAKING HYPHEN no longer shatters into the spurious pair ('0', 'C7'). Same shattering class as SC1.1/FIX-8.",
+        "before_sha256": "147ea9687112e9ccd61aaaf63c16404c5175a08d6733da2df22d4e591f1203e7"
+      }
+    },
+    "new_inputs": {},
+    "source_binding": "artifacts/grm_d1/lt1_1/amendment1.json",
+    "source_binding_sha256": "0a5754cd3e5bc91c4c5428228ed4164534c5d281d2aa0c7410e8c7f8b145ce0e",
+    "supersedes": "amendment1.core_rebind",
+    "unchanged": {
+      "core/grm_admission.py": {
+        "attribution": "unchanged by the fast-forward",
+        "sha256": "ebdfd84af435a163dfe4a37281d489047acd974bf76190b79622340c29af7ab6"
+      },
+      "core/grm_runtime.py": {
+        "attribution": "unchanged by the fast-forward",
+        "sha256": "973addc491a29eda9bac611a9c3f0cc25cd1033395ecc39b84b19c6f1b8f0646"
+      },
+      "core/grm_text_norm.py": {
+        "attribution": "unchanged by the fast-forward",
+        "sha256": "e968d68791950adb3a59bc83f43d75a75e31879a2f77c379b44bf711ccecc30a"
+      }
+    },
+    "unchanged_count": 3
+  },
+  "finding": {
+    "detail": "H1 measured correctly: on-tree graft_arena.py != the amendment-1 pin. Measured by this seat, both arms: lt1_1_preflight -> BLOCKED, reasons = [INPUT_SHA_MISMATCH: core/graft_arena.py, INPUT_SHA_MISMATCH: core/graft_repository.py, INPUT_SHA_MISMATCH: core/grm_alias_fold.py]. The order named two FIX-9 files and alias_fold; the third blocked pin (core/graft_repository.py) is also FIX-9, so the blocked set is three files, not two.",
+    "h1_measurement_confirmed": true,
+    "marks_were_hiding_the_blocker": "THE MARKS DID NOT MERELY LABEL THE BLOCKER -- THEY SUPPRESSED IT. tests/conftest.py:75-124 makes `campaign_receipt` a SKIP-BY-DEFAULT marker. With the marks in place the two files reported \"25 passed, 12 skipped\" on a tree whose preflight was BLOCKED: skip-green, not green. Removing the marks is what makes the gate able to fail; the rebind is what makes it pass."
+  },
+  "fix": {
+    "defects_the_unmarking_exposed": {
+      "env_leak": "Every test taking the `pinned` fixture failed GRM_ENV_LEAK. The guard (tests/conftest.py:198-226) runs at the END OF THE CALL PHASE by design, but a yield-fixture cleans up at TEARDOWN, so `pinned_arm`'s correct finally-restore was too late to be seen. Fixed by registering the same keys with `monkeypatch` in the fixture, which the guard recognises as pinned. `pinned_arm` still does the real pin and its readback.",
+      "note": "Removing the marks made these tests run for the first time on this tree. Both defects are in OUR test file and predate amendment 8; the marks had been hiding them.",
+      "teeth_pointed_at_a_superseded_block": "The two planted-drift teeth tests planted into amendment 1. Once amendment 8 governs, that block is never consulted, so the tests proved nothing and failed with AMENDMENT2_CHAIN_MISMATCH. Fixed with `_governing()` (plant in the block the runner actually reads) and `_replant()` (repair the downstream previous_amendment_sha256 links so the planted drift is the ONLY defect, and the INPUT check is what fails). The teeth are now sharper than before: they follow the governing block instead of a hard-coded amendment number."
+    },
+    "marks_removed": {
+      "files": [
+        "tests/test_grm_lt1_1_preflight.py",
+        "tests/test_grm_d1_amendment3.py"
+      ],
+      "note": "8 marks in the preflight file and 1 in the amendment3 file, per the lead. These tests are ours and now run by default."
+    },
+    "runner_reads_the_governing_rebind": "scripts/grm_lt1_1.py previously read `core_rebind` from AMENDMENT1 at four sites, so no later amendment could rebind a pin. Added `governing_core_rebind()` / `governing_core_pins()`: the newest amendment carrying a `core_rebind` governs, which is the rule the preflight already applied to the runner binding. Byte-identical behaviour on a tree where nothing moved.",
+    "sites": [
+      "binding()",
+      "lt1_1_preflight()",
+      "lt1_lineage() drift_table"
+    ]
+  },
+  "follow_up_instruction": "Amendment 8 rebinds pins only. It makes NO measurement claim: the CPU numbers in amendment 7 were taken on the pre-merge core and are NOT restated here as results for this tree.",
+  "order": "orders/GRM_D1_LT1_RESIDUAL_DIAGNOSIS.md",
+  "order_sha256": "6ae0f52af0059f0a93b66ae37dd442761a32409b5f3f17b027c4b8fa2c0efb46",
+  "previous_amendment": "amendment7.json",
+  "previous_amendment_sha256": "46bb7fd83e048999a6316bfcf488740f0e7163eb97480320b183eeca2a130af5",
+  "prior_art": {
+    "fix9_and_a1a3": "Not this seat's work - SCOUT-FIX-9 and A1 amendment 3 are the lead-merged core changes this amendment binds to. Their own prior-art annotations live at their code sites; core/grm_alias_fold.py:213-216 credits SC1.1/FIX-8 for the glyph-shattering class.",
+    "governing_rebind": "No prior art known to me for this specific rule; it is the ordinary \"latest record wins\" of an append-only amendment chain (append-only timestamped ledgers, Haber & Stornetta 1991, in kind). The \"LATEST amendment governs\" phrasing is this campaign's own, from the runner-binding logic already in lt1_1_preflight. Unverified against literature - no network in this sandbox; lead to check. Search terms: \"append-only amendment chain\", \"latest-wins record supersession\", \"content-addressed pin rebinding\"."
+  },
+  "process_safety": {
+    "core_writes": "none - core/ is read-only to this seat",
+    "disk": "Root filesystem hit 0 bytes free again mid-run (ENOSPC, surfacing as OSError in 6 tamper tests that shutil.copytree the document set). Reclaimed ONLY this seat's own stale /tmp/pytest-of-vader roots -> 91G free. No other consumer touched.",
+    "foreign_processes": "none killed or signalled. A foreign full-battery pytest (PID 3417188, 117 test files) was observed running on this machine and was left strictly alone; it finished on its own.",
+    "git": "none - the lead commits",
+    "gpu": "none - no lease taken, dry-lease only",
+    "subagents": "none"
+  },
+  "purpose": "Rebind LT1.1 core input pins to the merged tree it must run on. LT1.1 measures the core that ships; after the grm-merge fast-forward brought SCOUT-FIX-9 and A1 amendment 3 into core/, the amendment-1 pins were superseded and the chain preflight was BLOCKED with INPUT_SHA_MISMATCH on three files.",
+  "registration": "artifacts/grm_d1/lt1_1/registration.json",
+  "registration_sha256": "02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8",
+  "ruling": "LT1's original registration is a frozen receipt of its day; it is NOT re-validated against today's core. LT1.1's host preflight must validate LT1.1's own chain \u2014 registration 02b44d02 + amendments 1\u20133, whose core pins were rebound to this tree with attribution \u2014 using the same verification functions (`grm_lt1.verify`-class checks: sha-bound inputs, fixture sha, cell schedule, budget) but pointed at LT1.1's registration/amendment set. LT1's registration sha and its recorded core pins are carried as `parent` lineage in the LT1.1 receipt (recorded, with the drift table you already attributed), not as a gate.",
+  "runner": {
+    "change": "governing_core_rebind()/governing_core_pins() added; binding(), lt1_1_preflight() and lt1_lineage() now read the governing rebind instead of amendment 1. No gameplay/tuning literal introduced.",
+    "path": "scripts/grm_lt1_1.py",
+    "sha256": "2c745e2b27194ade4ec2c78c625fa2d70bd7ff0d5f1518e2b64f153708677937",
+    "superseded_sha256": "19e3a895c5e5442f0354fec59fcbe54b7c5dcb783f349b15d7612202bf1c14ec",
+    "tests": [
+      "tests/test_grm_lt1_1_runner.py",
+      "tests/test_grm_lt1_1_resume_route.py",
+      "tests/test_grm_lt1_1_preflight.py",
+      "tests/test_grm_lt1_1_child_spawn.py",
+      "tests/test_grm_lt1_1_idle_wait.py",
+      "tests/test_grm_lt1_1_production_turns.py"
+    ],
+    "tests_sha256": {
+      "tests/test_grm_d1_amendment3.py": "baf381fe0f3aa24e9b0650bf4086c66e67955640f4b39423643ff95512ec5f77",
+      "tests/test_grm_lt1_1_child_spawn.py": "8f6b1ceb2a138b769cfb3e77b01cfb8b3b680690a5f1b58c2d45086a2a9e3296",
+      "tests/test_grm_lt1_1_idle_wait.py": "50dfdb4e0805be8cebde96a69dc7a3d7284f2cbb5cf949f7acd596067b03b105",
+      "tests/test_grm_lt1_1_preflight.py": "ce33a4fc8f6fb9e0b7edacad0c1e06ef1d5b7b2fea818358aeff522da2819463",
+      "tests/test_grm_lt1_1_production_turns.py": "e0a71ad92106739b6cc08ee25ca7b0497e3acab77aa8592a690f6352b0bb8f7e",
+      "tests/test_grm_lt1_1_resume_route.py": "9b86b2ad4f7c3346c51187f8b3d3619e994b86091c08560bf23becbf28adfa9d",
+      "tests/test_grm_lt1_1_runner.py": "60c0eaf9849f11079d75ea9b558bd3f52f1af301d8bbc10e3e250d0244868ae3"
+    },
+    "worker": "scripts/grm_lt1_worker.py",
+    "worker_sha256": "79492eafe9176510a649c5477bf78bf1eb5c129ecaeaf4094221c67e22646c71"
+  },
+  "schema": "grm.lt1_1.amendment7.v1"
+}
