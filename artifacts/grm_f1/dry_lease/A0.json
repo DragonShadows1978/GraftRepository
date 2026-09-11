@@ -1,4 +1,5 @@
 LT1.1 arm A pinned {"arm": "A", "admission_rule": "margin_first", "alias_fold_merge": false}
+LT1.1 roots {"campaign_root": "artifacts/grm_f1/lt1_1_r3/run_A0", "cells_root": "artifacts/grm_f1/lt1_1_r3/run_A0/cells", "owner_file": "artifacts/grm_f1/lt1_1_r3/run_A0/campaign.active", "worker_RUN": "artifacts/grm_f1/lt1_1_r3/run_A0", "arm_default_root": "/mnt/ForgeRealm/wt/grm-f1/artifacts/grm_d1/lt1_1/run_A", "out_override": "artifacts/grm_f1/lt1_1_r3/run_A0", "arm_default_in_use": false}
 LT1.1 A cell A-001-008
 {
   "status": "PASS",
@@ -35,6 +36,15 @@ LT1.1 A cell A-001-008
       "core/grm_text_norm.py": "e968d68791950adb3a59bc83f43d75a75e31879a2f77c379b44bf711ccecc30a"
     }
   },
-  "out_dir": "/mnt/ForgeRealm/wt/grm-f1/artifacts/grm_f1/dry_lease/run_A0",
+  "out_dir": "artifacts/grm_f1/lt1_1_r3/run_A0",
+  "resolved_roots": {
+    "campaign_root": "artifacts/grm_f1/lt1_1_r3/run_A0",
+    "cells_root": "artifacts/grm_f1/lt1_1_r3/run_A0/cells",
+    "owner_file": "artifacts/grm_f1/lt1_1_r3/run_A0/campaign.active",
+    "worker_RUN": "artifacts/grm_f1/lt1_1_r3/run_A0",
+    "arm_default_root": "/mnt/ForgeRealm/wt/grm-f1/artifacts/grm_d1/lt1_1/run_A",
+    "out_override": "artifacts/grm_f1/lt1_1_r3/run_A0",
+    "arm_default_in_use": false
+  },
   "stopped_at": "worker.run_cell (lease boundary)"
 }

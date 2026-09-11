@@ -466,3 +466,161 @@ read only — the one copy taken FROM it was verified byte-identical and
 written only into this worktree. Every pytest run used
 `--basetemp /mnt/ForgeRealm/wt/grm-f1/artifacts/grm_f1/tmp`, removed after.
 All Bash calls foreground, under 10 minutes.
+
+---
+
+# FOLLOW-UP 3 (lead, 2026-09-11): `--out` must govern every root
+
+Follow-up 2 was verified (307 passed) and committed at 23d6f0d. The lead's
+arm-A' run on the card then died before taking any lease
+(`artifacts/grm_f1/lt1_1_r3/lead_Aprime_try1.log`):
+
+    scripts/grm_lt1_1.py:1206  resume -> worker.pending(reg, run=root)
+    scripts/grm_lt1_worker.py:240  ValueError: COMPLETED_CELL_BINDING_OR_STATUS
+
+`run_Aprime/cells` was empty — the tell that the campaign never wrote there.
+
+## 14. The cause: NEITHER candidate the lead offered
+
+Settled by receipt, `artifacts/grm_f1/red/`.
+
+`main()` read `return resume(args.arm)`. **`--out` was accepted by argparse
+and DROPPED** on the one route that spends GPU. Every other mode
+(`--dry-run`, `--summary`, `--fake`, `--dry-lease`) forwarded `args.out`, so
+the flag looked honoured everywhere a gate could see it and was discarded
+exactly where it mattered. `resume` fell back to `out_dir('A')` = r2's frozen
+`artifacts/grm_d1/lt1_1/run_A`, whose 26 COMPLETE cells carry r2's binding
+(amendments 10/11 rebound the core), and `pending()` raised.
+
+Reproduced before touching anything
+(`artifacts/grm_f1/red/red_resume_drops_out.log`): same error, same line,
+and the `--out` root **was never created** — proving the argument was
+dropped, not merely disagreeing with a registration.
+
+**Candidate (1) REFUTED by receipt.** `pending()` fails on the FIRST cell,
+`A-001-008`, and never reaches `A-025-032`; and its body reads only
+`controller.json` / `worker.json` / `checkpoint/` — the string `session`
+does not occur in it. The restored directory was irrelevant. Pinned by
+`test_red_is_not_caused_by_the_restored_session_directory`.
+
+**Candidate (2) does not apply.** There is no `run_root` binding in the
+registration to disagree with; `resume` derives the root from its argument
+alone.
+
+Why my own `--dry-lease` gate passed: it is a **different `main()` branch**
+that already forwarded `root=args.out`. It exercised the fixed path while the
+broken one shipped. That is the reporting failure to name — a gate that
+tests the sibling of the code under test is not a gate.
+
+## 15. Two more root leaks, found while fixing the first
+
+Neither would have surfaced today, because the crash happened first.
+
+**Leak 2 — select here, execute there.** `lt1_1_seams` pinned
+`worker.RUN = out_dir(arm)` unconditionally. `run_cell`, `accounting` and
+the leased child ALL read `worker.RUN`. With `--out` honoured only in
+`pending()`, a campaign would have SELECTED a cell from the `--out` root and
+EXECUTED it into the arm default.
+
+**Leak 3 — the silently wrong arm.** `run_cell` builds the child environment
+from `grm_c2_cells.environment(flags)`, which deletes every ambient `GRM_*`
+name; `spawn_env` re-applied only the arm pin. Measured
+(`artifacts/grm_f1/red/red_child_env_strip.json`): with all three treatment
+flags exported in the parent, **every one was ABSENT from the child** — the
+process that actually runs the turns, folds the windows and routes the
+probes. An r3 treatment arm would have **executed as the control while its
+receipts recorded the flags as on**. Silently wrong, not failed. My
+follow-up-2 `arm_environment` fix covered the in-process `--fake` path only;
+it did not cross the process boundary, and I did not check that it did.
+
+## 16. The fix (runner only; core untouched)
+
+`scripts/grm_lt1_1.py`:
+* `main()` — `return resume(args.arm, root=args.out, host_gate=not args.no_host_gate)`;
+  `--out`'s help now states that it governs every root.
+* `resolved_roots(arm, root)` — campaign root, cells root, owner file,
+  `worker_RUN`, the arm default, and `arm_default_in_use`. Printed into the
+  `--dry-lease` receipt AND the operator log (`LT1.1 roots {...}`), because
+  the GPU route returns an exit code, not a document.
+* `assert_root_isolation(arm, root)` — raises `LT11_OUT_EQUALS_ARM_DEFAULT`,
+  `LT11_OUT_INSIDE_ARM_DEFAULT` or `LT11_WORKER_RUN_NOT_ISOLATED`. With
+  `--out` given the arm default is never read, and that is now
+  unrepresentable rather than merely intended.
+* `lt1_1_seams(arm, root=None)` — pins `worker.RUN` to the campaign root.
+  Default unchanged, so every pre-existing caller is byte-identical.
+* `TREATMENT_FLAGS` + carries in `spawn_env` (cross-process) and
+  `arm_environment` (in-process). Carried only when actually set, so a
+  caller with none set gets a byte-identical child environment.
+
+## 17. F2's pin moved off the live run root
+
+`artifacts/grm_f2/flag_contract.json` pinned
+`artifacts/grm_d1/lt1_1/run_A/cells/A-025-032/session/repository/manifest.json`
+— a path INSIDE a live campaign run root, which is what made me restore that
+directory in follow-up 2 in the first place. Repointed to
+`artifacts/grm_f2/r2_arm_a_A-025-032_session_manifest.json`, a byte-identical
+copy (`cmp -s` clean), with a `pin_relocations` entry recording from/to/sha
+and why. The restored `session/` subtree was then removed from the run root
+after verifying the canonical repo still holds it byte-identically
+(`diff -r` clean); the four original r2 receipt files in that cell are
+untouched, and no `session/` directories remain anywhere under
+`run_A/cells/`. `test_f2_flag_contract_pin_is_off_the_live_run_root` refuses
+any pin containing `/run_A` or `/cells/`.
+
+## 18. Gate: the REAL resume route
+
+`tests/test_grm_f1_resume_out_root.py` (383 lines, 20 tests). Drives
+`resume()` itself — not the `--dry-lease` branch — through the chain
+preflight, seams, arm pin, campaign-owner file, `worker.pending` selection
+and ONE real `worker.run_cell` spawn onto the CPU double, for all three
+arms. Only the GPU lease and the idle probe are stubbed (the shape reused
+verbatim from `tests/test_grm_lt1_1_child_spawn.py`), so reservation
+accounting, directory creation, argv construction, Popen, the foreground
+wait, charge computation, checkpoint validation and the controller receipt
+all run unchanged.
+
+RED-before is pinned in the same file, not merely described:
+`test_red_resume_without_out_hits_the_frozen_r2_root` reproduces today's
+`COMPLETED_CELL_BINDING_OR_STATUS`, and
+`test_main_forwards_out_to_the_real_resume` reads the source so a
+re-introduced no-argument call site fails again.
+
+Result: all three arms COMPLETE, `status=COMPLETE error=None`, correct
+`campaign_arm` / `alias_fold_merge` per arm, clean child logs, everything
+written under `--out` and nothing added to the frozen r2 root.
+
+Worth recording: this gate FAILED first with
+`LT11_CHILD_PREFLIGHT_BLOCKED: RUNNER_SHA_MISMATCH` — the sha pin catching
+my own runner edit, exactly as designed, before amendment 12 existed.
+
+## 19. Amendment 12
+
+`scripts/grm_f1_register_lt11_r3_amd12.py`. Chains to 11, rebinds the RUNNER
+`c9874c41f46e -> 3725dc3fe2a3`, and carries amendment 11's core_rebind
+forward VERBATIM — **no core file moves in follow-up 3**, and the script
+raises `F1_UNEXPECTED_CORE_DRIFT` if one did (all 8 pins re-measured, all
+match). It also raises `F1_WORKER_DRIFT`, `F1_RUNNER_CHANGE_ABSENT` if the
+claimed markers are missing, and `F1_RUNNER_DEFECT_PRESENT` if the
+argument-dropping call is still in the file. Records the root-isolation
+contract, the treatment-flag carry (with the measured before/after), and the
+F2 pin relocation.
+
+Amendment 11 is FROZEN: its own generator now re-reads the emitted document
+rather than regenerating it, because re-emitting against a moved runner
+would rewrite a receipt to say something it did not say on its day. Verified
+byte-identical by md5 across the refresh. The three-arm registration stands
+unchanged; only the runner sha moves.
+
+Governing amendment: **12**. 8/8 core pins resolve. Preflight READY for both
+base arms, 9 inputs checked.
+
+## 20. Follow-up 3 process safety
+
+No GPU (the gate stubs the lease and the idle probe; no card touched). No
+process killed or signalled. Git never run. No subagents. No symlinks.
+**Core untouched** — follow-up 3 edits the runner, one test file, F2's
+contract JSON and the registration scripts only. The 48 MB `session/` copy
+taken in follow-up 2 was removed after verifying the canonical repo still
+holds it; `/mnt/ForgeRealm/GraftRepository` was never written. Every pytest
+run used `--basetemp /mnt/ForgeRealm/wt/grm-f1/artifacts/grm_f1/tmp`,
+removed afterwards. All Bash calls foreground, under 10 minutes.
