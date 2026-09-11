@@ -126,10 +126,16 @@ def test_the_seam_audit_matches_what_the_runner_actually_moves(doc):
     from scripts import grm_lt1_1 as r
     before = (lt.FIX, lt.binding, worker.bind, worker.RUN, lt.RUN, lt.REG)
     with r.lt1_1_seams('A+'):
+        # A seam HOLDS the LT1.1 value inside the window. Asserting that it
+        # *changed* is wrong: if a previous test left the module global
+        # already equal to the target, nothing changes and a correct seam
+        # reads as broken. That is exactly the spurious `worker.RUN: False`
+        # seen on the card, where a leftover run directory had been set.
+        # The invariant is the value held, plus the restore below.
         moved = {
-            'lt.FIX': lt.FIX != before[0],
-            'worker.bind': worker.bind is not before[2],
-            'worker.RUN': worker.RUN != before[3],
+            'lt.FIX': lt.FIX == r.FIXTURE,
+            'worker.bind': worker.bind is r.binding,
+            'worker.RUN': worker.RUN == r.out_dir('A+'),
         }
         unmoved = {
             'lt.binding': lt.binding is before[1],
@@ -138,6 +144,9 @@ def test_the_seam_audit_matches_what_the_runner_actually_moves(doc):
         }
     assert all(moved.values()), moved
     assert all(unmoved.values()), unmoved
+    # Restoration is the other half, and it IS an identity check.
+    assert (lt.FIX, lt.binding, worker.bind, worker.RUN,
+            lt.RUN, lt.REG) == before
     assert set(moved) == set(doc['seam_audit']['redirected'])
     assert set(unmoved) == set(doc['seam_audit']['deliberately_not_redirected'])
 

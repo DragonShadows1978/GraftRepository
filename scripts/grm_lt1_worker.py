@@ -137,16 +137,40 @@ def execute(cell, directory, registration, loader, *, run=RUN, deadline=float('i
                      expected=p['expected'],source_ids=source_ids,recency_ids=nominees,
                      memory=memory,oracle=upper,binding=bind(cell['arm']),admission_rule="margin_first"))
                 nrows+=1
+            elif event['kind']=='recap_probe':
+                # Recap-probe seam. LT1 has no such kind, so the default is to
+                # refuse rather than guess: falling through to the deposit
+                # branch is what raised KeyError: 'assistant' and killed cell
+                # A-189-196 on 2026-09-11. A campaign that registers this kind
+                # sets `recap_probe_turn`.
+                handler=globals().get('recap_probe_turn')
+                if not handler:raise ValueError('UNREGISTERED_TURN_KIND: recap_probe')
+                nrows+=handler(repo,event,directory,bind(cell['arm']))
             elif event['kind']=='recap':
                 answer,info=e2e._probe_ladder_chat(repo,event['user'],topk=3,ngen=160,max_trips=1,defer_memory=True)
                 lt.create(directory/'recap.json',dict(answer=str(answer),route_info=info,admission_rule="margin_first",
                     matched=sum(lt.score(answer,p['expected'])['exact_correct'] for p in fixture['decisions']),out_of=5,binding=bind(cell['arm'])))
             else:
-                # Prior art: LT1 r1 / EB1 frozen complete-turn replay (2026).
-                # User corrections are ordinary prose, not hidden supersede calls.
-                idx=a.feed(e2e.harmony_turn(event['user'],event['assistant']))
-                a.grafts[idx]['kind']='turn';state['turn_nodes'][str(turn)]=idx
-                fed_nodes[idx] = a.grafts[idx]
+                # Turn-semantics seam. The default below is byte-identical to
+                # the three lines it replaced: every non-probe kind is fed as
+                # ordinary prose, which is LT1's frozen-replay contract.
+                #
+                # A campaign that re-parameterizes this module (LT1.1) sets
+                # `deposit_turn` so `supersede` goes through the PRODUCTION
+                # correction path and every deposit goes through the
+                # production turn funnel. Without that, a fixture can register
+                # supersede and alias turns and the worker will still feed
+                # them as prose -- which is exactly why LT1.1 arm A+
+                # reproduced LT1's numbers byte-for-byte on 2026-09-11.
+                handler=globals().get('deposit_turn')
+                if handler:
+                    idx=handler(repo,event,state,turn)
+                else:
+                    # Prior art: LT1 r1 / EB1 frozen complete-turn replay (2026).
+                    # User corrections are ordinary prose, not hidden supersede calls.
+                    idx=a.feed(e2e.harmony_turn(event['user'],event['assistant']))
+                    a.grafts[idx]['kind']='turn';state['turn_nodes'][str(turn)]=idx
+                if idx is not None:fed_nodes[idx] = a.grafts[idx]
             state['transcript'].append(copy.deepcopy(event));state['next_turn']=turn+1
             context['phase']='post_turn';record_seats(a,directory,context)
         restart_before=None
@@ -239,12 +263,36 @@ def run_cell(cell,registration):
                     if time.monotonic()-outer>=240:raise TimeoutError('GPU_LOCK_WAIT_RAIL')
                     print('LT1 waiting for shared GPU lock',flush=True);time.sleep(5)
             acquired=time.monotonic()
-            busy=subprocess.run(['nvidia-smi','--query-compute-apps=pid','--format=csv,noheader'],capture_output=True,text=True)
-            if busy.returncode or busy.stdout.strip():raise ValueError('GPU_NOT_IDLE: '+busy.stdout.strip())
+            # Idle-check seam. The default below is byte-identical to the two
+            # lines it replaced: one probe, immediate refusal. A campaign that
+            # re-parameterizes this module (LT1.1) sets `await_idle` to wait a
+            # BOUNDED time for a card someone else is using, because a busy
+            # card is not a cell failure -- it cost arm A a spurious RED
+            # (GPU_NOT_IDLE) in the 2026-09-11 lead run. Declines only; never
+            # signals, kills or waits on another process.
+            gate=globals().get('await_idle')
+            if gate:
+                ok,receipt=gate()
+                if not ok:raise ValueError('GPU_NOT_IDLE: '+json.dumps(receipt))
+            else:
+                busy=subprocess.run(['nvidia-smi','--query-compute-apps=pid','--format=csv,noheader'],capture_output=True,text=True)
+                if busy.returncode or busy.stdout.strip():raise ValueError('GPU_NOT_IDLE: '+busy.stdout.strip())
             env=environment(registration['arms'][cell['arm']]['flags']);env['GRM_LT1_LEASE_PARENT']=str(os.getpid())
             env['GRM_ADMISSION_RULE']=registration['effective_admission_rule']
+            # Child entry point seam. The default below is byte-identical to
+            # the line this replaced; a campaign that re-parameterizes this
+            # module (LT1.1) sets `spawn_argv`/`spawn_env` so the CHILD runs
+            # ITS OWN chain verification instead of LT1's. Without the seam
+            # the child re-entered `scripts.grm_lt1_worker.__main__` and ran
+            # `lt.verify()`, which is how a green parent produced a RED cell
+            # (WORKER_EXIT_1 / INPUT_SHA_MISMATCH) in the 2026-09-11 lead run.
+            argv=globals().get('spawn_argv')
+            argv=(argv(cell) if argv else
+                  [sys.executable,'-m','scripts.grm_lt1_worker','--worker',cell['id']])
+            adjust=globals().get('spawn_env')
+            if adjust:env=adjust(dict(env),cell)
             with (directory/'worker.log').open('x') as stream:
-                child=subprocess.Popen([sys.executable,'-m','scripts.grm_lt1_worker','--worker',cell['id']],
+                child=subprocess.Popen(argv,
                     cwd=lt.ROOT,env=env,stdout=stream,stderr=subprocess.STDOUT)
                 # Foreground wait; interruptions do not release someone else's
                 # compute lease while our child still runs, and never kill it.

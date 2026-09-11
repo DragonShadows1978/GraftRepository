@@ -807,6 +807,180 @@ def report():
             % (a4['previous_amendment_sha256'][:16], a4['runner']['sha256'][:16]))
         add('')
 
+    # ----------------------------------------- follow-up 5: the leased child
+    amend5_path = OUT / 'lt1_1/amendment5.json'
+    if amend5_path.exists():
+        a5 = json.loads(amend5_path.read_text())
+        a5_sha = (OUT / 'lt1_1/amendment5.sha256').read_text().split()[0]
+        add('## 5f. Follow-up 5: the leased CHILD runs our chain')
+        add('')
+        add('**A green parent produced a RED cell.** `--arm A+ --resume`')
+        add('pinned the arm, started A-001-008, and the child died:')
+        add('')
+        add('```')
+        add('scripts/grm_lt1_worker.py:289  __main__ -> lt.verify()')
+        add('ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py')
+        add('```')
+        add('')
+        add('%s' % a5['defect']['cause'])
+        add('')
+        add('**Why the gates missed it — the third time, so stated plainly:**')
+        add('')
+        for reason in a5['defect']['why_the_gates_missed_it']:
+            add('- %s' % reason)
+        add('')
+        add('The third is the one that matters: I wrote a docstring asserting')
+        add('the child came back through the LT1.1 module and never checked.')
+        add('`test_run_cell_spawns_the_lt1_1_child` now reads the argv')
+        add('`run_cell` actually builds.')
+        add('')
+        add('**The fix: five seams, not three.**')
+        add('')
+        for item in a5['seams']['added']:
+            add('- %s' % item)
+        add('')
+        add('`scripts/grm_lt1_worker.py:run_cell` gained a `spawn_argv` /')
+        add('`spawn_env` seam whose **default is byte-identical** to the line')
+        add("it replaced, so LT1's own campaign is unaffected")
+        add('(`test_the_default_argv_is_unchanged_for_lt1`). The child is now')
+        add('`%s`,' % a5['child']['argv'])
+        add('which runs %s.' % a5['child']['runs'])
+        add('')
+        add('**Audit — every `lt.verify()` reach point in the worker module:**')
+        add('')
+        add('| line | function | disposition |')
+        add('|---|---|---|')
+        for row in a5['verify_reach_audit']:
+            add('| %d | `%s` | %s |'
+                % (row['line'], row['function'], row['disposition']))
+        add('')
+        add('**The gate: a real `run_cell` spawn, both arms, cells 1-2.**')
+        add('Stubbed: %s. Unstubbed: %s.'
+            % ('; '.join(a5['gate']['what'].split('with the ')[-1:]),
+               ', '.join(['reservation accounting', 'directory creation',
+                          'argv construction', 'Popen + foreground wait',
+                          'charge', 'checkpoint validation',
+                          'controller receipt'])))
+        add('')
+        add('| arm | cell | run_cell | status | child pid | new process | arm in receipt | INPUT_SHA_MISMATCH |')
+        add('|---|---|---|---|---|---|---|---|')
+        for name, arm in (('A', 'A'), ('Aplus', 'A+')):
+            path = OUT / ('lt1_1/proof/child_spawn_%s.json' % name)
+            if not path.exists():
+                continue
+            for row in json.loads(path.read_text())['rows']:
+                add('| %s | `%s` | %s | %s | %d | %s | %s (alias %s) | **%s** |'
+                    % (arm, row['cell'], row['run_cell_returned'],
+                       row['status'], row['child_pid'], row['new_process'],
+                       row['campaign_arm'], row['alias_fold_merge'],
+                       row['input_sha_mismatch_in_child_log']))
+        add('')
+        add('RED-before: `test_the_old_argv_reproduces_the_leads_worker_exit_1`')
+        add('spawns the ORIGINAL argv and requires the child to die with')
+        add('`INPUT_SHA_MISMATCH: core/graft_arena.py` — the lead-run failure,')
+        add('reproduced on demand. The `--dry-lease` gate is kept alongside.')
+        add('')
+        archive = a5['red_cell_archive']
+        add('**The RED cell is archived, not deleted.** `%s` -> `%s`; %s'
+            % (archive['cell'], archive['archived_to'], archive['policy']))
+        add('`test_the_archived_red_cell_is_preserved` asserts the archived log')
+        add('still contains `INPUT_SHA_MISMATCH` (the evidence was not')
+        add('sanitised) and that the live cell is gone so arm A+ re-arms.')
+        add('')
+        add('**Amendment 5** — `artifacts/grm_d1/lt1_1/amendment5.json`, sha256')
+        add('`%s`, chained to amendment 4' % a5_sha)
+        add('`%s…`. Runner rebound `%s…`.'
+            % (a5['previous_amendment_sha256'][:16], a5['runner']['sha256'][:16]))
+        add('')
+
+    # -------------------------------------- follow-up 6: a busy card waits
+    amend6_path = OUT / 'lt1_1/amendment6.json'
+    if amend6_path.exists():
+        a6 = json.loads(amend6_path.read_text())
+        a6_sha = (OUT / 'lt1_1/amendment6.sha256').read_text().split()[0]
+        idle = a6['idle_policy']
+        finding = a6['seam_restore_finding']
+        archived = a6['red_cell_archive']
+        add('## 5g. Follow-up 6: a busy card is not a cell failure')
+        add('')
+        add('**What happened.** The queue launched `--arm A --resume` while')
+        add('the A1 contrast was still leaving the card. The single-probe idle')
+        add('check refused and wrote `run_A/cells/A-001-008` RED with')
+        add('`GPU_NOT_IDLE: 3336818` — controller and reservation only, no')
+        add('`worker.log`, because no child was ever spawned. That leftover')
+        add('then made `--arm A --resume --dry-lease` fail with')
+        add('`PRIOR_CELL_RED`. Both effects were lead-caused; the second was a')
+        add('real defect in the policy and is fixed here.')
+        add('')
+        add('**The seam-restore question, answered: %s.**' % finding['answer'])
+        add('%s' % finding['why'])
+        add('The fix: %s' % finding['fix'])
+        add('I also checked the relaxed assertion still has teeth — with a')
+        add('deliberately broken seam it reports `(False, False, False)` and')
+        add('fails, so this is a sharper test, not a weaker one.')
+        add('')
+        add('**The policy change.**')
+        add('')
+        add('| | before | after |')
+        add('|---|---|---|')
+        add('| busy card | `%s` | `%s` |'
+            % (idle['before'].split(';')[0], idle['after'].split(';')[0]))
+        add('| keys on | compute-process list | %s |' % idle['keys_on'])
+        add('| bound | none (single probe) | %d probes at %d s, %d s total |'
+            % (idle['attempts_allowed'], idle['poll_seconds'],
+               idle['wait_seconds']))
+        add('| limit | any process at all | <= %d MiB framebuffer used |'
+            % idle['limit_mib'])
+        add('| on expiry | — | RED **with the memory snapshot** |')
+        add('')
+        add('%s. It NEVER %s' % (idle['rationale'].capitalize(),
+                                 idle['never']))
+        add('The bound is %s.' % idle['bound'])
+        add('')
+        add('Installed as a sixth seam, `worker.await_idle`, with the same')
+        add('byte-identical-default discipline used for `spawn_argv`:')
+        add('`test_the_lt1_default_branch_is_byte_identical` pins LT1\'s own')
+        add('single-probe refusal verbatim.')
+        add('')
+        add('**Fixtures** (`tests/test_grm_lt1_1_idle_wait.py`, 12 tests):')
+        add('')
+        for item in a6['gate']['fixtures']:
+            add('- %s' % item)
+        add('')
+        add('The two the lead named: `test_busy_then_idle_waits_and_then_'
+            'proceeds`')
+        add('feeds 4096 MiB -> 3144 MiB -> 96 MiB and requires the wait to')
+        add('proceed on the third probe; `test_busy_past_the_bound_declines_'
+            'with_a_snapshot`')
+        add('holds the card busy and requires a decline carrying')
+        add('`memory.used=4096 MiB` and the holder pid.')
+        add('`test_run_cell_raises_only_after_the_bound` drives the same')
+        add('through the real `run_cell` and asserts the controller error')
+        add('carries the snapshot, not the bare pid the lead run recorded.')
+        add('')
+        add('**The spurious RED is archived, not deleted.** `%s` -> `%s`; %s'
+            % (archived['cell'], archived['archived_to'], archived['policy']))
+        add('The archived controller still reads RED with `GPU_NOT_IDLE`, and')
+        add('the absence of `worker.log` is itself the tell that the card')
+        add('refused before any work began.')
+        add('')
+        add('**Gate lines, both arms:**')
+        add('')
+        for name, arm in (('A', 'A'), ('Aplus', 'A+')):
+            path = OUT / ('lt1_1/proof/resume_dry_lease_%s.json' % name)
+            if path.exists():
+                v = json.loads(path.read_text())
+                add('- `--arm %s --resume --dry-lease` -> rc 0, '
+                    'host_preflight **%s**, status %s, **next=%s**, stopped at %s'
+                    % (arm, v['host_preflight'], v['status'], v['next_cell'],
+                       v['stopped_at']))
+        add('')
+        add('**Amendment 6** — `artifacts/grm_d1/lt1_1/amendment6.json`, sha256')
+        add('`%s`, chained to amendment 5' % a6_sha)
+        add('`%s…`. Runner rebound `%s…`.'
+            % (a6['previous_amendment_sha256'][:16], a6['runner']['sha256'][:16]))
+        add('')
+
     add('## 6. Deviations, RED items, process safety')
     add('')
     add('**Deviations from the order**')

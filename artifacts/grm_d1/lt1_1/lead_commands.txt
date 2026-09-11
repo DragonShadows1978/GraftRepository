@@ -1,18 +1,24 @@
-# LT1.1 — arm A and arm A+ (amendment 4)
+# LT1.1 — arm A and arm A+ (amendment 7)
 # registration sha256: 02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8
-# amendment 3  sha256: 09680a0567d2d74f0a9a491823cc627c1a8d609451fdf165b36384dc97e89a08
-# amendment 4  sha256: 0b5da2387791e871759cf1d11c5ad27c4e4559642d81200a01bb2d9e7c85659d
-# runner            : scripts/grm_lt1_1.py (sha256 29c916601d4a3775d761742a453eccf71e9e7a67aab1cf7c6d8afee9f6610ad1)
+# amendment 6  sha256: 89d26556ade25ea05de2101929c22ac0d7374c8eb59c6f057119b776d393a0ba
+# amendment 7  sha256: 46bb7fd83e048999a6316bfcf488740f0e7163eb97480320b183eeca2a130af5
+# runner            : scripts/grm_lt1_1.py (sha256 19e3a895c5e5442f0354fec59fcbe54b7c5dcb783f349b15d7612202bf1c14ec)
+# worker            : scripts/grm_lt1_worker.py (sha256 79492eafe9176510a649c5477bf78bf1eb5c129ecaeaf4094221c67e22646c71)
 #
 # 26 cells per arm. Reservation ceiling 7410 s (2.06 GPU-h) PER ARM;
 # both arms: 4.12 GPU-h ceiling. Separately resumable.
 #
-# RULING (lead, 2026-09-11): LT1 original registration is a frozen
-# receipt of its day and is NOT re-validated against today core.
-# LT1.1 preflight validates LT1.1 OWN chain (registration + amendments
-# 1-4, core pins rebound to this tree with attribution). LT1 identity
-# is carried as parent lineage in the receipt, not as a gate.
-# The amendment-3 blocker (INPUT_SHA_MISMATCH) is RESOLVED by this.
+# THE PREVIOUS A+ RUN WAS A HARNESS NULL (amendment 7). execute()
+# fed supersede and alias turns as prose and never called the
+# production turn funnel, so nothing was retired and A1 fold-merge
+# never ran -- which is why A+ reproduced LT1 numbers exactly.
+# Both runs are archived under
+#   artifacts/grm_d1/lt1_1/archive/r1_harness_null/
+# and both arms re-arm from cell 1.
+#
+# FAIRNESS: arms A and A+ now share this worker, so A-vs-A+ is the
+# fair contrast. LT1 numbers are the PARENT BASELINE (different
+# worker, different fixture), not a same-worker control.
 #
 # ---- CPU gates (no GPU, no lease) ----
 cd /mnt/ForgeRealm/wt/grm-d1
@@ -23,30 +29,31 @@ python3 scripts/grm_d1_alias_cpu.py      # A+ alias fold/admit/mount
 # ---- arm A (alias fold OFF) ----
 python3 scripts/grm_lt1_1.py --arm A --preflight
 python3 scripts/grm_lt1_1.py --arm A --dry-run
-# Route check on CPU: walks the REAL resume path (chain preflight,
-# apply4, binding, cell selection) and stops at the lease.
+# Route check on CPU: walks the REAL resume path and stops at
+# the lease boundary.
 python3 scripts/grm_lt1_1.py --arm A --resume --dry-lease
 # GPU campaign (takes the shared lease; resumable -- run again
-# to continue):
+# to continue). A busy card makes it WAIT, not fail:
 python3 scripts/grm_lt1_1.py --arm A --resume
 python3 scripts/grm_lt1_1.py --arm A --summary
 
 # ---- arm A+ (GRM_ALIAS_FOLD_MERGE=1 pinned) ----
 python3 scripts/grm_lt1_1.py --arm A+ --preflight
 python3 scripts/grm_lt1_1.py --arm A+ --dry-run
-# Route check on CPU: walks the REAL resume path (chain preflight,
-# apply4, binding, cell selection) and stops at the lease.
+# Route check on CPU: walks the REAL resume path and stops at
+# the lease boundary.
 python3 scripts/grm_lt1_1.py --arm A+ --resume --dry-lease
 # GPU campaign (takes the shared lease; resumable -- run again
-# to continue):
+# to continue). A busy card makes it WAIT, not fail:
 python3 scripts/grm_lt1_1.py --arm A+ --resume
 python3 scripts/grm_lt1_1.py --arm A+ --summary
 
-# The runner pins the arm itself, AFTER environment(flags) strips
-# every ambient GRM_*, and reads it back before any cell runs:
+# The runner pins the arm itself and carries it into the leased
+# child in GRM_LT1_1_ARM. Supersede turns now go through
+# apply_memory_command, and every deposit through
+# runtime._finish_turn_event, where A1 fold-merge lives:
 #   arm A   -> admission_rule=margin_first, alias_fold_merge=False
 #   arm A+  -> admission_rule=margin_first, alias_fold_merge=True
-# A pin that does not take is LT11_ALIAS_PIN_FAILED, never silent.
 
 # Registered predictions (before any run):
 #   A   {"aliases": "0/5 wrong rows fixed (recall_7_* stay wrong)", "corrections": "5/5", "fresh": "6/7", "recap": "unpredicted memory-side; oracle 5/5 gated on CPU"}

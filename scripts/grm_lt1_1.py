@@ -91,12 +91,28 @@ RESTART_SENTINELS = ('recall_1_10', 'recall_4_10')
 
 
 def out_dir(arm):
-    """Per-arm campaign root. Distinct roots are what make arms resumable."""
+    """Per-arm campaign root. Distinct roots are what make arms resumable.
+
+    A leased child inherits the parent's root through `GRM_LT1_1_RUN`, so it
+    writes into the exact directory the parent reserved.
+    """
+    inherited = os.environ.get(RUN_ENV)
+    if inherited:
+        return Path(inherited)
     return OUT / ('run_A' if arm == 'A' else 'run_Aplus')
 
 
 def sha(path):
     return lt.sha(Path(path))
+
+
+def _relative(path):
+    """Repo-relative when it can be; absolute otherwise (gate temp dirs)."""
+    path = Path(path)
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        return str(path)
 
 
 # --------------------------------------------------------------- arm state
@@ -107,6 +123,9 @@ def sha(path):
 #: across the `--worker` / `--fake-cell` subprocess boundary the same way
 #: `GRM_LT1_LEASE_PARENT` carries the lease-parent contract.
 ARM_ENV = 'GRM_LT1_1_ARM'
+#: Campaign root, carried into the leased child so it writes into the exact
+#: directory the parent reserved instead of recomputing a default.
+RUN_ENV = 'GRM_LT1_1_RUN'
 _ARM = None
 
 
@@ -214,7 +233,7 @@ def registration(arm):
     value['effective_admission_rule'] = 'margin_first'
     value['restart_sentinels'] = list(RESTART_SENTINELS)
     value['lt1_1'] = dict(arm=arm, alias_fold_merge=ARM_ALIAS[arm] is not None,
-                          out_dir=str(out_dir(arm).relative_to(ROOT)),
+                          out_dir=_relative(out_dir(arm)),
                           amendment1_sha256=sha(AMENDMENT1))
     return value
 
@@ -273,12 +292,44 @@ def pinned_arm(arm):
 
 @contextlib.contextmanager
 def lt1_1_seams(arm):
-    """Redirect the three module seams `execute` reads from LT1 state.
+    """Redirect the module seams `execute` and `run_cell` read from LT1 state.
 
     Everything else in `grm_lt1_worker` -- cells, leases, checkpoints,
-    accounting, resume -- is used unchanged through these.
+    accounting -- is used unchanged through these.
+
+    SIX seams. Follow-up 6 added `await_idle`, so a card another process is
+    still using becomes a bounded WAIT rather than a RED cell -- a busy card
+    is not a cell failure. Follow-up 5 added the two before it, after a
+    lead-run
+    `--resume` put cell A-001-008 RED with `WORKER_EXIT_1`:
+
+        run_cell -> Popen([... '-m', 'scripts.grm_lt1_worker', '--worker', id])
+                 -> that module's __main__ -> lt.verify()
+                 -> ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+    The CHILD re-ran LT1's own chain verification -- the exact gate the lead's
+    ruling removed from the parent. Three reasons nothing caught it:
+
+      * `--dry-lease` stops at the lease boundary, before `run_cell` spawns;
+      * the `--fake` proof used `--fake-cell`, a path that never enters
+        `run_cell` at all;
+      * my own follow-up-2 docstring ASSERTED the child came back through this
+        module. It did not. That claim was wrong and this is the correction.
+
+    `lt.verify()` is reachable from the worker module at three points:
+    `worker()` line 188, `resume()` line 273, and `__main__` line 289. The
+    runner never calls `worker.resume`; the other two are covered by
+    redirecting `worker.worker` (which owns line 188 and is what the child
+    entry point invokes) and `worker.spawn_argv`, so the child comes back
+    through `scripts/grm_lt1_1.py --worker`.
     """
-    saved = (lt.FIX, worker.bind, worker.RUN)
+    saved = (lt.FIX, worker.bind, worker.RUN,
+             getattr(worker, 'worker', None),
+             getattr(worker, 'spawn_argv', None),
+             getattr(worker, 'spawn_env', None),
+             getattr(worker, 'await_idle', None),
+             getattr(worker, 'deposit_turn', None),
+             getattr(worker, 'recap_probe_turn', None))
     try:
         lt.FIX = FIXTURE
         # Redirect `worker.bind`, NOT `lt.binding`.
@@ -297,15 +348,377 @@ def lt1_1_seams(arm):
         # self-validation untouched and still stamps every receipt ours.
         worker.bind = binding
         worker.RUN = out_dir(arm)
+        # The child entry point and the argv that reaches it.
+        worker.worker = lt1_1_worker
+        worker.spawn_argv = spawn_argv
+        worker.spawn_env = spawn_env
+        worker.await_idle = await_idle
+        # Production turn semantics: supersede through the correction path,
+        # every deposit through the funnel where A1's fold-merge lives.
+        worker.deposit_turn = deposit_turn
+        worker.recap_probe_turn = recap_probe_turn
         # The arm must be resolvable for the whole window: `binding` cannot
         # take it as a parameter without breaking LT1's signature.
         with _arm_state(arm):
             yield
     finally:
-        lt.FIX, worker.bind, worker.RUN = saved
+        lt.FIX, worker.bind, worker.RUN = saved[:3]
+        for name, value in (('worker', saved[3]), ('spawn_argv', saved[4]),
+                            ('spawn_env', saved[5]),
+                            ('await_idle', saved[6]),
+                            ('deposit_turn', saved[7]),
+                            ('recap_probe_turn', saved[8])):
+            if value is None:
+                if hasattr(worker, name):
+                    delattr(worker, name)
+            else:
+                setattr(worker, name, value)
 
 
 # ------------------------------------------------------------------- loaders
+
+def deposit_turn(repo, event, state, turn):
+    """One non-probe fixture turn, through PRODUCTION semantics.
+
+    WHY THIS EXISTS. LT1's worker fed every non-probe kind as ordinary prose:
+
+        idx = a.feed(e2e.harmony_turn(event['user'], event['assistant']))
+
+    with the comment "User corrections are ordinary prose, not hidden
+    supersede calls". That is correct for LT1, which replays a frozen
+    transcript. It is wrong for LT1.1, whose whole point is that the
+    `supersede` and `alias` kinds carry production semantics. Run under that
+    worker, LT1.1 arm A+ reproduced LT1's numbers byte-for-byte on
+    2026-09-11 -- fresh 14/15, corrections 5/10, aliases 5/10 -- because:
+
+      * the 15 `supersede` turns were deposited as prose, so nothing was
+        retired and the stale node stayed in the candidate base: exactly the
+        fixture-lineage trap D1 diagnosed, re-created one layer down;
+      * no `alias_fold` decision appears anywhere in those receipts, because
+        A1's `alias_fold_pass` runs inside `runtime._finish_turn_event` and
+        `arena.feed()` never calls it. The flag was pinned and the mechanism
+        never ran.
+
+    WHAT THIS DOES.
+
+      `supersede` -> `repo.apply_memory_command(event['correction_command'])`,
+        the production correction path (`scripts/grm_e2e_session.py:2590-2597`
+        runs exactly this for `kind == "supersede"`). `correct_memory` retires
+        the matched node, sets `superseded_by`, and bumps the route epoch, so
+        the old value leaves `_route_cand_base`.
+
+      every deposit -> `arena.feed()` AND THEN
+        `repo.runtime._finish_turn_event('chat', before, autosave=True)`,
+        the funnel every production deposit passes through, exactly as
+        `scripts/grm_chat.py:240` does it. That funnel runs the width guard,
+        `_alias_fold_deposits` (A1) and `_librarian`, and is what assigns
+        `native_node_id`. Under A the alias fold is byte-inert (the flag is
+        off, `_alias_fold_jobs` returns `()` from its first line); under A+ it
+        merges.
+
+    FAIRNESS. Arms A and A+ now share THIS worker, so A-vs-A+ is a fair
+    same-worker contrast: one pinned environment variable is the only
+    difference. LT1's numbers are the PARENT BASELINE -- a different worker on
+    a different fixture -- and must never be read as a same-worker control.
+
+    Prior art:
+      * The production turn funnel and the reason a battery may stop at
+        `feed()` while a product may not: `scripts/grm_chat.py:224-245`
+        (GRM-P1, GRM contributors 2026), taken with its finding.
+      * The supersede turn: `scripts/grm_e2e_session.py:2590-2597`
+        (GRM contributors, 2026), reused unchanged.
+      * `_finish_turn_event` -> `_alias_fold_deposits` / `_librarian`:
+        `core/grm_runtime.py:95-111` (A1 + GRM contributors, 2026). Read, not
+        modified.
+      * Mine: routing a frozen fixture's kinds to these existing paths, and
+        the A/A+ fairness statement above.
+      * No prior art known to me for this exact composition.
+    """
+    from scripts import grm_e2e_session as e2e
+    arena = repo.arena
+    before = repo._snapshot_state()
+    kind = event.get('kind')
+
+    if kind == 'supersede':
+        command = event.get('correction_command')
+        if not command:
+            raise ValueError('LT11_SUPERSEDE_WITHOUT_COMMAND: turn %s' % turn)
+        # The production correction path. It deposits the replacement itself
+        # and retires the stale node, so there is no separate feed() here.
+        repo.apply_memory_command(command)
+        repo.runtime._finish_turn_event('chat', before, autosave=True)
+        new = [i for i, g in enumerate(arena.grafts)
+               if not g.get('retired') and i >= len(before)]
+        idx = new[-1] if new else None
+        if idx is not None:
+            state['turn_nodes'][str(turn)] = idx
+        return idx
+
+    idx = int(arena.feed(e2e.harmony_turn(event['user'], event['assistant'])))
+    arena.grafts[idx]['kind'] = 'turn'
+    state['turn_nodes'][str(turn)] = idx
+    # THEN the production funnel: width guard, alias fold (A1), librarian,
+    # native publication. Skipping it is what made the A+ arm inert.
+    repo.runtime._finish_turn_event('chat', before, autosave=True)
+    return idx
+
+
+def recap_probe_turn(repo, event, directory, binding_value):
+    """One `recap_probe` turn: the probe path, scored, no assistant field.
+
+    LT1 has no `recap_probe` kind, so the old worker fell through to the
+    deposit branch and raised `KeyError: 'assistant'`, killing cell
+    A-189-196. These are questions, not turns: they are asked, scored with the
+    existing value-span scorer, and never deposited.
+
+    Prior art: the probe branch of `scripts/grm_lt1_worker.execute`
+    (GRM contributors, 2026) and the C5 arm S scorer via `grm_lt1.score`,
+    both reused. Mine: the row shape carrying `kind='recap_probe'`.
+    """
+    from scripts import grm_e2e_session as e2e
+    from scripts.grm_c7_run import emit
+    fixture = json.loads(FIXTURE.read_text())
+    probe = next(q for q in fixture['recap_probes']
+                 if q['id'] == event['recap_probe_id'])
+    answer, info = e2e._probe_ladder_chat(repo, probe['question'], topk=3,
+                                          ngen=32, max_trips=1,
+                                          defer_memory=True)
+    emit(directory / 'probes.jsonl',
+         dict(probe_id=probe['id'], turn=event['turn'], kind='recap_probe',
+              question=probe['question'], expected=probe['expected'],
+              targets=probe['targets'],
+              memory=dict(answer=str(answer),
+                          score=lt.score(answer, probe['expected']),
+                          route_info=info, admission_rule='margin_first'),
+              binding=binding_value, admission_rule='margin_first'))
+    return 1
+
+
+#: Framebuffer ceiling below which the card counts as free to start, and the
+#: bound on how long we will wait for somebody else to finish. A busy card is
+#: a resource another process holds, not a failure of our cell.
+IDLE_LIMIT_MIB = 512
+IDLE_WAIT_SECONDS = 900
+IDLE_POLL_SECONDS = 15
+
+
+def device_snapshot():
+    """Total framebuffer used, plus the compute list, as a receipt.
+
+    Prior art: R1 `device_snapshot` (`scripts/grm_r1_replay.py:352`, GRM
+    contributors 2026) and, through it, FIX-8
+    `grm_scout_fix8_resume.parse_memory` and the NVIDIA nvidia-smi XML
+    framebuffer report. TAKEN verbatim: read TOTAL framebuffer used and never
+    infer an idle card from an empty compute list -- R4's OOM happened with
+    ~3,144 MiB held by a display-side program that listed no compute process.
+    OURS: nothing; this is a straight reuse.
+    """
+    import subprocess
+    import time
+    import xml.etree.ElementTree as ET
+    value = dict(time_unix=time.time(), status='ERROR',
+                 scope='point sample, not peak; device total includes '
+                       'unattributed memory such as display-side programs')
+    try:
+        probe = subprocess.run(['nvidia-smi', '-q', '-x'],
+                               capture_output=True, text=True, timeout=60)
+    except Exception as exc:                                # pragma: no cover
+        value['error'] = '%s: %s' % (type(exc).__name__, exc)
+        return value
+    if probe.returncode:
+        value['error'] = 'nvidia-smi exit %d' % probe.returncode
+        return value
+    try:
+        root = ET.fromstring(probe.stdout)
+        gpu = root.find('gpu')
+        fb = gpu.find('fb_memory_usage')
+
+        def mib(node, field):
+            return int(str(node.find(field).text).split()[0])
+        pids = [int(p.find('pid').text)
+                for p in gpu.findall('./processes/process_info')]
+        value.update(status='OK',
+                     memory_used_mib=mib(fb, 'used'),
+                     memory_free_mib=mib(fb, 'free'),
+                     memory_total_mib=mib(fb, 'total'),
+                     other_process_pids=pids,
+                     compute_list_empty=not pids)
+    except Exception as exc:                                # pragma: no cover
+        value['error'] = 'parse: %s: %s' % (type(exc).__name__, exc)
+    return value
+
+
+def idle_gate(snapshot, limit=None):
+    """Is the card free enough to start? Returns `(ok, reason)`.
+
+    Keys on TOTAL used, never on the compute-process list. Declines only:
+    it never signals, kills or waits on another process.
+
+    Prior art: R1 `idle_gate` (`scripts/grm_r1_replay.py:420`, GRM
+    contributors 2026), taken unchanged.
+    """
+    limit = IDLE_LIMIT_MIB if limit is None else int(limit)
+    if snapshot.get('status') != 'OK':
+        return False, 'DEVICE_PROBE_FAILED: %s' % snapshot.get('error',
+                                                               'unknown')
+    used = int(snapshot['memory_used_mib'])
+    if used > limit:
+        return False, ('DEVICE_BUSY: memory.used=%d MiB > %d MiB (free=%s MiB; '
+                       'compute_list_empty=%s; other_pids=%s)'
+                       % (used, limit, snapshot['memory_free_mib'],
+                          snapshot['compute_list_empty'],
+                          snapshot['other_process_pids']))
+    return True, 'IDLE: memory.used=%d MiB <= %d MiB' % (used, limit)
+
+
+def await_idle(limit=None, wait_seconds=None, poll_seconds=None):
+    """Wait a BOUNDED time for the card to fall below the limit.
+
+    A busy card is not a cell failure. The 2026-09-11 lead run started arm A
+    while the A1 contrast was still leaving the card, and the single-probe
+    check turned "somebody else is finishing" into a RED cell with a charged
+    reservation. This waits instead, and only reds out after the bound.
+
+    The bound is STRUCTURAL: `attempts_allowed` caps the number of probes up
+    front, so there is no unbounded loop. This is a bounded WAIT for a
+    resource somebody else holds, never a retry of our own failed work --
+    nothing here re-runs a cell. It never signals anything.
+
+    Prior art: R1 `await_idle` (`scripts/grm_r1_replay.py:440`, GRM
+    contributors 2026), taken with its counted-loop bound and its decline-only
+    contract. OURS: the LT1.1 defaults and the receipt returned to `run_cell`.
+    """
+    import time
+    limit = IDLE_LIMIT_MIB if limit is None else int(limit)
+    wait_seconds = max(0, int(IDLE_WAIT_SECONDS if wait_seconds is None
+                              else wait_seconds))
+    poll_seconds = max(1, int(IDLE_POLL_SECONDS if poll_seconds is None
+                              else poll_seconds))
+    attempts_allowed = 1 + (wait_seconds // poll_seconds)
+    deadline = time.monotonic() + wait_seconds
+    attempts = []
+    snapshot, ok, reason = {}, False, 'NOT_PROBED'
+    for _ in range(int(attempts_allowed)):
+        snapshot = device_snapshot()
+        ok, reason = idle_gate(snapshot, limit)
+        attempts.append(dict(time_unix=snapshot.get('time_unix'),
+                             memory_used_mib=snapshot.get('memory_used_mib'),
+                             ok=ok, reason=reason))
+        if ok:
+            break
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            break
+        print('LT1.1 waiting for the card: %s' % reason,
+              file=sys.stderr, flush=True)
+        time.sleep(min(poll_seconds, max(1, remaining)))
+    return ok, dict(attempts=attempts, final=snapshot, reason=reason,
+                    limit_mib=limit, waited_for_seconds=wait_seconds,
+                    attempts_allowed=int(attempts_allowed),
+                    policy='bounded wait for a card another process holds; '
+                           'declines only, never signals')
+
+
+def spawn_argv(cell):
+    """The child `run_cell` launches: THIS module, not LT1's worker module.
+
+    `grm_lt1_worker.__main__` resolves its cell with `lt.verify()` -- LT1's own
+    chain -- which is the gate the lead's ruling removed. Routing the child
+    here means it resolves its cell from LT1.1's chain instead.
+    """
+    return [sys.executable, '-m', 'scripts.grm_lt1_1',
+            '--arm', current_arm(), '--worker', cell['id']]
+
+
+def spawn_env(env, cell):
+    """Carry the pinned arm into the child.
+
+    `environment(flags)` strips every ambient `GRM_*`, and `run_cell` rebuilds
+    the child environment from it, so the arm pin must be re-applied here or
+    the child cannot tell A from A+. This is the same pin-after-the-strip
+    contract R1's `pin_rule` states, applied across a process boundary.
+    """
+    arm = current_arm()
+    env[ARM_ENV] = arm
+    env.pop(ALIAS_ENV, None)
+    if ARM_ALIAS[arm] is not None:
+        env[ALIAS_ENV] = ARM_ALIAS[arm]
+    env[RULE_ENV] = 'margin_first'
+    # The campaign root, so the child writes into the SAME directory the
+    # parent reserved rather than recomputing a default from the arm.
+    env[RUN_ENV] = str(worker.RUN)
+    return env
+
+
+def lt1_1_worker_cpu(cell):
+    """`lt1_1_worker` with the CPU double in place of the model.
+
+    Identical to `lt1_1_worker` except for the loader: the lease-parent
+    contract, the cooperative deadline, the cell directory `run_cell` already
+    created, and the create-only `worker.json` are all the same. It exists so
+    a gate can spawn a REAL leased child on a machine with no GPU -- the model
+    is the only thing that cannot be exercised here, so it is the only thing
+    replaced.
+    """
+    import signal
+    import time
+    import pytest
+    if os.environ.get('GRM_LT1_LEASE_PARENT') != str(os.getppid()):
+        raise ValueError('WORKER_REQUIRES_LEASE_PARENT')
+    arm = current_arm()
+    deadline = time.monotonic() + cell['worker_seconds']
+
+    def expired(*_):
+        raise TimeoutError('WORKER_COOPERATIVE_DEADLINE')
+    signal.signal(signal.SIGALRM, expired)
+    signal.alarm(cell['worker_seconds'])
+    directory = worker.cell_directory(worker.RUN / 'cells', cell['id'])
+    try:
+        with pytest.MonkeyPatch.context() as patch:
+            result = worker.execute(cell, directory, registration(arm),
+                                    fake_loader(patch),
+                                    run=worker.RUN / 'cells', deadline=deadline,
+                                    fake=True)
+        lt.create(directory / 'worker.json', result)
+    finally:
+        signal.alarm(0)
+
+
+def lt1_1_worker(cell):
+    """The leased child body: LT1's `worker`, with LT1.1's verification.
+
+    `grm_lt1_worker.worker` calls `lt.verify()` at its line 188 to obtain the
+    registration it hands to `execute`. That is LT1's chain. This replacement
+    keeps every other part of that function -- the lease-parent contract, the
+    cooperative SIGALRM deadline with no kill syscall, the GPU loader, the
+    cell directory, the create-only `worker.json` -- and swaps only the
+    registration source for `registration(arm)`, which is LT1.1's chain
+    checked by `lt1_1_preflight`.
+
+    Prior art: `scripts/grm_lt1_worker.py:worker` (GRM contributors, 2026),
+    reproduced in structure with one substitution; the deadline mechanism is
+    POSIX `setitimer` via Python's `signal`, unchanged. No new lease, timeout
+    or checkpoint logic.
+    """
+    import signal
+    import time
+    if os.environ.get('GRM_LT1_LEASE_PARENT') != str(os.getppid()):
+        raise ValueError('WORKER_REQUIRES_LEASE_PARENT')
+    arm = current_arm()
+    deadline = time.monotonic() + cell['worker_seconds']
+
+    def expired(*_):
+        raise TimeoutError('WORKER_COOPERATIVE_DEADLINE')
+    signal.signal(signal.SIGALRM, expired)
+    signal.alarm(cell['worker_seconds'])
+    directory = worker.cell_directory(worker.RUN / 'cells', cell['id'])
+    try:
+        result = worker.execute(cell, directory, registration(arm), gpu_loader,
+                                run=worker.RUN / 'cells', deadline=deadline)
+        lt.create(directory / 'worker.json', result)
+    finally:
+        signal.alarm(0)
+
 
 def gpu_loader(session, flags, state):
     """The registered loader: the real model, exactly as LT1's worker uses."""
@@ -437,26 +850,25 @@ def fake_cell(arm, cell_id, root):
     directory = root / 'cells' / cell['id']
     with pytest.MonkeyPatch.context() as patch:
         loader = fake_loader(patch)
-        # Same narrow seam as `lt1_1_seams`: `worker.bind`, never `lt.binding`.
-        saved = (lt.FIX, worker.bind, worker.RUN)
-        try:
-            lt.FIX, worker.bind, worker.RUN = FIXTURE, binding, root
-            with pinned_arm(arm):
-                directory.mkdir(parents=True)
-                lt.create(directory / 'reservation.json',
-                          dict(seconds=cell['lease_seconds'], cell=cell,
-                               binding=binding(arm), fake=True,
-                               admission_rule='margin_first'))
-                value = worker.execute(cell, directory, reg, loader,
-                                       run=root / 'cells', fake=True)
-                lt.create(directory / 'worker.json', value)
-                lt.create(directory / 'controller.json',
-                          dict(status='COMPLETE', error=None,
-                               charged_seconds=0.0, cell=cell,
-                               binding=binding(arm), fake=True,
-                               admission_rule='margin_first'))
-        finally:
-            lt.FIX, worker.bind, worker.RUN = saved
+        # ONE seam definition. This used to install a narrow subset inline,
+        # which silently drifted from `lt1_1_seams` when seams were added:
+        # the fake path kept LT1's prose-deposit behaviour after the
+        # production turn semantics landed, so it proved the wrong thing.
+        with lt1_1_seams(arm), pinned_arm(arm):
+            worker.RUN = root
+            directory.mkdir(parents=True)
+            lt.create(directory / 'reservation.json',
+                      dict(seconds=cell['lease_seconds'], cell=cell,
+                           binding=binding(arm), fake=True,
+                           admission_rule='margin_first'))
+            value = worker.execute(cell, directory, reg, loader,
+                                   run=root / 'cells', fake=True)
+            lt.create(directory / 'worker.json', value)
+            lt.create(directory / 'controller.json',
+                      dict(status='COMPLETE', error=None,
+                           charged_seconds=0.0, cell=cell,
+                           binding=binding(arm), fake=True,
+                           admission_rule='margin_first'))
     return str(directory)
 
 
@@ -764,15 +1176,29 @@ def summary(arm, *, root=None):
         if path.exists():
             rows.extend(json.loads(line) for line in
                         path.read_text().splitlines() if line.strip())
+    # Recall probes and recap probes share `probes.jsonl` but live in
+    # different fixture lists, so classify by the row's own `kind` rather
+    # than indexing every id into the recall map (which raised
+    # KeyError: 'recap_1' the first time recap rows were written).
+    recall_rows = [r for r in rows if r.get('kind') != 'recap_probe']
+    recap_rows = [r for r in rows if r.get('kind') == 'recap_probe']
     table = {}
     for cls in ('fresh', 'correction', 'alias'):
         want = [p for p in fixture['probes'] if p['class'] == cls]
-        got = [r for r in rows if probes[r['probe_id']]['class'] == cls]
+        got = [r for r in recall_rows
+               if probes[r['probe_id']]['class'] == cls]
         correct = sum(1 for r in got
                       if lt.score(r['memory']['answer'],
                                   probes[r['probe_id']]['expected'])['exact_correct'])
         table[cls] = dict(expected_n=len(want), n=len(got), correct=correct,
                           exact_rate=(correct / len(got)) if got else None)
+    recap_correct = sum(1 for r in recap_rows
+                        if lt.score(r['memory']['answer'],
+                                    r['expected'])['exact_correct'])
+    table['recap'] = dict(expected_n=len(fixture.get('recap_probes', [])),
+                          n=len(recap_rows), correct=recap_correct,
+                          exact_rate=(recap_correct / len(recap_rows)
+                                      if recap_rows else None))
     # `binding` reads the pinned arm rather than taking one, so that LT1's
     # callers can keep passing a backend label. Hold it for this call.
     with _arm_state(arm):
@@ -805,6 +1231,9 @@ def parse_args(argv=None):
                       help='CPU double execution; writes real receipts')
     mode.add_argument('--worker', help='leased child entry point (internal)')
     mode.add_argument('--fake-cell', help='one-cell CPU child (internal)')
+    mode.add_argument('--worker-cpu',
+                      help='leased child with the CPU double (gate only); '
+                           'same route as --worker, model replaced')
     p.add_argument('--out', help='override the campaign root (dry-run/fake/summary)')
     p.add_argument('--limit', type=int, help='fake mode: run only the first N cells')
     p.add_argument('--dry-lease', action='store_true',
@@ -820,8 +1249,29 @@ def parse_args(argv=None):
 
 def main(argv=None):
     args = parse_args(argv)
+    if args.worker_cpu:
+        # Same leased-child route as --worker; the model is the CPU double.
+        gate = lt1_1_preflight(args.arm)
+        if gate['status'] != 'READY':
+            print(json.dumps(gate), file=sys.stderr, flush=True)
+            raise ValueError('LT11_CHILD_PREFLIGHT_BLOCKED: %s'
+                             % ', '.join(gate['reasons']))
+        with lt1_1_seams(args.arm):
+            worker.worker = lt1_1_worker_cpu
+            cell = next(c for c in registration(args.arm)['cells']
+                        if c['id'] == args.worker_cpu)
+            worker.worker(cell)
+        return 0
     if args.worker:
-        # Leased child; the parent pinned the arm into our environment.
+        # Leased child. The parent pinned the arm into our environment via
+        # `spawn_env`; verify OUR chain (never LT1's -- that is the ruling)
+        # before doing any work, so a drifted LT1.1 document stops the child
+        # exactly as it would stop the parent.
+        gate = lt1_1_preflight(args.arm)
+        if gate['status'] != 'READY':
+            print(json.dumps(gate), file=sys.stderr, flush=True)
+            raise ValueError('LT11_CHILD_PREFLIGHT_BLOCKED: %s'
+                             % ', '.join(gate['reasons']))
         with lt1_1_seams(args.arm):
             cell = next(c for c in registration(args.arm)['cells']
                         if c['id'] == args.worker)

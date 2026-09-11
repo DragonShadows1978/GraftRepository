@@ -1,0 +1,172 @@
+{
+  "amendment": 5,
+  "arms": {
+    "A": {
+      "alias_fold_merge": false,
+      "arm": "A",
+      "budget_gpu_hours": 2.06,
+      "budget_gpu_seconds": 7410,
+      "env_after_environment_flags": {
+        "GRM_ADMISSION_RULE": "margin_first"
+      },
+      "invocation": {
+        "dry_run": "python3 scripts/grm_lt1_1.py --arm A --dry-run",
+        "preflight": "python3 scripts/grm_lt1_1.py --arm A --preflight",
+        "resume": "python3 scripts/grm_lt1_1.py --arm A --resume",
+        "summary": "python3 scripts/grm_lt1_1.py --arm A --summary"
+      },
+      "out_dir": "artifacts/grm_d1/lt1_1/run_A",
+      "predictions": {
+        "aliases": "0/5 wrong rows fixed (recall_7_* stay wrong)",
+        "corrections": "5/5",
+        "fresh": "6/7",
+        "recap": "unpredicted memory-side; oracle 5/5 gated on CPU"
+      },
+      "superseded_budget_gpu_seconds": 6120
+    },
+    "A+": {
+      "alias_fold_merge": true,
+      "arm": "A+",
+      "budget_gpu_hours": 2.06,
+      "budget_gpu_seconds": 7410,
+      "env_after_environment_flags": {
+        "GRM_ADMISSION_RULE": "margin_first",
+        "GRM_ALIAS_FOLD_MERGE": "1"
+      },
+      "invocation": {
+        "dry_run": "python3 scripts/grm_lt1_1.py --arm A+ --dry-run",
+        "preflight": "python3 scripts/grm_lt1_1.py --arm A+ --preflight",
+        "resume": "python3 scripts/grm_lt1_1.py --arm A+ --resume",
+        "summary": "python3 scripts/grm_lt1_1.py --arm A+ --summary"
+      },
+      "out_dir": "artifacts/grm_d1/lt1_1/run_Aplus",
+      "predictions": {
+        "aliases": "4/5 of the wrong rows fixed; the lead proposed >= 3/5 and that bar is also met",
+        "corrections": "5/5",
+        "fresh": "6/7",
+        "prediction_note": "The lead proposed aliases >= 3/5. I register 4/5 and state why: the D1 CPU check (artifacts/grm_d1/alias_cpu_aplus.json) shows the fold firing, the digest naming BOTH names, being ADMITTED and MOUNTED, and serving the right value for 10/10 alias probes at every distance, with a 78-token digest inside the 96 width. The one reservation that keeps me off 5/5 is that the CPU reader is a regex double: the GPU reader must still choose the digest value over the surrounding prose, and LT1 already showed one long-distance ladder drop (recall_3_150) that no lineage change addresses. 4/5 prices exactly one such drop.",
+        "recap": ">= 3/5 memory-side"
+      },
+      "superseded_budget_gpu_seconds": 6120
+    }
+  },
+  "budget_gpu_hours_total": 4.12,
+  "budget_gpu_seconds_per_arm": 7410,
+  "budget_gpu_seconds_total": 14820,
+  "child": {
+    "argv": "python3 -m scripts.grm_lt1_1 --arm <arm> --worker <cell>",
+    "arm_pin": "carried across the process boundary in GRM_LT1_1_ARM by `spawn_env`, re-applied after `environment(flags)` strips every ambient GRM_*",
+    "preserved": [
+      "WORKER_REQUIRES_LEASE_PARENT contract",
+      "cooperative SIGALRM deadline, no kill syscall",
+      "create-only worker.json",
+      "RESTART_REQUIRES_NEW_PROCESS (one process per cell)"
+    ],
+    "runs": "lt1_1_preflight (LT1.1 chain) -> lt1_1_seams -> worker.execute with registration(arm)"
+  },
+  "defect": {
+    "cause": "run_cell hard-coded the child argv as `-m scripts.grm_lt1_worker --worker <cell>`; that module __main__ resolves its cell with lt.verify(), which is LT1 own chain and the gate the ruling removed from the parent",
+    "receipt": "artifacts/grm_d1/lt1_1/run_Aplus/cells/A-001-008/worker.log",
+    "symptom": "cell A-001-008 RED with WORKER_EXIT_1 on arm A+; child log: INPUT_SHA_MISMATCH: core/graft_arena.py raised from scripts/grm_lt1.py line 101 via scripts/grm_lt1_worker.py line 289",
+    "why_the_gates_missed_it": [
+      "--dry-lease stops AT the lease boundary, before run_cell spawns anything",
+      "the --fake 2-cell proof used --fake-cell, a path that never enters run_cell, so it exercised a different child",
+      "the follow-up-2 docstring ASSERTED the child came back through the LT1.1 module; it did not, and that unverified claim is corrected here"
+    ]
+  },
+  "follow_up_instruction": "Lead follow-up 5 to GRM-D1 (2026-09-11): `--arm A+ --resume` started cell A-001-008 and the cell went RED with WORKER_EXIT_1 because run_cell spawns `-m scripts.grm_lt1_worker --worker <cell>`, whose __main__ re-runs LT1 verify() in the child. Route the child through scripts/grm_lt1_1.py --worker with our own chain, seams and arm pin; audit every other path to LT1 __main__ / lt.verify(); add a gate that actually spawns the child through the REAL run_cell with the lease and model stubbed, both arms, cells 1-2, asserting no INPUT_SHA_MISMATCH in the child log; archive the RED cell and re-arm A+ from cell 1.",
+  "gate": {
+    "asserts": [
+      "the child writes controller.json / worker.json / checkpoint",
+      "the child log contains no INPUT_SHA_MISMATCH",
+      "the child process id differs from the parent (RESTART_REQUIRES_NEW_PROCESS honoured)",
+      "the receipt binding carries the right arm"
+    ],
+    "evidence_class": "CPU child spawn (process and receipt plumbing; NOT a language-model quality measurement)",
+    "red_before": "test_the_old_argv_reproduces_the_leads_worker_exit_1 spawns the ORIGINAL argv and asserts the child log carries INPUT_SHA_MISMATCH and a non-zero exit",
+    "tests": "tests/test_grm_lt1_1_child_spawn.py",
+    "what": "spawns the child through the REAL run_cell with the lease stubbed to a no-op flock on a temp file and the model stubbed to the CPU double; both arms, cells 1-2"
+  },
+  "order": "orders/GRM_D1_LT1_RESIDUAL_DIAGNOSIS.md",
+  "order_sha256": "6ae0f52af0059f0a93b66ae37dd442761a32409b5f3f17b027c4b8fa2c0efb46",
+  "previous_amendment": "artifacts/grm_d1/lt1_1/amendment4.json",
+  "previous_amendment_sha256": "0b5da2387791e871759cf1d11c5ad27c4e4559642d81200a01bb2d9e7c85659d",
+  "prior_art": [
+    "Lease/child contract reused from scripts/grm_lt1_worker.py worker/run_cell (GRM contributors, 2026); the new child body reproduces worker structure with one substitution",
+    "Pin-after-the-strip carried across a process boundary: R1 pin_rule, scripts/grm_r1_replay.py:242 (GRM contributors, 2026)",
+    "spawn_argv/spawn_env seam with a byte-identical default, and a spawning gate over the real run_cell: no prior art known to me"
+  ],
+  "process_safety": {
+    "arms": "A and A+ never run concurrently on the same GPU",
+    "children": "the parent waits on its child and never signals it; the cooperative deadline raises inside the child instead",
+    "git": "lead commits; the seat never runs git",
+    "gpu": "only `--resume` without `--dry-lease` takes the shared lease, through LT1 own run_cell (flock + nvidia-smi idle check + no-kill child wait). The spawn gate stubs the lease to a temp-file flock and never touches the shared lock or the GPU."
+  },
+  "purpose": "Route the leased child through the LT1.1 chain, so a green parent cannot produce a child that re-runs LT1 own verification.",
+  "red_cell_archive": {
+    "archived_to": "artifacts/grm_d1/lt1_1/archive/Aplus_A-001-008_RED",
+    "arm": "A+",
+    "cell": "A-001-008",
+    "policy": "create-only: the RED attempt is copied, never deleted or overwritten, and the live cell directory is removed so arm A+ re-arms from cell 1",
+    "rearm": "arm A+ resumes at A-001-008"
+  },
+  "registration": "artifacts/grm_d1/lt1_1/registration.json",
+  "registration_sha256": "02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8",
+  "ruling": "LT1's original registration is a frozen receipt of its day; it is NOT re-validated against today's core. LT1.1's host preflight must validate LT1.1's own chain \u2014 registration 02b44d02 + amendments 1\u20133, whose core pins were rebound to this tree with attribution \u2014 using the same verification functions (`grm_lt1.verify`-class checks: sha-bound inputs, fixture sha, cell schedule, budget) but pointed at LT1.1's registration/amendment set. LT1's registration sha and its recorded core pins are carried as `parent` lineage in the LT1.1 receipt (recorded, with the drift table you already attributed), not as a gate.",
+  "runner": {
+    "path": "scripts/grm_lt1_1.py",
+    "sha256": "72fa0a79c174e313caba15a42b7ee5fee21156ebc39b71ba15e7b36caf3f3966",
+    "superseded_sha256": "29c916601d4a3775d761742a453eccf71e9e7a67aab1cf7c6d8afee9f6610ad1",
+    "tests": [
+      "tests/test_grm_lt1_1_runner.py",
+      "tests/test_grm_lt1_1_resume_route.py",
+      "tests/test_grm_lt1_1_preflight.py",
+      "tests/test_grm_lt1_1_child_spawn.py"
+    ],
+    "tests_sha256": {
+      "tests/test_grm_lt1_1_child_spawn.py": "445fcf9ff4a1b2a8371d4bad62c02da30644ad506f80570952202e832bd993b2",
+      "tests/test_grm_lt1_1_preflight.py": "8a60976f0c1f92757ee22e28af9cba44cf35f08baaf67f9e2acb3df4f8254114",
+      "tests/test_grm_lt1_1_resume_route.py": "9b86b2ad4f7c3346c51187f8b3d3619e994b86091c08560bf23becbf28adfa9d",
+      "tests/test_grm_lt1_1_runner.py": "60c0eaf9849f11079d75ea9b558bd3f52f1af301d8bbc10e3e250d0244868ae3"
+    }
+  },
+  "schema": "grm.lt1_1.amendment5.v1",
+  "seams": {
+    "added": [
+      "worker.worker -> lt1_1_worker (covers lt.verify at grm_lt1_worker.py:188)",
+      "worker.spawn_argv -> spawn_argv (covers grm_lt1_worker __main__ at :289 by never reaching it)"
+    ],
+    "count": 5,
+    "existing": [
+      "lt.FIX",
+      "worker.bind",
+      "worker.RUN"
+    ],
+    "worker_module_change": {
+      "file": "scripts/grm_lt1_worker.py",
+      "lt1_behaviour_unchanged": true,
+      "sha256": "c62b6f9c97e01e01d8a17d40216e7b3a36fa504f21de175c6686209bd7918024",
+      "what": "run_cell consults optional module globals `spawn_argv` and `spawn_env`; the default is byte-identical to the line it replaced, so LT1 own campaign is unaffected"
+    }
+  },
+  "verify_reach_audit": [
+    {
+      "disposition": "covered: `worker.worker` is redirected to `lt1_1_worker`, which uses `registration(arm)` instead",
+      "function": "worker",
+      "line": 188,
+      "source": "result=execute(cell,directory,lt.verify(),loader,run=RUN/'cells',deadline=deadline)"
+    },
+    {
+      "disposition": "not reachable: the runner never calls `worker.resume`; it runs its own `resume` loop over `worker.pending` / `worker.run_cell`",
+      "function": "resume",
+      "line": 285,
+      "source": "r=lt.verify();p=lt.preflight()"
+    },
+    {
+      "disposition": "not reachable: `spawn_argv` routes the child to `scripts/grm_lt1_1.py --worker`, so this entry point is never executed by an LT1.1 campaign",
+      "function": "__main__",
+      "line": 301,
+      "source": "if args.worker:worker(next(c for c in lt.verify()['cells'] if c['id']==args.worker))"
+    }
+  ]
+}

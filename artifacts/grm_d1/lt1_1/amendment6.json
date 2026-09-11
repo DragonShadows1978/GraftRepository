@@ -1,0 +1,158 @@
+{
+  "amendment": 6,
+  "arms": {
+    "A": {
+      "alias_fold_merge": false,
+      "arm": "A",
+      "budget_gpu_hours": 2.06,
+      "budget_gpu_seconds": 7410,
+      "env_after_environment_flags": {
+        "GRM_ADMISSION_RULE": "margin_first"
+      },
+      "invocation": {
+        "dry_run": "python3 scripts/grm_lt1_1.py --arm A --dry-run",
+        "preflight": "python3 scripts/grm_lt1_1.py --arm A --preflight",
+        "resume": "python3 scripts/grm_lt1_1.py --arm A --resume",
+        "summary": "python3 scripts/grm_lt1_1.py --arm A --summary"
+      },
+      "out_dir": "artifacts/grm_d1/lt1_1/run_A",
+      "predictions": {
+        "aliases": "0/5 wrong rows fixed (recall_7_* stay wrong)",
+        "corrections": "5/5",
+        "fresh": "6/7",
+        "recap": "unpredicted memory-side; oracle 5/5 gated on CPU"
+      },
+      "superseded_budget_gpu_seconds": 6120
+    },
+    "A+": {
+      "alias_fold_merge": true,
+      "arm": "A+",
+      "budget_gpu_hours": 2.06,
+      "budget_gpu_seconds": 7410,
+      "env_after_environment_flags": {
+        "GRM_ADMISSION_RULE": "margin_first",
+        "GRM_ALIAS_FOLD_MERGE": "1"
+      },
+      "invocation": {
+        "dry_run": "python3 scripts/grm_lt1_1.py --arm A+ --dry-run",
+        "preflight": "python3 scripts/grm_lt1_1.py --arm A+ --preflight",
+        "resume": "python3 scripts/grm_lt1_1.py --arm A+ --resume",
+        "summary": "python3 scripts/grm_lt1_1.py --arm A+ --summary"
+      },
+      "out_dir": "artifacts/grm_d1/lt1_1/run_Aplus",
+      "predictions": {
+        "aliases": "4/5 of the wrong rows fixed; the lead proposed >= 3/5 and that bar is also met",
+        "corrections": "5/5",
+        "fresh": "6/7",
+        "prediction_note": "The lead proposed aliases >= 3/5. I register 4/5 and state why: the D1 CPU check (artifacts/grm_d1/alias_cpu_aplus.json) shows the fold firing, the digest naming BOTH names, being ADMITTED and MOUNTED, and serving the right value for 10/10 alias probes at every distance, with a 78-token digest inside the 96 width. The one reservation that keeps me off 5/5 is that the CPU reader is a regex double: the GPU reader must still choose the digest value over the surrounding prose, and LT1 already showed one long-distance ladder drop (recall_3_150) that no lineage change addresses. 4/5 prices exactly one such drop.",
+        "recap": ">= 3/5 memory-side"
+      },
+      "superseded_budget_gpu_seconds": 6120
+    }
+  },
+  "budget_gpu_hours_total": 4.12,
+  "budget_gpu_seconds_per_arm": 7410,
+  "budget_gpu_seconds_total": 14820,
+  "follow_up_instruction": "Lead follow-up 6 to GRM-D1 (2026-09-11): the queue launched --arm A --resume while the A1 contrast was leaving the card; the idle check refused and wrote run_A/cells/A-001-008 RED with GPU_NOT_IDLE, which then made --dry-lease fail with PRIOR_CELL_RED. Archive that cell create-only and re-arm arm A from cell 1; make GPU_NOT_IDLE a bounded wait-then-retry in the R1 await_idle shape (framebuffer used, counted loop, declines only, never signals), RED with a snapshot only after the bound; confirm the seam-restore audit failure was state-caused.",
+  "gate": {
+    "evidence_class": "CPU fixture over the idle policy (control flow and receipts; no GPU is probed)",
+    "fixtures": [
+      "busy -> wait -> idle: the cell runs",
+      "busy past the bound: RED with the memory snapshot",
+      "probe failure: declines, with the reason",
+      "the wait is bounded and counted, never unbounded",
+      "nothing is ever signalled"
+    ],
+    "tests": "tests/test_grm_lt1_1_idle_wait.py"
+  },
+  "idle_policy": {
+    "after": "bounded wait for the card to fall below a framebuffer limit, then proceed; RED with the memory snapshot ONLY after the bound expires",
+    "attempts_allowed": 61,
+    "before": "one nvidia-smi compute-app probe; any output -> ValueError GPU_NOT_IDLE -> the cell is RED and its reservation is charged",
+    "bound": "structural: attempts_allowed caps the probe count up front, so there is no unbounded loop and nothing re-runs a cell",
+    "keys_on": "TOTAL framebuffer used, never the compute-process list (FIX-8: never infer an idle card from an empty compute list)",
+    "limit_mib": 512,
+    "never": "signals, kills or waits on another process; it declines and it waits, nothing else",
+    "poll_seconds": 15,
+    "rationale": "a busy card is a resource another process holds, not a fault in our cell",
+    "seam": {
+      "file": "scripts/grm_lt1_worker.py",
+      "lt1_behaviour_unchanged": true,
+      "name": "await_idle",
+      "sha256": "06b537d5e7884eb40e87c2710042c9f901233fbe9e481d60ba3a458d07434e97",
+      "what": "run_cell consults an optional module global; the default branch is byte-identical to the two lines it replaced, so LT1 own campaign is unaffected"
+    },
+    "wait_seconds": 900
+  },
+  "order": "orders/GRM_D1_LT1_RESIDUAL_DIAGNOSIS.md",
+  "order_sha256": "6ae0f52af0059f0a93b66ae37dd442761a32409b5f3f17b027c4b8fa2c0efb46",
+  "previous_amendment": "artifacts/grm_d1/lt1_1/amendment5.json",
+  "previous_amendment_sha256": "c823e9e02b326c78434f589e4c996beb797450d65f19c246555cd7e26d0bbd0d",
+  "prior_art": [
+    "R1 await_idle / idle_gate / device_snapshot, scripts/grm_r1_replay.py:352-470 (GRM contributors, 2026), and through them FIX-8 grm_scout_fix8_resume.parse_memory and the NVIDIA nvidia-smi XML framebuffer report: the counted-loop bound, the decline-only contract, and the rule that an idle card is never inferred from an empty compute list",
+    "Seam with a byte-identical default: this campaign own pattern, established for spawn_argv in amendment 5",
+    "LT1.1 defaults and the receipt shape returned to run_cell: no prior art known to me"
+  ],
+  "process_safety": {
+    "arms": "A and A+ never run concurrently on the same GPU",
+    "git": "lead commits; the seat never runs git",
+    "gpu": "the idle wait READS the card and declines; it never signals, kills or waits on another process. Only `--resume` without `--dry-lease` takes the shared lease, through LT1 own run_cell.",
+    "operator": "the operator has absolute right of way: a busy card makes this campaign wait, then stand down"
+  },
+  "purpose": "Make a busy card a bounded wait instead of a cell failure, and clear the spurious RED it already caused.",
+  "red_cell_archive": {
+    "archived_to": "artifacts/grm_d1/lt1_1/archive/A_A-001-008_GPU_NOT_IDLE",
+    "arm": "A",
+    "cell": "A-001-008",
+    "consequence": "`--arm A --resume --dry-lease` failed with PRIOR_CELL_RED until the cell was cleared",
+    "lead_caused": true,
+    "not_a_cell_failure": true,
+    "policy": "create-only: the attempt is copied, never deleted or overwritten, and the live cell directory is removed so arm A re-arms from cell 1",
+    "reason": "GPU_NOT_IDLE",
+    "symptom": "ValueError: GPU_NOT_IDLE: 3336818; controller.json and reservation.json only, no worker.log, because no child was ever spawned"
+  },
+  "registration": "artifacts/grm_d1/lt1_1/registration.json",
+  "registration_sha256": "02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8",
+  "ruling": "LT1's original registration is a frozen receipt of its day; it is NOT re-validated against today's core. LT1.1's host preflight must validate LT1.1's own chain \u2014 registration 02b44d02 + amendments 1\u20133, whose core pins were rebound to this tree with attribution \u2014 using the same verification functions (`grm_lt1.verify`-class checks: sha-bound inputs, fixture sha, cell schedule, budget) but pointed at LT1.1's registration/amendment set. LT1's registration sha and its recorded core pins are carried as `parent` lineage in the LT1.1 receipt (recorded, with the drift table you already attributed), not as a gate.",
+  "runner": {
+    "path": "scripts/grm_lt1_1.py",
+    "sha256": "664ad608468c8703b59eb2be3176e04e90aceb9171d1676715c9f0e82d9f525a",
+    "superseded_sha256": "72fa0a79c174e313caba15a42b7ee5fee21156ebc39b71ba15e7b36caf3f3966",
+    "tests": [
+      "tests/test_grm_lt1_1_runner.py",
+      "tests/test_grm_lt1_1_resume_route.py",
+      "tests/test_grm_lt1_1_preflight.py",
+      "tests/test_grm_lt1_1_child_spawn.py",
+      "tests/test_grm_lt1_1_idle_wait.py"
+    ],
+    "tests_sha256": {
+      "tests/test_grm_lt1_1_child_spawn.py": "445fcf9ff4a1b2a8371d4bad62c02da30644ad506f80570952202e832bd993b2",
+      "tests/test_grm_lt1_1_idle_wait.py": "50dfdb4e0805be8cebde96a69dc7a3d7284f2cbb5cf949f7acd596067b03b105",
+      "tests/test_grm_lt1_1_preflight.py": "8a60976f0c1f92757ee22e28af9cba44cf35f08baaf67f9e2acb3df4f8254114",
+      "tests/test_grm_lt1_1_resume_route.py": "9b86b2ad4f7c3346c51187f8b3d3619e994b86091c08560bf23becbf28adfa9d",
+      "tests/test_grm_lt1_1_runner.py": "60c0eaf9849f11079d75ea9b558bd3f52f1af301d8bbc10e3e250d0244868ae3"
+    }
+  },
+  "schema": "grm.lt1_1.amendment6.v1",
+  "seam_restore_finding": {
+    "answer": "NO \u2014 state-caused",
+    "fix": "the assertion now tests the invariant that matters -- the seam HOLDS the LT1.1 value inside the window -- plus an identity check on restore",
+    "question": "the lead asked whether the audit `worker.RUN: False` was a real restore bug",
+    "receipt": "tests/test_grm_d1_amendment3.py::test_the_seam_audit_matches_what_the_runner_actually_moves",
+    "why": "the assertion tested that the seam CHANGED the module global. When an earlier test had already left `worker.RUN` equal to the target, nothing changed and a correct seam read as broken. Restoration was verified separately by an identity check and was always correct."
+  },
+  "seams": {
+    "added": [
+      "worker.await_idle -> await_idle (bounded idle wait)"
+    ],
+    "count": 6,
+    "existing": [
+      "lt.FIX",
+      "worker.bind",
+      "worker.RUN",
+      "worker.worker",
+      "worker.spawn_argv",
+      "worker.spawn_env"
+    ]
+  }
+}
