@@ -161,6 +161,7 @@ def test_keyless_node_is_ineligible_in_both_paths(tmp_path, monkeypatch):
         repo.close()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_scout_fix8/green.json (scripts/grm_scout_fix8_cpu.py C2 = /mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2, pruned with the grm-c2 fork)')
 def test_c2_recorded_plans_byte_identical():
     """The FIX-6/FIX-8 replay gate: 132 recorded A-DEC plans must not move."""
     from scripts.grm_scout_fix8_cpu import c2_plans

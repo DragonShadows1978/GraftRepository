@@ -99,6 +99,7 @@ def rewrite_original(layout, spec, **changes):
     path.write_text(json.dumps(row))
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_three_segments_probe_free_middle_passes_original_bytes_unchanged(layout, monkeypatch):
     before = {p:p.read_bytes() for p in c.OUT.rglob('*') if p.is_file()}
     a2.worker(layout.cell, 's2')
@@ -123,6 +124,7 @@ def test_three_segments_probe_free_middle_passes_original_bytes_unchanged(layout
         a2.worker(layout.cell, 's3')
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_cell_with_zero_serving_overall_reds_only_on_final(layout, monkeypatch):
     rewrite_original(layout, 's1', events=[{'event':'geometry'}])
     layout.controls['serving'] = False
@@ -139,6 +141,7 @@ def test_cell_with_zero_serving_overall_reds_only_on_final(layout, monkeypatch):
         a2.accounting(layout.reg)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('error', ['No serving observed', 'AssertionError: No serving observed ', 'TimeoutError: No serving observed', 'AssertionError: No arena observed', a2.DEPENDENCY_ERROR])
 def test_root_error_requires_exact_stored_string(layout, error):
     rewrite_original(layout, 's2', error=error)
@@ -146,6 +149,7 @@ def test_root_error_requires_exact_stored_string(layout, error):
         a2.recovery_ready(layout.reg, layout.cell, 's2')
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_dependency_error_requires_root_and_transitive_suffix(layout):
     layout.receipt('s3', 'RED', a2.DEPENDENCY_ERROR, serving=False)
     assert a2.eligible_suffix(layout.reg, layout.cell) == ['s2','s3']
@@ -154,12 +158,14 @@ def test_dependency_error_requires_root_and_transitive_suffix(layout):
     assert not a2.receipt_path(layout.cell,'longhorizon','s3',amended=True).exists()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_unrelated_dependent_red_is_stop(layout):
     layout.receipt('s3', 'RED', 'TimeoutError: synthetic rail')
     with pytest.raises(AssertionError, match='Other RED'):
         a2.worker(layout.cell, 's2')
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_existing_pass_and_unevidenced_cell_not_rerunnable(layout):
     with pytest.raises(AssertionError, match='not re-runnable'):
         a2.worker(layout.cell, 's1')
@@ -168,6 +174,7 @@ def test_existing_pass_and_unevidenced_cell_not_rerunnable(layout):
         a2.worker('c96_w64', 's2')
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('amended', [False, True])
 def test_orphan_claim_blocks_campaign(layout, amended):
     path = a2.receipt_path('c96_w64','longhorizon','s1',amended=amended)
@@ -177,6 +184,7 @@ def test_orphan_claim_blocks_campaign(layout, amended):
     assert not a2.receipt_path(layout.cell,'longhorizon','s2',amended=True).exists()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_one_attempt_even_after_failure_or_abandonment(layout):
     layout.controls['fail'] = True
     with pytest.raises(TimeoutError, match='synthetic rail'):
@@ -191,6 +199,7 @@ def test_one_attempt_even_after_failure_or_abandonment(layout):
         a2.worker(layout.cell, 's2')
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('delta', [-1, 1])
 def test_wrong_turn_advancement_reds_probe_free_segment(layout, delta):
     layout.controls['turn_delta'] = delta
@@ -198,6 +207,7 @@ def test_wrong_turn_advancement_reds_probe_free_segment(layout, delta):
         a2.worker(layout.cell, 's2')
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('corruption', ['missing', 'changed', 'unlisted'])
 def test_resume_bound_state_must_be_complete_and_unchanged(layout, corruption):
     path,row = a2.pass_receipt(layout.reg,layout.cell,'longhorizon','s1')
@@ -212,6 +222,7 @@ def test_resume_bound_state_must_be_complete_and_unchanged(layout, corruption):
         a2.worker(layout.cell,'s2')
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_saved_boundary_and_turn_range_are_checked(layout):
     _,row = a2.pass_receipt(layout.reg,layout.cell,'longhorizon','s1')
     session=Path(row['result']['session_dir'])
@@ -221,6 +232,7 @@ def test_saved_boundary_and_turn_range_are_checked(layout):
         a2.worker(layout.cell,'s2')
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_source_and_amendment_compatibility_is_exact(layout):
     rewrite_original(layout,'s1',sources=[])
     with pytest.raises(AssertionError, match='Mixed session source'):
@@ -230,6 +242,7 @@ def test_source_and_amendment_compatibility_is_exact(layout):
         a2.worker(layout.cell,'s2')
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_budget_and_cooldown_unchanged(layout, monkeypatch):
     rewrite_original(layout,'s2',gpu_seconds=4510)
     with pytest.raises(AssertionError, match='GPU budget non-fit'):
@@ -239,6 +252,7 @@ def test_budget_and_cooldown_unchanged(layout, monkeypatch):
         a2.worker(layout.cell,'s2')
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_command_file_only_eligible_suffixes_and_cell_scores():
     reg=a2.binding()
     lines=(c.OUT/'lead_commands_a2.txt').read_text().splitlines()
@@ -259,6 +273,7 @@ def test_command_file_only_eligible_suffixes_and_cell_scores():
     assert not any(' --battery sup ' in line or ' --battery census ' in line for line in lines)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_original_binding_and_receipts_byte_unchanged():
     reg=c.binding()
     assert reg['amendment'] == c.record(c.OUT/'amendment_a3.json')
@@ -269,6 +284,7 @@ def test_original_binding_and_receipts_byte_unchanged():
         assert c.record(row['path']) == row
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_registered_turn_plan_confirms_deposit_only_segment():
     from scripts import grm_eb1_longhorizon_gpu as lh
     reg=c.binding()
@@ -280,6 +296,7 @@ def test_registered_turn_plan_confirms_deposit_only_segment():
     assert c.LH_STOPS['c4-lh-05']==40 and c.LH_STOPS['c4-lh-06']==48
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_a2_binding_refuses_order_source_and_sha_drift(tmp_path, monkeypatch):
     legacy=c.binding()
     monkeypatch.setattr(c,'binding',lambda:legacy)
@@ -307,6 +324,7 @@ def test_a2_binding_refuses_order_source_and_sha_drift(tmp_path, monkeypatch):
         a2.binding()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_serving_only_in_earlier_segment_satisfies_cell(layout, monkeypatch):
     layout.controls['serving']=False
     a2.worker(layout.cell,'s2')
@@ -316,6 +334,7 @@ def test_serving_only_in_earlier_segment_satisfies_cell(layout, monkeypatch):
     assert row['status']=='PASS' and row['cell_serving_guard']['attempt_residency_count']==1
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_score_matches_original_arithmetic_and_preserves_receipts(tmp_path, monkeypatch):
     reg=c.binding()
     monkeypatch.setattr(c,'OUT',tmp_path/'original')

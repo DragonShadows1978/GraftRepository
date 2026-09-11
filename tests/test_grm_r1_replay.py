@@ -46,6 +46,7 @@ def test_registration_cohort_budget_and_plan_wording():
     assert 'Nothing is imputed' in r['unresolved_policy']
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_r1/registration.json (cell checkpoints pinned under absolute /mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/, pruned with the grm-c2 fork)')
 def test_every_registered_cell_input_hash_verifies():
     for c in run.cells():
         descriptor = run.verify_cell_inputs(c)
@@ -70,6 +71,7 @@ def test_batches_partition_the_cohort_in_order_and_by_side():
 # RED fixture: a checkpoint hash mismatch is RED, never a retry
 # --------------------------------------------------------------------------
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_r1/registration.json (cell checkpoints pinned under absolute /mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/, pruned with the grm-c2 fork)')
 def test_checkpoint_file_hash_mismatch_is_red(monkeypatch):
     c = run.cells()[0]
     name = sorted(c['checkpoint_files'])[0]
@@ -82,6 +84,7 @@ def test_checkpoint_file_hash_mismatch_is_red(monkeypatch):
         run.verify_cell_inputs(c)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_r1/registration.json (cell checkpoints pinned under absolute /mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/, pruned with the grm-c2 fork)')
 def test_checkpoint_descriptor_hash_mismatch_is_red(monkeypatch):
     c = run.cells()[0]
     target = Path(c['checkpoint'])
@@ -93,6 +96,7 @@ def test_checkpoint_descriptor_hash_mismatch_is_red(monkeypatch):
         run.verify_cell_inputs(c)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_r1/registration.json (cell checkpoints pinned under absolute /mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/, pruned with the grm-c2 fork)')
 def test_policy_state_and_source_worker_drift_are_red(monkeypatch):
     c = run.cells()[0]
     original = run.sha
@@ -132,6 +136,7 @@ def test_a_hash_mismatch_never_becomes_a_retry():
 # RED fixture: the arm-OFF parity barrier stops the run
 # --------------------------------------------------------------------------
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_r1/registration.json (cell checkpoints pinned under absolute /mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/, pruned with the grm-c2 fork)')
 def test_parity_barrier_stops_the_run(tmp_path, monkeypatch):
     """A replayed OFF plan that is not the recorded plan is RED and STOPS."""
     c = copy.deepcopy(run.cells()[0])
@@ -155,6 +160,7 @@ def test_parity_barrier_stops_the_run(tmp_path, monkeypatch):
     assert calls == ['off', 'on']        # both arms ran; only the check failed
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_r1/registration.json (cell checkpoints pinned under absolute /mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/, pruned with the grm-c2 fork)')
 def test_parity_barrier_passes_on_the_recorded_plan(tmp_path):
     c = run.cells()[0]
     value, _ = run.run_cell(copy.deepcopy(c), tmp_path, None, fake=True)
@@ -226,6 +232,7 @@ def test_rule_is_pinned_after_environment_strips_grm_vars(monkeypatch):
     monkeypatch.delenv(run.RULE_ENV, raising=False)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_r1/registration.json (cell checkpoints pinned under absolute /mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/, pruned with the grm-c2 fork)')
 def test_both_arms_share_one_verified_state(tmp_path):
     c = run.cells()[0]
     value, _ = run.run_cell(copy.deepcopy(c), tmp_path, None, fake=True)
@@ -292,6 +299,7 @@ def test_scorer_rejected_value_defeats_a_hit():
     assert not v['correct']
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_r1/registration.json (cell checkpoints pinned under absolute /mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/, pruned with the grm-c2 fork)')
 def test_expected_values_come_from_the_recorded_checkpoint_only():
     for c in run.cells():
         descriptor = run.read(Path(c['checkpoint']))

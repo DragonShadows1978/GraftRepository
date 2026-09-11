@@ -174,6 +174,7 @@ def test_main_refuses_to_run_on_drift(tmp_path, monkeypatch):
 
 # ------------------------------------------------------------------ rows
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_plan_covers_all_23_registered_rows(registration):
     rows = W.plan_rows(registration)
     assert len(rows) == 23
@@ -271,6 +272,7 @@ def fake_run(tmp_path_factory):
     return rc, out
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_fake_run_executes_every_registered_row(fake_run):
     rc, out = fake_run
     assert rc == 0, 'structural health, not the prediction'
@@ -287,6 +289,7 @@ def test_fake_run_executes_every_registered_row(fake_run):
         assert row['worker_provenance']['sha256'] == W.sha(W.SELF_PATH)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_fake_run_single_mount_and_controls(fake_run):
     _, out = fake_run
     summary = W.read(out / 'summary.json')
@@ -297,6 +300,7 @@ def test_fake_run_single_mount_and_controls(fake_run):
     assert summary['controls_broken'] == 0
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_fake_run_refuses_to_report_a_prediction(fake_run):
     """A fake run is not evidence for the registered prediction, and says so."""
     _, out = fake_run
@@ -307,6 +311,7 @@ def test_fake_run_refuses_to_report_a_prediction(fake_run):
     assert 'entity-blind' in summary['fake_note']
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_fake_run_width_receipt_precedes_the_single_mount_claim(fake_run):
     """Every digest carries a measured width, and none was over 96."""
     _, out = fake_run
@@ -329,6 +334,7 @@ def test_fake_run_width_receipt_precedes_the_single_mount_claim(fake_run):
     assert measured, 'the fake run must have measured at least one digest'
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_fake_run_emits_the_probes_jsonl_lead_commands_reads(fake_run):
     _, out = fake_run
     lines = [json.loads(l) for l in
@@ -340,6 +346,7 @@ def test_fake_run_emits_the_probes_jsonl_lead_commands_reads(fake_run):
 
 # ------------------------------------------------------ resume / create-only
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_resume_after_interrupt_skips_done_rows_and_never_rewrites(tmp_path):
     """Interrupt, re-invoke, and the finished rows are untouched."""
     out = tmp_path / 'resume'
@@ -532,6 +539,7 @@ def test_amendment_2_registers_the_lease_shape():
 
 # --------------------------------- defect 2: undeclared frame / runtime
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_runtime_frame_and_flags_source_are_declared_and_pinned():
     reg = W.read(REGISTRATION)
     _, amendments = W.load_amendments(REGISTRATION)
@@ -548,6 +556,7 @@ def test_runtime_frame_and_flags_source_are_declared_and_pinned():
                                                'model_snapshot'}
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_dry_run_reports_ok_and_takes_no_lease(tmp_path, monkeypatch):
     """--dry-run checks everything and never reaches a lease or a row."""
     taken = []
@@ -574,6 +583,7 @@ def test_dry_run_is_red_on_a_missing_frame(tmp_path):
         W.load_runtime_frame(effective)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_dry_run_is_red_on_a_missing_native_runtime(tmp_path):
     """The OSError the lead hit AFTER the lease, now a pre-lease RED."""
     reg = W.read(REGISTRATION)
@@ -592,6 +602,7 @@ def test_dry_run_is_red_on_a_missing_native_runtime(tmp_path):
     assert skipped[0]['detail'] == 'skipped on --fake'
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_run_refuses_to_take_a_lease_when_a_precondition_is_missing(
         tmp_path, monkeypatch):
     """A1_PRECONDITION_MISSING fires BEFORE gpu_lease is ever imported."""
@@ -621,6 +632,7 @@ def test_frame_sha_drift_is_named(tmp_path):
 
 # ------------------------------ defect 3: flags shape / environment(flags)
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_flags_come_from_the_c7_r3_registration_not_the_rs1_frame():
     """The RS1 frame carries NO C2 frame keys — that was the KeyError."""
     reg = W.read(REGISTRATION)
@@ -644,6 +656,7 @@ def test_flags_come_from_the_c7_r3_registration_not_the_rs1_frame():
         W.build_environment(rs1_flags)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_environment_is_built_from_those_flags_without_raising():
     reg = W.read(REGISTRATION)
     _, amendments = W.load_amendments(REGISTRATION)
@@ -655,6 +668,7 @@ def test_environment_is_built_from_those_flags_without_raising():
     assert W.FLAG_ENV not in env and W.RULE_ENV not in env
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_incomplete_flags_are_a_named_error_not_a_keyerror(tmp_path):
     """A missing frame key fails HERE, by name, not deep inside a GPU load."""
     reg = W.read(REGISTRATION)
@@ -670,6 +684,7 @@ def test_incomplete_flags_are_a_named_error_not_a_keyerror(tmp_path):
         W.resolve_flags(effective)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_fake_arm_uses_the_same_flags_and_environment_as_the_gpu_arm(
         tmp_path, monkeypatch):
     """THE regression guard: the fake loader must call the SAME helpers.
@@ -705,6 +720,7 @@ def test_fake_arm_uses_the_same_flags_and_environment_as_the_gpu_arm(
         loaded['monkeypatch'].undo()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_fake_rows_record_the_real_frame_and_pins(tmp_path):
     """End to end on --fake: the receipt proves the frame was really read."""
     out = tmp_path / 'frames'
@@ -719,6 +735,7 @@ def test_fake_rows_record_the_real_frame_and_pins(tmp_path):
 
 # ------------------------------------------------- resumable lease loop
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_summary_reports_pending_and_lease_state(tmp_path):
     out = tmp_path / 'pending'
     rc = W.main(['--registration', str(REGISTRATION), '--out', str(out),
@@ -795,6 +812,7 @@ def test_node_vram_budget_is_well_above_a_mount_plan():
 
 # ------------------------------------------------------------- paging
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_only_mounted_payloads_stay_resident_after_a_row(tmp_path):
     """After mount, device residency is the mount plan, not the corpus."""
     out = tmp_path / 'paging'
@@ -871,6 +889,7 @@ def test_is_non_fit_recognises_allocation_failures_only():
     assert not W.is_non_fit(AssertionError('wrong answer'))
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_non_fit_row_is_receipted_and_the_campaign_continues(tmp_path,
                                                              monkeypatch):
     """One row OOMs; the rest still run, and the receipt carries the memory."""
@@ -975,6 +994,7 @@ def test_alias_parser_normalizes_unicode_hyphens():
         'The current C7‑Fresh‑0 value is Basalt‑811.') is None
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_alias_parser_repair_on_the_real_checkpoint_node():
     """Read the actual C7 r3 node 16 off disk and parse it."""
     from core import grm_alias_fold as af
@@ -1039,6 +1059,7 @@ def lease_harness(monkeypatch):
     return W
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_lease_budget_stops_before_starting_an_unaffordable_row(
         lease_harness, tmp_path):
     """The rail: never START a row that cannot finish inside the lease."""
@@ -1060,6 +1081,7 @@ def test_lease_budget_stops_before_starting_an_unaffordable_row(
     assert not list((out / 'rows').glob('*.json'))
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_lease_budget_lets_affordable_rows_run_then_stops(lease_harness,
                                                           tmp_path):
     """A generous reserve admits rows; the stop is recorded when it bites."""
@@ -1075,6 +1097,7 @@ def test_lease_budget_lets_affordable_rows_run_then_stops(lease_harness,
     assert rc in (0, 1, 5)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_lease_budget_resumes_where_it_stopped(lease_harness, tmp_path):
     """Stop, re-run, and the finished rows are skipped without re-costing."""
     out = tmp_path / 'resume_budget'
@@ -1102,6 +1125,7 @@ def test_lease_budget_resumes_where_it_stopped(lease_harness, tmp_path):
         assert (out / 'rows' / name).read_bytes() == payload
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_row_wall_is_recorded_per_row(lease_harness, tmp_path):
     out = tmp_path / 'walls'
     W.main(['--registration', str(REGISTRATION), '--out', str(out),
@@ -1121,6 +1145,7 @@ def test_load_reserve_default_covers_the_observed_cold_load():
     assert W.LOAD_RESERVE_SECONDS < W.LEASE_SECONDS
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (all 27 effective pins are absolute /mnt/ForgeRealm/wt/grm-a1|c7|rd1/ paths, pruned with the forks)')
 def test_summary_distinguishes_planned_from_completed_rows(tmp_path):
     """Defect 2: a partial campaign must not read as a finished one."""
     out = tmp_path / 'planned'

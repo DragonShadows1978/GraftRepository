@@ -146,6 +146,7 @@ def test_preflight_boundary(tmp_path, monkeypatch, free, passes):
             reg.preflight(tmp_path)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c7/registration.json (immutable_inputs pins absolute /mnt/ForgeRealm/wt/grm-c3/orders/GRM_C3_DNGH_DECOY_CALIBRATION.md, pruned with the grm-c3 fork)')
 @pytest.mark.parametrize('attack', ['checksum','input','budget','cells','fix7'])
 def test_registration_tamper(tmp_path, attack):
     from scripts import grm_c7_register_r3 as reg

@@ -27,6 +27,7 @@ def a6_layout(layout, monkeypatch):
         yield layout
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_registered_projection_commands_and_unchanged_rules():
     reg = a6.binding(); old = a6.LEGACY_BINDING(); plan = reg['a5_plan']
     assert reg['budget'] == {**old['budget'], 'gpu_seconds': 6600}
@@ -95,6 +96,7 @@ def test_stale_bound_bytes_refused(monkeypatch,target):
     with pytest.raises(AssertionError): a6.binding()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_all_registered_skips_zero_attempt_lease_reserve_or_charge(a6_layout,monkeypatch):
     def forbidden(*a,**k): pytest.fail('Skip reached reservation/readiness/harness')
     for method in ('ready','accounting','split_harness'):
@@ -111,6 +113,7 @@ def test_all_registered_skips_zero_attempt_lease_reserve_or_charge(a6_layout,mon
     assert a6_layout.controls['lease_calls']==0
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_all_fitting_units_dispatched_dependencies_preserved_partial_summary(a6_layout):
     pins=seed_legacy(a6_layout)
     before=a5.accounting(a6_layout.reg,reserve=False)
@@ -139,6 +142,7 @@ def test_all_fitting_units_dispatched_dependencies_preserved_partial_summary(a6_
         before+sum(r['gpu_seconds'] for r in new))
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('attack', ['pass','charge','attempt','source','reason'])
 def test_forged_skip_receipt_refused(a6_layout,attack):
     cell='c64_w96';spec='c4-lh-12a'
@@ -153,6 +157,7 @@ def test_forged_skip_receipt_refused(a6_layout,attack):
     assert not (a5.OUT/'cross_summary.json').exists()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('attack', ['scores','completed','amendment'])
 def test_forged_or_stale_partial_score_refused(a6_layout,attack):
     cell='c96_w64';row=a5.score(cell);path=a5.score_path(cell)
@@ -163,6 +168,7 @@ def test_forged_or_stale_partial_score_refused(a6_layout,attack):
     with pytest.raises(AssertionError): a5.cross_summary()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('used,accepted', [(6315,True),(6315.001,False)])
 def test_actual_cap_reserves_285_at_6600(a6_layout,used,accepted):
     run(a6_layout,'c96_w64',a6_layout.reg['units_per_new_cell'][:1])
@@ -173,6 +179,7 @@ def test_actual_cap_reserves_285_at_6600(a6_layout,used,accepted):
         with pytest.raises(AssertionError,match='budget non-fit'): a5.accounting(a6_layout.reg)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_existing_artifacts_byte_unchanged_and_no_real_attempts():
     pins=c.read(a6.OUT/'before.json')['files']
     assert len(pins)>2567

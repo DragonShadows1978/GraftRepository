@@ -1,0 +1,30 @@
+........................................................................ [  5%]
+......................................................ss.....s.....sssss [ 10%]
+s......ss.ss.ssssss...s...s...s.ssss.s............................s..... [ 15%]
+sss.ssssssssssssssssssssssssssssssssssssssssss..s.....sssssssssss.....s. [ 20%]
+............s.......................sssss.ss............................ [ 25%]
+..ssssssssssssssssssss...........................s.sss.ss.ss.ssss....... [ 30%]
+.........................................ssssssssssss.........ssssssss.. [ 35%]
+.........ss..............sss.........sssssssssssssssssssssssssssssssssss [ 40%]
+ssssssssssssss.................ssssssssssssss............sssssssssssssss [ 45%]
+ssssssss............ss..s................ssss.sssssss............ss.s... [ 50%]
+ssss...ssssssssssssssssss........s...sssssssssss.......ssssssssssssssss. [ 55%]
+....................ss.s.s.............................................. [ 60%]
+........................................................................ [ 65%]
+.ssssssssssss........................................................... [ 70%]
+........................................................................ [ 75%]
+........................................................................ [ 80%]
+........................................................................ [ 85%]
+........................................................................ [ 90%]
+........................................................................ [ 95%]
+..................................................................       [100%]
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1114 passed, 321 skipped, 2 warnings in 25.15s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

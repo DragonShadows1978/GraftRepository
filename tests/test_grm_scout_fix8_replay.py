@@ -31,6 +31,7 @@ def test_input_drift_rejected(monkeypatch):
     with pytest.raises(ValueError,match='FIX8_INPUT_SHA_MISMATCH'):run.verify()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_scout_fix8/registration.json (A7 archive pins absolute /mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/amendment_7/, pruned with the grm-c7 fork)')
 def test_middle_archive_drift_rejected(monkeypatch):
     original=run.sha
     monkeypatch.setattr(run,'sha',lambda p:'bad' if Path(p)==run.OUT/'before/core/grm_admission.py' else original(p))

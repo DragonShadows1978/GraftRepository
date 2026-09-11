@@ -75,6 +75,7 @@ def run_fake(tmp_path, monkeypatch, *, prefix=False, arm='A0', side='memory', mo
     return result, receipt, loaded
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_rd1/registration.json (scripts/grm_rd1.py SOURCE = /mnt/ForgeRealm/wt/grm-c7, pruned with the grm-c7 fork)')
 def test_registration_and_138_intended_diffs():
     r = rd.verify()
     qs = old.read(rd.OUT/'requests.json')
@@ -92,6 +93,7 @@ def test_registration_and_138_intended_diffs():
     assert r['arms']['A1']['status'] == r['arms']['A3']['status'] == 'NOT_RUN'
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_rd1/registration.json (scripts/grm_rd1.py SOURCE = /mnt/ForgeRealm/wt/grm-c7, pruned with the grm-c7 fork)')
 def test_checkpoint_tree_and_boundary(tmp_path, monkeypatch):
     for c in rd.verify()['batches'][:16]:
         old.validate_bound_state(c['cell'])
@@ -153,11 +155,13 @@ def test_A0_difference_receipted_and_stops(tmp_path, monkeypatch):
     assert row['difference']['actual_utf8_hex'] == 'Basalt-811'.encode().hex()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_rd1/registration.json (scripts/grm_rd1.py SOURCE = /mnt/ForgeRealm/wt/grm-c7, pruned with the grm-c7 fork)')
 def test_A0_campaign_barrier(tmp_path):
     with pytest.raises(ValueError,match='A0_INCOMPLETE'):
         rd.verify_a0(rd.verify(),tmp_path)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_rd1/registration.json (scripts/grm_rd1.py SOURCE = /mnt/ForgeRealm/wt/grm-c7, pruned with the grm-c7 fork)')
 def test_budget_and_incomplete_summary_fail_closed(tmp_path, monkeypatch):
     r=rd.verify()
     s=rd.summary(r,tmp_path)
@@ -170,6 +174,7 @@ def test_budget_and_incomplete_summary_fail_closed(tmp_path, monkeypatch):
     assert not (tmp_path/r['batches'][0]['id']).exists()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_rd1/registration.json (scripts/grm_rd1.py SOURCE = /mnt/ForgeRealm/wt/grm-c7, pruned with the grm-c7 fork)')
 def test_dry_run_no_gpu(tmp_path, monkeypatch):
     monkeypatch.delenv('GRM_RD1_LEAD_GPU',raising=False)
     r=rd.verify()

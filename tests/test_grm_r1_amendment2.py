@@ -224,12 +224,14 @@ def test_admission_rule_is_back_to_default_after_a_fake_batch(tmp_path,
     assert admission_rule() == 'all_tokens_bind'
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_r1/amendment_2.json (cell checkpoints pinned under absolute /mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/, pruned with the grm-c2 fork)')
 def test_run_cell_restores_the_environment(tmp_path, monkeypatch):
     monkeypatch.delenv(run.RULE_ENV, raising=False)
     run.run_cell(run.cells()[0], tmp_path, None, fake=True)
     assert run.RULE_ENV not in os.environ
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_r1/amendment_2.json (cell checkpoints pinned under absolute /mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/, pruned with the grm-c2 fork)')
 def test_both_arms_still_get_their_own_rule_despite_restoration(tmp_path):
     """Restoration must not defeat the pin: the arms must still differ."""
     value, _ = run.run_cell(run.cells()[0], tmp_path, None, fake=True)

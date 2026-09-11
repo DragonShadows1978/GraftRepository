@@ -52,6 +52,7 @@ def simulated(unit, status='COMPLETE', attempt=1, wall=10, rows=None, claim_only
                     {'type': 'SyntheticError'} if status == 'RED' else None, non_fit)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x1/continuation_04_registration.json + artifacts/grm_x1/claims/r4/')
 def test_r4_continuation_accepted(r4_tree):
     out, reg, _ = r4_tree
     assert u.validate()['reuse']['status'] == 'VALID_BYTE_IDENTICAL'
@@ -102,6 +103,7 @@ def test_r4_stale_continuation(r4_tree, source):
         u.validate()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x1/continuation_04_registration.json + artifacts/grm_x1/claims/r4/')
 def test_r4_historical_bytes(r4_tree):
     _, reg, _ = r4_tree
     before = {p: (c.ROOT / p).read_bytes() for p in reg['historical_files']}
@@ -116,6 +118,7 @@ def test_r4_historical_bytes(r4_tree):
         u.validate()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x1/continuation_04_registration.json + artifacts/grm_x1/claims/r4/')
 def test_r4_dry_run_72(r4_tree):
     dry = c.dry_run()
     assert dry['unit_count'] == len(u.units()) == 72
@@ -129,6 +132,7 @@ def test_r4_dry_run_72(r4_tree):
     assert not list((c.OUT/'claims/r4').glob('*.json'))
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x1/continuation_04_registration.json + artifacts/grm_x1/claims/r4/')
 def test_r4_reuse_identical_unit(r4_tree):
     out, reg, _ = r4_tree
     old = next(x for x in c.read(out/'continuation_03.json')['units'] if x['unit_id'] == reg['reuse']['unit_id'])
@@ -142,6 +146,7 @@ def test_r4_reuse_identical_unit(r4_tree):
         u.state()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x1/continuation_04_registration.json + artifacts/grm_x1/claims/r4/')
 def test_r4_unit_definition_drift(r4_tree, monkeypatch):
     original = u.units
     def altered(full=False):
@@ -153,6 +158,7 @@ def test_r4_unit_definition_drift(r4_tree, monkeypatch):
         u.validate()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x1/continuation_04_registration.json + artifacts/grm_x1/claims/r4/')
 def test_r4_create_only(r4_tree):
     unit = u.units()[1]
     path = simulated(unit)
@@ -170,6 +176,7 @@ def test_r4_create_only(r4_tree):
         u.state()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x1/continuation_04_registration.json + artifacts/grm_x1/claims/r4/')
 def test_r4_aggregate_sum(r4_tree):
     reg = r4_tree[1]
     all_rows = list(c.read(c.ROOT/reg['reuse']['receipt_path'])['rows'])
@@ -187,6 +194,7 @@ def test_r4_aggregate_sum(r4_tree):
     assert set(current['cell_status'].values()) == {'COMPLETE'}
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x1/continuation_04_registration.json + artifacts/grm_x1/claims/r4/')
 def test_r4_resume_next_missing(r4_tree):
     simulated(u.units()[2])
     assert u.next_unit()[0] == u.units()[1]
@@ -197,6 +205,7 @@ def test_r4_resume_next_missing(r4_tree):
         u.next_unit('oracle_m10_s0')
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x1/continuation_04_registration.json + artifacts/grm_x1/claims/r4/')
 def test_r4_red_advances_second_red_stops(r4_tree):
     unit = u.units()[1]
     simulated(unit, 'RED', rows=[])
@@ -207,6 +216,7 @@ def test_r4_red_advances_second_red_stops(r4_tree):
     assert not u.state()['oracle_positive']
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x1/continuation_04_registration.json + artifacts/grm_x1/claims/r4/')
 @pytest.mark.parametrize('scenario', ['projection','admission','incomplete','timeout'])
 def test_r4_budget(r4_tree, monkeypatch, scenario):
     current = u.state()
@@ -235,6 +245,7 @@ def test_r4_budget(r4_tree, monkeypatch, scenario):
             u.next_unit(retry_unit=unit['unit_id'])
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x1/continuation_04_registration.json + artifacts/grm_x1/claims/r4/')
 @pytest.mark.parametrize('failure', [None,'minimum','spread','gain','coverage','fault','retains','incomplete','duplicate','natural_missing'])
 def test_r4_natural_gate(r4_tree, monkeypatch, failure):
     rows = [row for unit in u.units()[:24] for row in sample(unit)]
@@ -265,6 +276,7 @@ def test_r4_natural_gate(r4_tree, monkeypatch, failure):
         assert c.aggregate(rows+natural,cells=u.active_cells())['predictions']['S5'] is True
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x1/continuation_04_registration.json + artifacts/grm_x1/claims/r4/')
 @pytest.mark.parametrize('answer,abstained,label', [
     ("I’m sorry, but I can’t help with that.",False,'refusal-style'),
     ("I'm sorry, but I can't help with that",False,'refusal-style'),
@@ -284,6 +296,7 @@ def test_r4_served_text_classes(r4_tree, answer, abstained, label):
     assert actual['table']['A/1/present']['false_rate'] == 1
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x1/continuation_04_registration.json + artifacts/grm_x1/claims/r4/')
 @pytest.mark.parametrize('timeout',[False,True])
 def test_r4_worker_cpu(r4_tree, monkeypatch, timeout):
     unit = u.units()[1]

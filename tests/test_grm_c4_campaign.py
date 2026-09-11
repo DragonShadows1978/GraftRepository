@@ -124,6 +124,7 @@ def test_residency_uses_tokens_and_rejects_wrong_counter():
         residency(arena)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_registered_probe_sets_and_segment_coverage():
     r = campaign.binding()
     assert sum(len(v) for v in r['fixtures']['sup'].values()) == 9
@@ -153,6 +154,7 @@ def test_registration_and_source_drift_refused(tmp_path, monkeypatch):
         campaign.write_once(r, {})
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('cell', ['c64_w96', 'c96_w64', 'c64_w64'])
 def test_missing_results_cannot_score(tmp_path, monkeypatch, cell):
     r = campaign.binding()
@@ -171,6 +173,7 @@ def test_imported_loader_paths_pinned_without_gpu(tmp_path):
     assert loader.NATIVE_LIB == original_native
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('cell', ['c64_w96', 'c64_w64'])
 def test_timeout_receipted_and_same_worker_cannot_retry(tmp_path, monkeypatch, cell):
     from contextlib import contextmanager
@@ -224,6 +227,7 @@ def test_imported_lh_segments_copy_saved_state(tmp_path, monkeypatch):
     assert stops == list(range(8,105,8))
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_abandoned_worker_blocks_other_cell_without_gpu(tmp_path, monkeypatch):
     from contextlib import contextmanager
     from scripts import grm_cmc1_gpu_arms as leases
@@ -239,6 +243,7 @@ def test_abandoned_worker_blocks_other_cell_without_gpu(tmp_path, monkeypatch):
         campaign.worker('c64_w96', 'sup', campaign.SUP[0])
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_lead_amendment_preserves_prediction_geometry_and_rails():
     # Prior art: C4/RS3 registration invariants (house, 2026). Check the
     # lead's exact permitted delta against the immutable base, not a new bar.
@@ -284,6 +289,7 @@ def test_amendment_sha_and_order_drift_refused(tmp_path, monkeypatch):
         campaign.binding()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_lead_commands_complete_each_cell_before_score():
     # Prior art: WC1 dependency-ordered commands (house, 2026). Ensure the
     # new diagonal is executable and each score needs only completed units.
@@ -307,6 +313,7 @@ def test_lead_commands_complete_each_cell_before_score():
     assert not pending and tuple(observed) == campaign.executable_cells(reg)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_historical_diagonal_cannot_launch_worker():
     with pytest.raises(AssertionError, match='Only registered new cells'):
         campaign.worker('c96_w96', 'sup', campaign.SUP[0])

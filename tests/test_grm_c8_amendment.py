@@ -48,6 +48,7 @@ def make_receipt(cell, *, status='COMPLETE', fraction=.25, amendment_sha=None):
     return directory
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c8/amendment_1.json + registration.json (C8 core pins; lead_commands.txt cds to /mnt/ForgeRealm/wt/grm-c8)')
 def test_amendment_cap_all_cells_and_original_registration_immutable():
     before = c.REG.read_bytes()
     original = c.registration()
@@ -62,6 +63,7 @@ def test_amendment_cap_all_cells_and_original_registration_immutable():
     c.fit(effective)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c8/amendment_1.json + registration.json (C8 core pins; lead_commands.txt cds to /mnt/ForgeRealm/wt/grm-c8)')
 def test_preflight_reads_amendment_without_gpu(capsys):
     assert c.main(['--preflight']) == 0
     value = json.loads(capsys.readouterr().out)
@@ -114,6 +116,7 @@ def test_missing_amendment_refused(tmp_path, monkeypatch):
         c.main(['--preflight'])
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c8/amendment_1.json + registration.json (C8 core pins; lead_commands.txt cds to /mnt/ForgeRealm/wt/grm-c8)')
 @pytest.mark.parametrize('state,expected', [('COMPLETE', 0), ('RED', 1), ('unfinished', 1), ('empty', 1)])
 def test_resume_skips_all_started_states_without_launch(tmp_path, monkeypatch, capsys, state, expected):
     r = c.effective_registration()
@@ -138,6 +141,7 @@ def test_resume_skips_all_started_states_without_launch(tmp_path, monkeypatch, c
     assert {str(x): x.read_bytes() for x in directory.rglob('*') if x.is_file()} == before
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c8/amendment_1.json + registration.json (C8 core pins; lead_commands.txt cds to /mnt/ForgeRealm/wt/grm-c8)')
 def test_resume_stale_receipt_is_red(tmp_path, monkeypatch):
     r = c.effective_registration()
     monkeypatch.setattr(c, 'OUT', tmp_path)
@@ -145,6 +149,7 @@ def test_resume_stale_receipt_is_red(tmp_path, monkeypatch):
     assert c.run_cell(r, r['cells'][0], resume=True) == 1
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c8/amendment_1.json + registration.json (C8 core pins; lead_commands.txt cds to /mnt/ForgeRealm/wt/grm-c8)')
 def test_prior_red_blocks_unstarted_cell(tmp_path, monkeypatch):
     r = c.effective_registration()
     monkeypatch.setattr(c, 'OUT', tmp_path)
@@ -155,6 +160,7 @@ def test_prior_red_blocks_unstarted_cell(tmp_path, monkeypatch):
     assert not (tmp_path / 'cells' / r['cells'][2]['id']).exists()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c8/amendment_1.json + registration.json (C8 core pins; lead_commands.txt cds to /mnt/ForgeRealm/wt/grm-c8)')
 def test_forecast_all_24_reservations_fit_and_overrun_refused():
     r = c.effective_registration()
     used = 0
@@ -168,6 +174,7 @@ def test_forecast_all_24_reservations_fit_and_overrun_refused():
         c.reservation_seconds(r, r['cells'][-1], 2636)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c8/amendment_1.json + registration.json (C8 core pins; lead_commands.txt cds to /mnt/ForgeRealm/wt/grm-c8)')
 def test_unstarted_final_cell_uses_remaining_lease_cpu_fake(tmp_path, monkeypatch):
     r = c.effective_registration()
     monkeypatch.setattr(c, 'OUT', tmp_path)
@@ -198,6 +205,7 @@ def test_unstarted_final_cell_uses_remaining_lease_cpu_fake(tmp_path, monkeypatc
     assert c.read(tmp_path / 'cells' / cell['id'] / 'controller.json')['charged_seconds'] == 60.
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c8/amendment_1.json + registration.json (C8 core pins; lead_commands.txt cds to /mnt/ForgeRealm/wt/grm-c8)')
 @pytest.mark.parametrize('fraction,expected', [(.25, 'session routing/admission wins'),
     (.5, 'APA decode integration competitive; lead reports both')])
 def test_complete_summary_stage_table_demand_and_decision(tmp_path, monkeypatch, fraction, expected):
@@ -221,6 +229,7 @@ def test_complete_summary_stage_table_demand_and_decision(tmp_path, monkeypatch,
         assert b['stages']['decode']['wall_ms'] == dict(mean=fraction * 100, p50=fraction * 100, p95=fraction * 100)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c8/amendment_1.json + registration.json (C8 core pins; lead_commands.txt cds to /mnt/ForgeRealm/wt/grm-c8)')
 @pytest.mark.parametrize('defect', ['missing', 'red', 'demand_not_taken', 'identity_missing', 'conflict'])
 def test_summary_withholds_allocation_for_missing_red_demand_identity_or_conflict(tmp_path, monkeypatch, defect):
     r = c.effective_registration()
@@ -248,6 +257,7 @@ def test_summary_withholds_allocation_for_missing_red_demand_identity_or_conflic
     assert result['status'] == ('COMPLETE' if defect == 'conflict' else 'BLOCKED_NOT_MEASURED')
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c8/amendment_1.json + registration.json (C8 core pins; lead_commands.txt cds to /mnt/ForgeRealm/wt/grm-c8)')
 def test_lead_commands_all_cells_in_order_resume_and_final_summary(tmp_path):
     # Exercise the real executable shell file using fake python/timeout on
     # PATH. No real cell process, lease, GPU, wait, or signal is launched.

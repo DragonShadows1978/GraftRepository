@@ -12,6 +12,7 @@ from scripts.grm_x1_gpu import clone_node, duplicate_children, payload_digest
 from scripts.grm_x1_register import create
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x1/registration.json (frozen source_shas)')
 def test_frozen_fixture_hashes_queries():
     assert c.verify_fixtures()["queries"] == 24
 

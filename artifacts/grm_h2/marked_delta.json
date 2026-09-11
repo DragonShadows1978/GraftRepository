@@ -1,0 +1,164 @@
+[
+  {
+    "module": "tests/test_grm_a1_gpu_contrast.py",
+    "marks_added_by_H2": 25,
+    "marked_functions_total": 27,
+    "collected_node_ids": 27
+  },
+  {
+    "module": "tests/test_grm_c4_accounting_a7.py",
+    "marks_added_by_H2": 5,
+    "marked_functions_total": 5,
+    "collected_node_ids": 20
+  },
+  {
+    "module": "tests/test_grm_c4_campaign.py",
+    "marks_added_by_H2": 7,
+    "marked_functions_total": 7,
+    "collected_node_ids": 10
+  },
+  {
+    "module": "tests/test_grm_c4_cap_a4.py",
+    "marks_added_by_H2": 4,
+    "marked_functions_total": 4,
+    "collected_node_ids": 13
+  },
+  {
+    "module": "tests/test_grm_c4_recovery_a8.py",
+    "marks_added_by_H2": 6,
+    "marked_functions_total": 6,
+    "collected_node_ids": 12
+  },
+  {
+    "module": "tests/test_grm_c4_recovery_a8_sequence.py",
+    "marks_added_by_H2": 1,
+    "marked_functions_total": 1,
+    "collected_node_ids": 1
+  },
+  {
+    "module": "tests/test_grm_c4_remaining_a3.py",
+    "marks_added_by_H2": 9,
+    "marked_functions_total": 9,
+    "collected_node_ids": 22
+  },
+  {
+    "module": "tests/test_grm_c4_resume_a2.py",
+    "marks_added_by_H2": 19,
+    "marked_functions_total": 19,
+    "collected_node_ids": 27
+  },
+  {
+    "module": "tests/test_grm_c4_skip_a6.py",
+    "marks_added_by_H2": 7,
+    "marked_functions_total": 7,
+    "collected_node_ids": 14
+  },
+  {
+    "module": "tests/test_grm_c4_split_a5.py",
+    "marks_added_by_H2": 10,
+    "marked_functions_total": 10,
+    "collected_node_ids": 23
+  },
+  {
+    "module": "tests/test_grm_c5_grounding_receipt.py",
+    "marks_added_by_H2": 1,
+    "marked_functions_total": 1,
+    "collected_node_ids": 1
+  },
+  {
+    "module": "tests/test_grm_c7_lead_1.py",
+    "marks_added_by_H2": 1,
+    "marked_functions_total": 2,
+    "collected_node_ids": 4
+  },
+  {
+    "module": "tests/test_grm_c7_r2_registration.py",
+    "marks_added_by_H2": 2,
+    "marked_functions_total": 4,
+    "collected_node_ids": 18
+  },
+  {
+    "module": "tests/test_grm_c7_r3.py",
+    "marks_added_by_H2": 1,
+    "marked_functions_total": 6,
+    "collected_node_ids": 10
+  },
+  {
+    "module": "tests/test_grm_c8_amendment.py",
+    "marks_added_by_H2": 10,
+    "marked_functions_total": 10,
+    "collected_node_ids": 18
+  },
+  {
+    "module": "tests/test_grm_c8_profiler.py",
+    "marks_added_by_H2": 4,
+    "marked_functions_total": 4,
+    "collected_node_ids": 4
+  },
+  {
+    "module": "tests/test_grm_r1_amendment2.py",
+    "marks_added_by_H2": 2,
+    "marked_functions_total": 8,
+    "collected_node_ids": 8
+  },
+  {
+    "module": "tests/test_grm_r1_replay.py",
+    "marks_added_by_H2": 8,
+    "marked_functions_total": 23,
+    "collected_node_ids": 23
+  },
+  {
+    "module": "tests/test_grm_rd1_replay.py",
+    "marks_added_by_H2": 5,
+    "marked_functions_total": 5,
+    "collected_node_ids": 5
+  },
+  {
+    "module": "tests/test_grm_scout_fix8_replay.py",
+    "marks_added_by_H2": 1,
+    "marked_functions_total": 6,
+    "collected_node_ids": 6
+  },
+  {
+    "module": "tests/test_grm_scout_fix9.py",
+    "marks_added_by_H2": 1,
+    "marked_functions_total": 1,
+    "collected_node_ids": 1
+  },
+  {
+    "module": "tests/test_grm_x1_campaign.py",
+    "marks_added_by_H2": 1,
+    "marked_functions_total": 1,
+    "collected_node_ids": 1
+  },
+  {
+    "module": "tests/test_grm_x1_reduced.py",
+    "marks_added_by_H2": 13,
+    "marked_functions_total": 13,
+    "collected_node_ids": 33
+  },
+  {
+    "module": "tests/test_grm_x2_runner.py",
+    "marks_added_by_H2": 5,
+    "marked_functions_total": 5,
+    "collected_node_ids": 5
+  },
+  {
+    "module": "tests/test_grm_x2_witnesses.py",
+    "marks_added_by_H2": 1,
+    "marked_functions_total": 1,
+    "collected_node_ids": 1
+  },
+  {
+    "module": "tests/test_grm_x3_lesions.py",
+    "marks_added_by_H2": 9,
+    "marked_functions_total": 9,
+    "collected_node_ids": 13
+  },
+  {
+    "module": "tests/test_grm_x3_r2.py",
+    "marks_added_by_H2": 8,
+    "marked_functions_total": 8,
+    "collected_node_ids": 10
+  }
+]

@@ -28,6 +28,7 @@ def marker(path, reg):
         registration=c.record(c.REG),amendment=reg['amendment'],budget_amendment=reg['budget_amendment'],started_unix=1))
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_exact_corrupt_bytes_and_live_inventory():
     reg=a8.binding(); rows=reg['a8_incidents']
     assert len(rows)==1 and rows[0]['classification']=='CORRUPT_DISK_FULL'
@@ -71,6 +72,7 @@ def recovery(a6_layout,monkeypatch):
     return SimpleNamespace(base=a6_layout,previous=previous,reg=reg,old=old)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_abandoned_claim_charged_full_reservation(recovery):
     r=recovery; path=r.old/'runs/c96_w64/sup_correction_then_restatement.json'
     marker(path,r.previous)
@@ -81,6 +83,7 @@ def test_abandoned_claim_charged_full_reservation(recovery):
     with a8.executor(): assert a8.accounting(r.reg,reserve=False)==285
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('kind',['corrupt','abandoned'])
 @pytest.mark.parametrize('outcome',['PASS','RED','unfinished'])
 def test_incident_rerun_once_and_accounting(recovery,kind,outcome):
@@ -121,6 +124,7 @@ def test_incident_rerun_once_and_accounting(recovery,kind,outcome):
             a8.accounting(r.reg,reserve=False)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_census_recovery_copies_intact_prior_and_continues(recovery):
     r=recovery; cell='c96_w64'
     # Original five completed units; their session bytes and receipts must
@@ -174,6 +178,7 @@ def test_low_space_worker_stops_before_binding_or_lease(monkeypatch):
     with pytest.raises(AssertionError,match='123 bytes free'): a8.worker('c96_w64','census','e2e-2')
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('kind',['claim','corrupt'])
 def test_unregistered_damage_blocks_accounting(recovery,kind):
     path=a8.OUT/'runs/c96_w64/sup_correction_then_restatement.json'
@@ -213,6 +218,7 @@ def test_stale_bound_bytes_refused(monkeypatch,target):
     with pytest.raises(AssertionError):a8.binding()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_live_projection_order_admission_and_immutable_originals():
     reg=a8.binding()
     with a8.executor():

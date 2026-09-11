@@ -28,6 +28,7 @@ def test_direct_worker_pins_production_live_shift_before_opening_turn():
     assert observed == [99, 99]
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x2/registration.json (X2 registered inputs)')
 def test_dry_run_enumerates_all_48_paired_cells_without_gpu_imports():
     before = set(sys.modules)
     data = gpu.plan()
@@ -50,6 +51,7 @@ def test_create_only_receipt_cannot_overwrite(tmp_path):
     assert common.read(path) == {"first": True}
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x2/registration.json (X2 registered inputs)')
 def test_receipt_fingerprint_changes_with_scoped_code(monkeypatch):
     baseline, _ = common.fingerprint()
     real = common.sha_file
@@ -58,6 +60,7 @@ def test_receipt_fingerprint_changes_with_scoped_code(monkeypatch):
     assert changed != baseline
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x2/registration.json (X2 registered inputs)')
 def test_cpu_red_rail_blocks_gpu_before_any_preflight(monkeypatch):
     real_read = gpu.read
     monkeypatch.setattr(gpu, "read", lambda p: {"status": "RED_KILL", "gpu_allowed": False} if p == gpu.CPU_RECEIPT else real_read(p))
@@ -65,6 +68,7 @@ def test_cpu_red_rail_blocks_gpu_before_any_preflight(monkeypatch):
         gpu.ready()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x2/registration.json (X2 registered inputs)')
 def test_missing_gpu_data_cannot_pass_P3(monkeypatch, tmp_path):
     # Summary uses the real frozen fixture IDs but an empty receipt root.
     real_read = gpu.read
@@ -87,6 +91,7 @@ def test_runner_has_no_process_termination_calls_or_background_launch():
     assert "setitimer" in (ROOT / "scripts/grm_x2_gpu.py").read_text()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x2/registration.json (X2 registered inputs)')
 def test_P3_counts_correct_raw_answers_already_rejected_by_A(monkeypatch, tmp_path):
     fixture = common.read(common.OUT / "fixtures/live.json")
     def score(exact=False, abstained=False):

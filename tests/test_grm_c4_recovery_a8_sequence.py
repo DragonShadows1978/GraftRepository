@@ -3,6 +3,9 @@ Prior art: C4/A5/A6 full-sequence synthetic fixtures (house, 2026), reused
 under A8's isolated root to check dependency and partial-summary integration.
 """
 from pathlib import Path
+
+import pytest
+
 from scripts import grm_c4_campaign as c
 from scripts import grm_c4_split_a5 as a5
 from scripts import grm_c4_recovery_a8 as a8
@@ -11,6 +14,7 @@ from test_grm_c4_skip_a6 import a6_layout
 from test_grm_c4_recovery_a8 import recovery, marker, TRUNCATED
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_entire_remaining_sequence_retains_skips_dependencies_and_partial_summary(recovery):
     r=recovery
     seed_legacy(r.base)

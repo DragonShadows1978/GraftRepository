@@ -13,6 +13,7 @@ from scripts import grm_c4_remaining_a3 as a3
 from scripts import grm_c4_cap_a4 as cap
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('runner', [a2, a3], ids=['A2', 'A3'])
 def test_runtime_cap_and_unchanged_scope(runner):
     reg = runner.binding()
@@ -84,6 +85,7 @@ def test_current_source_or_anchor_drift_refused(monkeypatch, runner, target):
         runner.binding()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('runner', [a2, a3], ids=['A2', 'A3'])
 def test_missing_cap_never_falls_back(tmp_path, monkeypatch, runner):
     monkeypatch.setattr(cap, 'AMENDMENT', tmp_path/'absent.json')
@@ -91,6 +93,7 @@ def test_missing_cap_never_falls_back(tmp_path, monkeypatch, runner):
         runner.binding()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('runner', [a2, a3], ids=['A2', 'A3'])
 @pytest.mark.parametrize('used,allowed', [(4516, True), (4924.074634324294, True),
                                          (5115, True), (5115.001, False)])
@@ -117,6 +120,7 @@ def test_reserve_boundary_and_original_red_charged(tmp_path, monkeypatch, runner
             runner.accounting(reg)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_commands_receipts_and_prior_amendments_byte_unchanged():
     rows = c.read(cap.OUT/'before.json')['files']
     assert len(rows) >= 29

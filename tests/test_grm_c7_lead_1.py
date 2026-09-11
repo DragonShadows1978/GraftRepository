@@ -87,6 +87,7 @@ def test_forged_or_stale_amendment_refused_even_when_rehashed(isolated, attack, 
             entry()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c7/registration.json (immutable_inputs pins absolute /mnt/ForgeRealm/wt/grm-c3/orders/GRM_C3_DNGH_DECOY_CALIBRATION.md, pruned with the grm-c3 fork)')
 @pytest.mark.parametrize('changed', [c.SOURCE_PATH, c.LEAD_ORDER,
                                     'artifacts/grm_c7/lead_commands.txt'])
 def test_live_bytes_must_match_authorized_amendment(isolated, monkeypatch, changed):

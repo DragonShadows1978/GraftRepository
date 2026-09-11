@@ -103,6 +103,7 @@ def run_units(layout, units, cell='c96_w64'):
         a3.worker(cell,u['battery'],u['spec'])
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_real_dry_schedule_and_commands():
     reg=a3.binding()
     units=a3.schedule(reg)
@@ -149,6 +150,7 @@ def test_forged_or_stale_amendment_refused(tmp_path,monkeypatch,field):
         a3.binding()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_existing_receipts_and_original_bindings_unchanged():
     assert c.binding()['amendment']==c.record(c.OUT/'amendment_a3.json')
     assert a2.binding()['amendment']==c.record(a2.AMENDMENT)
@@ -158,6 +160,7 @@ def test_existing_receipts_and_original_bindings_unchanged():
     assert all(c.record(r['path'])==r for r in before)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_all_batteries_resume_guard_score_layout_and_create_only(layout):
     reg=layout.reg
     run_units(layout,reg['units_per_new_cell'])
@@ -177,6 +180,7 @@ def test_all_batteries_resume_guard_score_layout_and_create_only(layout):
         a3.worker('c96_w64','longhorizon','c4-lh-06')
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_out_of_order_or_original_claim_refused_before_work(layout):
     with pytest.raises(AssertionError,match='Prior unit missing'):
         a3.worker('c96_w64','census','e2e-1')
@@ -190,6 +194,7 @@ def test_out_of_order_or_original_claim_refused_before_work(layout):
     assert claim.read_bytes()==raw and not a3.OUT.exists()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_previous_cell_score_is_required(layout,monkeypatch):
     monkeypatch.setattr(a3,'load_score',layout.load_score)
     with pytest.raises(AssertionError,match='Prior cell score missing'):
@@ -197,6 +202,7 @@ def test_previous_cell_score_is_required(layout,monkeypatch):
     assert not a3.OUT.exists()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('kind',['state','turns','zero_serving','rail'])
 def test_bound_state_turns_serving_and_failure_stop(layout,kind):
     units=layout.reg['units_per_new_cell']
@@ -228,6 +234,7 @@ def test_bound_state_turns_serving_and_failure_stop(layout,kind):
             a3.worker('c96_w64','longhorizon','c4-lh-13')
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('case',['charge','cap','cooldown','orphan','other_red'])
 def test_three_root_accounting(layout,case):
     old=layout.reg['a4_context']
@@ -290,6 +297,7 @@ def four_cells(layout, monkeypatch):
             'measurement_receipts':receipts,'measurements':{b:{'attempt_observations':1} for b in reg['counts']}})
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('outcome',['SUPPORTED_FINITE','REJECTED_FINITE','MIXED'])
 def test_synthetic_four_cell_summary(layout,monkeypatch,outcome):
     four_cells(layout,monkeypatch)
@@ -312,6 +320,7 @@ def test_synthetic_four_cell_summary(layout,monkeypatch,outcome):
     with pytest.raises(FileExistsError): a3.cross_summary()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('bad',['missing','stale','identity','probes','observation'])
 def test_cross_summary_refuses_incomplete_or_mixed_evidence(layout,monkeypatch,bad):
     four_cells(layout,monkeypatch)

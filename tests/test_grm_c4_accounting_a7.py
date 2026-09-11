@@ -56,6 +56,7 @@ def original_accounting():
     return namespace['accounting']
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_exact_crashed_disk_layout_keyerror_then_completed_receipts(crashed_disk_layout, capsys, monkeypatch):
     reg = crashed_disk_layout
     with pytest.raises(KeyError, match='status') as caught:
@@ -84,6 +85,7 @@ def test_exact_crashed_disk_layout_keyerror_then_completed_receipts(crashed_disk
         a5.worker('c96_w64', 'sup', 'correction_then_restatement')
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_metadata_attempt_and_score_are_excluded_before_read(crashed_disk_layout, monkeypatch, capsys):
     original = c.read
     def read(path):
@@ -95,6 +97,7 @@ def test_metadata_attempt_and_score_are_excluded_before_read(crashed_disk_layout
     assert 'runtime_frame.json' in capsys.readouterr().err
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('contents', ['{', '[]', '{}', '{"status":"PASS"}',
     '{"status":"PASS","cell":"c96_w64","battery":"sup","spec":"partial"}'])
 @pytest.mark.parametrize('claim', [False, True])
@@ -111,6 +114,7 @@ def test_partial_worker_diagnosed_and_blocks_admission(a6_layout, capsys, conten
     assert a6_layout.controls['lease_calls'] == 0
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('field,value', [('gpu_seconds',float('nan')), ('gpu_seconds',float('inf')),
     ('gpu_seconds',-1), ('gpu_seconds',True), ('gpu_seconds','1'),
     ('finished_unix',float('nan')), ('finished_unix',-1)])
@@ -122,6 +126,7 @@ def test_invalid_completed_wall_refused(a6_layout, field, value):
         a5.accounting(a6_layout.reg, reserve=False)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_a6_plan_budget_commands_and_historical_artifacts_unchanged():
     reg=a6.binding();old=c.read(a6.AMENDMENT)
     assert reg['a5_plan']==old['plan'] and reg['budget']==old['budget']

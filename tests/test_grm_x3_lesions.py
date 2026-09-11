@@ -98,6 +98,7 @@ def test_kl_extremes_shift_invariance_and_tie():
 def test_invalid_logits_fail(bad):
     with pytest.raises(x.X3Error):x.distribution_delta(bad,bad)
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x3/registration.json (X3 frozen inputs)')
 def test_frozen_inputs_token_ids_shas_and_dry_run():
     from tokenizers import Tokenizer
     reg,rows=x.validate_fixtures();tok=Tokenizer.from_file(reg['tokenizer']['path'])
@@ -122,6 +123,7 @@ def result(i,group='correct',mass=.5,effect=2.,error=False):
     d['forks']['remove']['kl_nats']=effect;d['forks']['swap']['kl_nats']=effect
     return d
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x3/registration.json (X3 frozen inputs)')
 def test_four_way_errors_empty_cells_and_fixed_thresholds():
     reg,_=x.validate_fixtures();t=reg['scoring']['mass_threshold']
     rows=[result(0,mass=t,effect=1,error=True),result(1,mass=t-1e-9,effect=1+1e-9,error=False)]
@@ -131,11 +133,13 @@ def test_four_way_errors_empty_cells_and_fixed_thresholds():
     assert table['high','high']['error_rate'] is None
     assert s['predictions']['P1'] is None and s['accuracy']['all']['lesion']==0
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x3/registration.json (X3 frozen inputs)')
 def test_no_vacuous_gpu_pass():
     reg,_=x.validate_fixtures();s=x.summarize([],reg)
     assert s['status'].startswith('RED') and all(p is None for p in s['predictions'].values())
     assert all(c['error_rate'] is None for c in s['table'])
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x3/registration.json (X3 frozen inputs)')
 def test_prediction_sets_and_category_guard():
     reg,_=x.validate_fixtures()
     rows=[result(i,group='correct' if i<8 else 'decoy' if i<14 else 'refusal',error=i>=8) for i in range(20)]
@@ -145,6 +149,7 @@ def test_prediction_sets_and_category_guard():
     s=x.summarize(rows,reg);assert s['predictions']['P2'] is None and s['predictions']['P3'] is None
     with pytest.raises(x.X3Error,match='duplicate'):x.summarize([rows[0],rows[0]],reg)
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x3/registration.json (X3 frozen inputs)')
 def test_comparable_controls_kill_without_hiding_measurement():
     reg,_=x.validate_fixtures();rows=[result(i,group='correct' if i<8 else 'decoy' if i<14 else 'refusal') for i in range(20)]
     for r in rows[:3]:r['forks']['sham']['kl_nats']=2
@@ -269,6 +274,7 @@ def synthetic_run(tmp_path,monkeypatch):
     return lead,run
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x3/registration.json (X3 frozen inputs)')
 def test_summary_existing_run_directory_real_layout(synthetic_run,monkeypatch):
     from scripts import grm_det1_3_snapshot as snap
     lead,run=synthetic_run
@@ -289,6 +295,7 @@ def test_summary_existing_run_directory_real_layout(synthetic_run,monkeypatch):
     assert s['status']=='RED_KILL'
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x3/registration.json (X3 frozen inputs)')
 def test_summary_ambiguous_run_requires_explicit_fingerprint(synthetic_run):
     lead,run=synthetic_run
     (run.parent/'another_run').mkdir()
@@ -297,6 +304,7 @@ def test_summary_ambiguous_run_requires_explicit_fingerprint(synthetic_run):
     with pytest.raises(x.X3Error,match='unknown summary'):lead.summary('../escape')
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x3/registration.json (X3 frozen inputs)')
 @pytest.mark.parametrize('corruption',['runtime','receipt','worker','result','blob'])
 def test_summary_rejects_corrupt_existing_receipts(synthetic_run,corruption):
     from scripts.grm_det1_3_snapshot import SnapshotError
@@ -314,6 +322,7 @@ def test_summary_rejects_corrupt_existing_receipts(synthetic_run,corruption):
     with pytest.raises((x.X3Error,SnapshotError)):lead.summary()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x3/registration.json (X3 frozen inputs)')
 def test_summary_missing_start_reports_receipt_error(synthetic_run):
     lead,run=synthetic_run
     (run/'cell_00/started.json').unlink()

@@ -13,6 +13,7 @@ from scripts import grm_x3_r2_diagnostic as x
 from scripts.grm_x3_r2_scorer import value_span, outcome, normalize, DASH_POINTS
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x3/r2/registration.json + r1_evidence_before.json (5161 pinned files, incl. gitignored runs/*/donor_payload.npz)')
 def test_registered_scorer_controls():
     reg,_=x.validate_fixtures()
     controls=json.loads((x.ROOT/reg['scorer']['controls']['path']).read_text())['cases']
@@ -28,6 +29,7 @@ def test_all_registered_dashes():
     assert normalize('ＣＯＰＰＥＲ－７３１\tbefore\nindigo-851')=='copper-731 before indigo-851'
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x3/r2/registration.json + r1_evidence_before.json (5161 pinned files, incl. gitignored runs/*/donor_payload.npz)')
 @pytest.mark.parametrize('corruption',['forged','stale','manifest'])
 def test_r2_registration_rejects_forged_and_stale(tmp_path,corruption):
     reg,_=x.validate_fixtures()
@@ -40,6 +42,7 @@ def test_r2_registration_rejects_forged_and_stale(tmp_path,corruption):
     with pytest.raises(x.X3Error,match='forged/stale'):x.validate_fixtures(tmp_path)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x3/r2/registration.json + r1_evidence_before.json (5161 pinned files, incl. gitignored runs/*/donor_payload.npz)')
 def test_r1_evidence_byte_unchanged():
     pinned=json.loads((x.OUT/'r1_evidence_before.json').read_text())
     assert len(pinned['files'])==5161
@@ -47,6 +50,7 @@ def test_r1_evidence_byte_unchanged():
         assert x.sha(x.ROOT/record['path'])==record['sha256'], record['path']
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x3/r2/registration.json + r1_evidence_before.json (5161 pinned files, incl. gitignored runs/*/donor_payload.npz)')
 def test_r2_disjoint_recipes_and_dry_run():
     reg,fixtures=x.validate_fixtures()
     old=[json.loads(p.read_text()) for p in (x.ROOT/'artifacts/grm_x3/fixtures').glob('x3_*.json')]
@@ -74,6 +78,7 @@ def make_rows():
     return reg,rows
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x3/r2/registration.json + r1_evidence_before.json (5161 pinned files, incl. gitignored runs/*/donor_payload.npz)')
 def test_r2_summary_guards_and_floor():
     reg,rows=make_rows();s=x.summarize(rows,reg)
     assert s['predictions']["P1'"] is True and s['realized_strata']
@@ -99,6 +104,7 @@ def test_r2_summary_guards_and_floor():
     assert s['status']=='RED_STRATA_OR_INCOMPLETE' and all(v is None for v in s['predictions'].values())
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x3/r2/registration.json + r1_evidence_before.json (5161 pinned files, incl. gitignored runs/*/donor_payload.npz)')
 def test_r2_thresholds_and_unchanged_kill():
     reg,rows=make_rows()
     for r in rows[:3]:r['forks']['sham']['kl_nats']=2.
@@ -112,6 +118,7 @@ def test_r2_thresholds_and_unchanged_kill():
     assert s['status']=='RED_KILL' and s['predictions']["Q3'"] is True
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x3/r2/registration.json + r1_evidence_before.json (5161 pinned files, incl. gitignored runs/*/donor_payload.npz)')
 def test_r2_scorer_competing_answers_and_frozen_exact():
     _,fixtures=x.validate_fixtures();f=fixtures[0]
     a=outcome(f['expected_values'][0],f)
@@ -176,6 +183,7 @@ def synthetic_run(tmp_path,monkeypatch):
     return lead,run
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x3/r2/registration.json + r1_evidence_before.json (5161 pinned files, incl. gitignored runs/*/donor_payload.npz)')
 def test_r2_summary_existing_run_layout(synthetic_run,monkeypatch):
     lead,run=synthetic_run
     monkeypatch.setattr(lead,'runtime',lambda:pytest.fail('live runtime queried'))

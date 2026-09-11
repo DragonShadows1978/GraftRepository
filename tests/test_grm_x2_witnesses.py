@@ -103,6 +103,7 @@ def test_adapter_both_deposit_paths_metadata_and_prompt_isolation(monkeypatch):
     assert info == {"grounded": True}
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_x2/registration.json (X2 registered inputs)')
 def test_frozen_contract_counts_sources_and_sha():
     reg = contract()
     cpu, live = read(OUT / "fixtures/cpu.json"), read(OUT / "fixtures/live.json")

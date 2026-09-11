@@ -7,8 +7,42 @@ import json
 
 import pytest
 
+from tests.conftest import campaign_receipt_module
+
 from scripts.grm_c5_offline import load_fixtures, mutation_checks
 from scripts.grm_c5_rules import TextArena, binding_candidates, grounding_verdict
+
+# GRM-H2: WHOLE-MODULE campaign receipt, declared at import.
+#
+# ``load_fixtures()`` below calls ``scripts.grm_c5_offline.registration()``,
+# which verifies C5's frozen registration against the ABSOLUTE paths it was
+# registered at -- ``/mnt/ForgeRealm/wt/grm-c5/artifacts/grm_c5/fixtures.json``
+# and the gitignored EB1 session artifacts under
+# ``/mnt/ForgeRealm/GraftRepository/artifacts/``.  That is the worktree-path
+# receipt class (docs/TESTS_CAMPAIGN_RECEIPTS.md): it cannot pass on any tree
+# but grm-c5, by construction.
+#
+# It is declared at MODULE level rather than per function because the check
+# runs at IMPORT time -- ``FIXTURES`` is the argument list of the
+# ``parametrize`` decorators below, so it cannot be deferred into a fixture
+# without changing what the campaign registered.  Left unguarded it does not
+# merely fail: it aborts collection of the entire tree-wide run
+# ("Interrupted: 1 error during collection"), and `-m campaign_receipt` aborts
+# the same way, so the receipt gate could not be run either.
+#
+# The skip is therefore UNCONDITIONAL -- there is no invocation in which this
+# import can succeed off the grm-c5 tree.  The receipt is not swallowed by it:
+# tests/test_grm_c5_grounding_receipt.py carries one campaign_receipt-marked
+# test that calls the same load_fixtures() binding, so the failure stays
+# collectable and reproduces under -m campaign_receipt like every other
+# receipt.  No assertion in this file was changed; only whether it is
+# collected.
+campaign_receipt_module(
+    registration='artifacts/grm_c5/registration.json (pins absolute '
+                 '/mnt/ForgeRealm/wt/grm-c5/ and gitignored '
+                 '/mnt/ForgeRealm/GraftRepository/artifacts/grm_eb1/ inputs)',
+    reason='scripts.grm_c5_offline.load_fixtures() verifies C5 registration '
+           'at import time')
 
 FIXTURES = load_fixtures()
 SCORABLE = [row for row in FIXTURES if row["texts"] is not None]

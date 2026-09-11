@@ -214,7 +214,11 @@ non-`GRM_` keys unconditionally and silently; only the `GRM_*` leak fails a
 test. Proved by
 `test_grm_h1_env_isolation.py::test_a_wholesale_environ_clear_is_repaired_for_the_next_test`.
 
-## Gates (merged tree, 2026-09-11)
+## Gates (merged tree, 2026-09-11) — GRM-H1, SUPERSEDED
+
+These are H1's numbers, recorded **before** the eight Scout Part C / X
+branches were merged and their worktrees pruned. Kept as the H1 receipt; the
+current gates are in the GRM-H2 section below.
 
 ```
 $ python3 -m pytest -q tests/test_grm_*.py
@@ -232,6 +236,144 @@ $ python3 -m pytest -q tests/test_grm_r1_*.py tests/test_grm_scout_fix4.py \
 are two parametrised cases of
 `test_grm_c2_epoch3.py::test_stale_epoch_input_refused` whose other cases fail;
 the mark is on the function, so all its cases travel together.
+
+## GRM-H2 delta: the eight Scout Part C / X merges (2026-09-11)
+
+`lc1-wip` absorbed grm-c3, grm-c4, grm-c5, grm-c6, grm-c8, grm-x1, grm-x2,
+grm-x3, **and the eight forks were then pruned**. Pruning is what makes this
+pass large: it converted every absolute-worktree pin across the tree from
+"file present, sha moved" into "file absent", which is the durable
+worktree-path receipt class this document already names as the strongest
+and least re-bindable one.
+
+Method as in H1: each module reproduced in an **isolated single-module
+process** under `--campaign-receipts`, marks on test FUNCTIONS, no assertion
+changed anywhere. 166 marks added across 27 modules.
+
+### In scope -- the 21 modules the eight merges added or changed
+
+| Test module | Marks added | Marked fns | Node ids | Why it is a receipt |
+|---|---:|---:|---:|---|
+| `tests/test_grm_c4_accounting_a7.py` | 5 | 5 | 20 | same `binding()` chain (a7 -> a6 -> a5 -> ...) |
+| `tests/test_grm_c4_campaign.py` | 7 | 7 | 10 | C4 amendments record `registration` as `{path, sha256, bytes}` with an ABSOLUTE path; sha and bytes still match byte-for-byte, only `/mnt/ForgeRealm/wt/grm-c4/` differs, so `grm_c4_campaign.binding()` raises `amendment registration mismatch` |
+| `tests/test_grm_c4_cap_a4.py` | 4 | 4 | 13 | same `binding()` chain; one case also reads `/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/` |
+| `tests/test_grm_c4_recovery_a8.py` | 6 | 6 | 12 | same `binding()` chain (a8 -> ...) |
+| `tests/test_grm_c4_recovery_a8_sequence.py` | 1 | 1 | 1 | same `binding()` chain, reached through the a5 `layout` fixture it imports |
+| `tests/test_grm_c4_remaining_a3.py` | 9 | 9 | 22 | same `binding()` chain (a3 -> a2 -> campaign) |
+| `tests/test_grm_c4_resume_a2.py` | 19 | 19 | 27 | same `binding()` chain (a2 -> campaign) |
+| `tests/test_grm_c4_skip_a6.py` | 7 | 7 | 14 | same `binding()` chain; one case also reads `/mnt/ForgeRealm/wt/grm-c4/AGENTS.md` |
+| `tests/test_grm_c4_split_a5.py` | 10 | 10 | 23 | same `binding()` chain (a5 -> a3 -> a2 -> campaign) |
+| `tests/test_grm_c5_grounding_receipt.py` | 1 | 1 | 1 | holds the collectable half of the C5 receipt; `test_grm_c5_grounding.py` verifies the registration at IMPORT time and now skips at module level (see below) |
+| `tests/test_grm_c8_amendment.py` | 10 | 10 | 18 | `grm_c8_cells` raises `bound input changed: core/graft_arena.py`; `lead_commands.txt` also `cd`s to `/mnt/ForgeRealm/wt/grm-c8` |
+| `tests/test_grm_c8_profiler.py` | 4 | 4 | 4 | `bound input changed: core/graft_arena.py` |
+| `tests/test_grm_x1_campaign.py` | 1 | 1 | 1 | `frozen source/fixture drift: docs/GRM_SCOUT_2026-09-08.md` (and `scripts/grm_e2e_session.py`) |
+| `tests/test_grm_x1_reduced.py` | 13 | 13 | 33 | `r4 source drift outside harness scope` -- 8 pinned `core/` and `scripts/` files moved, 2 new `core/` files appeared; the `r4_tree` fixture also copies the campaign`s real `artifacts/grm_x1/claims/r4/` (23 gitignored claims), so the create-only writes collide |
+| `tests/test_grm_x2_runner.py` | 5 | 5 | 5 | `registered input drift: core/graft_arena.py` |
+| `tests/test_grm_x2_witnesses.py` | 1 | 1 | 1 | `registered input drift: core/graft_arena.py` |
+| `tests/test_grm_x3_lesions.py` | 9 | 9 | 13 | `frozen input drift: core/graft_arena.py` |
+| `tests/test_grm_x3_r2.py` | 8 | 8 | 10 | `frozen r2 input drift: core/graft_arena.py`; `r1_evidence_before.json` also pins 5161 files of which 20 gitignored `runs/*/donor_payload.npz` are absent |
+| **18 modules** | **120** | **120** | **228** | |
+
+Clean on this tree, needing no marks: `test_grm_c3.py`,
+`test_grm_x1_addresses.py`, `test_grm_x1_units.py` (29 + 31 + 22 pass).
+grm-c6 added no test module.
+
+### Fallout -- pruning the forks broke pins in modules the merges never touched
+
+These were green for H1 **because the campaign worktrees were still on
+disk**. They are not new defects and not new drift; they are the same
+receipts, now unable to resolve their own pinned paths.
+
+| Test module | Marks added | Marked fns | Node ids | Why it is a receipt |
+|---|---:|---:|---:|---|
+| `tests/test_grm_a1_gpu_contrast.py` | 25 | 27 | 27 | **all 27** effective pins are absolute paths in the pruned `grm-a1`, `grm-c7` and `grm-rd1` worktrees; every one now hashes to `null` |
+| `tests/test_grm_c7_lead_1.py` | 1 | 2 | 4 | same single pruned C3 order pin |
+| `tests/test_grm_c7_r2_registration.py` | 2 | 4 | 18 | `artifacts/grm_c7/registration.json` `immutable_inputs` pins `/mnt/ForgeRealm/wt/grm-c3/orders/GRM_C3_DNGH_DECOY_CALIBRATION.md`; `verify()` cannot reach its sha comparison |
+| `tests/test_grm_c7_r3.py` | 1 | 6 | 10 | same single pruned C3 order pin |
+| `tests/test_grm_r1_amendment2.py` | 2 | 8 | 8 | same pruned C2 checkpoint, reached through `run.run_cell` |
+| `tests/test_grm_r1_replay.py` | 8 | 23 | 23 | cell checkpoints pinned under `/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/` -> `R1_CHECKPOINT_MISSING` |
+| `tests/test_grm_rd1_replay.py` | 5 | 5 | 5 | `scripts/grm_rd1.py` hardcodes `SOURCE = Path('/mnt/ForgeRealm/wt/grm-c7')` |
+| `tests/test_grm_scout_fix8_replay.py` | 1 | 6 | 6 | A7 archive pins `/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/amendment_7/` |
+| `tests/test_grm_scout_fix9.py` | 1 | 1 | 1 | `scripts/grm_scout_fix8_cpu.py` hardcodes `C2 = Path('/mnt/ForgeRealm/wt/grm-c2/...')`; the glob returns 0 rows where 132 are asserted |
+| **9 modules** | **46** | **82** | **102** | |
+
+Three of the eight `test_grm_r1_replay.py` marks are **re-marks**: H1
+removed them because "R1 amendments 2-4 rebound R1's pins to this tree".
+That rebinding was real but not durable -- the pins it rebound to were
+absolute paths in `grm-c2`. This document's own rule predicted it: a
+worktree-path receipt is never retired by re-pinning. The same correction
+applies to `test_grm_a1_gpu_contrast.py`, whose "A1 amendment 4 rebound the
+pins, `pinned inputs verified: 27`" result held only while `/mnt/ForgeRealm/
+wt/grm-a1/` existed; all 27 of those pins are absolute worktree paths, so
+the module is 27/27 worktree-path receipts, not 2.
+
+`test_grm_d1_amendment3.py` and `test_grm_lt1_1_preflight.py` went the other
+way: D1 amendment 8 rebound them to this tree and removed their marks. Both
+now pass outright (37 passed, 0 skipped) -- correctly unmarked, left alone.
+
+### A receipt whose binding runs at IMPORT time
+
+`tests/test_grm_c5_grounding.py` calls `load_fixtures()` at module scope,
+because what it returns IS the `parametrize` argument list; it cannot be
+deferred into a fixture without changing what the campaign registered. That
+call verifies C5's registration, which pins
+`/mnt/ForgeRealm/wt/grm-c5/artifacts/grm_c5/fixtures.json` and gitignored
+EB1 session artifacts. Unguarded it does not merely fail -- it aborts
+collection of the whole run (`Interrupted: 1 error during collection`), and
+`-m campaign_receipt` aborts identically, so the receipt gate could not run
+either. A function-level mark cannot reach it: the import never completes.
+
+The fix is a pair, `campaign_receipt_module()` in `tests/conftest.py`:
+
+* the module skips itself at import, unconditionally -- there is no
+  invocation in which that import can succeed off the grm-c5 tree;
+* `tests/test_grm_c5_grounding_receipt.py` carries ONE
+  `campaign_receipt`-marked test calling the same `load_fixtures()` binding,
+  so the receipt stays collectable, deselected by default and reproduced
+  under `-m campaign_receipt` like every other one.
+
+The skip alone would have converted a receipt into silence; the pair is what
+keeps it honest. Use this shape only for modules whose binding is evaluated
+by the import itself.
+
+### Failures that are NOT receipts
+
+None. Every failure in all 21 in-scope modules, and every fallout failure,
+resolved to a registration binding or a pruned absolute path. No genuine
+defect was found, and no test double went stale against these merges.
+
+### Gates (GRM-H2, merged + pruned tree, 2026-09-11)
+
+The one-process tree-wide run is ~705 s, over the 600 s ceiling this seat
+runs under, so it is reported in three parts over the same 138 modules.
+
+```
+$ python3 -m pytest -q --basetemp artifacts/grm_h2/tmp $(ls tests/test_grm_*.py | sed -n 1,70p)
+1114 passed, 321 skipped, 2 warnings in 25.15s
+
+$ python3 -m pytest -q --basetemp artifacts/grm_h2/tmp $(ls tests/test_grm_*.py | sed -n 71,101p)
+600 passed, 102 skipped, 2 warnings in 531.27s (0:08:51)
+
+$ python3 -m pytest -q --basetemp artifacts/grm_h2/tmp $(ls tests/test_grm_*.py | sed -n 102,138p)
+1014 passed, 99 skipped, 2 warnings in 147.07s (0:02:27)
+
+$ python3 -m pytest -q --basetemp artifacts/grm_h2/tmp -m campaign_receipt tests/test_grm_*.py
+314 failed, 8 passed, 1 skipped, 2745 deselected, 2 warnings, 182 errors in 73.54s (0:01:13)
+
+$ python3 -m pytest -q --basetemp artifacts/grm_h2/tmp tests/test_grm_r1_*.py \
+      tests/test_grm_scout_fix4.py tests/test_grm_a1_alias_fold.py tests/test_grm_admission.py
+194 passed, 61 skipped, 2 warnings in 7.83s
+```
+
+2728 passed, 522 skipped, **0 failed / 0 errors** across the three parts.
+
+Skip arithmetic: 314 failed + 182 errors + 8 passed = **504** collected
+receipt node ids; + 1 module-level C5 skip + 17 pre-existing non-receipt
+skips (12 `test_grm_d1_cause_table.py` `skipif`, 5 LT1.1 archive/full-run
+`skipif`) = **522**, matching the default skip count exactly.
+
+Tree totals after this pass: **321 marked test functions, 504 node ids,
+49 modules** (H1 left 164 / 232 / 31).
 
 ## Re-blessing a receipt
 

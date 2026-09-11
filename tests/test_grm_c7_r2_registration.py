@@ -79,6 +79,7 @@ def test_r2_forged_amendment_fails_closed(tmp_path, attack, error):
         r2.verify_r2(copy.deepcopy(r), inputs, c.ROOT, tmp_path)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c7/registration.json (immutable_inputs pins absolute /mnt/ForgeRealm/wt/grm-c3/orders/GRM_C3_DNGH_DECOY_CALIBRATION.md, pruned with the grm-c3 fork)')
 @pytest.mark.parametrize('name', sorted(r2.CHANGED | {'scripts/grm_c7_register_r2.py'}))
 def test_live_r2_source_tampering_is_rejected(monkeypatch, name):
     original = c.sha
@@ -88,6 +89,7 @@ def test_live_r2_source_tampering_is_rejected(monkeypatch, name):
         c.verify()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c7/registration.json (immutable_inputs pins absolute /mnt/ForgeRealm/wt/grm-c3/orders/GRM_C3_DNGH_DECOY_CALIBRATION.md, pruned with the grm-c3 fork)')
 def test_r1_execution_fails_closed_after_core_change(monkeypatch):
     monkeypatch.delenv('GRM_C7_REVISION', raising=False)
     monkeypatch.delenv('GRM_C7_FIX4', raising=False)

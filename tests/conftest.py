@@ -121,6 +121,37 @@ def _requested(config):
     return MARKER in expr
 
 
+def campaign_receipt_module(registration, reason):
+    """Declare the WHOLE module a campaign receipt, at IMPORT time.
+
+    A campaign receipt whose binding is verified at module import (C5's
+    ``load_fixtures()`` runs at import, because what it returns IS the
+    ``@pytest.mark.parametrize`` argument list) cannot be handled by
+    ``pytest_collection_modifyitems``: the import raises during COLLECTION,
+    pytest reports "Interrupted: 1 error during collection", and the whole
+    tree-wide run stops -- the mis-rule the marker exists to prevent, only
+    worse.  ``-m campaign_receipt`` aborts the same way, so the receipt gate
+    cannot be run either.
+
+    So such a module calls this at the top of its import.  It ALWAYS skips
+    the module body, in every invocation, because there is no invocation in
+    which the import can succeed on a tree that is not the campaign's.  The
+    receipt itself is not lost: the module pairs this call with ONE
+    ``campaign_receipt``-marked test that invokes the same binding check
+    directly, so the failure stays collectable, deselected by default and
+    REPRODUCED under ``-m campaign_receipt`` / ``--campaign-receipts`` like
+    every other receipt.
+
+    Marks still belong on test FUNCTIONS wherever collection can happen --
+    this is only for modules whose binding is evaluated by the import itself.
+    """
+    pytest.skip(
+        "campaign receipt (registration=%s): %s; sha-bound to its campaign; "
+        "the binding is reproduced by the campaign_receipt-marked test in "
+        "this module -- run with -m campaign_receipt" % (registration, reason),
+        allow_module_level=True)
+
+
 def pytest_collection_modifyitems(config, items):
     if _requested(config):
         return

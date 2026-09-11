@@ -223,6 +223,7 @@ def test_corrupt_timing_rejected(defect):
             p.summarize(rows)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c8/registration.json (C8 core pins)')
 def test_registration_complete_counts_dependencies_flags_budget():
     r = c.registration(); seen = set(); counts = {}
     for cell in r['cells']:
@@ -238,6 +239,7 @@ def test_registration_complete_counts_dependencies_flags_budget():
         c.fit(r)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c8/registration.json (C8 core pins)')
 def test_nonfit_refused_before_any_lease_or_reservation(tmp_path, monkeypatch):
     r = c.registration()
     monkeypatch.setattr(c, 'OUT', tmp_path / 'never_created')
@@ -252,6 +254,7 @@ def test_worker_requires_leased_parent_before_imports(monkeypatch):
         c.worker({})
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c8/registration.json (C8 core pins)')
 def test_forged_registration_rejected(tmp_path, monkeypatch):
     r = c.registration(); r['budget_seconds'] = 99999
     target = tmp_path / 'forged.json'; target.write_text(json.dumps(r))
@@ -269,6 +272,7 @@ def test_side_b_does_not_relabel_context_or_claim_saving():
     assert value['two_pass_saving_ms_tok'] == pytest.approx(-1.4)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c8/registration.json (C8 core pins)')
 def test_missing_gpu_summary_not_a_decision():
     report = c.summary()
     assert report['status'] == 'BLOCKED_NOT_MEASURED'

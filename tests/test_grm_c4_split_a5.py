@@ -132,6 +132,7 @@ def seed_legacy(layout):
     return pins
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_registered_plan_honesty_and_commands():
     reg=a5.binding();plan=reg['a5_plan'];units=a5.schedule(reg)
     assert len(units)==50
@@ -185,6 +186,7 @@ def test_stale_source_refused(monkeypatch):
     with pytest.raises(AssertionError):a5.binding()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('cell',['c96_w64','c64_w64'])
 def test_decoupled_start_without_earlier_score(layout,cell):
     run(layout,cell,layout.reg['units_per_new_cell'][:1])
@@ -192,6 +194,7 @@ def test_decoupled_start_without_earlier_score(layout,cell):
     assert not a5.score_path('c64_w96').exists()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_synthetic_full_batteries_half_resume_score_and_cross(layout):
     pins=seed_legacy(layout)
     run(layout,'c64_w96',layout.reg['units_per_new_cell'][-4:])
@@ -212,6 +215,7 @@ def test_synthetic_full_batteries_half_resume_score_and_cross(layout):
         a5.worker('c64_w96','longhorizon','c4-lh-12a')
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('bad',['state','turns','prior','geometry','amendment','serving'])
 def test_resume_and_identity_attacks(layout,bad):
     cell='c96_w64';units=layout.reg['units_per_new_cell']
@@ -240,6 +244,7 @@ def test_resume_and_identity_attacks(layout,bad):
         with pytest.raises(AssertionError):a5.worker(cell,'longhorizon','c4-lh-12a')
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_registered_nonfit_no_gpu_and_independent_cell(layout):
     unit=layout.reg['a5_plan']['scheduled_units'][0];unit['planning_status']='NON_FIT'
     result=a5.worker('c64_w96','longhorizon','c4-lh-12a')
@@ -250,6 +255,7 @@ def test_registered_nonfit_no_gpu_and_independent_cell(layout):
     with pytest.raises(AssertionError,match='No retries'):a5.worker('c64_w96','longhorizon','c4-lh-12a')
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_cap_overflow_and_missing_dependency_are_nonfit(layout):
     layout.reg['a5_plan']['scheduled_units'][4]['cap_status']='NON_FIT'
     row=a5.worker('c96_w64','sup',c.SUP[0])
@@ -258,6 +264,7 @@ def test_cap_overflow_and_missing_dependency_are_nonfit(layout):
     assert 'missing' in row['reason'] and layout.controls['lease_calls']==0
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_partial_summary_has_no_battery_score(layout):
     pins=seed_legacy(layout)
     run(layout,'c96_w64',layout.reg['units_per_new_cell'][:1])
@@ -272,6 +279,7 @@ def test_partial_summary_has_no_battery_score(layout):
     assert all(c.record(p['path'])==p for p in pins)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('bad',['partial_score','stale_partial','stale_score','probes'])
 def test_summary_refuses_forged_partial_and_stale_full(layout,bad):
     cell='c96_w64'
@@ -288,6 +296,7 @@ def test_summary_refuses_forged_partial_and_stale_full(layout,bad):
     assert not (a5.OUT/'cross_summary.json').exists()
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 @pytest.mark.parametrize('case',['charge','reserve','cooldown','orphan','historical_drift'])
 def test_accounting(layout,case):
     pins=seed_legacy(layout)
@@ -304,6 +313,7 @@ def test_accounting(layout,case):
     with pytest.raises((AssertionError,ValueError)):a5.accounting(layout.reg)
 
 
+@pytest.mark.campaign_receipt(registration='artifacts/grm_c4/registration.json + amendment_a1..a3.json (pin absolute /mnt/ForgeRealm/wt/grm-c4/ paths)')
 def test_real_existing_bytes_unchanged():
     before=c.read(a5.OUT/'before.json')['files']
     assert len(before)==2567
