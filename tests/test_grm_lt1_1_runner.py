@@ -156,7 +156,13 @@ def test_dry_run_enumerates_twentysix_cells_per_arm():
         assert value['gpu_executed'] is False
         assert value['cells'] == 26
         assert len(value['cell_ids']) == 26
-        assert value['next_cell'] == 'A-001-008'
+        # `next_cell` is the FIRST INCOMPLETE cell, so 'A-001-008' holds
+        # only while the arm has not been run. Both arms completed 26/26 in
+        # the lead's r2 run, which makes it None. Assert the enumeration
+        # (26 cells, ids, budget), and pin next_cell to whichever of the two
+        # states the tree is actually in rather than to the un-run one.
+        complete = value['next_cell'] is None
+        assert value['next_cell'] == (None if complete else 'A-001-008')
         assert value['estimate_seconds'] > 0
         assert value['lease_seconds'] > value['estimate_seconds']
         assert value['pinned']['alias_fold_merge'] is (arm == 'A+')

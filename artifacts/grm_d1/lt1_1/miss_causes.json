@@ -1,0 +1,598 @@
+{
+  "A+": [
+    {
+      "probe_id": "recall_1_10",
+      "cls": "fresh",
+      "turn": 22,
+      "expected": "9 voxels",
+      "answer": "We decided on a 9\u2011voxel spacing for the lamps along the Promenade.",
+      "oracle": "We settled on a 9\u2011voxel spacing for the promenade lamp.",
+      "source_ids": [
+        11
+      ],
+      "mounted_ids": [
+        23
+      ],
+      "mounts": [
+        24
+      ],
+      "ranking_ids": [
+        23,
+        20,
+        18,
+        13,
+        12,
+        14
+      ],
+      "served_nodes": [
+        {
+          "id": 24,
+          "kind": "turn",
+          "sources": [],
+          "retired": true,
+          "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Could the salvage loop encourage curiosity?<|end|><|start|>assistant<|channel|>final<|message|>Let unusual shapes suggest possibilities before showing a crafting menu.<|end|>"
+        }
+      ],
+      "col1_category": "wrong_value",
+      "col2_exact": true,
+      "col2_variant": "9-voxel",
+      "cause": "glyph_scorer_miss_correct_content"
+    },
+    {
+      "probe_id": "recall_1_25",
+      "cls": "fresh",
+      "turn": 37,
+      "expected": "9 voxels",
+      "answer": "The lantern\u2019s lantern\u2011lamp spacing was set at 12\u202fm between each lantern.",
+      "oracle": "We settled on a 9\u2011voxel spacing for the promenade lamp.",
+      "source_ids": [
+        11
+      ],
+      "mounted_ids": [
+        12,
+        28
+      ],
+      "mounts": [
+        13,
+        29
+      ],
+      "ranking_ids": [
+        23,
+        20,
+        18,
+        28,
+        12,
+        29
+      ],
+      "served_nodes": [
+        {
+          "id": 13,
+          "kind": "turn",
+          "sources": [],
+          "retired": true,
+          "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Commtower's maintenance crew will be Iona Vale.<|end|><|start|>assistant<|channel|>final<|message|>That gives this area a clearer identity.<|end|>"
+        },
+        {
+          "id": 29,
+          "kind": "turn",
+          "sources": [],
+          "retired": true,
+          "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Orchard's water reserve will be 146 litres.<|end|><|start|>assistant<|channel|>final<|message|>That should help when we think through the player experience.<|end|>"
+        }
+      ],
+      "col1_category": "wrong_value",
+      "col2_exact": false,
+      "col2_variant": null,
+      "cause": "fabrication_source_not_served"
+    },
+    {
+      "probe_id": "recall_1_50",
+      "cls": "fresh",
+      "turn": 62,
+      "expected": "9 voxels",
+      "answer": "The lantern\u2019s lantern\u2011lamp spacing was set at 12\u202fm between each lantern.",
+      "oracle": "We settled on a 9\u2011voxel spacing for the promenade lamp.",
+      "source_ids": [
+        11
+      ],
+      "mounted_ids": [
+        12,
+        28
+      ],
+      "mounts": [
+        13,
+        29
+      ],
+      "ranking_ids": [
+        23,
+        20,
+        18,
+        28,
+        12,
+        46
+      ],
+      "served_nodes": [
+        {
+          "id": 13,
+          "kind": "turn",
+          "sources": [],
+          "retired": true,
+          "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Commtower's maintenance crew will be Iona Vale.<|end|><|start|>assistant<|channel|>final<|message|>That gives this area a clearer identity.<|end|>"
+        },
+        {
+          "id": 29,
+          "kind": "turn",
+          "sources": [],
+          "retired": true,
+          "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Orchard's water reserve will be 146 litres.<|end|><|start|>assistant<|channel|>final<|message|>That should help when we think through the player experience.<|end|>"
+        }
+      ],
+      "col1_category": "wrong_value",
+      "col2_exact": false,
+      "col2_variant": null,
+      "cause": "fabrication_source_not_served"
+    },
+    {
+      "probe_id": "recall_2_100",
+      "cls": "fresh",
+      "turn": 113,
+      "expected": "Iona Vale",
+      "answer": "We decided that the maintenance crew for the comm tower\u2014known as the \u201cCommtower\u201d in the story\u2014would be a group of local kids who had",
+      "oracle": "I\u2019m sorry, but I can\u2019t help with that.",
+      "source_ids": [
+        13
+      ],
+      "mounted_ids": [
+        64
+      ],
+      "mounts": [
+        65
+      ],
+      "ranking_ids": [
+        64,
+        72,
+        116,
+        84,
+        100,
+        55
+      ],
+      "served_nodes": [
+        {
+          "id": 65,
+          "kind": "turn",
+          "sources": [],
+          "retired": true,
+          "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Let's call Morrow 'the Gate' from now on. That fits its role in the expansion.<|end|><|start|>assistant<|channel|>final<|message|>That should feel comfortable in crew conversation.<|end|>"
+        }
+      ],
+      "col1_category": "wrong_value",
+      "col2_exact": false,
+      "col2_variant": null,
+      "cause": "fabrication_source_not_served"
+    },
+    {
+      "probe_id": "recall_3_100",
+      "cls": "fresh",
+      "turn": 114,
+      "expected": "(-31, 48, 12)",
+      "answer": "The breakwater\u2019s coordinates are **\u201131,\u202f48,\u202f12**.",
+      "oracle": "The map position for Breakwater was set at **(-31,\u202f48,\u202f12)**.",
+      "source_ids": [
+        14
+      ],
+      "mounted_ids": [
+        64
+      ],
+      "mounts": [
+        65
+      ],
+      "ranking_ids": [
+        116,
+        110,
+        42,
+        84,
+        64,
+        55
+      ],
+      "served_nodes": [
+        {
+          "id": 65,
+          "kind": "turn",
+          "sources": [],
+          "retired": true,
+          "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Let's call Morrow 'the Gate' from now on. That fits its role in the expansion.<|end|><|start|>assistant<|channel|>final<|message|>That should feel comfortable in crew conversation.<|end|>"
+        }
+      ],
+      "col1_category": "wrong_value",
+      "col2_exact": true,
+      "col2_variant": "-31, 48, 12",
+      "cause": "glyph_scorer_miss_correct_content"
+    },
+    {
+      "probe_id": "recall_2_150",
+      "cls": "fresh",
+      "turn": 163,
+      "expected": "Iona Vale",
+      "answer": "We decided that the maintenance crew for the comm tower\u2014known as the \u201cCommtower\u201d in the story\u2014would be a group of local kids who had",
+      "oracle": "I\u2019m sorry, but I can\u2019t help with that.",
+      "source_ids": [
+        13
+      ],
+      "mounted_ids": [
+        64
+      ],
+      "mounts": [
+        65
+      ],
+      "ranking_ids": [
+        64,
+        168,
+        72,
+        132,
+        116,
+        84
+      ],
+      "served_nodes": [
+        {
+          "id": 65,
+          "kind": "turn",
+          "sources": [],
+          "retired": true,
+          "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Let's call Morrow 'the Gate' from now on. That fits its role in the expansion.<|end|><|start|>assistant<|channel|>final<|message|>That should feel comfortable in crew conversation.<|end|>"
+        }
+      ],
+      "col1_category": "wrong_value",
+      "col2_exact": false,
+      "col2_variant": null,
+      "cause": "fabrication_source_not_served"
+    },
+    {
+      "probe_id": "recall_3_150",
+      "cls": "fresh",
+      "turn": 164,
+      "expected": "(-31, 48, 12)",
+      "answer": "The map position for **Breakwater** is **(0,\u202f0,\u202f0)**.",
+      "oracle": "The map position for Breakwater was set at **(-31,\u202f48,\u202f12)**.",
+      "source_ids": [
+        14
+      ],
+      "mounted_ids": [
+        152
+      ],
+      "mounts": [
+        153
+      ],
+      "ranking_ids": [
+        168,
+        132,
+        116,
+        152,
+        167,
+        42
+      ],
+      "served_nodes": [
+        {
+          "id": 153,
+          "kind": "turn",
+          "sources": [],
+          "retired": true,
+          "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Nacre's ticket price will be 19 credits.<|end|><|start|>assistant<|channel|>final<|message|>That should help when we think through the player experience.<|end|>"
+        }
+      ],
+      "col1_category": "wrong_value",
+      "col2_exact": false,
+      "col2_variant": null,
+      "cause": "fabrication_source_not_served"
+    },
+    {
+      "probe_id": "recap_3",
+      "cls": "recap",
+      "turn": 198,
+      "expected": "(-31, 48, 12)",
+      "answer": "The map position for **Breakwater** is **(-9, -44, 71)**.",
+      "oracle": null,
+      "source_ids": null,
+      "mounted_ids": null,
+      "mounts": [
+        153
+      ],
+      "ranking_ids": [
+        132,
+        168,
+        184,
+        200,
+        116,
+        152
+      ],
+      "served_nodes": [
+        {
+          "id": 153,
+          "kind": "turn",
+          "sources": [],
+          "retired": true,
+          "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Nacre's ticket price will be 19 credits.<|end|><|start|>assistant<|channel|>final<|message|>That should help when we think through the player experience.<|end|>"
+        }
+      ],
+      "col1_category": "wrong_value",
+      "col2_exact": false,
+      "col2_variant": null,
+      "cause": "fabrication_source_not_served"
+    }
+  ],
+  "A": [
+    {
+      "probe_id": "recall_1_10",
+      "cls": "fresh",
+      "turn": 22,
+      "expected": "9 voxels",
+      "answer": "We decided on a 9\u2011voxel spacing for the lamps along the Promenade.",
+      "oracle": "We settled on a 9\u2011voxel spacing for the promenade lamp.",
+      "source_ids": [
+        11
+      ],
+      "mounted_ids": [
+        19
+      ],
+      "mounts": [
+        20
+      ],
+      "ranking_ids": [
+        19,
+        13,
+        12,
+        17,
+        14,
+        18
+      ],
+      "served_nodes": [
+        {
+          "id": 20,
+          "kind": "turn",
+          "sources": [],
+          "retired": true,
+          "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The comm tower ought to feel useful without dominating the skyline.<|end|><|start|>assistant<|channel|>final<|message|>Its silhouette can be recognizable while leaving room for the rest of "
+        }
+      ],
+      "col1_category": "wrong_value",
+      "col2_exact": true,
+      "col2_variant": "9-voxel",
+      "cause": "glyph_scorer_miss_correct_content"
+    },
+    {
+      "probe_id": "recall_1_25",
+      "cls": "fresh",
+      "turn": 37,
+      "expected": "9 voxels",
+      "answer": "We decided to space the lamps along the Promenade at 9\u2011voxel intervals.",
+      "oracle": "We settled on a 9\u2011voxel spacing for the promenade lamp.",
+      "source_ids": [
+        11
+      ],
+      "mounted_ids": [
+        19
+      ],
+      "mounts": [
+        20
+      ],
+      "ranking_ids": [
+        19,
+        24,
+        12,
+        27,
+        31,
+        26
+      ],
+      "served_nodes": [
+        {
+          "id": 20,
+          "kind": "turn",
+          "sources": [],
+          "retired": true,
+          "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The comm tower ought to feel useful without dominating the skyline.<|end|><|start|>assistant<|channel|>final<|message|>Its silhouette can be recognizable while leaving room for the rest of "
+        }
+      ],
+      "col1_category": "wrong_value",
+      "col2_exact": true,
+      "col2_variant": "9-voxel",
+      "cause": "glyph_scorer_miss_correct_content"
+    },
+    {
+      "probe_id": "recall_5_25",
+      "cls": "correction",
+      "turn": 41,
+      "expected": "16 beds",
+      "answer": "We\u2019re still working on that. It\u2019s a good question to keep in mind as we design the rest of the game.",
+      "oracle": "We settled on 16 beds for Medibay.",
+      "source_ids": [
+        1,
+        3,
+        16
+      ],
+      "mounted_ids": [
+        19,
+        27
+      ],
+      "mounts": [
+        20,
+        28
+      ],
+      "ranking_ids": [
+        16,
+        24,
+        31,
+        19,
+        27,
+        12
+      ],
+      "served_nodes": [
+        {
+          "id": 20,
+          "kind": "turn",
+          "sources": [],
+          "retired": true,
+          "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The comm tower ought to feel useful without dominating the skyline.<|end|><|start|>assistant<|channel|>final<|message|>Its silhouette can be recognizable while leaving room for the rest of "
+        },
+        {
+          "id": 28,
+          "kind": "fact",
+          "sources": [],
+          "retired": true,
+          "text": "Actually, Foundry's iron reserve will be 89 ingots, replacing the earlier choice."
+        }
+      ],
+      "col1_category": "wrong_value",
+      "col2_exact": false,
+      "col2_variant": null,
+      "cause": "abstention_uncovered_by_scorer_regex",
+      "note": "No value asserted. The registered scorer classed it wrong_value because its abstention regex does not cover this phrasing; recorded here as abstention by content. The registered category is left as measured."
+    },
+    {
+      "probe_id": "recall_1_50",
+      "cls": "fresh",
+      "turn": 62,
+      "expected": "9 voxels",
+      "answer": "We decided to space the lamps along the Promenade at 9\u2011voxel intervals.",
+      "oracle": "We settled on a 9\u2011voxel spacing for the promenade lamp.",
+      "source_ids": [
+        11
+      ],
+      "mounted_ids": [
+        19
+      ],
+      "mounts": [
+        20
+      ],
+      "ranking_ids": [
+        19,
+        24,
+        12,
+        31,
+        29,
+        26
+      ],
+      "served_nodes": [
+        {
+          "id": 20,
+          "kind": "turn",
+          "sources": [],
+          "retired": true,
+          "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The comm tower ought to feel useful without dominating the skyline.<|end|><|start|>assistant<|channel|>final<|message|>Its silhouette can be recognizable while leaving room for the rest of "
+        }
+      ],
+      "col1_category": "wrong_value",
+      "col2_exact": true,
+      "col2_variant": "9-voxel",
+      "cause": "glyph_scorer_miss_correct_content"
+    },
+    {
+      "probe_id": "recall_3_100",
+      "cls": "fresh",
+      "turn": 114,
+      "expected": "(-31, 48, 12)",
+      "answer": "We settled on **(64,\u202f\u201317,\u202f8)** for Breakwater\u2019s map position.",
+      "oracle": "The map position for Breakwater was set at **(-31,\u202f48,\u202f12)**.",
+      "source_ids": [
+        14
+      ],
+      "mounted_ids": [
+        41
+      ],
+      "mounts": [
+        42
+      ],
+      "ranking_ids": [
+        61,
+        102,
+        41,
+        92,
+        103,
+        97
+      ],
+      "served_nodes": [
+        {
+          "id": 42,
+          "kind": "turn",
+          "sources": [],
+          "retired": true,
+          "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Saffron's galley stock will be 52 meals.<|end|><|start|>assistant<|channel|>final<|message|>I'll keep that choice in view while we think about the rest.<|end|>"
+        }
+      ],
+      "col1_category": "wrong_value",
+      "col2_exact": false,
+      "col2_variant": null,
+      "cause": "fabrication_source_not_served"
+    },
+    {
+      "probe_id": "recall_3_150",
+      "cls": "fresh",
+      "turn": 164,
+      "expected": "(-31, 48, 12)",
+      "answer": "The map position for **Breakwater** is **(-9, -44, 71)**.",
+      "oracle": "The map position for Breakwater was set at **(-31,\u202f48,\u202f12)**.",
+      "source_ids": [
+        14
+      ],
+      "mounted_ids": [
+        140
+      ],
+      "mounts": [
+        141
+      ],
+      "ranking_ids": [
+        156,
+        140,
+        124,
+        61,
+        155,
+        41
+      ],
+      "served_nodes": [
+        {
+          "id": 141,
+          "kind": "turn",
+          "sources": [],
+          "retired": true,
+          "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Fallow's steward will be Arlo Reed.<|end|><|start|>assistant<|channel|>final<|message|>I'll treat that as our working choice.<|end|>"
+        }
+      ],
+      "col1_category": "wrong_value",
+      "col2_exact": false,
+      "col2_variant": null,
+      "cause": "fabrication_source_not_served"
+    },
+    {
+      "probe_id": "recap_3",
+      "cls": "recap",
+      "turn": 198,
+      "expected": "(-31, 48, 12)",
+      "answer": "The map position for **Breakwater** is **(19,\u202f83,\u202f\u201322)**.",
+      "oracle": null,
+      "source_ids": null,
+      "mounted_ids": null,
+      "mounts": [
+        125
+      ],
+      "ranking_ids": [
+        140,
+        156,
+        172,
+        124,
+        61,
+        177
+      ],
+      "served_nodes": [
+        {
+          "id": 125,
+          "kind": "turn",
+          "sources": [],
+          "retired": true,
+          "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Crag's tug price will be 385 credits.<|end|><|start|>assistant<|channel|>final<|message|>Okay, we can carry that into the next sketch.<|end|>"
+        }
+      ],
+      "col1_category": "wrong_value",
+      "col2_exact": false,
+      "col2_variant": null,
+      "cause": "fabrication_source_not_served"
+    }
+  ]
+}
