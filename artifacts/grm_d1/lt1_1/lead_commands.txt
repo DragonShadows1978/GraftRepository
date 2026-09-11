@@ -1,21 +1,24 @@
-# LT1.1 — arm A and arm A+ (amendment 6)
+# LT1.1 — arm A and arm A+ (amendment 7)
 # registration sha256: 02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8
-# amendment 5  sha256: c823e9e02b326c78434f589e4c996beb797450d65f19c246555cd7e26d0bbd0d
 # amendment 6  sha256: 89d26556ade25ea05de2101929c22ac0d7374c8eb59c6f057119b776d393a0ba
-# runner            : scripts/grm_lt1_1.py (sha256 664ad608468c8703b59eb2be3176e04e90aceb9171d1676715c9f0e82d9f525a)
+# amendment 7  sha256: 46bb7fd83e048999a6316bfcf488740f0e7163eb97480320b183eeca2a130af5
+# runner            : scripts/grm_lt1_1.py (sha256 19e3a895c5e5442f0354fec59fcbe54b7c5dcb783f349b15d7612202bf1c14ec)
+# worker            : scripts/grm_lt1_worker.py (sha256 79492eafe9176510a649c5477bf78bf1eb5c129ecaeaf4094221c67e22646c71)
 #
 # 26 cells per arm. Reservation ceiling 7410 s (2.06 GPU-h) PER ARM;
 # both arms: 4.12 GPU-h ceiling. Separately resumable.
 #
-# A BUSY CARD IS NOT A CELL FAILURE (amendment 6). The runner now
-# waits up to 900 s (polling every 15 s, 61 probes) for framebuffer
-# use to fall to <= 512 MiB, then proceeds. Only after the bound is
-# it a RED, and then with the memory snapshot attached. It reads the
-# card and declines; it never signals anything. The operator has
-# absolute right of way.
-# The earlier spurious RED (GPU_NOT_IDLE on arm A) is archived at
-#   artifacts/grm_d1/lt1_1/archive/A_A-001-008_GPU_NOT_IDLE
-# and arm A re-arms from cell 1.
+# THE PREVIOUS A+ RUN WAS A HARNESS NULL (amendment 7). execute()
+# fed supersede and alias turns as prose and never called the
+# production turn funnel, so nothing was retired and A1 fold-merge
+# never ran -- which is why A+ reproduced LT1 numbers exactly.
+# Both runs are archived under
+#   artifacts/grm_d1/lt1_1/archive/r1_harness_null/
+# and both arms re-arm from cell 1.
+#
+# FAIRNESS: arms A and A+ now share this worker, so A-vs-A+ is the
+# fair contrast. LT1 numbers are the PARENT BASELINE (different
+# worker, different fixture), not a same-worker control.
 #
 # ---- CPU gates (no GPU, no lease) ----
 cd /mnt/ForgeRealm/wt/grm-d1
@@ -45,14 +48,12 @@ python3 scripts/grm_lt1_1.py --arm A+ --resume --dry-lease
 python3 scripts/grm_lt1_1.py --arm A+ --resume
 python3 scripts/grm_lt1_1.py --arm A+ --summary
 
-# The runner pins the arm itself, AFTER environment(flags) strips
-# every ambient GRM_*, and carries it into the leased child in
-# GRM_LT1_1_ARM. The child verifies the LT1.1 chain before any work:
+# The runner pins the arm itself and carries it into the leased
+# child in GRM_LT1_1_ARM. Supersede turns now go through
+# apply_memory_command, and every deposit through
+# runtime._finish_turn_event, where A1 fold-merge lives:
 #   arm A   -> admission_rule=margin_first, alias_fold_merge=False
 #   arm A+  -> admission_rule=margin_first, alias_fold_merge=True
-# A pin that does not take is LT11_ALIAS_PIN_FAILED, never silent.
-# A drifted LT1.1 document stops the CHILD too:
-#   LT11_CHILD_PREFLIGHT_BLOCKED.
 
 # Registered predictions (before any run):
 #   A   {"aliases": "0/5 wrong rows fixed (recall_7_* stay wrong)", "corrections": "5/5", "fresh": "6/7", "recap": "unpredicted memory-side; oracle 5/5 gated on CPU"}

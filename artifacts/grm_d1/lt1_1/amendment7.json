@@ -1,0 +1,173 @@
+{
+  "alias_attribution": {
+    "honest_reading": "on this fixture the librarian chronicle fold reaches the same pairing the alias fold-merge would, so an outcome test cannot attribute the pairing to A1",
+    "observed": "under BOTH arms, an active node names the alias and its base after the alias turns",
+    "open": "whether A1 fold-merge changes alias recall on the GPU arms is unmeasured; it is what the A/A+ contrast is for",
+    "what_the_gate_asserts": "the OUTCOME the alias rows need (one active node naming both), never which mechanism produced it"
+  },
+  "amendment": 7,
+  "archive": {
+    "label": "r1_harness_null",
+    "policy": "create-only: each run is copied under archive/<label>/<run>, never deleted or overwritten, and the live cells are cleared so both arms re-arm from cell 1",
+    "runs": [
+      "run_Aplus (24 COMPLETE + 1 RED, the null)",
+      "run_A (in progress at the time)"
+    ],
+    "why": "the null is evidence about the harness and is kept as such"
+  },
+  "arms": {
+    "A": {
+      "alias_fold_merge": false,
+      "arm": "A",
+      "budget_gpu_hours": 2.06,
+      "budget_gpu_seconds": 7410,
+      "env_after_environment_flags": {
+        "GRM_ADMISSION_RULE": "margin_first"
+      },
+      "invocation": {
+        "dry_run": "python3 scripts/grm_lt1_1.py --arm A --dry-run",
+        "preflight": "python3 scripts/grm_lt1_1.py --arm A --preflight",
+        "resume": "python3 scripts/grm_lt1_1.py --arm A --resume",
+        "summary": "python3 scripts/grm_lt1_1.py --arm A --summary"
+      },
+      "out_dir": "artifacts/grm_d1/lt1_1/run_A",
+      "predictions": {
+        "aliases": "0/5 wrong rows fixed (recall_7_* stay wrong)",
+        "corrections": "5/5",
+        "fresh": "6/7",
+        "recap": "unpredicted memory-side; oracle 5/5 gated on CPU"
+      },
+      "superseded_budget_gpu_seconds": 6120
+    },
+    "A+": {
+      "alias_fold_merge": true,
+      "arm": "A+",
+      "budget_gpu_hours": 2.06,
+      "budget_gpu_seconds": 7410,
+      "env_after_environment_flags": {
+        "GRM_ADMISSION_RULE": "margin_first",
+        "GRM_ALIAS_FOLD_MERGE": "1"
+      },
+      "invocation": {
+        "dry_run": "python3 scripts/grm_lt1_1.py --arm A+ --dry-run",
+        "preflight": "python3 scripts/grm_lt1_1.py --arm A+ --preflight",
+        "resume": "python3 scripts/grm_lt1_1.py --arm A+ --resume",
+        "summary": "python3 scripts/grm_lt1_1.py --arm A+ --summary"
+      },
+      "out_dir": "artifacts/grm_d1/lt1_1/run_Aplus",
+      "predictions": {
+        "aliases": "4/5 of the wrong rows fixed; the lead proposed >= 3/5 and that bar is also met",
+        "corrections": "5/5",
+        "fresh": "6/7",
+        "prediction_note": "The lead proposed aliases >= 3/5. I register 4/5 and state why: the D1 CPU check (artifacts/grm_d1/alias_cpu_aplus.json) shows the fold firing, the digest naming BOTH names, being ADMITTED and MOUNTED, and serving the right value for 10/10 alias probes at every distance, with a 78-token digest inside the 96 width. The one reservation that keeps me off 5/5 is that the CPU reader is a regex double: the GPU reader must still choose the digest value over the surrounding prose, and LT1 already showed one long-distance ladder drop (recall_3_150) that no lineage change addresses. 4/5 prices exactly one such drop.",
+        "recap": ">= 3/5 memory-side"
+      },
+      "superseded_budget_gpu_seconds": 6120
+    }
+  },
+  "budget_gpu_hours_total": 4.12,
+  "budget_gpu_seconds_per_arm": 7410,
+  "budget_gpu_seconds_total": 14820,
+  "cpu_measurement": {
+    "aliases": "0/10",
+    "corrections": "10/10 (the lead GPU run scored 5/10)",
+    "evidence_class": "CPU fake worker (lineage and plumbing; NOT a language-model quality measurement)",
+    "fresh": "8/15",
+    "reading": "the correction result is the supersession fix working end to end through the real worker. The fresh, alias and recap numbers are the CPU prose double reading ability, NOT a memory claim -- that is what the GPU arms measure.",
+    "recap": "0/5",
+    "scope": "26 cells, arm A, CPU double, through the real execute"
+  },
+  "fairness": {
+    "gate": "tests/test_grm_lt1_1_production_turns.py::test_the_two_arms_share_this_worker",
+    "lt1": "LT1 numbers are the PARENT BASELINE -- a different worker over a different fixture -- and are NOT a same-worker control",
+    "statement": "arms A and A+ now share THIS worker, so A-vs-A+ is a fair same-worker contrast differing by one pinned environment variable"
+  },
+  "finding": {
+    "cause": "grm_lt1_worker.execute branched on kind only for probe and recap; supersede and alias fell to a.feed(harmony_turn(...)), so nothing was retired and the production turn funnel -- where A1 alias_fold runs -- was never called",
+    "consequences": [
+      "the 15 supersede turns were deposited as prose: the stale node stayed in _route_cand_base, which is the fixture-lineage trap D1 diagnosed, re-created inside its own fix",
+      "no alias_fold decision appears in any A+ receipt: the flag was pinned and the mechanism was inert",
+      "the D1 CPU A+ check called alias_fold_pass() explicitly, so it proved A1 works but NOT that the GPU worker runs it"
+    ],
+    "headline": "the A+ = LT1 null was a harness null, not a memory result",
+    "symptom": "24/26 cells COMPLETE then A-189-196 RED with KeyError: 'assistant'; --summary over the 24 gave fresh 14/15, corrections 5/10, aliases 5/10 -- LT1 numbers byte-for-byte",
+    "verdict": "LT1.1 as run measured nothing new"
+  },
+  "fix": {
+    "also_fixed": "summary() classified every probes.jsonl row against the recall-probe map, which raised KeyError: 'recap_1' once recap rows existed; it now splits by the row kind and scores a recap class",
+    "deposits": "feed() THEN runtime._finish_turn_event(\"chat\", before, autosave=True), the funnel scripts/grm_chat.py:240 calls; it runs the width guard, _alias_fold_deposits (A1) and _librarian",
+    "lt1_default": "byte-identical; the prose deposit and its comment are preserved verbatim and LT1 own campaign is unaffected",
+    "recap_probe": "the probe path: asked, scored with the value-span scorer into probes.jsonl with kind=\"recap_probe\", never deposited",
+    "seams_added": [
+      "worker.deposit_turn -> deposit_turn",
+      "worker.recap_probe_turn -> recap_probe_turn"
+    ],
+    "supersede": "repo.apply_memory_command(correction_command), the production path scripts/grm_e2e_session.py:2590-2597 runs for kind == \"supersede\"",
+    "unchanged": [
+      "probe",
+      "recap"
+    ]
+  },
+  "follow_up_instruction": "Lead follow-up 7 to GRM-D1 (2026-09-11): LT1.1 A+ ran 24/26 cells then died on the first recap_probe with KeyError: assistant, and --summary returned LT1 numbers byte-for-byte because execute() fed supersede and alias turns as prose and never called the production turn funnel where A1 fold-merge lives. Route fixture kinds through production semantics; gate on the CPU double through the REAL execute; state that arms A and A+ now share this worker so A-vs-A+ is the fair contrast and LT1 is the parent baseline; archive both runs as r1_harness_null and re-arm.",
+  "order": "orders/GRM_D1_LT1_RESIDUAL_DIAGNOSIS.md",
+  "order_sha256": "6ae0f52af0059f0a93b66ae37dd442761a32409b5f3f17b027c4b8fa2c0efb46",
+  "previous_amendment": "artifacts/grm_d1/lt1_1/amendment6.json",
+  "previous_amendment_sha256": "89d26556ade25ea05de2101929c22ac0d7374c8eb59c6f057119b776d393a0ba",
+  "prior_art": [
+    "Production turn funnel and its finding: scripts/grm_chat.py:224-245 (GRM-P1, GRM contributors 2026)",
+    "Supersede turn: scripts/grm_e2e_session.py:2590-2597 (GRM contributors, 2026), reused unchanged",
+    "_finish_turn_event -> _guard_deposit_width -> _alias_fold_deposits / _librarian: core/grm_runtime.py:69-115 (A1 + GRM contributors, 2026), read not modified",
+    "Seam with a byte-identical default: this campaign own pattern from amendment 5",
+    "Routing a frozen fixture kinds to these existing paths: no prior art known to me"
+  ],
+  "process_safety": {
+    "arms": "A and A+ never run concurrently on the same GPU",
+    "git": "lead commits; the seat never runs git",
+    "gpu": "the idle wait READS the card and declines; it never signals, kills or waits on another process. Only `--resume` without `--dry-lease` takes the shared lease, through LT1 own run_cell.",
+    "operator": "the operator has absolute right of way: a busy card makes this campaign wait, then stand down"
+  },
+  "purpose": "Route fixture kinds through production semantics so supersede retires and A1 fold-merge actually runs.",
+  "registration": "artifacts/grm_d1/lt1_1/registration.json",
+  "registration_sha256": "02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8",
+  "ruling": "LT1's original registration is a frozen receipt of its day; it is NOT re-validated against today's core. LT1.1's host preflight must validate LT1.1's own chain \u2014 registration 02b44d02 + amendments 1\u20133, whose core pins were rebound to this tree with attribution \u2014 using the same verification functions (`grm_lt1.verify`-class checks: sha-bound inputs, fixture sha, cell schedule, budget) but pointed at LT1.1's registration/amendment set. LT1's registration sha and its recorded core pins are carried as `parent` lineage in the LT1.1 receipt (recorded, with the drift table you already attributed), not as a gate.",
+  "runner": {
+    "path": "scripts/grm_lt1_1.py",
+    "sha256": "19e3a895c5e5442f0354fec59fcbe54b7c5dcb783f349b15d7612202bf1c14ec",
+    "superseded_sha256": "664ad608468c8703b59eb2be3176e04e90aceb9171d1676715c9f0e82d9f525a",
+    "tests": [
+      "tests/test_grm_lt1_1_runner.py",
+      "tests/test_grm_lt1_1_resume_route.py",
+      "tests/test_grm_lt1_1_preflight.py",
+      "tests/test_grm_lt1_1_child_spawn.py",
+      "tests/test_grm_lt1_1_idle_wait.py",
+      "tests/test_grm_lt1_1_production_turns.py"
+    ],
+    "tests_sha256": {
+      "tests/test_grm_lt1_1_child_spawn.py": "8f6b1ceb2a138b769cfb3e77b01cfb8b3b680690a5f1b58c2d45086a2a9e3296",
+      "tests/test_grm_lt1_1_idle_wait.py": "50dfdb4e0805be8cebde96a69dc7a3d7284f2cbb5cf949f7acd596067b03b105",
+      "tests/test_grm_lt1_1_preflight.py": "8a60976f0c1f92757ee22e28af9cba44cf35f08baaf67f9e2acb3df4f8254114",
+      "tests/test_grm_lt1_1_production_turns.py": "e0a71ad92106739b6cc08ee25ca7b0497e3acab77aa8592a690f6352b0bb8f7e",
+      "tests/test_grm_lt1_1_resume_route.py": "9b86b2ad4f7c3346c51187f8b3d3619e994b86091c08560bf23becbf28adfa9d",
+      "tests/test_grm_lt1_1_runner.py": "60c0eaf9849f11079d75ea9b558bd3f52f1af301d8bbc10e3e250d0244868ae3"
+    },
+    "worker": "scripts/grm_lt1_worker.py",
+    "worker_sha256": "79492eafe9176510a649c5477bf78bf1eb5c129ecaeaf4094221c67e22646c71"
+  },
+  "schema": "grm.lt1_1.amendment7.v1",
+  "seams": {
+    "added": [
+      "worker.deposit_turn",
+      "worker.recap_probe_turn"
+    ],
+    "count": 8,
+    "existing": [
+      "lt.FIX",
+      "worker.bind",
+      "worker.RUN",
+      "worker.worker",
+      "worker.spawn_argv",
+      "worker.spawn_env",
+      "worker.await_idle"
+    ]
+  }
+}

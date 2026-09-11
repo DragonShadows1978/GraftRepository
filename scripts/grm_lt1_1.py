@@ -327,7 +327,9 @@ def lt1_1_seams(arm):
              getattr(worker, 'worker', None),
              getattr(worker, 'spawn_argv', None),
              getattr(worker, 'spawn_env', None),
-             getattr(worker, 'await_idle', None))
+             getattr(worker, 'await_idle', None),
+             getattr(worker, 'deposit_turn', None),
+             getattr(worker, 'recap_probe_turn', None))
     try:
         lt.FIX = FIXTURE
         # Redirect `worker.bind`, NOT `lt.binding`.
@@ -351,6 +353,10 @@ def lt1_1_seams(arm):
         worker.spawn_argv = spawn_argv
         worker.spawn_env = spawn_env
         worker.await_idle = await_idle
+        # Production turn semantics: supersede through the correction path,
+        # every deposit through the funnel where A1's fold-merge lives.
+        worker.deposit_turn = deposit_turn
+        worker.recap_probe_turn = recap_probe_turn
         # The arm must be resolvable for the whole window: `binding` cannot
         # take it as a parameter without breaking LT1's signature.
         with _arm_state(arm):
@@ -359,7 +365,9 @@ def lt1_1_seams(arm):
         lt.FIX, worker.bind, worker.RUN = saved[:3]
         for name, value in (('worker', saved[3]), ('spawn_argv', saved[4]),
                             ('spawn_env', saved[5]),
-                            ('await_idle', saved[6])):
+                            ('await_idle', saved[6]),
+                            ('deposit_turn', saved[7]),
+                            ('recap_probe_turn', saved[8])):
             if value is None:
                 if hasattr(worker, name):
                     delattr(worker, name)
@@ -368,6 +376,123 @@ def lt1_1_seams(arm):
 
 
 # ------------------------------------------------------------------- loaders
+
+def deposit_turn(repo, event, state, turn):
+    """One non-probe fixture turn, through PRODUCTION semantics.
+
+    WHY THIS EXISTS. LT1's worker fed every non-probe kind as ordinary prose:
+
+        idx = a.feed(e2e.harmony_turn(event['user'], event['assistant']))
+
+    with the comment "User corrections are ordinary prose, not hidden
+    supersede calls". That is correct for LT1, which replays a frozen
+    transcript. It is wrong for LT1.1, whose whole point is that the
+    `supersede` and `alias` kinds carry production semantics. Run under that
+    worker, LT1.1 arm A+ reproduced LT1's numbers byte-for-byte on
+    2026-09-11 -- fresh 14/15, corrections 5/10, aliases 5/10 -- because:
+
+      * the 15 `supersede` turns were deposited as prose, so nothing was
+        retired and the stale node stayed in the candidate base: exactly the
+        fixture-lineage trap D1 diagnosed, re-created one layer down;
+      * no `alias_fold` decision appears anywhere in those receipts, because
+        A1's `alias_fold_pass` runs inside `runtime._finish_turn_event` and
+        `arena.feed()` never calls it. The flag was pinned and the mechanism
+        never ran.
+
+    WHAT THIS DOES.
+
+      `supersede` -> `repo.apply_memory_command(event['correction_command'])`,
+        the production correction path (`scripts/grm_e2e_session.py:2590-2597`
+        runs exactly this for `kind == "supersede"`). `correct_memory` retires
+        the matched node, sets `superseded_by`, and bumps the route epoch, so
+        the old value leaves `_route_cand_base`.
+
+      every deposit -> `arena.feed()` AND THEN
+        `repo.runtime._finish_turn_event('chat', before, autosave=True)`,
+        the funnel every production deposit passes through, exactly as
+        `scripts/grm_chat.py:240` does it. That funnel runs the width guard,
+        `_alias_fold_deposits` (A1) and `_librarian`, and is what assigns
+        `native_node_id`. Under A the alias fold is byte-inert (the flag is
+        off, `_alias_fold_jobs` returns `()` from its first line); under A+ it
+        merges.
+
+    FAIRNESS. Arms A and A+ now share THIS worker, so A-vs-A+ is a fair
+    same-worker contrast: one pinned environment variable is the only
+    difference. LT1's numbers are the PARENT BASELINE -- a different worker on
+    a different fixture -- and must never be read as a same-worker control.
+
+    Prior art:
+      * The production turn funnel and the reason a battery may stop at
+        `feed()` while a product may not: `scripts/grm_chat.py:224-245`
+        (GRM-P1, GRM contributors 2026), taken with its finding.
+      * The supersede turn: `scripts/grm_e2e_session.py:2590-2597`
+        (GRM contributors, 2026), reused unchanged.
+      * `_finish_turn_event` -> `_alias_fold_deposits` / `_librarian`:
+        `core/grm_runtime.py:95-111` (A1 + GRM contributors, 2026). Read, not
+        modified.
+      * Mine: routing a frozen fixture's kinds to these existing paths, and
+        the A/A+ fairness statement above.
+      * No prior art known to me for this exact composition.
+    """
+    from scripts import grm_e2e_session as e2e
+    arena = repo.arena
+    before = repo._snapshot_state()
+    kind = event.get('kind')
+
+    if kind == 'supersede':
+        command = event.get('correction_command')
+        if not command:
+            raise ValueError('LT11_SUPERSEDE_WITHOUT_COMMAND: turn %s' % turn)
+        # The production correction path. It deposits the replacement itself
+        # and retires the stale node, so there is no separate feed() here.
+        repo.apply_memory_command(command)
+        repo.runtime._finish_turn_event('chat', before, autosave=True)
+        new = [i for i, g in enumerate(arena.grafts)
+               if not g.get('retired') and i >= len(before)]
+        idx = new[-1] if new else None
+        if idx is not None:
+            state['turn_nodes'][str(turn)] = idx
+        return idx
+
+    idx = int(arena.feed(e2e.harmony_turn(event['user'], event['assistant'])))
+    arena.grafts[idx]['kind'] = 'turn'
+    state['turn_nodes'][str(turn)] = idx
+    # THEN the production funnel: width guard, alias fold (A1), librarian,
+    # native publication. Skipping it is what made the A+ arm inert.
+    repo.runtime._finish_turn_event('chat', before, autosave=True)
+    return idx
+
+
+def recap_probe_turn(repo, event, directory, binding_value):
+    """One `recap_probe` turn: the probe path, scored, no assistant field.
+
+    LT1 has no `recap_probe` kind, so the old worker fell through to the
+    deposit branch and raised `KeyError: 'assistant'`, killing cell
+    A-189-196. These are questions, not turns: they are asked, scored with the
+    existing value-span scorer, and never deposited.
+
+    Prior art: the probe branch of `scripts/grm_lt1_worker.execute`
+    (GRM contributors, 2026) and the C5 arm S scorer via `grm_lt1.score`,
+    both reused. Mine: the row shape carrying `kind='recap_probe'`.
+    """
+    from scripts import grm_e2e_session as e2e
+    from scripts.grm_c7_run import emit
+    fixture = json.loads(FIXTURE.read_text())
+    probe = next(q for q in fixture['recap_probes']
+                 if q['id'] == event['recap_probe_id'])
+    answer, info = e2e._probe_ladder_chat(repo, probe['question'], topk=3,
+                                          ngen=32, max_trips=1,
+                                          defer_memory=True)
+    emit(directory / 'probes.jsonl',
+         dict(probe_id=probe['id'], turn=event['turn'], kind='recap_probe',
+              question=probe['question'], expected=probe['expected'],
+              targets=probe['targets'],
+              memory=dict(answer=str(answer),
+                          score=lt.score(answer, probe['expected']),
+                          route_info=info, admission_rule='margin_first'),
+              binding=binding_value, admission_rule='margin_first'))
+    return 1
+
 
 #: Framebuffer ceiling below which the card counts as free to start, and the
 #: bound on how long we will wait for somebody else to finish. A busy card is
@@ -725,26 +850,25 @@ def fake_cell(arm, cell_id, root):
     directory = root / 'cells' / cell['id']
     with pytest.MonkeyPatch.context() as patch:
         loader = fake_loader(patch)
-        # Same narrow seam as `lt1_1_seams`: `worker.bind`, never `lt.binding`.
-        saved = (lt.FIX, worker.bind, worker.RUN)
-        try:
-            lt.FIX, worker.bind, worker.RUN = FIXTURE, binding, root
-            with pinned_arm(arm):
-                directory.mkdir(parents=True)
-                lt.create(directory / 'reservation.json',
-                          dict(seconds=cell['lease_seconds'], cell=cell,
-                               binding=binding(arm), fake=True,
-                               admission_rule='margin_first'))
-                value = worker.execute(cell, directory, reg, loader,
-                                       run=root / 'cells', fake=True)
-                lt.create(directory / 'worker.json', value)
-                lt.create(directory / 'controller.json',
-                          dict(status='COMPLETE', error=None,
-                               charged_seconds=0.0, cell=cell,
-                               binding=binding(arm), fake=True,
-                               admission_rule='margin_first'))
-        finally:
-            lt.FIX, worker.bind, worker.RUN = saved
+        # ONE seam definition. This used to install a narrow subset inline,
+        # which silently drifted from `lt1_1_seams` when seams were added:
+        # the fake path kept LT1's prose-deposit behaviour after the
+        # production turn semantics landed, so it proved the wrong thing.
+        with lt1_1_seams(arm), pinned_arm(arm):
+            worker.RUN = root
+            directory.mkdir(parents=True)
+            lt.create(directory / 'reservation.json',
+                      dict(seconds=cell['lease_seconds'], cell=cell,
+                           binding=binding(arm), fake=True,
+                           admission_rule='margin_first'))
+            value = worker.execute(cell, directory, reg, loader,
+                                   run=root / 'cells', fake=True)
+            lt.create(directory / 'worker.json', value)
+            lt.create(directory / 'controller.json',
+                      dict(status='COMPLETE', error=None,
+                           charged_seconds=0.0, cell=cell,
+                           binding=binding(arm), fake=True,
+                           admission_rule='margin_first'))
     return str(directory)
 
 
@@ -1052,15 +1176,29 @@ def summary(arm, *, root=None):
         if path.exists():
             rows.extend(json.loads(line) for line in
                         path.read_text().splitlines() if line.strip())
+    # Recall probes and recap probes share `probes.jsonl` but live in
+    # different fixture lists, so classify by the row's own `kind` rather
+    # than indexing every id into the recall map (which raised
+    # KeyError: 'recap_1' the first time recap rows were written).
+    recall_rows = [r for r in rows if r.get('kind') != 'recap_probe']
+    recap_rows = [r for r in rows if r.get('kind') == 'recap_probe']
     table = {}
     for cls in ('fresh', 'correction', 'alias'):
         want = [p for p in fixture['probes'] if p['class'] == cls]
-        got = [r for r in rows if probes[r['probe_id']]['class'] == cls]
+        got = [r for r in recall_rows
+               if probes[r['probe_id']]['class'] == cls]
         correct = sum(1 for r in got
                       if lt.score(r['memory']['answer'],
                                   probes[r['probe_id']]['expected'])['exact_correct'])
         table[cls] = dict(expected_n=len(want), n=len(got), correct=correct,
                           exact_rate=(correct / len(got)) if got else None)
+    recap_correct = sum(1 for r in recap_rows
+                        if lt.score(r['memory']['answer'],
+                                    r['expected'])['exact_correct'])
+    table['recap'] = dict(expected_n=len(fixture.get('recap_probes', [])),
+                          n=len(recap_rows), correct=recap_correct,
+                          exact_rate=(recap_correct / len(recap_rows)
+                                      if recap_rows else None))
     # `binding` reads the pinned arm rather than taking one, so that LT1's
     # callers can keep passing a backend label. Hold it for this call.
     with _arm_state(arm):
