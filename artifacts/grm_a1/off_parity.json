@@ -1,0 +1,38 @@
+{
+ "arm_a1_off": {
+  "bytes": 40696,
+  "root": "/mnt/ForgeRealm/wt/grm-a1",
+  "sha256": "38cb90b4b2df3ca35dc88d73064ce6e51b24e696359deaaddaf04579c034e6f3"
+ },
+ "arm_parent": {
+  "bytes": 40696,
+  "root": "/mnt/ForgeRealm/wt/grm-merge",
+  "sha256": "38cb90b4b2df3ca35dc88d73064ce6e51b24e696359deaaddaf04579c034e6f3"
+ },
+ "byte_identical": true,
+ "schema": "grm.a1.off_parity.v1",
+ "session": {
+  "correction": [
+   "current C7-Plain-0 value is Basalt-811",
+   "The current C7-Plain-0 value is Onyx-911."
+  ],
+  "fold_sources": [
+   0,
+   5
+  ],
+  "questions": [
+   "What is the current value for C7-Signal-0? Reply only with the answer.",
+   "What is the current value for C7-Signal-1? Reply only with the answer.",
+   "What is the current C7-Plain-0 value? Reply only with the answer.",
+   "What did we settle on for the Hauler's cargo allowance?"
+  ],
+  "seed": [
+   "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+   "C7-Signal-0 is an alias for C7-AliasBase-0.",
+   "C7-Signal-1 is an alias for C7-AliasBase-1.",
+   "Let's call Kestrel 'the Hauler' from now on.",
+   "Kestrel's cargo allowance will be 37 crates.",
+   "The current C7-Plain-0 value is Basalt-811."
+  ]
+ }
+}

@@ -1,0 +1,111 @@
+{
+ "digests": [
+  {
+   "alias": "C7-Signal-0",
+   "base_shared_with_edges": [
+    2
+   ],
+   "digest_text": "For the archive: the The archived record states that C7-Signal-0 is an alias for C7-AliasBase-0. The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+   "group": "rd2",
+   "lineage": "digest_supersedes_edge_only",
+   "reason": "alias_merged",
+   "width": {
+    "arena_width": 96,
+    "digest_tokens": 58,
+    "fits": true,
+    "single_mount_claimable": true
+   }
+  },
+  {
+   "alias": "C7-Signal-1",
+   "base_shared_with_edges": [],
+   "digest_text": "For the archive: the The archived record states that C7-Signal-1 is an alias for C7-AliasBase-1. The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+   "group": "rd2",
+   "lineage": "digest_supersedes_edge_and_base",
+   "reason": "alias_merged",
+   "width": {
+    "arena_width": 96,
+    "digest_tokens": 58,
+    "fits": true,
+    "single_mount_claimable": true
+   }
+  },
+  {
+   "alias": "C7-Signal-0",
+   "base_shared_with_edges": [
+    2
+   ],
+   "digest_text": "For the archive: the The archived record states that C7-Signal-0 is an alias for C7-AliasBase-0. The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+   "group": "c7_r3",
+   "lineage": "digest_supersedes_edge_only",
+   "reason": "alias_merged",
+   "width": {
+    "arena_width": 96,
+    "digest_tokens": 58,
+    "fits": true,
+    "single_mount_claimable": true
+   }
+  },
+  {
+   "alias": "C7-Signal-1",
+   "base_shared_with_edges": [],
+   "digest_text": "For the archive: the The archived record states that C7-Signal-1 is an alias for C7-AliasBase-1. The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+   "group": "c7_r3",
+   "lineage": "digest_supersedes_edge_and_base",
+   "reason": "alias_merged",
+   "width": {
+    "arena_width": 96,
+    "digest_tokens": 58,
+    "fits": true,
+    "single_mount_claimable": true
+   }
+  },
+  {
+   "alias": "the Hauler",
+   "base_shared_with_edges": [],
+   "digest_text": "For the archive: the The archived record states that Kestrel's cargo allowance will be 37 crates. the Hauler is an alias for Kestrel.",
+   "group": "lt1",
+   "lineage": "digest_supersedes_edge_and_base",
+   "reason": "alias_merged",
+   "width": {
+    "arena_width": 96,
+    "digest_tokens": 50,
+    "fits": true,
+    "single_mount_claimable": true
+   }
+  },
+  {
+   "alias": "the Beacon",
+   "base_shared_with_edges": [],
+   "digest_text": "For the archive: the The archived record states that Lantern's launch date will be 18 October 2196. the Beacon is an alias for Lantern.",
+   "group": "lt1",
+   "lineage": "digest_supersedes_edge_and_base",
+   "reason": "alias_merged",
+   "width": {
+    "arena_width": 96,
+    "digest_tokens": 52,
+    "fits": true,
+    "single_mount_claimable": true
+   }
+  }
+ ],
+ "fixture_sha256": "e8119ce85b9a8e944fe0a3d78ee1ad049a6b8100f04d8c7f83f469955887af41",
+ "production_widths": {
+  "alias_base_ntok": 61,
+  "alias_edge_ntok": 49,
+  "arena_width": 96,
+  "edge_plus_base": 110,
+  "over_width_by": 14
+ },
+ "schema": "grm.a1.width_receipts.v1",
+ "summary": {
+  "all_single_mount_claimable": true,
+  "digests": 6,
+  "fits_under_width": 6,
+  "over_width": 0
+ },
+ "token_scales": {
+  "cpu_codec": "scripts.grm_c7_diagnose.Codec — whitespace split. NOT GPT-OSS geometry. Proves the merge yields ONE seatable node; claims no production token count.",
+  "production": "RD2 receipts, GPT-OSS geometry: alias edge 49 + alias base 61 = 110 > arena width 96. This is the arithmetic co-mount (FIX-7) could not defeat."
+ }
+}

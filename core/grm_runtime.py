@@ -83,7 +83,19 @@ class GRMRuntime:
         guard = getattr(self.repository, "_guard_deposit_range", None)
         if not callable(guard):
             return ()
-        return guard(len(before))
+        out = guard(len(before))
+        # GRM-A1: alias fold-merge rides in the SAME funnel, immediately
+        # after the width guard, so (a) an over-width alias edge is already
+        # split into mountable children before the merge looks at it, and
+        # (b) a new deposit site cannot silently skip the merge any more than
+        # it can skip the guard. Duck-typed and flag-gated: repositories
+        # without the method, and the default-OFF flag, both no-op — so with
+        # GRM_ALIAS_FOLD_MERGE unset this adds one getattr and one False test
+        # and changes nothing else on the deposit path.
+        merge = getattr(self.repository, "_alias_fold_deposits", None)
+        if callable(merge):
+            merge(len(before))
+        return out
 
     def _finish_turn_event(self, event, before, extraction=(), *,
                            autosave=False):
