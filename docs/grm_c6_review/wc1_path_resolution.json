@@ -1,0 +1,219 @@
+[
+  {
+    "original": "artifacts/grm_wc1/registration.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/registration.json",
+    "sha256": "5bc6717f9ed10d674e255a268f0a7d72146981f20ffa130d4ae523c49aeb691e",
+    "expected": "5bc6717f9ed10d674e255a268f0a7d72146981f20ffa130d4ae523c49aeb691e",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w128/census_score_73ba2b6b26bbbbba.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/census_score_73ba2b6b26bbbbba.json",
+    "sha256": "73ba2b6b26bbbbba2e713479894d1be2a282c7ba7bfbed15d7385b58abc2f501",
+    "expected": "73ba2b6b26bbbbba2e713479894d1be2a282c7ba7bfbed15d7385b58abc2f501",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w128/lh_score_57e5d9e4a2aa7e2a.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/lh_score_57e5d9e4a2aa7e2a.json",
+    "sha256": "57e5d9e4a2aa7e2afdead64ffaf0aa3abf377090210679fd58d1f88592d717ed",
+    "expected": "57e5d9e4a2aa7e2afdead64ffaf0aa3abf377090210679fd58d1f88592d717ed",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w128/sup_correction_then_restatement_dcc32ccbfde2d891.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/sup_correction_then_restatement_dcc32ccbfde2d891.json",
+    "sha256": "dcc32ccbfde2d8915c55543ae0ab35f28a8fe0665f07e5b40ce422104cb18ad6",
+    "expected": "dcc32ccbfde2d8915c55543ae0ab35f28a8fe0665f07e5b40ce422104cb18ad6",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w128/sup_fresh_fact_controls_5f4049fe55c29c5f.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/sup_fresh_fact_controls_5f4049fe55c29c5f.json",
+    "sha256": "5f4049fe55c29c5f1140ec80f01e4d6a64ac9dc21877375a6804ecda8ac03881",
+    "expected": "5f4049fe55c29c5f1140ec80f01e4d6a64ac9dc21877375a6804ecda8ac03881",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w128/sup_multi_hop_a_b_c_c1e79d7f632e92dd.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/sup_multi_hop_a_b_c_c1e79d7f632e92dd.json",
+    "sha256": "c1e79d7f632e92dda1e69ffe201decf4be94f2765dd16212cdc0a3f78bbd987b",
+    "expected": "c1e79d7f632e92dda1e69ffe201decf4be94f2765dd16212cdc0a3f78bbd987b",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w128/sup_short_correction_long_competitor_ba2e9c15d99962c6.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w128/sup_short_correction_long_competitor_ba2e9c15d99962c6.json",
+    "sha256": "ba2e9c15d99962c66f8814d3427ac11aa62afb30a71d6ef216d35d899245d3b1",
+    "expected": "ba2e9c15d99962c66f8814d3427ac11aa62afb30a71d6ef216d35d899245d3b1",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w192/census_score_885327c3ecf3aad2.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/census_score_885327c3ecf3aad2.json",
+    "sha256": "885327c3ecf3aad2dec88e1d62e00f8042b35e3cc32df547a92729d2adbd25c1",
+    "expected": "885327c3ecf3aad2dec88e1d62e00f8042b35e3cc32df547a92729d2adbd25c1",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w192/lh_score_9d4e2c8e8cf21f7e.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/lh_score_9d4e2c8e8cf21f7e.json",
+    "sha256": "9d4e2c8e8cf21f7e96d0c43a4a5201f55ac5b228182b19a17b320ec5cc12a715",
+    "expected": "9d4e2c8e8cf21f7e96d0c43a4a5201f55ac5b228182b19a17b320ec5cc12a715",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w192/sup_correction_then_restatement_460d1282e355c1ff.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/sup_correction_then_restatement_460d1282e355c1ff.json",
+    "sha256": "460d1282e355c1ff9e97b304226fbe8c086ebb879393d50e4c455f6d2ee4f857",
+    "expected": "460d1282e355c1ff9e97b304226fbe8c086ebb879393d50e4c455f6d2ee4f857",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w192/sup_fresh_fact_controls_5c4efe4f601e1a32.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/sup_fresh_fact_controls_5c4efe4f601e1a32.json",
+    "sha256": "5c4efe4f601e1a326c4b4fedd0bc3edb7853a586330a3720b8bb5302245593a4",
+    "expected": "5c4efe4f601e1a326c4b4fedd0bc3edb7853a586330a3720b8bb5302245593a4",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w192/sup_multi_hop_a_b_c_66b39a2c0eba81e1.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/sup_multi_hop_a_b_c_66b39a2c0eba81e1.json",
+    "sha256": "66b39a2c0eba81e18297469ab2d1e23b1fef0fc5d47bacd65c19017aa6dedaf5",
+    "expected": "66b39a2c0eba81e18297469ab2d1e23b1fef0fc5d47bacd65c19017aa6dedaf5",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w192/sup_short_correction_long_competitor_9b607d9b58e87634.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w192/sup_short_correction_long_competitor_9b607d9b58e87634.json",
+    "sha256": "9b607d9b58e87634dd13134cc05ab4ee49ba127d6908af838a9fa9380e17c3bd",
+    "expected": "9b607d9b58e87634dd13134cc05ab4ee49ba127d6908af838a9fa9380e17c3bd",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w256/census_score_bec9b6b92f6236d5.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/census_score_bec9b6b92f6236d5.json",
+    "sha256": "bec9b6b92f6236d5fc1b5b8bef227f4dfc969053efb5455f0c5f91e3edf0d7c0",
+    "expected": "bec9b6b92f6236d5fc1b5b8bef227f4dfc969053efb5455f0c5f91e3edf0d7c0",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w256/lh_score_cda9737d77be8d7c.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_score_cda9737d77be8d7c.json",
+    "sha256": "cda9737d77be8d7c20aab484d87d9898a641c1126017ac3800eb4ada69ce8a06",
+    "expected": "cda9737d77be8d7c20aab484d87d9898a641c1126017ac3800eb4ada69ce8a06",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w256/sup_correction_then_restatement_1a51eb65f7f9ac67.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/sup_correction_then_restatement_1a51eb65f7f9ac67.json",
+    "sha256": "1a51eb65f7f9ac6765417a748b95c2b63967c1fbdbb56f525a77d04a443e16b6",
+    "expected": "1a51eb65f7f9ac6765417a748b95c2b63967c1fbdbb56f525a77d04a443e16b6",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w256/sup_fresh_fact_controls_e8a3027bf20c1029.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/sup_fresh_fact_controls_e8a3027bf20c1029.json",
+    "sha256": "e8a3027bf20c1029b6d2c7b927a33ffa1665cad788799b5f352203a3f5761942",
+    "expected": "e8a3027bf20c1029b6d2c7b927a33ffa1665cad788799b5f352203a3f5761942",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w256/sup_multi_hop_a_b_c_ac288c1bf57b6777.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/sup_multi_hop_a_b_c_ac288c1bf57b6777.json",
+    "sha256": "ac288c1bf57b67775c4fa5672ee4f6ce1036485085714c5b7e2f589325b2be9e",
+    "expected": "ac288c1bf57b67775c4fa5672ee4f6ce1036485085714c5b7e2f589325b2be9e",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w256/sup_short_correction_long_competitor_592e95da353ad025.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/sup_short_correction_long_competitor_592e95da353ad025.json",
+    "sha256": "592e95da353ad0251317b1fdb8bb9117a55f0615df8659abd56830115902a04b",
+    "expected": "592e95da353ad0251317b1fdb8bb9117a55f0615df8659abd56830115902a04b",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w64/census_score_5c40a707ec2ac8eb.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/census_score_5c40a707ec2ac8eb.json",
+    "sha256": "5c40a707ec2ac8eb0fb3a0117a1d8efb90494724b58162ec30d400cb663dc054",
+    "expected": "5c40a707ec2ac8eb0fb3a0117a1d8efb90494724b58162ec30d400cb663dc054",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w64/lh_score_d720f2403529c7e2.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/lh_score_d720f2403529c7e2.json",
+    "sha256": "d720f2403529c7e27da1e4cfd5bca89e9cda388f76e051759e6cc27d75900976",
+    "expected": "d720f2403529c7e27da1e4cfd5bca89e9cda388f76e051759e6cc27d75900976",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w64/sup_correction_then_restatement_abe6eb76bb840979.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/sup_correction_then_restatement_abe6eb76bb840979.json",
+    "sha256": "abe6eb76bb8409794f97a7fb48097f908da06df54b6363e8ce3be598b129c491",
+    "expected": "abe6eb76bb8409794f97a7fb48097f908da06df54b6363e8ce3be598b129c491",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w64/sup_fresh_fact_controls_e60af39db0afc8bd.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/sup_fresh_fact_controls_e60af39db0afc8bd.json",
+    "sha256": "e60af39db0afc8bd04f8a418e54d9b8710ad06fba7dd703f5b14d0c7c0bf93e5",
+    "expected": "e60af39db0afc8bd04f8a418e54d9b8710ad06fba7dd703f5b14d0c7c0bf93e5",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w64/sup_multi_hop_a_b_c_ad7efbd6b387f60a.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/sup_multi_hop_a_b_c_ad7efbd6b387f60a.json",
+    "sha256": "ad7efbd6b387f60a8cadc7879a2829bd9bd1e4eace2d054e6a01b5a698fa15f5",
+    "expected": "ad7efbd6b387f60a8cadc7879a2829bd9bd1e4eace2d054e6a01b5a698fa15f5",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w64/sup_short_correction_long_competitor_0a2f81c65bdfe27b.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w64/sup_short_correction_long_competitor_0a2f81c65bdfe27b.json",
+    "sha256": "0a2f81c65bdfe27b451a2b28943d2bba23204cbc499f833335ec8700b6a0adf8",
+    "expected": "0a2f81c65bdfe27b451a2b28943d2bba23204cbc499f833335ec8700b6a0adf8",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w96/census_score_bf0b4d60b6ea941f.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_score_bf0b4d60b6ea941f.json",
+    "sha256": "bf0b4d60b6ea941fe78db65239c5f7a596f8294a5a3246f53a12d9a1c66e12d7",
+    "expected": "bf0b4d60b6ea941fe78db65239c5f7a596f8294a5a3246f53a12d9a1c66e12d7",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w96/lh_score_d91c1dd36c10dff7.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_score_d91c1dd36c10dff7.json",
+    "sha256": "d91c1dd36c10dff7ad9a631624237cf28c5d952b17b7d260fafda5982a1d5c8f",
+    "expected": "d91c1dd36c10dff7ad9a631624237cf28c5d952b17b7d260fafda5982a1d5c8f",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w96/sup_correction_then_restatement_ad61a11154fbabfd.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_correction_then_restatement_ad61a11154fbabfd.json",
+    "sha256": "ad61a11154fbabfd2394fdcd297d71a3b96e7a38687c6dae09bb5ea4e860b400",
+    "expected": "ad61a11154fbabfd2394fdcd297d71a3b96e7a38687c6dae09bb5ea4e860b400",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w96/sup_fresh_fact_controls_5ed53221b0012dcc.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_fresh_fact_controls_5ed53221b0012dcc.json",
+    "sha256": "5ed53221b0012dcc80afe5d5092e169f29513d404791d27e62a098cea357c659",
+    "expected": "5ed53221b0012dcc80afe5d5092e169f29513d404791d27e62a098cea357c659",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w96/sup_multi_hop_a_b_c_7621d7746e2ca835.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_multi_hop_a_b_c_7621d7746e2ca835.json",
+    "sha256": "7621d7746e2ca8358c0b0a9e3a737ad7eccc16e8060eb160045319d65b2ed5cd",
+    "expected": "7621d7746e2ca8358c0b0a9e3a737ad7eccc16e8060eb160045319d65b2ed5cd",
+    "matches": true
+  },
+  {
+    "original": "artifacts/grm_wc1/runs/w96/sup_short_correction_long_competitor_c4a9170fef1de770.json",
+    "candidate": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_short_correction_long_competitor_c4a9170fef1de770.json",
+    "sha256": "c4a9170fef1de770894fc381e1a1cbf2b1e0f9e69e3bfc4e8b45c1ed06eba559",
+    "expected": "c4a9170fef1de770894fc381e1a1cbf2b1e0f9e69e3bfc4e8b45c1ed06eba559",
+    "matches": true
+  }
+]

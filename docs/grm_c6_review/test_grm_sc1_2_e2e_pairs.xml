@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="20" failures="12" skipped="0" tests="47" time="1.284" timestamp="2026-09-08T23:53:21.348062-04:00" hostname="MilleniumFalcon"><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_seven_e2e_pairs_are_selected_and_all_certified" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'&quot;">tests/test_grm_sc1_2_e2e_pairs.py:52: in instrumentation
+    return sc12.read_jsonl(
+scripts/grm_sc1_2_session.py:196: in read_jsonl
+    for line in Path(path).read_text(encoding="utf-8").splitlines()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'</error></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_every_pair_has_both_arms_in_the_frozen_rows" time="0.000"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_rows.jsonl'">tests/test_grm_sc1_2_e2e_pairs.py:77: in test_every_pair_has_both_arms_in_the_frozen_rows
+    rows = sc12.race_rows()
+           ^^^^^^^^^^^^^^^^
+scripts/grm_sc1_2_session.py:206: in race_rows
+    return {str(row["row_id"]): dict(row) for row in read_jsonl(path)}
+                                                     ^^^^^^^^^^^^^^^^
+scripts/grm_sc1_2_session.py:196: in read_jsonl
+    for line in Path(path).read_text(encoding="utf-8").splitlines()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_rows.jsonl'</failure></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_pair_selection_refuses_a_missing_arm" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'&quot;">tests/test_grm_sc1_2_e2e_pairs.py:52: in instrumentation
+    return sc12.read_jsonl(
+scripts/grm_sc1_2_session.py:196: in read_jsonl
+    for line in Path(path).read_text(encoding="utf-8").splitlines()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'</error></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_pair_selection_refuses_a_non_certified_family" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'&quot;">tests/test_grm_sc1_2_e2e_pairs.py:52: in instrumentation
+    return sc12.read_jsonl(
+scripts/grm_sc1_2_session.py:196: in read_jsonl
+    for line in Path(path).read_text(encoding="utf-8").splitlines()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'</error></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_pair_selection_refuses_a_planted_miss_that_is_not_a_positive" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'&quot;">tests/test_grm_sc1_2_e2e_pairs.py:52: in instrumentation
+    return sc12.read_jsonl(
+scripts/grm_sc1_2_session.py:196: in read_jsonl
+    for line in Path(path).read_text(encoding="utf-8").splitlines()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'</error></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_pair_selection_requires_node_counts_and_never_guesses_them" time="0.000"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_rows.jsonl'">tests/test_grm_sc1_2_e2e_pairs.py:112: in test_pair_selection_requires_node_counts_and_never_guesses_them
+    sc12.e2e_pairs()
+scripts/grm_sc1_2_session.py:234: in e2e_pairs
+    rows = dict(rows or race_rows())
+                        ^^^^^^^^^^^
+scripts/grm_sc1_2_session.py:206: in race_rows
+    return {str(row["row_id"]): dict(row) for row in read_jsonl(path)}
+                                                     ^^^^^^^^^^^^^^^^
+scripts/grm_sc1_2_session.py:196: in read_jsonl
+    for line in Path(path).read_text(encoding="utf-8").splitlines()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_rows.jsonl'</failure></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_pair_selection_refuses_a_plant_alias_outside_its_prefix" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'&quot;">tests/test_grm_sc1_2_e2e_pairs.py:52: in instrumentation
+    return sc12.read_jsonl(
+scripts/grm_sc1_2_session.py:196: in read_jsonl
+    for line in Path(path).read_text(encoding="utf-8").splitlines()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'</error></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_probe_node_counts_match_the_hand_derived_values" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'&quot;">tests/test_grm_sc1_2_e2e_pairs.py:52: in instrumentation
+    return sc12.read_jsonl(
+scripts/grm_sc1_2_session.py:196: in read_jsonl
+    for line in Path(path).read_text(encoding="utf-8").splitlines()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'</error></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_fixture_ids_map_to_the_expected_conversation_turns" time="0.000" /><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_fixture_id_number_is_NOT_the_node_index" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'&quot;">tests/test_grm_sc1_2_e2e_pairs.py:52: in instrumentation
+    return sc12.read_jsonl(
+scripts/grm_sc1_2_session.py:196: in read_jsonl
+    for line in Path(path).read_text(encoding="utf-8").splitlines()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'</error></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_every_plant_alias_lies_inside_its_own_prefix" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'&quot;">tests/test_grm_sc1_2_e2e_pairs.py:52: in instrumentation
+    return sc12.read_jsonl(
+scripts/grm_sc1_2_session.py:196: in read_jsonl
+    for line in Path(path).read_text(encoding="utf-8").splitlines()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'</error></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_every_lived_ranking_lies_inside_its_own_prefix" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'&quot;">tests/test_grm_sc1_2_e2e_pairs.py:52: in instrumentation
+    return sc12.read_jsonl(
+scripts/grm_sc1_2_session.py:196: in read_jsonl
+    for line in Path(path).read_text(encoding="utf-8").splitlines()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'</error></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_probe_node_counts_fail_closed_when_a_ranking_escapes" time="0.000" /><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_probe_node_counts_walk_backward_not_forward" time="0.000" /><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_lineage_derivation_reproduces_every_frozen_manifest" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-1/attempt_001/session/repository/manifest.json'&quot;">tests/test_grm_sc1_2_e2e_pairs.py:39: in shard_manifests
+    shard: sc12.read_json(
+scripts/grm_sc1_2_session.py:190: in read_json
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-1/attempt_001/session/repository/manifest.json'</error></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_lineage_derivation_is_prefix_sensitive" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-1/attempt_001/session/repository/manifest.json'&quot;">tests/test_grm_sc1_2_e2e_pairs.py:39: in shard_manifests
+    shard: sc12.read_json(
+scripts/grm_sc1_2_session.py:190: in read_json
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-1/attempt_001/session/repository/manifest.json'</error></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_lineage_fails_closed_on_a_forward_edge_outside_the_prefix" time="0.000" /><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_supersedes_is_deposit_final_across_every_frozen_shard" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-1/attempt_001/session/repository/manifest.json'&quot;">tests/test_grm_sc1_2_e2e_pairs.py:39: in shard_manifests
+    shard: sc12.read_json(
+scripts/grm_sc1_2_session.py:190: in read_json
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-1/attempt_001/session/repository/manifest.json'</error></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_prefix_agreement_reports_a_deposit_time_disagreement" time="0.000" /><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_truncated_manifest_keeps_the_prefix_and_rebuilds_the_back_edges" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-1/attempt_001/session/repository/manifest.json'&quot;">tests/test_grm_sc1_2_e2e_pairs.py:39: in shard_manifests
+    shard: sc12.read_json(
+scripts/grm_sc1_2_session.py:190: in read_json
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-1/attempt_001/session/repository/manifest.json'</error></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_truncated_manifest_drops_the_native_checkpoint" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-1/attempt_001/session/repository/manifest.json'&quot;">tests/test_grm_sc1_2_e2e_pairs.py:39: in shard_manifests
+    shard: sc12.read_json(
+scripts/grm_sc1_2_session.py:190: in read_json
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-1/attempt_001/session/repository/manifest.json'</error></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_truncated_manifest_refuses_a_prefix_longer_than_its_source" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-1/attempt_001/session/repository/manifest.json'&quot;">tests/test_grm_sc1_2_e2e_pairs.py:39: in shard_manifests
+    shard: sc12.read_json(
+scripts/grm_sc1_2_session.py:190: in read_json
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-1/attempt_001/session/repository/manifest.json'</error></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_truncated_manifest_applies_the_no_fold_pins" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-1/attempt_001/session/repository/manifest.json'&quot;">tests/test_grm_sc1_2_e2e_pairs.py:39: in shard_manifests
+    shard: sc12.read_json(
+scripts/grm_sc1_2_session.py:190: in read_json
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-1/attempt_001/session/repository/manifest.json'</error></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_no_fold_pinning_brackets_and_flags_the_ambiguity" time="0.000" /><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_unpinned_no_fold_pairs_are_named" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'&quot;">tests/test_grm_sc1_2_e2e_pairs.py:52: in instrumentation
+    return sc12.read_jsonl(
+scripts/grm_sc1_2_session.py:196: in read_jsonl
+    for line in Path(path).read_text(encoding="utf-8").splitlines()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'</error></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_reproduction_needs_both_text_and_signal" time="0.053" /><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_reproduction_uses_the_det1_semantic_comparator_for_text" time="0.000" /><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_reproduction_min_mass_uses_exact_equality_with_no_tolerance" time="0.000" /><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_reproduction_records_the_delta_when_the_fork_is_not_byte_exact" time="0.000" /><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_reproduction_fails_closed_on_a_missing_signal" time="0.000" /><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_pair_reproduces_only_when_both_arms_do" time="0.000" /><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_sc1_1_rows_carry_into_the_table_unchanged" time="0.000"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_sc1_1/sc1_1_g2_summary_c1baaea3f682e7cc.json'">tests/test_grm_sc1_2_e2e_pairs.py:406: in test_sc1_1_rows_carry_into_the_table_unchanged
+    summary = _sc1_1_summary()
+              ^^^^^^^^^^^^^^^^
+tests/test_grm_sc1_2_e2e_pairs.py:379: in _sc1_1_summary
+    return sc12.read_json(sc12.SC1_1_G2_SUMMARY)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_sc1_2_session.py:190: in read_json
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_sc1_1/sc1_1_g2_summary_c1baaea3f682e7cc.json'</failure></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_sc1_1_unmeasurable_arm_is_excluded_not_counted_as_a_miss" time="0.000"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_sc1_1/sc1_1_g2_summary_c1baaea3f682e7cc.json'">tests/test_grm_sc1_2_e2e_pairs.py:418: in test_sc1_1_unmeasurable_arm_is_excluded_not_counted_as_a_miss
+    rows = sc12.sup_rows_from_sc1_1(_sc1_1_summary())
+                                    ^^^^^^^^^^^^^^^^
+tests/test_grm_sc1_2_e2e_pairs.py:379: in _sc1_1_summary
+    return sc12.read_json(sc12.SC1_1_G2_SUMMARY)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_sc1_2_session.py:190: in read_json
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_sc1_1/sc1_1_g2_summary_c1baaea3f682e7cc.json'</failure></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_ten_pair_table_has_ten_rows_when_all_seven_are_measured" time="0.000"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_sc1_1/sc1_1_g2_summary_c1baaea3f682e7cc.json'">tests/test_grm_sc1_2_e2e_pairs.py:434: in test_ten_pair_table_has_ten_rows_when_all_seven_are_measured
+    table = sc12.ten_pair_table(results, _sc1_1_summary())
+                                         ^^^^^^^^^^^^^^^^
+tests/test_grm_sc1_2_e2e_pairs.py:379: in _sc1_1_summary
+    return sc12.read_json(sc12.SC1_1_G2_SUMMARY)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_sc1_2_session.py:190: in read_json
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_sc1_1/sc1_1_g2_summary_c1baaea3f682e7cc.json'</failure></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_an_unreproduced_pair_is_excluded_from_numerator_and_denominator" time="0.000"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_sc1_1/sc1_1_g2_summary_c1baaea3f682e7cc.json'">tests/test_grm_sc1_2_e2e_pairs.py:448: in test_an_unreproduced_pair_is_excluded_from_numerator_and_denominator
+    table = sc12.ten_pair_table(results, _sc1_1_summary())
+                                         ^^^^^^^^^^^^^^^^
+tests/test_grm_sc1_2_e2e_pairs.py:379: in _sc1_1_summary
+    return sc12.read_json(sc12.SC1_1_G2_SUMMARY)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_sc1_2_session.py:190: in read_json
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_sc1_1/sc1_1_g2_summary_c1baaea3f682e7cc.json'</failure></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_the_floor_rule_never_pads_the_denominator_to_ten" time="0.000"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_sc1_1/sc1_1_g2_summary_c1baaea3f682e7cc.json'">tests/test_grm_sc1_2_e2e_pairs.py:460: in test_the_floor_rule_never_pads_the_denominator_to_ten
+    table = sc12.ten_pair_table([], _sc1_1_summary())
+                                    ^^^^^^^^^^^^^^^^
+tests/test_grm_sc1_2_e2e_pairs.py:379: in _sc1_1_summary
+    return sc12.read_json(sc12.SC1_1_G2_SUMMARY)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_sc1_2_session.py:190: in read_json
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_sc1_1/sc1_1_g2_summary_c1baaea3f682e7cc.json'</failure></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_pass_rule_is_recall_ge_0_9_and_fp_le_1" time="0.000"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_sc1_1/sc1_1_g2_summary_c1baaea3f682e7cc.json'">tests/test_grm_sc1_2_e2e_pairs.py:476: in test_pass_rule_is_recall_ge_0_9_and_fp_le_1
+    table = sc12.ten_pair_table(results, _sc1_1_summary())
+                                         ^^^^^^^^^^^^^^^^
+tests/test_grm_sc1_2_e2e_pairs.py:379: in _sc1_1_summary
+    return sc12.read_json(sc12.SC1_1_G2_SUMMARY)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_sc1_2_session.py:190: in read_json
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_sc1_1/sc1_1_g2_summary_c1baaea3f682e7cc.json'</failure></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_recovery_is_reported_never_gated" time="0.000"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_sc1_1/sc1_1_g2_summary_c1baaea3f682e7cc.json'">tests/test_grm_sc1_2_e2e_pairs.py:500: in test_recovery_is_reported_never_gated
+    table = sc12.ten_pair_table(results, _sc1_1_summary())
+                                         ^^^^^^^^^^^^^^^^
+tests/test_grm_sc1_2_e2e_pairs.py:379: in _sc1_1_summary
+    return sc12.read_json(sc12.SC1_1_G2_SUMMARY)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_sc1_2_session.py:190: in read_json
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_sc1_1/sc1_1_g2_summary_c1baaea3f682e7cc.json'</failure></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_table_names_the_two_instruments_rather_than_blending_them" time="0.000"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_sc1_1/sc1_1_g2_summary_c1baaea3f682e7cc.json'">tests/test_grm_sc1_2_e2e_pairs.py:515: in test_table_names_the_two_instruments_rather_than_blending_them
+    table = sc12.ten_pair_table(results, _sc1_1_summary())
+                                         ^^^^^^^^^^^^^^^^
+tests/test_grm_sc1_2_e2e_pairs.py:379: in _sc1_1_summary
+    return sc12.read_json(sc12.SC1_1_G2_SUMMARY)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_sc1_2_session.py:190: in read_json
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_sc1_1/sc1_1_g2_summary_c1baaea3f682e7cc.json'</failure></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_registration_exists_and_carries_the_race_threshold" time="0.000"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_sc1_2/registration.json'">tests/test_grm_sc1_2_e2e_pairs.py:526: in test_registration_exists_and_carries_the_race_threshold
+    registration = sc12.read_json(sc12.REGISTRATION)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_sc1_2_session.py:190: in read_json
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_sc1_2/registration.json'</failure></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_registration_names_the_cross_process_weakening" time="0.000"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_sc1_2/registration.json'">tests/test_grm_sc1_2_e2e_pairs.py:538: in test_registration_names_the_cross_process_weakening
+    registration = sc12.read_json(sc12.REGISTRATION)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_sc1_2_session.py:190: in read_json
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_sc1_2/registration.json'</failure></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_driver_declares_no_writes_under_the_frozen_run" time="0.001" /><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_snapshot_manifests_for_all_seven_pairs_exist_and_are_lived" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'&quot;">tests/test_grm_sc1_2_e2e_pairs.py:52: in instrumentation
+    return sc12.read_jsonl(
+scripts/grm_sc1_2_session.py:196: in read_jsonl
+    for line in Path(path).read_text(encoding="utf-8").splitlines()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'</error></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_lived_rows_match_the_snapshot_the_pair_forks_from" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'&quot;">tests/test_grm_sc1_2_e2e_pairs.py:52: in instrumentation
+    return sc12.read_jsonl(
+scripts/grm_sc1_2_session.py:196: in read_jsonl
+    for line in Path(path).read_text(encoding="utf-8").splitlines()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'</error></testcase><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_sc1_recovery_summarize10_delegates_and_does_not_duplicate_the_rule" time="0.016" /><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_summarize10_receipts_route_to_the_sc1_2_artifact_dir" time="0.000" /><testcase classname="tests.test_grm_sc1_2_e2e_pairs" name="test_planted_miss_arms_are_all_single_mount_withholdings" time="0.000"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'&quot;">tests/test_grm_sc1_2_e2e_pairs.py:52: in instrumentation
+    return sc12.read_jsonl(
+scripts/grm_sc1_2_session.py:196: in read_jsonl
+    for line in Path(path).read_text(encoding="utf-8").splitlines()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'</error></testcase></testsuite></testsuites>

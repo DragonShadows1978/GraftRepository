@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="0.226" timestamp="2026-09-08T23:51:36.421374-04:00" hostname="MilleniumFalcon"><testcase classname="tests.test_grm_adm1_snapshot" name="test_adm1_k1_snapshot_survives_consuming_cache_list" time="0.015" /></testsuite></testsuites>

@@ -1,0 +1,800 @@
+{
+  "cells": 88,
+  "files": 54,
+  "counts": {
+    "tests": 1548,
+    "failures": 52,
+    "errors": 20,
+    "skipped": 148,
+    "passed": 1328
+  },
+  "timeouts": 1,
+  "cpu_wall_s": 564.4190518539399,
+  "duplicate_test_ids": [],
+  "groups": {
+    "tests/test_deepseek_grm_hooks_static.py": {
+      "counts": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 4
+      },
+      "cells": [
+        "test_deepseek_grm_hooks_static"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.5149858589284122
+    },
+    "tests/test_gpt_oss20b_e14_backend_fix.py": {
+      "counts": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 3
+      },
+      "cells": [
+        "test_gpt_oss20b_e14_backend_fix"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.3648122390732169
+    },
+    "tests/test_grm_adm1_3_dual_frame.py": {
+      "counts": {
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 9
+      },
+      "cells": [
+        "test_grm_adm1_3_dual_frame"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.3144887681119144
+    },
+    "tests/test_grm_adm1_probe_adjudication.py": {
+      "counts": {
+        "tests": 2,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 1
+      },
+      "cells": [
+        "test_grm_adm1_probe_adjudication"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.31447619292885065
+    },
+    "tests/test_grm_adm1_snapshot.py": {
+      "counts": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 1
+      },
+      "cells": [
+        "test_grm_adm1_snapshot"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.4647021759301424
+    },
+    "tests/test_grm_admission.py": {
+      "counts": {
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 11
+      },
+      "cells": [
+        "test_grm_admission"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.4648739700205624
+    },
+    "tests/test_grm_arena_step_rollback.py": {
+      "counts": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 2
+      },
+      "cells": [
+        "test_grm_arena_step_rollback"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.414634742308408
+    },
+    "tests/test_grm_det1_11_achieved.py": {
+      "counts": {
+        "tests": 41,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 41
+      },
+      "cells": [
+        "test_grm_det1_11_achieved"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.41469977516680956
+    },
+    "tests/test_grm_det1_11_census.py": {
+      "counts": {
+        "tests": 18,
+        "failures": 10,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 8
+      },
+      "cells": [
+        "test_grm_det1_11_census"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.8153773052617908
+    },
+    "tests/test_grm_det1_11_envelope_lineage.py": {
+      "counts": {
+        "tests": 25,
+        "failures": 4,
+        "errors": 0,
+        "skipped": 2,
+        "passed": 19
+      },
+      "cells": [
+        "test_grm_det1_11_envelope_lineage"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.4146669511683285
+    },
+    "tests/test_grm_det1_3_snapshot.py": {
+      "counts": {
+        "tests": 39,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 39
+      },
+      "cells": [
+        "test_grm_det1_3_snapshot"
+      ],
+      "timeouts": 0,
+      "wall_s": 1.4162857453338802
+    },
+    "tests/test_grm_det1_5_campaign.py": {
+      "counts": {
+        "tests": 63,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 63
+      },
+      "cells": [
+        "test_grm_det1_5_campaign"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.5149285709485412
+    },
+    "tests/test_grm_det1_7_registry.py": {
+      "counts": {
+        "tests": 23,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 23
+      },
+      "cells": [
+        "test_grm_det1_7_registry"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.7154651037417352
+    },
+    "tests/test_grm_det1_7_source_auth.py": {
+      "counts": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 6
+      },
+      "cells": [
+        "test_grm_det1_7_source_auth"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.4147766940295696
+    },
+    "tests/test_grm_det1_8_source_auth.py": {
+      "counts": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 6
+      },
+      "cells": [
+        "test_grm_det1_8_source_auth"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.4647623370401561
+    },
+    "tests/test_grm_det1_9_findings.py": {
+      "counts": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 5
+      },
+      "cells": [
+        "test_grm_det1_9_findings"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.4146471479907632
+    },
+    "tests/test_grm_det1_9_source_auth.py": {
+      "counts": {
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 7
+      },
+      "cells": [
+        "test_grm_det1_9_source_auth"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.5650576851330698
+    },
+    "tests/test_grm_det1_baseline_registry.py": {
+      "counts": {
+        "tests": 8,
+        "failures": 7,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 1
+      },
+      "cells": [
+        "test_grm_det1_baseline_registry"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.4649013769812882
+    },
+    "tests/test_grm_eb1_ephemeral_frame.py": {
+      "counts": {
+        "tests": 44,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 44
+      },
+      "cells": [
+        "test_grm_eb1_ephemeral_frame"
+      ],
+      "timeouts": 0,
+      "wall_s": 6.174739787820727
+    },
+    "tests/test_grm_ensure_h_error.py": {
+      "counts": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 3
+      },
+      "cells": [
+        "test_grm_ensure_h_error"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.41474549612030387
+    },
+    "tests/test_grm_fold_recovered_guard.py": {
+      "counts": {
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 11
+      },
+      "cells": [
+        "test_grm_fold_recovered_guard"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.6151767130941153
+    },
+    "tests/test_grm_importance_counterfactual.py": {
+      "counts": {
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 15
+      },
+      "cells": [
+        "test_grm_importance_counterfactual"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.3145966278389096
+    },
+    "tests/test_grm_importance_g1g2.py": {
+      "counts": {
+        "tests": 56,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 56
+      },
+      "cells": [
+        "test_grm_importance_g1g2"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.5148748550564051
+    },
+    "tests/test_grm_importance_salience.py": {
+      "counts": {
+        "tests": 29,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 29
+      },
+      "cells": [
+        "test_grm_importance_salience"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.5649869279004633
+    },
+    "tests/test_grm_importance_telemetry.py": {
+      "counts": {
+        "tests": 12,
+        "failures": 5,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 7
+      },
+      "cells": [
+        "test_grm_importance_telemetry"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.6151430746540427
+    },
+    "tests/test_grm_lsr_p2a_fit_honesty.py": {
+      "counts": {
+        "tests": 20,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 20
+      },
+      "cells": [
+        "test_grm_lsr_p2a_fit_honesty"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.4648511908017099
+    },
+    "tests/test_grm_lsr_p2a_probe_path.py": {
+      "counts": {
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 9
+      },
+      "cells": [
+        "test_grm_lsr_p2a_probe_path"
+      ],
+      "timeouts": 0,
+      "wall_s": 6.124776736367494
+    },
+    "tests/test_grm_lsr_p2b_e2e_fixture.py": {
+      "counts": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 5
+      },
+      "cells": [
+        "test_grm_lsr_p2b_e2e_fixture"
+      ],
+      "timeouts": 0,
+      "wall_s": 6.274669934995472
+    },
+    "tests/test_grm_lsr_p2b_route_receipt.py": {
+      "counts": {
+        "tests": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 14
+      },
+      "cells": [
+        "test_grm_lsr_p2b_route_receipt"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.5148461190983653
+    },
+    "tests/test_grm_lsr_p2c_split_descent.py": {
+      "counts": {
+        "tests": 39,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 39
+      },
+      "cells": [
+        "test_grm_lsr_p2c_split_descent"
+      ],
+      "timeouts": 0,
+      "wall_s": 6.124769840855151
+    },
+    "tests/test_grm_native_runtime.py": {
+      "counts": {
+        "tests": 121,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 121
+      },
+      "cells": [
+        "test_grm_native_runtime_00",
+        "test_grm_native_runtime_01",
+        "test_grm_native_runtime_02",
+        "test_grm_native_runtime_03",
+        "test_grm_native_runtime_04",
+        "test_grm_native_runtime_05",
+        "test_grm_native_runtime_06",
+        "test_grm_native_runtime_07",
+        "test_grm_native_runtime_08",
+        "test_grm_native_runtime_09",
+        "test_grm_native_runtime_10",
+        "test_grm_native_runtime_11",
+        "test_grm_native_runtime_12",
+        "test_grm_native_runtime_13",
+        "test_grm_native_runtime_14",
+        "test_grm_native_runtime_15",
+        "test_grm_native_runtime_16",
+        "test_grm_native_runtime_17",
+        "test_grm_native_runtime_18"
+      ],
+      "timeouts": 0,
+      "wall_s": 289.41395351383835
+    },
+    "tests/test_grm_probe_ladder.py": {
+      "counts": {
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 15
+      },
+      "cells": [
+        "test_grm_probe_ladder"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.26451279502362013
+    },
+    "tests/test_grm_route_seams_gate.py": {
+      "counts": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 2
+      },
+      "cells": [
+        "test_grm_route_seams_gate"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.26446058601140976
+    },
+    "tests/test_grm_router_baseline.py": {
+      "counts": {},
+      "cells": [
+        "test_grm_router_baseline"
+      ],
+      "timeouts": 1,
+      "wall_s": 55.007508730050176
+    },
+    "tests/test_grm_rs1_read_strength.py": {
+      "counts": {
+        "tests": 34,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 34,
+        "passed": 0
+      },
+      "cells": [
+        "test_grm_rs1_read_strength"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.3647958068177104
+    },
+    "tests/test_grm_rs2_mount_read.py": {
+      "counts": {
+        "tests": 32,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 32,
+        "passed": 0
+      },
+      "cells": [
+        "test_grm_rs2_mount_read"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.41473367577418685
+    },
+    "tests/test_grm_rs3_capture_pin_seat.py": {
+      "counts": {
+        "tests": 64,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 64
+      },
+      "cells": [
+        "test_grm_rs3_capture_pin_seat"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.5150351407937706
+    },
+    "tests/test_grm_rs3_tables.py": {
+      "counts": {
+        "tests": 24,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 24,
+        "passed": 0
+      },
+      "cells": [
+        "test_grm_rs3_tables"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.36475930782034993
+    },
+    "tests/test_grm_rs4_baseline_and_gates.py": {
+      "counts": {
+        "tests": 25,
+        "failures": 2,
+        "errors": 0,
+        "skipped": 5,
+        "passed": 18
+      },
+      "cells": [
+        "test_grm_rs4_baseline_and_gates"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.4649097640067339
+    },
+    "tests/test_grm_rs4_row_split.py": {
+      "counts": {
+        "tests": 32,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 5,
+        "passed": 27
+      },
+      "cells": [
+        "test_grm_rs4_row_split"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.3648076178506017
+    },
+    "tests/test_grm_rt1_split_child_routing.py": {
+      "counts": {
+        "tests": 38,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 38
+      },
+      "cells": [
+        "test_grm_rt1_split_child_routing"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.5152305793017149
+    },
+    "tests/test_grm_runtime_lifecycle.py": {
+      "counts": {
+        "tests": 101,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 101
+      },
+      "cells": [
+        "test_grm_runtime_lifecycle_00",
+        "test_grm_runtime_lifecycle_01",
+        "test_grm_runtime_lifecycle_02",
+        "test_grm_runtime_lifecycle_03",
+        "test_grm_runtime_lifecycle_04",
+        "test_grm_runtime_lifecycle_05",
+        "test_grm_runtime_lifecycle_06",
+        "test_grm_runtime_lifecycle_07",
+        "test_grm_runtime_lifecycle_08",
+        "test_grm_runtime_lifecycle_09",
+        "test_grm_runtime_lifecycle_10",
+        "test_grm_runtime_lifecycle_11",
+        "test_grm_runtime_lifecycle_12",
+        "test_grm_runtime_lifecycle_13",
+        "test_grm_runtime_lifecycle_14",
+        "test_grm_runtime_lifecycle_15",
+        "test_grm_runtime_lifecycle_16"
+      ],
+      "timeouts": 0,
+      "wall_s": 157.52202355721965
+    },
+    "tests/test_grm_s4_demotion.py": {
+      "counts": {
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 16
+      },
+      "cells": [
+        "test_grm_s4_demotion"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.7153251678682864
+    },
+    "tests/test_grm_s4_fold_order.py": {
+      "counts": {
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 15
+      },
+      "cells": [
+        "test_grm_s4_fold_order"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.7154535786248744
+    },
+    "tests/test_grm_s4_ledger.py": {
+      "counts": {
+        "tests": 23,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 23
+      },
+      "cells": [
+        "test_grm_s4_ledger"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.6651814389042556
+    },
+    "tests/test_grm_sc1_1_grounding_glyphs.py": {
+      "counts": {
+        "tests": 164,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 164
+      },
+      "cells": [
+        "test_grm_sc1_1_grounding_glyphs"
+      ],
+      "timeouts": 0,
+      "wall_s": 6.225081061013043
+    },
+    "tests/test_grm_sc1_2_e2e_pairs.py": {
+      "counts": {
+        "tests": 47,
+        "failures": 12,
+        "errors": 20,
+        "skipped": 0,
+        "passed": 15
+      },
+      "cells": [
+        "test_grm_sc1_2_e2e_pairs"
+      ],
+      "timeouts": 0,
+      "wall_s": 1.5165667971596122
+    },
+    "tests/test_grm_sc1_demand_loop.py": {
+      "counts": {
+        "tests": 51,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 50
+      },
+      "cells": [
+        "test_grm_sc1_demand_loop"
+      ],
+      "timeouts": 0,
+      "wall_s": 6.27518520783633
+    },
+    "tests/test_grm_sc2_calibration_early_abort.py": {
+      "counts": {
+        "tests": 63,
+        "failures": 10,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 53
+      },
+      "cells": [
+        "test_grm_sc2_calibration_early_abort"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.8155722208321095
+    },
+    "tests/test_grm_supersession_battery.py": {
+      "counts": {
+        "tests": 21,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 21
+      },
+      "cells": [
+        "test_grm_supersession_battery"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.46491342782974243
+    },
+    "tests/test_grm_three_pass.py": {
+      "counts": {
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 7
+      },
+      "cells": [
+        "test_grm_three_pass"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.464920140337199
+    },
+    "tests/test_grm_wc1_sweep.py": {
+      "counts": {
+        "tests": 39,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 39
+      },
+      "cells": [
+        "test_grm_wc1_sweep"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.3146177991293371
+    },
+    "tests/test_lsr_p2c_1_census.py": {
+      "counts": {
+        "tests": 46,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 46,
+        "passed": 0
+      },
+      "cells": [
+        "test_lsr_p2c_1_census"
+      ],
+      "timeouts": 0,
+      "wall_s": 0.3649142701178789
+    },
+    "tests/test_qwen38_cpu.py": {
+      "counts": {
+        "tests": 38,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "passed": 38
+      },
+      "cells": [
+        "test_qwen38_cpu"
+      ],
+      "timeouts": 0,
+      "wall_s": 2.2178697250783443
+    }
+  }
+}

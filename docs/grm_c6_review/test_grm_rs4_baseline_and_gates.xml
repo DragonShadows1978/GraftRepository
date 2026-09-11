@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="5" tests="25" time="0.235" timestamp="2026-09-08T23:53:14.259102-04:00" hostname="MilleniumFalcon"><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_baseline_reproduces_the_rs3_c5_feed" time="0.000" /><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_baseline_is_zero_on_a_cleared_mounted_arm" time="0.000" /><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_baseline_does_not_use_pos_at_observer_entry" time="0.000" /><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_baseline_is_cached_after_the_first_forward" time="0.000" /><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_two_derivations_disagreeing_raises" time="0.000" /><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_question_overrunning_the_cache_raises" time="0.000" /><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_feed_receipt_larger_than_the_baseline_raises" time="0.000" /><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_g2_passes_on_float_equal_rows" time="0.000" /><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_g2_fails_on_any_band_drifting[mounted_mass_full_layers]" time="0.000" /><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_g2_fails_on_any_band_drifting[live_mass_full_layers]" time="0.000" /><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_g2_fails_on_any_band_drifting[sink_mass_full_layers]" time="0.000" /><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_g2_fails_on_any_band_drifting[learned_sink_mass_full_layers]" time="0.000" /><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_g2_fails_on_any_band_drifting[mounted_mass_sliding_layers]" time="0.000" /><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_g2_fails_on_any_band_drifting[live_mass_sliding_layers]" time="0.000" /><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_g2_fails_on_a_different_served_string" time="0.000" /><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_g2_fails_on_a_flipped_correctness" time="0.000" /><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_g2_reports_a_missing_row_rather_than_skipping_it" time="0.000" /><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_residual_table_reports_both_framings" time="0.000"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_rs3/registration.json'">tests/test_grm_rs4_baseline_and_gates.py:278: in test_residual_table_reports_both_framings
+    table = residual_table(_registration_with({}), _residual_rows())
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_rs4_results.py:202: in residual_table
+    refuser_ids = set(refusers())
+                      ^^^^^^^^^^
+scripts/grm_rs4_results.py:108: in refusers
+    return [str(v) for v in _read(RS3_REGISTRATION)["refusers"]]
+                            ^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_rs4_results.py:68: in _read
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_rs3/registration.json'</failure></testcase><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_residual_table_ignores_non_registered_rows" time="0.000"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_rs3/registration.json'">tests/test_grm_rs4_baseline_and_gates.py:291: in test_residual_table_ignores_non_registered_rows
+    assert residual_table(_registration_with({}), rows) == []
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_rs4_results.py:202: in residual_table
+    refuser_ids = set(refusers())
+                      ^^^^^^^^^^
+scripts/grm_rs4_results.py:108: in refusers
+    return [str(v) for v in _read(RS3_REGISTRATION)["refusers"]]
+                            ^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_rs4_results.py:68: in _read
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_rs3/registration.json'</failure></testcase><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_g3_verdicts_follow_the_registered_thresholds" time="0.000"><skipped type="pytest.skip" message="RS4 registration not written yet">/mnt/ForgeRealm/wt/grm-c6/tests/test_grm_rs4_baseline_and_gates.py:294: RS4 registration not written yet</skipped></testcase><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_g3_reports_inconclusive_between_the_registered_branches" time="0.000"><skipped type="pytest.skip" message="RS4 registration not written yet">/mnt/ForgeRealm/wt/grm-c6/tests/test_grm_rs4_baseline_and_gates.py:310: RS4 registration not written yet</skipped></testcase><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_g3_reports_the_mechanism_branch_when_the_residual_is_large" time="0.000"><skipped type="pytest.skip" message="RS4 registration not written yet">/mnt/ForgeRealm/wt/grm-c6/tests/test_grm_rs4_baseline_and_gates.py:322: RS4 registration not written yet</skipped></testcase><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_partition_audit_flags_a_row_whose_sub_bands_do_not_close" time="0.000" /><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_measured_g2_passed_and_the_recut_was_exact" time="0.000"><skipped type="pytest.skip" message="RS4 results not built yet">/mnt/ForgeRealm/wt/grm-c6/tests/test_grm_rs4_baseline_and_gates.py:350: RS4 results not built yet</skipped></testcase><testcase classname="tests.test_grm_rs4_baseline_and_gates" name="test_measured_sub_bands_close_on_every_table_row" time="0.000"><skipped type="pytest.skip" message="RS4 results not built yet">/mnt/ForgeRealm/wt/grm-c6/tests/test_grm_rs4_baseline_and_gates.py:364: RS4 results not built yet</skipped></testcase></testsuite></testsuites>

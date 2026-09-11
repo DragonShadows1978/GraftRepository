@@ -1,0 +1,51 @@
+.................FFsss.ss                                                [100%]
+=================================== FAILURES ===================================
+__________________ test_residual_table_reports_both_framings ___________________
+tests/test_grm_rs4_baseline_and_gates.py:278: in test_residual_table_reports_both_framings
+    table = residual_table(_registration_with({}), _residual_rows())
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_rs4_results.py:202: in residual_table
+    refuser_ids = set(refusers())
+                      ^^^^^^^^^^
+scripts/grm_rs4_results.py:108: in refusers
+    return [str(v) for v in _read(RS3_REGISTRATION)["refusers"]]
+                            ^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_rs4_results.py:68: in _read
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_rs3/registration.json'
+_______________ test_residual_table_ignores_non_registered_rows ________________
+tests/test_grm_rs4_baseline_and_gates.py:291: in test_residual_table_ignores_non_registered_rows
+    assert residual_table(_registration_with({}), rows) == []
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_rs4_results.py:202: in residual_table
+    refuser_ids = set(refusers())
+                      ^^^^^^^^^^
+scripts/grm_rs4_results.py:108: in refusers
+    return [str(v) for v in _read(RS3_REGISTRATION)["refusers"]]
+                            ^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_rs4_results.py:68: in _read
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_rs3/registration.json'
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_grm_rs4_baseline_and_gates.py:294: RS4 registration not written yet
+SKIPPED [1] tests/test_grm_rs4_baseline_and_gates.py:310: RS4 registration not written yet
+SKIPPED [1] tests/test_grm_rs4_baseline_and_gates.py:322: RS4 registration not written yet
+SKIPPED [1] tests/test_grm_rs4_baseline_and_gates.py:350: RS4 results not built yet
+SKIPPED [1] tests/test_grm_rs4_baseline_and_gates.py:364: RS4 results not built yet
+FAILED tests/test_grm_rs4_baseline_and_gates.py::test_residual_table_reports_both_framings
+FAILED tests/test_grm_rs4_baseline_and_gates.py::test_residual_table_ignores_non_registered_rows
+2 failed, 18 passed, 5 skipped in 0.23s

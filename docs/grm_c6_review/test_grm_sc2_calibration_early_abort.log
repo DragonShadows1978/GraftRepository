@@ -1,0 +1,130 @@
+FFF.FFFFF.F....F...............................................          [100%]
+=================================== FAILURES ===================================
+_______ test_envelope_rule_reproduces_the_frozen_det1_threshold_exactly ________
+tests/test_grm_sc2_calibration_early_abort.py:68: in test_envelope_rule_reproduces_the_frozen_det1_threshold_exactly
+    rows = sc2._read_jsonl(sc2.RACE_CALIBRATION_ROWS)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_sc2_calibration.py:130: in _read_jsonl
+    raise CalibrationError(f"missing persisted rows: {path}")
+E   scripts.grm_sc2_calibration.CalibrationError: missing persisted rows: /mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/mechanistic_rows.jsonl
+_______ test_minima_verdict_equals_detector_decision_on_every_frozen_row _______
+tests/test_grm_sc2_calibration_early_abort.py:88: in test_minima_verdict_equals_detector_decision_on_every_frozen_row
+    result = sc2.rule_equality_check()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_sc2_calibration.py:496: in rule_equality_check
+    calibration_rows = _read_jsonl(RACE_CALIBRATION_ROWS)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_sc2_calibration.py:130: in _read_jsonl
+    raise CalibrationError(f"missing persisted rows: {path}")
+E   scripts.grm_sc2_calibration.CalibrationError: missing persisted rows: /mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/mechanistic_rows.jsonl
+_________ test_fire_index_matches_first_strictly_below_on_frozen_rows __________
+tests/test_grm_sc2_calibration_early_abort.py:105: in test_fire_index_matches_first_strictly_below_on_frozen_rows
+    for row in (sc2._read_jsonl(sc2.RACE_CALIBRATION_ROWS)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_sc2_calibration.py:130: in _read_jsonl
+    raise CalibrationError(f"missing persisted rows: {path}")
+E   scripts.grm_sc2_calibration.CalibrationError: missing persisted rows: /mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/mechanistic_rows.jsonl
+_________ test_registered_split_is_deterministic_across_repeated_runs __________
+tests/test_grm_sc2_calibration_early_abort.py:137: in test_registered_split_is_deterministic_across_repeated_runs
+    first = sc2.registered_split(*_split_inputs())
+                                  ^^^^^^^^^^^^^^^
+tests/test_grm_sc2_calibration_early_abort.py:132: in _split_inputs
+    inv = sc2.inventory()
+          ^^^^^^^^^^^^^^^
+scripts/grm_sc2_calibration.py:176: in inventory
+    carried = float(_read_json(CARRIED_THRESHOLDS)["D-NGH"]["threshold"])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_sc2_calibration.py:137: in _read_json
+    raise CalibrationError(f"missing persisted receipt: {path}")
+E   scripts.grm_sc2_calibration.CalibrationError: missing persisted receipt: /mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json
+___________ test_split_sets_are_non_empty_and_match_the_registration ___________
+tests/test_grm_sc2_calibration_early_abort.py:149: in test_split_sets_are_non_empty_and_match_the_registration
+    (ROOT / "artifacts" / "grm_sc2" / "registration.json").read_text())
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1015: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_sc2/registration.json'
+________________ test_held_out_contains_the_current_false_fire _________________
+tests/test_grm_sc2_calibration_early_abort.py:163: in test_held_out_contains_the_current_false_fire
+    split = sc2.registered_split(*_split_inputs())
+                                  ^^^^^^^^^^^^^^^
+tests/test_grm_sc2_calibration_early_abort.py:132: in _split_inputs
+    inv = sc2.inventory()
+          ^^^^^^^^^^^^^^^
+scripts/grm_sc2_calibration.py:176: in inventory
+    carried = float(_read_json(CARRIED_THRESHOLDS)["D-NGH"]["threshold"])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_sc2_calibration.py:137: in _read_json
+    raise CalibrationError(f"missing persisted receipt: {path}")
+E   scripts.grm_sc2_calibration.CalibrationError: missing persisted receipt: /mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json
+___________ test_sc1_2_arm0_rows_fold_into_the_race_rows_losslessly ____________
+tests/test_grm_sc2_calibration_early_abort.py:169: in test_sc1_2_arm0_rows_fold_into_the_race_rows_losslessly
+    dedup = sc2.deduplicate(sc2.inventory())
+                            ^^^^^^^^^^^^^^^
+scripts/grm_sc2_calibration.py:176: in inventory
+    carried = float(_read_json(CARRIED_THRESHOLDS)["D-NGH"]["threshold"])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_sc2_calibration.py:137: in _read_json
+    raise CalibrationError(f"missing persisted receipt: {path}")
+E   scripts.grm_sc2_calibration.CalibrationError: missing persisted receipt: /mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json
+_______ test_the_solace_instrument_disagreement_is_carried_not_collapsed _______
+tests/test_grm_sc2_calibration_early_abort.py:184: in test_the_solace_instrument_disagreement_is_carried_not_collapsed
+    split = sc2.registered_split(*_split_inputs())
+                                  ^^^^^^^^^^^^^^^
+tests/test_grm_sc2_calibration_early_abort.py:132: in _split_inputs
+    inv = sc2.inventory()
+          ^^^^^^^^^^^^^^^
+scripts/grm_sc2_calibration.py:176: in inventory
+    carried = float(_read_json(CARRIED_THRESHOLDS)["D-NGH"]["threshold"])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_sc2_calibration.py:137: in _read_json
+    raise CalibrationError(f"missing persisted receipt: {path}")
+E   scripts.grm_sc2_calibration.CalibrationError: missing persisted receipt: /mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json
+_________________ test_planted_rows_are_all_exactly_zero_mass __________________
+tests/test_grm_sc2_calibration_early_abort.py:206: in test_planted_rows_are_all_exactly_zero_mass
+    planted = sc2.inventory()["planted"]
+              ^^^^^^^^^^^^^^^
+scripts/grm_sc2_calibration.py:176: in inventory
+    carried = float(_read_json(CARRIED_THRESHOLDS)["D-NGH"]["threshold"])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_sc2_calibration.py:137: in _read_json
+    raise CalibrationError(f"missing persisted receipt: {path}")
+E   scripts.grm_sc2_calibration.CalibrationError: missing persisted receipt: /mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json
+_________ test_the_candidate_is_the_envelope_over_the_calibration_set __________
+tests/test_grm_sc2_calibration_early_abort.py:270: in test_the_candidate_is_the_envelope_over_the_calibration_set
+    split = sc2.registered_split(*_split_inputs())
+                                  ^^^^^^^^^^^^^^^
+tests/test_grm_sc2_calibration_early_abort.py:132: in _split_inputs
+    inv = sc2.inventory()
+          ^^^^^^^^^^^^^^^
+scripts/grm_sc2_calibration.py:176: in inventory
+    carried = float(_read_json(CARRIED_THRESHOLDS)["D-NGH"]["threshold"])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_sc2_calibration.py:137: in _read_json
+    raise CalibrationError(f"missing persisted receipt: {path}")
+E   scripts.grm_sc2_calibration.CalibrationError: missing persisted receipt: /mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_grm_sc2_calibration_early_abort.py::test_envelope_rule_reproduces_the_frozen_det1_threshold_exactly
+FAILED tests/test_grm_sc2_calibration_early_abort.py::test_minima_verdict_equals_detector_decision_on_every_frozen_row
+FAILED tests/test_grm_sc2_calibration_early_abort.py::test_fire_index_matches_first_strictly_below_on_frozen_rows
+FAILED tests/test_grm_sc2_calibration_early_abort.py::test_registered_split_is_deterministic_across_repeated_runs
+FAILED tests/test_grm_sc2_calibration_early_abort.py::test_split_sets_are_non_empty_and_match_the_registration
+FAILED tests/test_grm_sc2_calibration_early_abort.py::test_held_out_contains_the_current_false_fire
+FAILED tests/test_grm_sc2_calibration_early_abort.py::test_sc1_2_arm0_rows_fold_into_the_race_rows_losslessly
+FAILED tests/test_grm_sc2_calibration_early_abort.py::test_the_solace_instrument_disagreement_is_carried_not_collapsed
+FAILED tests/test_grm_sc2_calibration_early_abort.py::test_planted_rows_are_all_exactly_zero_mass
+FAILED tests/test_grm_sc2_calibration_early_abort.py::test_the_candidate_is_the_envelope_over_the_calibration_set
+10 failed, 53 passed, 2 warnings in 0.59s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

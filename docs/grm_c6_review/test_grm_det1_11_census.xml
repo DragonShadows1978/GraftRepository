@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="10" skipped="0" tests="18" time="0.601" timestamp="2026-09-08T23:51:37.750657-04:00" hostname="MilleniumFalcon"><testcase classname="tests.test_grm_det1_11_census" name="test_selftest_passes_and_declares_cause_not_investigated" time="0.001" /><testcase classname="tests.test_grm_det1_11_census" name="test_refusal_is_classified_apart_from_a_wrong_value" time="0.001" /><testcase classname="tests.test_grm_det1_11_census" name="test_separator_variant_is_lawful_but_flagged_as_rescued" time="0.000" /><testcase classname="tests.test_grm_det1_11_census" name="test_comparator_disagreement_fails_closed" time="0.000" /><testcase classname="tests.test_grm_det1_11_census" name="test_probe_without_expected_values_fails_closed" time="0.000" /><testcase classname="tests.test_grm_det1_11_census" name="test_census_uses_the_latest_attempt_and_keeps_the_history" time="0.002" /><testcase classname="tests.test_grm_det1_11_census" name="test_unknown_unplantable_reason_fails_closed" time="0.001" /><testcase classname="tests.test_grm_det1_11_census" name="test_census_partitions_and_counts_the_population" time="0.001"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/registration_62cb6c09cbec211d.json'">tests/test_grm_det1_11_census.py:187: in test_census_partitions_and_counts_the_population
+    census = build_census(root)
+             ^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_11_census.py:427: in build_census
+    "registration": file_record(REGISTRATION, root=record_root or ROOT),
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_common.py:172: in file_record
+    return {"path": shown, "bytes": path.stat().st_size, "sha256": sha256_file(path)}
+                                    ^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:842: in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/registration_62cb6c09cbec211d.json'</failure></testcase><testcase classname="tests.test_grm_det1_11_census" name="test_wrong_value_with_multiple_mounts_is_not_counted_as_single_mount" time="0.001"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/registration_62cb6c09cbec211d.json'">tests/test_grm_det1_11_census.py:211: in test_wrong_value_with_multiple_mounts_is_not_counted_as_single_mount
+    census = build_census(root)
+             ^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_11_census.py:427: in build_census
+    "registration": file_record(REGISTRATION, root=record_root or ROOT),
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_common.py:172: in file_record
+    return {"path": shown, "bytes": path.stat().st_size, "sha256": sha256_file(path)}
+                                    ^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:842: in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/registration_62cb6c09cbec211d.json'</failure></testcase><testcase classname="tests.test_grm_det1_11_census" name="test_writing_twice_keeps_exactly_one_receipt" time="0.001"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/registration_62cb6c09cbec211d.json'">tests/test_grm_det1_11_census.py:224: in test_writing_twice_keeps_exactly_one_receipt
+    first, _ = write_census(out, shard_root=root)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_11_census.py:559: in write_census
+    census = build_census(shard_root, record_root=record_root)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_11_census.py:427: in build_census
+    "registration": file_record(REGISTRATION, root=record_root or ROOT),
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_common.py:172: in file_record
+    return {"path": shown, "bytes": path.stat().st_size, "sha256": sha256_file(path)}
+                                    ^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:842: in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/registration_62cb6c09cbec211d.json'</failure></testcase><testcase classname="tests.test_grm_det1_11_census" name="test_changed_evidence_authors_a_successor_naming_its_predecessor" time="0.001"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/registration_62cb6c09cbec211d.json'">tests/test_grm_det1_11_census.py:243: in test_changed_evidence_authors_a_successor_naming_its_predecessor
+    first_path, first = write_census(out, shard_root=root)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_11_census.py:559: in write_census
+    census = build_census(shard_root, record_root=record_root)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_11_census.py:427: in build_census
+    "registration": file_record(REGISTRATION, root=record_root or ROOT),
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_common.py:172: in file_record
+    return {"path": shown, "bytes": path.stat().st_size, "sha256": sha256_file(path)}
+                                    ^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:842: in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/registration_62cb6c09cbec211d.json'</failure></testcase><testcase classname="tests.test_grm_det1_11_census" name="test_a_successor_is_authored_only_when_evidence_actually_drifted" time="0.001"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/registration_62cb6c09cbec211d.json'">tests/test_grm_det1_11_census.py:280: in test_a_successor_is_authored_only_when_evidence_actually_drifted
+    first_path, _ = write_census(out, shard_root=root)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_11_census.py:559: in write_census
+    census = build_census(shard_root, record_root=record_root)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_11_census.py:427: in build_census
+    "registration": file_record(REGISTRATION, root=record_root or ROOT),
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_common.py:172: in file_record
+    return {"path": shown, "bytes": path.stat().st_size, "sha256": sha256_file(path)}
+                                    ^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:842: in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/registration_62cb6c09cbec211d.json'</failure></testcase><testcase classname="tests.test_grm_det1_11_census" name="test_lineage_extends_across_several_drifts" time="0.001"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/registration_62cb6c09cbec211d.json'">tests/test_grm_det1_11_census.py:300: in test_lineage_extends_across_several_drifts
+    path, payload = write_census(out, shard_root=root)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_11_census.py:559: in write_census
+    census = build_census(shard_root, record_root=record_root)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_11_census.py:427: in build_census
+    "registration": file_record(REGISTRATION, root=record_root or ROOT),
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_common.py:172: in file_record
+    return {"path": shown, "bytes": path.stat().st_size, "sha256": sha256_file(path)}
+                                    ^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:842: in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/registration_62cb6c09cbec211d.json'</failure></testcase><testcase classname="tests.test_grm_det1_11_census" name="test_lineage_rejects_a_receipt_outside_the_chain" time="0.001"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/registration_62cb6c09cbec211d.json'">tests/test_grm_det1_11_census.py:321: in test_lineage_rejects_a_receipt_outside_the_chain
+    write_census(out, shard_root=root)
+scripts/grm_det1_11_census.py:559: in write_census
+    census = build_census(shard_root, record_root=record_root)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_11_census.py:427: in build_census
+    "registration": file_record(REGISTRATION, root=record_root or ROOT),
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_common.py:172: in file_record
+    return {"path": shown, "bytes": path.stat().st_size, "sha256": sha256_file(path)}
+                                    ^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:842: in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/registration_62cb6c09cbec211d.json'</failure></testcase><testcase classname="tests.test_grm_det1_11_census" name="test_lineage_rejects_two_originals" time="0.001"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/registration_62cb6c09cbec211d.json'">tests/test_grm_det1_11_census.py:343: in test_lineage_rejects_two_originals
+    write_census(out, shard_root=root)
+scripts/grm_det1_11_census.py:559: in write_census
+    census = build_census(shard_root, record_root=record_root)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_11_census.py:427: in build_census
+    "registration": file_record(REGISTRATION, root=record_root or ROOT),
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_common.py:172: in file_record
+    return {"path": shown, "bytes": path.stat().st_size, "sha256": sha256_file(path)}
+                                    ^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:842: in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/registration_62cb6c09cbec211d.json'</failure></testcase><testcase classname="tests.test_grm_det1_11_census" name="test_lineage_rejects_a_fork" time="0.001"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/registration_62cb6c09cbec211d.json'">tests/test_grm_det1_11_census.py:363: in test_lineage_rejects_a_fork
+    original_path, _ = write_census(out, shard_root=root)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_11_census.py:559: in write_census
+    census = build_census(shard_root, record_root=record_root)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_11_census.py:427: in build_census
+    "registration": file_record(REGISTRATION, root=record_root or ROOT),
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_common.py:172: in file_record
+    return {"path": shown, "bytes": path.stat().st_size, "sha256": sha256_file(path)}
+                                    ^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:842: in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/registration_62cb6c09cbec211d.json'</failure></testcase><testcase classname="tests.test_grm_det1_11_census" name="test_no_lineage_yet_reports_empty" time="0.001" /><testcase classname="tests.test_grm_det1_11_census" name="test_census_receipt_is_titled_and_scoped_to_receipts_only" time="0.001"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/registration_62cb6c09cbec211d.json'">tests/test_grm_det1_11_census.py:391: in test_census_receipt_is_titled_and_scoped_to_receipts_only
+    path, census = write_census(tmp_path / "census", shard_root=root)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_11_census.py:559: in write_census
+    census = build_census(shard_root, record_root=record_root)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_11_census.py:427: in build_census
+    "registration": file_record(REGISTRATION, root=record_root or ROOT),
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/grm_det1_common.py:172: in file_record
+    return {"path": shown, "bytes": path.stat().st_size, "sha256": sha256_file(path)}
+                                    ^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:842: in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_det1/run_20260831T160525Z_2/registration_62cb6c09cbec211d.json'</failure></testcase></testsuite></testsuites>

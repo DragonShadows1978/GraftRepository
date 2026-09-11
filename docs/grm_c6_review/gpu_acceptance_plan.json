@@ -1,0 +1,119 @@
+{
+  "status": "BLOCKED_NON_FIT_FULL_ACCEPTANCE",
+  "budget_s": 1440,
+  "worker_cap_s": 285,
+  "outer_cap_s": 590,
+  "cooldown_s": 30,
+  "historical_candidate_cells": [
+    {
+      "cell": "census_e2e-1_349d068f20555358",
+      "prior_receipt": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_e2e-1_349d068f20555358.json",
+      "sha256": "349d068f20555358f55313d73aaf7aa926df00d6bbae79e5b9bed9d1edf05f23",
+      "observed_wall_s": 69.6169999181293,
+      "estimate_s": 70,
+      "worker_285s_fit_observed": true
+    },
+    {
+      "cell": "census_e2e-2_4432ad0fa2beb0ab",
+      "prior_receipt": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_e2e-2_4432ad0fa2beb0ab.json",
+      "sha256": "4432ad0fa2beb0ab752f973c6275eb4c3296b4532bb0c6fb54f9ca78510f5cb8",
+      "observed_wall_s": 60.00210761046037,
+      "estimate_s": 65,
+      "worker_285s_fit_observed": true
+    },
+    {
+      "cell": "census_e2e-3_302768c3a43335d7",
+      "prior_receipt": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_e2e-3_302768c3a43335d7.json",
+      "sha256": "302768c3a43335d769baf0959b511e82c3a58e2442e9d8eb3f2d015625304d00",
+      "observed_wall_s": 100.89516760734841,
+      "estimate_s": 105,
+      "worker_285s_fit_observed": true
+    },
+    {
+      "cell": "census_e2e-4_9b547acfc4c8d80e",
+      "prior_receipt": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_e2e-4_9b547acfc4c8d80e.json",
+      "sha256": "9b547acfc4c8d80e8ff58355e8d82352169e32b2a7a1608e54b8f5d97a06e5cf",
+      "observed_wall_s": 73.28362855920568,
+      "estimate_s": 75,
+      "worker_285s_fit_observed": true
+    },
+    {
+      "cell": "lh_lh-1_f37d03a43ec801e1",
+      "prior_receipt": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_lh-1_f37d03a43ec801e1.json",
+      "sha256": "f37d03a43ec801e189643efa744ac303a972a6f32c6ade84aab3f4a15e3f5aaa",
+      "observed_wall_s": 232.88769468199462,
+      "estimate_s": 235,
+      "worker_285s_fit_observed": true
+    },
+    {
+      "cell": "lh_lh-2_f447f5901661a21c",
+      "prior_receipt": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_lh-2_f447f5901661a21c.json",
+      "sha256": "f447f5901661a21c4ef25b9e580107a04687c8ee0019c8d8ca82bddfbc96bc2f",
+      "observed_wall_s": 246.92771078180522,
+      "estimate_s": 250,
+      "worker_285s_fit_observed": true
+    },
+    {
+      "cell": "lh_lh-3_49be4ff76e0df50c",
+      "prior_receipt": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_lh-3_49be4ff76e0df50c.json",
+      "sha256": "49be4ff76e0df50c3e87688ffe2ddfe1e94b1e77d1f31e374227e5b66ce48aec",
+      "observed_wall_s": 210.80933895986527,
+      "estimate_s": 215,
+      "worker_285s_fit_observed": true
+    },
+    {
+      "cell": "lh_lh-4_d7bb547bdffb3d4d",
+      "prior_receipt": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_lh-4_d7bb547bdffb3d4d.json",
+      "sha256": "d7bb547bdffb3d4d424c2ee5f828de2253612eb3251a81080760d1c0a3335606",
+      "observed_wall_s": 237.63344783801585,
+      "estimate_s": 240,
+      "worker_285s_fit_observed": true
+    },
+    {
+      "cell": "lh_lh-5_f299b53624a181f5",
+      "prior_receipt": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_lh-5_f299b53624a181f5.json",
+      "sha256": "f299b53624a181f583ef012a21499bd54c10ddf4db7dccabd638b6bfdc263091",
+      "observed_wall_s": 153.80273340689018,
+      "estimate_s": 155,
+      "worker_285s_fit_observed": true
+    },
+    {
+      "cell": "sup_correction_then_restatement_ad61a11154fbabfd",
+      "prior_receipt": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_correction_then_restatement_ad61a11154fbabfd.json",
+      "sha256": "ad61a11154fbabfd2394fdcd297d71a3b96e7a38687c6dae09bb5ea4e860b400",
+      "observed_wall_s": 89.84046454308555,
+      "estimate_s": 90,
+      "worker_285s_fit_observed": true
+    },
+    {
+      "cell": "sup_fresh_fact_controls_5ed53221b0012dcc",
+      "prior_receipt": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_fresh_fact_controls_5ed53221b0012dcc.json",
+      "sha256": "5ed53221b0012dcc80afe5d5092e169f29513d404791d27e62a098cea357c659",
+      "observed_wall_s": 56.033884782809764,
+      "estimate_s": 60,
+      "worker_285s_fit_observed": true
+    },
+    {
+      "cell": "sup_multi_hop_a_b_c_7621d7746e2ca835",
+      "prior_receipt": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_multi_hop_a_b_c_7621d7746e2ca835.json",
+      "sha256": "7621d7746e2ca8358c0b0a9e3a737ad7eccc16e8060eb160045319d65b2ed5cd",
+      "observed_wall_s": 50.02366476505995,
+      "estimate_s": 55,
+      "worker_285s_fit_observed": true
+    },
+    {
+      "cell": "sup_short_correction_long_competitor_c4a9170fef1de770",
+      "prior_receipt": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_short_correction_long_competitor_c4a9170fef1de770.json",
+      "sha256": "c4a9170fef1de770894fc381e1a1cbf2b1e0f9e69e3bfc4e8b45c1ed06eba559",
+      "observed_wall_s": 47.61396936327219,
+      "estimate_s": 50,
+      "worker_285s_fit_observed": true
+    }
+  ],
+  "historical_candidate_total_wall_s": 1629.3708128179424,
+  "historical_candidate_total_wall_h": 0.45260300356053956,
+  "rounded_estimate_total_s": 1665,
+  "candidate_control_restart_inherited": "Full equal-standing matrix requires fresh candidate and shipped-default control, paired restart re-probes of all correct IDs and separately graded inherited unpinned payloads. Existing 13-cell candidate-only reproduction already exceeds 1440 seconds of in-worker wall. No defensible full-matrix fit currently established.",
+  "measurement_caveat": "Historical wall inside WC1 wrappers, not measured GPU-busy time. End-to-end tables separately warn about lock contention. Planning uses conservative leased-worker wall; no claim of a lower bound on achievable GPU time. No timings executed by C6.",
+  "next_seat": "Create importer-based bounded acceptance harness, register all fixture/model/source/payload hashes and exact stable result bar, measure non-GPU preflight estimates; fail closed if full plan exceeds cap. Do not raise rails or omit comparator/restart/legacy arms."
+}

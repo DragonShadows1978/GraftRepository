@@ -1,0 +1,31 @@
+F.FF.F................ss.                                                [100%]
+=================================== FAILURES ===================================
+________________ test_lineage_contains_every_authored_envelope _________________
+tests/test_grm_det1_11_envelope_lineage.py:39: in test_lineage_contains_every_authored_envelope
+    assert len(lineage) >= 2, "expected an append-only series of envelopes"
+E   AssertionError: expected an append-only series of envelopes
+E   assert 0 >= 2
+E    +  where 0 = len([])
+______________ test_current_envelope_is_the_newest_lineage_member ______________
+tests/test_grm_det1_11_envelope_lineage.py:63: in test_current_envelope_is_the_newest_lineage_member
+    assert lineage[-1].name == campaign.DET1_7_SOURCE_AUTH.name
+           ^^^^^^^^^^^
+E   IndexError: list index out of range
+_______________ test_every_superseded_envelope_is_still_accepted _______________
+tests/test_grm_det1_11_envelope_lineage.py:69: in test_every_superseded_envelope_is_still_accepted
+    assert len(lineage) >= 2
+E   assert 0 >= 2
+E    +  where 0 = len([])
+_____________ test_a_tampered_record_for_a_real_member_is_rejected _____________
+tests/test_grm_det1_11_envelope_lineage.py:95: in test_a_tampered_record_for_a_real_member_is_rejected
+    forged = dict(file_record(lineage[0]))
+                              ^^^^^^^^^^
+E   IndexError: list index out of range
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_grm_det1_11_envelope_lineage.py:227: plant_registration shards not present in this tree
+SKIPPED [1] tests/test_grm_det1_11_envelope_lineage.py:245: no analysis receipt in this tree
+FAILED tests/test_grm_det1_11_envelope_lineage.py::test_lineage_contains_every_authored_envelope
+FAILED tests/test_grm_det1_11_envelope_lineage.py::test_current_envelope_is_the_newest_lineage_member
+FAILED tests/test_grm_det1_11_envelope_lineage.py::test_every_superseded_envelope_is_still_accepted
+FAILED tests/test_grm_det1_11_envelope_lineage.py::test_a_tampered_record_for_a_real_member_is_rejected
+4 failed, 19 passed, 2 skipped in 0.21s

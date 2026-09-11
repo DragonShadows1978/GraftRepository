@@ -1,0 +1,13 @@
+{
+  "utc": "2026-09-09T04:08:41.915321+00:00",
+  "registration_sha256": "547569ae2319e2e4859f5fec7f2ae6dad9ac3b1d87d69ab81ee254dbbdbaecd4",
+  "source_files_unchanged": 273,
+  "cell_receipts_verified": 88,
+  "report_links_broken": [],
+  "original_order_unchanged": true,
+  "protected_worktree_diff_empty": true,
+  "dry_run_reproduced": true,
+  "gpu_cells_executed": 0,
+  "report_sha256": "62cbf0facc6c353507f04ca9fea99e856cb6118999572871f8c85446a87e4dfc",
+  "status": "REVIEW_ARTIFACT_VALIDATED; INTEGRATION_RED"
+}

@@ -1,0 +1,10 @@
+.F                                                                       [100%]
+=================================== FAILURES ===================================
+___________ test_completed_diag_capture_is_exact_anchor_and_l2_noop ____________
+tests/test_grm_adm1_probe_adjudication.py:22: in test_completed_diag_capture_is_exact_anchor_and_l2_noop
+    assert completed_capture_available(CAPTURE, "diag")
+E   AssertionError: assert False
+E    +  where False = completed_capture_available(PosixPath('/mnt/ForgeRealm/wt/grm-c6/artifacts/grm_adm1/run_20260830T093538Z_3defaa'), 'diag')
+=========================== short test summary info ============================
+FAILED tests/test_grm_adm1_probe_adjudication.py::test_completed_diag_capture_is_exact_anchor_and_l2_noop
+1 failed, 1 passed in 0.11s
