@@ -1,4 +1,44 @@
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-2309 passed, 246 skipped, 2 warnings in 585.77s (0:09:45)
-sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
-RC=0
+GRM-H1 A1-amendment-4 follow-up, 2026-09-11.
+
+SCOPE: the lead scoped this round to the A1 module and its isolated
+reproductions, NOT a full-suite re-gate. The one-process full-suite line in
+this file is therefore the one from the PREVIOUS round (commit cf6910f /
+merge 887c700), not re-measured here.
+
+This round's required gate:
+
+  $ python3 -m pytest -q tests/test_grm_a1_gpu_contrast.py
+  58 passed, 2 skipped, 2 warnings in 305.39s (0:05:05)
+
+  (run with --basetemp artifacts/grm_h1/tmp per the lead's instruction;
+   peak scratch 1.7 MB, directory removed afterwards. An earlier identical
+   run on a quiet machine took 56.14s; the 305s is contention from the
+   concurrent D1 seat.)
+
+Supporting gates, each in one process:
+
+  $ python3 -m pytest -q -m campaign_receipt tests/test_grm_*.py
+  167 failed, 2 passed, 2377 deselected, 2 warnings, 63 errors in 59.93s
+
+  $ python3 -m pytest -q tests/test_grm_r1_*.py tests/test_grm_scout_fix4.py \
+        tests/test_grm_a1_alias_fold.py tests/test_grm_admission.py
+  204 passed, 51 skipped, 2 warnings in 9.93s
+
+167 + 63 + 2 = 232 = the marked node-id count, so the marker set is exact.
+
+INTERRUPTIONS (not test failures): three attempts at a wider battery were
+killed -- two by machine contention and the third by the lead reclaiming
+disk (root filesystem reached 9 GB free with /tmp/pytest-of-vader at 83 GB;
+the lead stopped pid 3432129 and cleared the stale scratch roots). RC=143
+in each case. No process belonging to another seat was signalled by me.
+
+KNOWN RED, NOT MINE (D1's in-flight LT1.1 rebind; both files carry
+pre-my-edit mtimes and are in the two-file area the lead told me to leave
+alone plus one sibling):
+  tests/test_grm_lt1_1_child_spawn.py::test_run_cell_spawns_a_child_that_writes_receipts[A]
+  tests/test_grm_lt1_1_child_spawn.py::test_run_cell_spawns_a_child_that_writes_receipts[A+]
+  tests/test_grm_lt1_1_runner.py::test_dry_run_enumerates_twentysix_cells_per_arm
+Cause: artifacts/grm_d1/lt1_1/run_Aplus/cells/ holds 25 COMPLETED cells
+(through A-189-196), so the dry-run's next_cell is A-197-200 rather than
+A-001-008, and run_cell() correctly declines already-done cells. The tests
+are stale against live campaign state, not broken code. Left for D1.

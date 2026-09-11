@@ -36,6 +36,18 @@ from scripts import grm_a1_gpu_contrast as W
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRATION = ROOT / 'artifacts/grm_a1/gpu_contrast_registration.json'
 
+# GRM-H1: `W.main()` calls `pin_flags()`, which does `os.environ.clear()` and
+# repopulates from `environment(flags)` -- by design, because the worker
+# normally runs as a one-shot process that OWNS its environment.  Every test
+# here that drives main() therefore reshapes GRM_* and never restores it.  The
+# conftest guard still restores (no later test is mis-ruled); this declares
+# that the reshape is the code under test doing its job, so the guard does not
+# attribute it as a test-hygiene leak.  Scoped to this module, not relaxed
+# globally.
+pytestmark = pytest.mark.grm_env_owned_by_entrypoint(
+    reason='scripts/grm_a1_gpu_contrast.pin_flags() owns the process '
+           'environment (os.environ.clear() + environment(flags))')
+
 
 @pytest.fixture(scope='module')
 def registration():
@@ -60,7 +72,7 @@ def test_amendment_chain_is_sha_bound_to_the_registration():
 
 
 @pytest.mark.campaign_receipt(
-    registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..3.json')
+    registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (pins absolute /mnt/ForgeRealm/wt/grm-a1/ paths)')
 def test_amendment_input_set_wins_over_the_registration(registration):
     """The amendment's hashes override the registration's, file by file."""
     _, amendments = W.load_amendments(REGISTRATION)
@@ -75,7 +87,7 @@ def test_amendment_input_set_wins_over_the_registration(registration):
 
 
 @pytest.mark.campaign_receipt(
-    registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..3.json')
+    registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (pins absolute /mnt/ForgeRealm/wt/grm-a1/ paths)')
 def test_worker_is_excluded_from_its_own_drift_set_and_checked_separately(
         registration):
     """A self-pinned file inside its own drift set is uneditable; don't.
@@ -217,8 +229,6 @@ def test_scoring_answerable_and_controls():
 
 # --------------------------------------------------------------- the pins
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..3.json')
 def test_flags_are_pinned_after_environment_and_asserted(monkeypatch):
     """The pin must SURVIVE environment(flags), which strips every GRM_*."""
     from scripts.grm_c2_cells import environment
@@ -243,8 +253,6 @@ def test_flags_are_pinned_after_environment_and_asserted(monkeypatch):
     assert admission_rule() == 'margin_first'
 
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..3.json')
 def test_pin_failure_is_red(monkeypatch):
     """If the flag does not take, the worker refuses rather than measuring."""
     monkeypatch.setattr(W, 'FLAG_ENV', 'GRM_A1_FLAG_THAT_NOTHING_READS')
@@ -263,8 +271,6 @@ def fake_run(tmp_path_factory):
     return rc, out
 
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..3.json')
 def test_fake_run_executes_every_registered_row(fake_run):
     rc, out = fake_run
     assert rc == 0, 'structural health, not the prediction'
@@ -281,8 +287,6 @@ def test_fake_run_executes_every_registered_row(fake_run):
         assert row['worker_provenance']['sha256'] == W.sha(W.SELF_PATH)
 
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..3.json')
 def test_fake_run_single_mount_and_controls(fake_run):
     _, out = fake_run
     summary = W.read(out / 'summary.json')
@@ -293,8 +297,6 @@ def test_fake_run_single_mount_and_controls(fake_run):
     assert summary['controls_broken'] == 0
 
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..3.json')
 def test_fake_run_refuses_to_report_a_prediction(fake_run):
     """A fake run is not evidence for the registered prediction, and says so."""
     _, out = fake_run
@@ -305,8 +307,6 @@ def test_fake_run_refuses_to_report_a_prediction(fake_run):
     assert 'entity-blind' in summary['fake_note']
 
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..3.json')
 def test_fake_run_width_receipt_precedes_the_single_mount_claim(fake_run):
     """Every digest carries a measured width, and none was over 96."""
     _, out = fake_run
@@ -329,8 +329,6 @@ def test_fake_run_width_receipt_precedes_the_single_mount_claim(fake_run):
     assert measured, 'the fake run must have measured at least one digest'
 
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..3.json')
 def test_fake_run_emits_the_probes_jsonl_lead_commands_reads(fake_run):
     _, out = fake_run
     lines = [json.loads(l) for l in
@@ -342,8 +340,6 @@ def test_fake_run_emits_the_probes_jsonl_lead_commands_reads(fake_run):
 
 # ------------------------------------------------------ resume / create-only
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..3.json')
 def test_resume_after_interrupt_skips_done_rows_and_never_rewrites(tmp_path):
     """Interrupt, re-invoke, and the finished rows are untouched."""
     out = tmp_path / 'resume'
@@ -552,8 +548,6 @@ def test_runtime_frame_and_flags_source_are_declared_and_pinned():
                                                'model_snapshot'}
 
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..3.json')
 def test_dry_run_reports_ok_and_takes_no_lease(tmp_path, monkeypatch):
     """--dry-run checks everything and never reaches a lease or a row."""
     taken = []
@@ -598,8 +592,6 @@ def test_dry_run_is_red_on_a_missing_native_runtime(tmp_path):
     assert skipped[0]['detail'] == 'skipped on --fake'
 
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..3.json')
 def test_run_refuses_to_take_a_lease_when_a_precondition_is_missing(
         tmp_path, monkeypatch):
     """A1_PRECONDITION_MISSING fires BEFORE gpu_lease is ever imported."""
@@ -713,8 +705,6 @@ def test_fake_arm_uses_the_same_flags_and_environment_as_the_gpu_arm(
         loaded['monkeypatch'].undo()
 
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..3.json')
 def test_fake_rows_record_the_real_frame_and_pins(tmp_path):
     """End to end on --fake: the receipt proves the frame was really read."""
     out = tmp_path / 'frames'
@@ -729,8 +719,6 @@ def test_fake_rows_record_the_real_frame_and_pins(tmp_path):
 
 # ------------------------------------------------- resumable lease loop
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..3.json')
 def test_summary_reports_pending_and_lease_state(tmp_path):
     out = tmp_path / 'pending'
     rc = W.main(['--registration', str(REGISTRATION), '--out', str(out),
@@ -807,8 +795,6 @@ def test_node_vram_budget_is_well_above_a_mount_plan():
 
 # ------------------------------------------------------------- paging
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..3.json')
 def test_only_mounted_payloads_stay_resident_after_a_row(tmp_path):
     """After mount, device residency is the mount plan, not the corpus."""
     out = tmp_path / 'paging'
@@ -885,8 +871,6 @@ def test_is_non_fit_recognises_allocation_failures_only():
     assert not W.is_non_fit(AssertionError('wrong answer'))
 
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..3.json')
 def test_non_fit_row_is_receipted_and_the_campaign_continues(tmp_path,
                                                              monkeypatch):
     """One row OOMs; the rest still run, and the receipt carries the memory."""

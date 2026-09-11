@@ -45,7 +45,7 @@ mixed module keeps running.
 
 | Test module | Tests | Node ids | Class | Registration | Why it is a receipt |
 |---|---:|---:|---|---|---|
-| `tests/test_grm_a1_gpu_contrast.py` **(new)** | 16 | 16 | sha-bound | `artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..3.json` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
+| `tests/test_grm_a1_gpu_contrast.py` | 2 | 2 | worktree-path | `artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (pins absolute /mnt/ForgeRealm/wt/grm-a1/ paths)` | asserts the amendment pins keyed by ABSOLUTE paths inside the grm-a1 worktree; cannot pass on any other tree by construction |
 | `tests/test_grm_c2_amendment.py` | 12 | 18 | artifact-bound | `artifacts/grm_c2/registration.json + orders/GRM_C2_AMENDMENT_1.md` | reads gitignored campaign artifacts under artifacts/ that this tree does not carry complete |
 | `tests/test_grm_c2_budget_a5.py` | 15 | 28 | artifact-bound | `artifacts/grm_c2/a5/ + orders/GRM_C2_AMENDMENT_5.md` | reads gitignored campaign artifacts under artifacts/ that this tree does not carry complete |
 | `tests/test_grm_c2_epoch3.py` | 7 | 12 | sha-bound | `artifacts/grm_c2/epochs/scout-fix-2/ + orders/GRM_SCOUT_FIX_2.md` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
@@ -76,7 +76,7 @@ mixed module keeps running.
 | `tests/test_grm_scout_fix5_runner.py` | 4 | 16 | artifact-bound | `artifacts/grm_scout_fix5/registration.json + artifacts/grm_c7/r2/cells/*/checkpoint` | reads gitignored campaign artifacts under artifacts/ that this tree does not carry complete |
 | `tests/test_grm_scout_fix8_replay.py` | 5 | 5 | sha-bound | `artifacts/grm_scout_fix8/registration.json` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
 | `tests/test_grm_scout_fix8_resume.py` | 2 | 3 | sha-bound | `artifacts/grm_scout_fix8/resume_amendment_1/registration.json` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
-| **31 modules** | **178** | **246** | | | |
+| **31 modules** | **164** | **232** | | | |
 
 ## Delta from the first pass (pre-merge tree, 100 GRM modules -> 113)
 
@@ -89,15 +89,83 @@ mixed module keeps running.
 | **added** | `tests/test_grm_r1_amendment2.py` | 6 | New module. `R1_INPUT_SHA_MISMATCH: core/graft_arena.py`. |
 | **added** | `tests/test_grm_r1_amendment3.py` | 10 | New module. Same binding. |
 | **added** | `tests/test_grm_r1_amendment4.py` | 8 | New module. Same binding. |
-| **added** | `tests/test_grm_a1_gpu_contrast.py` | 16 | New module. `A1_INPUT_SHA_MISMATCH` against paths in `/mnt/ForgeRealm/wt/grm-a1/` — it binds shas in its own source worktree, so it cannot pass anywhere else. |
+| **added, then cut to 2** | `tests/test_grm_a1_gpu_contrast.py` | 16 -> 2 | Marked 16 during the re-derivation, when the module failed wholesale on `A1_INPUT_SHA_MISMATCH`. A1 amendment 4 then REBOUND the pins (`pinned inputs verified: 27`), so that binding now passes and 14 of those marks were stale. See the A1 section below. |
 | **added** | `tests/test_grm_lt1_1_preflight.py` | 8 | New module. LT1.1's own chain gate returns `BLOCKED` with `INPUT_SHA_MISMATCH` on `core/graft_arena.py`, `core/graft_repository.py`, `core/grm_alias_fold.py`. |
 | **added** | `tests/test_grm_d1_amendment3.py` | 1 | New module; one test (`test_the_host_blocker_claim_was_true_and_is_now_resolved`) asserts LT1.1's gate is `READY`. It is `BLOCKED` by the same three-file drift, so the assertion is bound to LT1.1's registration sha. |
 | **NOT marked** | `tests/test_grm_scout_fix2_capture.py` | 3 | A genuine merge-drift RED — fixed, not marked. See below. |
 
-Net: 134 -> 178 marked test functions (199 -> 246 node ids), 27 -> 31 modules.
+Net after the A1 amendment 4 re-derivation: 164 marked test functions
+(232 node ids) across 31 modules -- DOWN from 178/246, because A1 amendment 4
+rebound its pins and retired 14 marks. See the A1 section below.
 Modules that newly landed and are **clean** on this tree, needing no marks:
 `test_grm_d1_amendment1/2`, `test_grm_d1_alias_cpu`, `test_grm_lt1_1_runner`,
 `test_grm_lt1_1_resume_route`, `test_grm_scout_fix9`.
+
+### A test that pins its own worktree path is always a receipt
+
+If a test (or the script it drives) verifies shas against **absolute paths
+inside the worktree it was authored in** -- `/mnt/ForgeRealm/wt/grm-a1/...`,
+`/mnt/ForgeRealm/wt/grm-c7/...` -- it **cannot pass on any other tree**, by
+construction, no matter how the core moves or how the campaign is re-pinned.
+That is the strongest form of campaign receipt: it is bound not just to a sha
+but to a filesystem location that exists on exactly one branch. It is also the
+most durable: rebinding the campaign's pins (as A1 amendment 4 did) retires a
+sha-bound mark, but never a worktree-path one.
+
+Such a test must be marked `campaign_receipt` **in the same change that lands
+it**, not later by a hygiene pass. A seat adding one to an existing campaign
+module should mark it the way its siblings are marked; `grep campaign_receipt`
+in the file gives the registration string to reuse. The cost of not doing so is
+that the next tree-wide run reports it as a regression of whatever unrelated
+work happens to be in flight.
+
+Receipt for the rule: A1 amendment 4 added four tests to
+`tests/test_grm_a1_gpu_contrast.py` after GRM-H1's re-derivation, and they
+surfaced as four unexplained failures in the lead's next spot-check.
+
+
+## A1 amendment 4: why 16 marks became 2
+
+The lead reported four new failures in `tests/test_grm_a1_gpu_contrast.py`
+(A1 amendment 4's lease/summary tests) and asked for them to be marked like
+their 16 siblings. Reproducing each one in its own process showed that would
+have been wrong twice over, so the whole module was re-derived instead.
+
+**1. The sha binding no longer fails.** A1 amendment 4 rebound the campaign's
+pins; the worker now prints `pinned inputs verified: 27` on this tree. The
+`A1_INPUT_SHA_MISMATCH` that justified all 16 marks during the re-derivation
+is gone. Running each of the 16 alone: 3 pass outright, 2 fail on the
+worktree-path assertion, 11 fail for the reason below. Only the 2 are still
+receipts.
+
+**2. The four "new failures" were caused by this guard, not by a campaign.**
+All four -- and 12 of the 16 -- failed with `GRM_ENV_LEAK`, because
+`W.main()` calls `scripts/grm_a1_gpu_contrast.pin_flags()`, which does
+`os.environ.clear()` and repopulates from `environment(flags)`. That is
+deliberate: the worker normally runs as a one-shot process that owns its
+environment. Marking those tests `campaign_receipt` would have filed a bug in
+this guard under a label that means "not our problem" -- the exact
+mis-classification the marker exists to prevent.
+
+The fix is a second, narrower marker:
+
+```python
+pytestmark = pytest.mark.grm_env_owned_by_entrypoint(
+    reason='scripts/grm_a1_gpu_contrast.pin_flags() owns the process '
+           'environment (os.environ.clear() + environment(flags))')
+```
+
+It suppresses **attribution only**. The restore still happens, so no later
+test is mis-ruled -- proved by
+`test_grm_h1_env_isolation.py::test_entrypoint_owned_environments_are_restored_but_not_attributed`,
+with a companion test asserting the declaration does not leak to other
+modules. Declare it per module, naming the entry point; never relax the guard
+globally.
+
+Result on this module: `--campaign-receipts` goes from 11 failed / 35 passed /
+5 errors to **2 failed / 58 passed**, and the two failures are the genuine
+worktree-path receipts.
+
 
 ## Failures that are NOT receipts
 
@@ -135,7 +203,7 @@ Leakers found, across two full sweeps of the suite:
 | Test | Leak | Status |
 |---|---|---|
 | `test_grm_r1_replay.py::test_parity_barrier_stops_the_run` | `GRM_ADMISSION_RULE: unset -> 'margin_first'` | Fixed at source by R1 amendment 2; no longer leaks. |
-| `test_grm_a1_gpu_contrast.py::test_pin_failure_is_red` | `GRM_A1_FLAG_THAT_NOTHING_READS: unset -> '1'` | Attributed by the guard. Origin is `scripts/grm_a1_gpu_contrast.pin_flags()` (read-only here), which writes `os.environ` directly and raises `A1_FLAG_NOT_IN_FORCE_AFTER_PIN` before any cleanup. |
+| `test_grm_a1_gpu_contrast.py::test_pin_failure_is_red` | `GRM_A1_FLAG_THAT_NOTHING_READS: unset -> '1'` | Origin is `scripts/grm_a1_gpu_contrast.pin_flags()` (read-only here), which writes `os.environ` directly and raises `A1_FLAG_NOT_IN_FORCE_AFTER_PIN` before any cleanup. No longer attributed: the module now declares `grm_env_owned_by_entrypoint` (see the A1 section). Still restored. |
 
 That second test also calls `os.environ.clear()` inside `pin_flags()` and so
 **wiped 86 non-`GRM_` variables** — `PATH`, `HOME`, `DISPLAY` and the rest —

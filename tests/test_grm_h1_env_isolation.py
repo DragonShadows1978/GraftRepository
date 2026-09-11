@@ -179,7 +179,44 @@ def test_the_leak_was_recorded_for_attribution(grm_env_leak_record):
 
 # -- the marker itself is registered ---------------------------------------
 
+def test_entrypoint_owned_environments_are_restored_but_not_attributed(tmp_path):
+    """`grm_env_owned_by_entrypoint` suppresses attribution, NOT the restore.
+
+    `scripts/grm_a1_gpu_contrast.pin_flags()` clears and repopulates the whole
+    environment by design (it normally runs as a one-shot worker process).
+    Failing every test that drives it would be the guard mis-ruling working
+    code, so a module can declare the ownership -- but the restore must still
+    happen, or one such module poisons the rest of the run.
+    """
+    out = _run_inner(tmp_path, """
+        import os, pytest
+        pytestmark = pytest.mark.grm_env_owned_by_entrypoint(reason='proof')
+        os.environ['GRM_PREEXISTING'] = 'keepme'
+        def test_reshapes_the_environment():
+            os.environ['GRM_ADMISSION_RULE'] = 'margin_first'
+            del os.environ['GRM_PREEXISTING']
+        def test_two_sees_the_restored_environment():
+            assert 'GRM_ADMISSION_RULE' not in os.environ
+            assert os.environ.get('GRM_PREEXISTING') == 'keepme'
+    """)
+    assert out.returncode == 0, out.stdout
+    assert "2 passed" in out.stdout, out.stdout
+    assert "GRM_ENV_LEAK" not in out.stdout
+
+
+def test_the_ownership_marker_does_not_leak_to_other_modules(tmp_path):
+    """It is per-module opt-in; an undeclared module is still policed."""
+    out = _run_inner(tmp_path, """
+        import os
+        def test_undeclared_module_still_fails():
+            os.environ['GRM_ADMISSION_RULE'] = 'margin_first'
+    """)
+    assert out.returncode != 0, out.stdout
+    assert "GRM_ENV_LEAK" in out.stdout
+
+
 def test_campaign_receipt_marker_is_registered(pytestconfig):
     names = pytestconfig.getini("markers")
     assert any(n.startswith("campaign_receipt(") for n in names), names
     assert any(n.startswith("grm_env_leak_expected") for n in names), names
+    assert any(n.startswith("grm_env_owned_by_entrypoint(") for n in names), names

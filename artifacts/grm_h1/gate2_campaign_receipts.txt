@@ -1,3 +1,2 @@
-ERROR tests/test_grm_lt1_amendment4.py::test_actual_attempt_clears_original_failure_without_changing_pick
-176 failed, 2 passed, 2309 deselected, 2 warnings, 68 errors in 59.00s
+167 failed, 2 passed, 2377 deselected, 2 warnings, 63 errors in 59.93s
 sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

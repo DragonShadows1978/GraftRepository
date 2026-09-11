@@ -97,6 +97,16 @@ def pytest_configure(config):
         "grm_env_leak_expected: this test deliberately leaves a GRM_* "
         "variable set; the isolation fixture restores it but does not fail "
         "the test. Used only to prove the fixture.")
+    config.addinivalue_line(
+        "markers",
+        "grm_env_owned_by_entrypoint(reason=...): this test drives a "
+        "production entry point that OWNS the process environment (it calls "
+        "os.environ.clear() and repopulates, by design, because it normally "
+        "runs as a one-shot worker process). The guard still RESTORES, so no "
+        "later test is mis-ruled, but it does not attribute a leak: the "
+        "environment reshape is the code under test doing its job, not a "
+        "test forgetting to clean up. Declare it once per module, with the "
+        "entry point named.")
 
 
 def _requested(config):
@@ -275,6 +285,9 @@ def pytest_runtest_call(item):
     _LAST_LEAK[item.nodeid] = list(leaks)
 
     if item.get_closest_marker("grm_env_leak_expected") is not None:
+        return
+    if item.get_closest_marker("grm_env_owned_by_entrypoint") is not None:
+        # The restore above already happened; the reshape is by design.
         return
     if outcome.excinfo is not None:
         # Already failing on its own terms; that receipt is the useful one,

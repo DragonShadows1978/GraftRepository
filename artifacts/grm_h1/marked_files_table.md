@@ -1,6 +1,6 @@
 | Test module | Tests | Node ids | Class | Registration | Why it is a receipt |
 |---|---:|---:|---|---|---|
-| `tests/test_grm_a1_gpu_contrast.py` **(new)** | 16 | 16 | sha-bound | `artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..3.json` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
+| `tests/test_grm_a1_gpu_contrast.py` | 2 | 2 | worktree-path | `artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json (pins absolute /mnt/ForgeRealm/wt/grm-a1/ paths)` | asserts the amendment pins keyed by ABSOLUTE paths inside the grm-a1 worktree; cannot pass on any other tree by construction |
 | `tests/test_grm_c2_amendment.py` | 12 | 18 | artifact-bound | `artifacts/grm_c2/registration.json + orders/GRM_C2_AMENDMENT_1.md` | reads gitignored campaign artifacts under artifacts/ that this tree does not carry complete |
 | `tests/test_grm_c2_budget_a5.py` | 15 | 28 | artifact-bound | `artifacts/grm_c2/a5/ + orders/GRM_C2_AMENDMENT_5.md` | reads gitignored campaign artifacts under artifacts/ that this tree does not carry complete |
 | `tests/test_grm_c2_epoch3.py` | 7 | 12 | sha-bound | `artifacts/grm_c2/epochs/scout-fix-2/ + orders/GRM_SCOUT_FIX_2.md` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
@@ -31,4 +31,4 @@
 | `tests/test_grm_scout_fix5_runner.py` | 4 | 16 | artifact-bound | `artifacts/grm_scout_fix5/registration.json + artifacts/grm_c7/r2/cells/*/checkpoint` | reads gitignored campaign artifacts under artifacts/ that this tree does not carry complete |
 | `tests/test_grm_scout_fix8_replay.py` | 5 | 5 | sha-bound | `artifacts/grm_scout_fix8/registration.json` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
 | `tests/test_grm_scout_fix8_resume.py` | 2 | 3 | sha-bound | `artifacts/grm_scout_fix8/resume_amendment_1/registration.json` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
-| **31 modules** | **178** | **246** | | | |
+| **31 modules** | **164** | **232** | | | |
