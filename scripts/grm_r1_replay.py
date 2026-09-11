@@ -77,19 +77,37 @@ ARM_RULE = {'off': None, 'on': 'margin_first'}
 TRANSITIONS = ('unchanged_correct', 'unchanged_wrong', 'correct_to_wrong',
                'wrong_to_correct', 'abstain_gained', 'abstain_lost')
 
+#: Paths an amendment may bind that the registration could not list, because
+#: they did not exist when it was written.  Strictly the amendment's own
+#: builder: an amendment can never smuggle in a new core or scoring source.
+REBINDABLE_NEW = ('scripts/grm_r1_amend_1.py',)
+
 
 # --------------------------------------------------------------------------
 # registration
 # --------------------------------------------------------------------------
 
-def verify():
+def verify(root=None):
     """Registration + every sha-bound source, cells file and cohort contract."""
     need(REG.is_file(), 'R1_REGISTRATION_MISSING')
     need(sha(REG) == REG.with_suffix('.sha256').read_text().split()[0],
          'R1_REGISTRATION_SHA_MISMATCH')
     r = read(REG)
     need(r['schema'] == 'grm.r1.replay.v1', 'R1_SCHEMA_MISMATCH')
-    for path, digest in r['inputs'].items():
+    inputs = dict(r['inputs'])
+    # An amendment may RE-BIND a source whose hash legitimately changed (the
+    # worker itself, when the amendment's fix lives in it).  The re-bind is
+    # explicit, sha-bound and scoped: it can only replace a hash for a path
+    # the registration already listed, never add or drop one.  Every other
+    # input keeps its original registered hash and still fails closed.
+    a = amendment(root)
+    if a:
+        for path, digest in a.get('rebound_inputs', {}).items():
+            need(path in inputs or path in REBINDABLE_NEW,
+                 'R1_AMENDMENT_REBIND_OUT_OF_SCOPE: ' + path)
+            inputs[path] = digest
+        r['amendment_1_sha256'] = a['_self_sha256']
+    for path, digest in inputs.items():
         p = Path(path) if Path(path).is_absolute() else ROOT / path
         need(sha(p) == digest, 'R1_INPUT_SHA_MISMATCH: ' + path)
     need(sha(CELLS) == r['cells_sha256'], 'R1_CELLS_SHA_MISMATCH')
@@ -280,6 +298,74 @@ def open_arm(c, session, flags, loaded):
     return GraftRepository(*ctor_args, **ctor_kwargs), loaded
 
 
+def device_memory_mib():
+    """Point-sample of device framebuffer use, in MiB, or None off-GPU.
+
+    Prior art: FIX8 ``grm_scout_fix8_resume.parse_memory`` (GRM, 2026) and
+    the NVIDIA nvidia-smi XML framebuffer report (docs.nvidia.com, accessed
+    2026-09-09).  TAKEN: read total FB used, which conservatively includes
+    unattributed memory.  This is a POINT SAMPLE, never a peak, and it is a
+    receipt field only -- nothing gates on it.
+    """
+    import subprocess
+    try:
+        proc = subprocess.run(
+            ['nvidia-smi', '--query-gpu=memory.used',
+             '--format=csv,noheader,nounits'],
+            capture_output=True, text=True, timeout=5, check=False)
+        if proc.returncode != 0:
+            return None
+        return int(proc.stdout.strip().splitlines()[0])
+    except Exception:                        # noqa: BLE001 -- receipt only
+        return None
+
+
+def release_arm(repo):
+    """Return this arm's device memory before the next arm/cell allocates.
+
+    THE R1 AMENDMENT-1 FIX.  ``GraftRepository.close()`` releases only the
+    NATIVE STORE (``core/graft_repository.py:368-372``); it never touches the
+    arena.  But ``_graft_block`` documents that "Grafts are device-resident
+    tc tensors", so every ``grafts[i]['h']`` harvested by an arm stays pinned
+    in VRAM after ``close()``.  With a fresh arena per arm and two arms per
+    cell, the batch's resident payload count is CUMULATIVE across cells --
+    which is exactly what the lead's R1 receipts show (243 node payloads
+    across 12 arm-passes before ``cudaMalloc failed: out of memory``).
+
+    The release uses the repository pager's own idiom -- ``g['h'] = None``
+    (``_free_retired`` / ``_page`` / ``_mark_payload_missing``) -- so nothing
+    novel is invented, followed by the engine's ``tc.empty_cache()`` to
+    return the freed blocks to the driver.  Persisted node TEXT, metadata and
+    lineage are untouched: only the device payload is dropped, and the
+    checkpoint on disk remains the source of truth for the next arm.
+    """
+    freed = 0
+    arena = getattr(repo, 'arena', None)
+    if arena is not None:
+        try:
+            arena.reset_live_cache()         # drops self.caches (live KV)
+        except Exception:                    # noqa: BLE001 -- best effort
+            pass
+        arena._deferred_route_keys = {}
+        for g in getattr(arena, 'grafts', []) or []:
+            if g.get('h') is not None:
+                g['h'] = None                # pager idiom: device payload out
+                freed += 1
+    try:
+        repo.close()                         # native store (its own scope)
+    except Exception:                        # noqa: BLE001 -- best effort
+        pass
+    pooled = False
+    try:
+        import core.graft_arena as ga
+        if hasattr(ga.tc, 'empty_cache'):
+            ga.tc.empty_cache()
+            pooled = True
+    except Exception:                        # noqa: BLE001 -- best effort
+        pass
+    return {'payloads_freed': freed, 'pool_emptied': pooled}
+
+
 def run_arm(repo, c, descriptor, flags, arm, session, process_id):
     """One arm: the PRODUCTION ladder, observed exactly as C2 observed it."""
     from scripts import grm_e2e_session as e2e
@@ -348,6 +434,34 @@ def run_arm(repo, c, descriptor, flags, arm, session, process_id):
             'registration_sha256': sha(REG)}
 
 
+class _FakeArena:
+    """Minimal arena stand-in so the CPU gate exercises the real release path.
+
+    It holds device-payload-shaped entries (``{'h': ...}``) exactly as the
+    real arena does, so ``release_arm`` walks the same branches and its
+    ``payloads_freed`` count is a real count, not a hard-coded 0.
+    """
+
+    def __init__(self, payloads=3):
+        self.grafts = [{'h': object(), 'text': f'node {i}'}
+                       for i in range(payloads)]
+        self.reset_calls = 0
+
+    def reset_live_cache(self):
+        self.reset_calls += 1
+
+
+class _FakeRepo:
+    """Repository stand-in for the CPU gate; ``close`` is a real no-op close."""
+
+    def __init__(self, payloads=3):
+        self.arena = _FakeArena(payloads)
+        self.closed = False
+
+    def close(self):
+        self.closed = True
+
+
 def run_cell(c, destination, loaded, fake=False):
     """Both arms of one cell from the SAME recorded checkpoint."""
     from scripts.grm_c2_cells import flags_for
@@ -357,18 +471,32 @@ def run_cell(c, destination, loaded, fake=False):
     process_id = str(uuid.uuid4())
     arms = {}
     pins = {}
+    # AMENDMENT 1: device-memory receipt, so the NEXT run shows whether peak
+    # is per-cell or cumulative.  Point samples, never peaks; nothing gates
+    # on them.  ``None`` off-GPU (the fake path) rather than a fabricated 0.
+    device = {'before_cell_mib': None if fake else device_memory_mib(),
+              'arms': {}, 'after_cell_mib': None}
     for arm in ARMS:
         pins[arm] = pin_rule(arm)
         session = destination / 'sessions' / c['id'] / arm
         if fake:
             arms[arm] = fake_arm(c, descriptor, arm, session)
+            device['arms'][arm] = {'before_mib': None, 'after_mib': None,
+                                   'released': release_arm(_FakeRepo())}
         else:
+            before = device_memory_mib()
             repo, loaded = open_arm(c, session, flags, loaded)
             try:
                 arms[arm] = run_arm(repo, c, descriptor, flags, arm,
                                     session, process_id)
             finally:
-                repo.close()
+                # Release BEFORE the next arm allocates, not at cell end:
+                # otherwise arm ON runs on top of arm OFF's resident payloads.
+                released = release_arm(repo)
+            device['arms'][arm] = {'before_mib': before,
+                                   'after_mib': device_memory_mib(),
+                                   'released': released}
+    device['after_cell_mib'] = None if fake else device_memory_mib()
     # PARITY BARRIER (RD1 A0 shape): arm OFF must reproduce the FIX-6 recorded
     # plan byte-for-byte.  A mismatch means the replayed frame is NOT the
     # recorded frame, so the contrast would be meaningless: it is a RED
@@ -378,7 +506,7 @@ def run_cell(c, destination, loaded, fake=False):
     parity = off_bytes == recorded_bytes
     on_bytes = json.dumps(arms['on']['rank_plan'], separators=(',', ':')).encode()
     value = {'cell': c, 'arms': arms, 'process_id': process_id,
-             'rule_pins': pins,
+             'rule_pins': pins, 'device_memory': device,
              'off_plan_parity': parity,
              'off_plan_bytes_hex': off_bytes.hex(),
              'recorded_off_plan_bytes_hex': recorded_bytes.hex(),
@@ -517,26 +645,129 @@ def fake_arm(c, descriptor, arm, session):
 # campaign: leases, reservations, resume
 # --------------------------------------------------------------------------
 
+def amendment(root=None):
+    """Load amendment 1 if present: sha-bound, create-only, never inferred.
+
+    Prior art: GRM C7/C2 sha-bound amendment chains (GRM contributors, 2026).
+    TAKEN verbatim: an amendment is a SEPARATE create-only file bound to the
+    registration hash, which widens scope explicitly and never edits the
+    immutable registration.  OURS: the "re-arm one FAILED batch for its
+    MISSING cells only, retaining completed receipts" scope.
+    """
+    root = Path(root) if root is not None else OUT
+    path = root / 'amendment_1.json'
+    if not path.is_file():
+        # An amendment binds the CAMPAIGN (registration + sources), not a
+        # particular receipt directory.  A gate or test pointed at an
+        # alternate --out still runs the amended worker, so it must see the
+        # canonical amendment; otherwise the re-bound source hash would fail
+        # closed against the pre-amendment registration.
+        path = OUT / 'amendment_1.json'
+        if not path.is_file():
+            return None
+        root = OUT
+    checksum = path.with_suffix('.sha256')
+    need(checksum.is_file(), 'R1_AMENDMENT_SHA_MISSING')
+    need(sha(path) == checksum.read_text().split()[0],
+         'R1_AMENDMENT_SHA_MISMATCH')
+    a = read(path)
+    need(a['schema'] == 'grm.r1.amendment.v1', 'R1_AMENDMENT_SCHEMA_MISMATCH')
+    need(a['registration_sha256'] == sha(REG), 'R1_AMENDMENT_CHAIN_MISMATCH')
+    need(a['order_sha256'] == sha(ROOT / 'orders/GRM_R1_MARGIN_FIRST_REPLAY.md'),
+         'R1_AMENDMENT_ORDER_MISMATCH')
+    a['_self_sha256'] = sha(path)
+    a['_path'] = str(path)
+    return a
+
+
+def resume_scope(r, root, a=None):
+    """Which cells of a re-armed batch still need running, and which are kept.
+
+    A completed cell receipt is a VALID create-only receipt: it is retained
+    byte-for-byte and never re-run.  Only cells with no receipt are re-issued.
+    """
+    explicit = a is not None
+    if a is None:
+        a = amendment(root)
+    scope = {}
+    if not a:
+        return scope
+    root = Path(root) if root is not None else OUT
+    # An amendment's retain/reissue lists describe ONE receipt root: the one
+    # it was built against.  A gate or test pointed at a different --out is
+    # running the amended WORKER (so the re-bound source hashes apply) but
+    # not the amended CAMPAIGN, so there is no re-arm scope to honour there.
+    # Passing the amendment explicitly overrides this, for fixtures that
+    # deliberately construct a matching state.
+    if not explicit and a.get('_path') and Path(a['_path']).parent != root:
+        return scope
+    for batch_id, entry in a['rearm'].items():
+        need(batch_id in r['batches'], 'R1_AMENDMENT_UNKNOWN_BATCH: ' + batch_id)
+        d = root / 'gpu' / batch_id
+        retained, missing = [], []
+        for cell_id in r['batches'][batch_id]:
+            p = d / 'cells' / (cell_id + '.json')
+            if p.exists():
+                row = read(p)
+                need(row['registration_sha256'] == sha(REG),
+                     'R1_RETAINED_RECEIPT_BINDING_MISMATCH: ' + cell_id)
+                need(row['off_plan_parity'],
+                     'R1_RETAINED_RECEIPT_NOT_PARITY_CLEAN: ' + cell_id)
+                retained.append(cell_id)
+            else:
+                missing.append(cell_id)
+        # The amendment states what it expects to find.  If the receipts on
+        # disk disagree with it, that is a RED stop, not a silent re-scope:
+        # the amendment was written against a state that no longer holds.
+        need(retained == entry['retain'],
+             'R1_AMENDMENT_RETAIN_MISMATCH: ' + batch_id
+             + ' on_disk=' + str(retained) + ' amendment=' + str(entry['retain']))
+        need(missing == entry['reissue'],
+             'R1_AMENDMENT_REISSUE_MISMATCH: ' + batch_id
+             + ' on_disk=' + str(missing) + ' amendment=' + str(entry['reissue']))
+        scope[batch_id] = {'retain': retained, 'reissue': missing,
+                           'lease_seconds': entry['lease_seconds']}
+    return scope
+
+
 def campaign_state(r, root):
-    """Charged seconds so far; fail closed on orphans and failed batches."""
+    """Charged seconds so far; fail closed on orphans and failed batches.
+
+    A FAILED batch normally closes the campaign (``R1_FAILED_CAMPAIGN_STOP``).
+    Amendment 1 UN-CLOSES exactly the batches it re-arms, and nothing else:
+    an unlisted FAILED batch still stops everything.
+    """
     gpu = root / 'gpu'
     charged = 0.0
     complete = []
+    a = amendment(root)
+    # Un-closing is CAMPAIGN state, so it applies only to the receipt root the
+    # amendment was built against -- the same rule resume_scope uses.  A gate
+    # or test pointed at a different --out gets the unamended fail-closed
+    # behaviour, which is what it is there to check.
+    if a and a.get('_path') and Path(a['_path']).parent != Path(root):
+        a = None
+    rearmed = set(a['rearm']) if a else set()
     if not gpu.exists():
         return charged, complete
     need(all(p.name in r['batches'] and p.is_dir() for p in gpu.iterdir()),
          'R1_UNKNOWN_BATCH_RECEIPT')
     for p in sorted(gpu.glob('*/reservation.json')):
-        need(p.with_name('controller.json').exists(),
+        need(p.with_name('controller.json').exists()
+             or p.parent.name in rearmed,
              'R1_ORPHAN_RESERVATION_STOP: ' + p.parent.name)
     for p in sorted(gpu.glob('*/controller.json')):
         controller = read(p)
         need(controller['registration_sha256'] == sha(REG),
              'R1_RESULT_BINDING_MISMATCH: ' + p.parent.name)
-        need(controller['status'] == 'COMPLETE',
-             'R1_FAILED_CAMPAIGN_STOP: ' + p.parent.name)
+        # The failed batch's charge is REAL and stays on the books; only its
+        # campaign-stopping effect is lifted, and only for a re-armed batch.
         charged += float(controller['charged_seconds'])
-        complete.append(p.parent.name)
+        if controller['status'] == 'COMPLETE':
+            complete.append(p.parent.name)
+        else:
+            need(p.parent.name in rearmed,
+                 'R1_FAILED_CAMPAIGN_STOP: ' + p.parent.name)
     return charged, complete
 
 
@@ -557,16 +788,20 @@ def batch(batch_id, fake=False, root=None):
     returns; a create-only ``mkdir(exist_ok=False)`` makes a half-written
     batch fail closed rather than silently re-run (C7 no-retry discipline).
     """
-    r = verify()
     root = Path(root) if root is not None else OUT
+    r = verify(root)
     need(batch_id in r['batches'], 'R1_UNKNOWN_BATCH: ' + str(batch_id))
     destination = root / 'gpu' / batch_id
+    scope = resume_scope(r, root).get(batch_id)
     if (destination / 'controller.json').exists():
         controller = read(destination / 'controller.json')
-        need(controller['status'] == 'COMPLETE',
-             'R1_FAILED_CAMPAIGN_STOP: ' + batch_id)
-        print(json.dumps({'status': 'ALREADY_COMPLETE', 'batch': batch_id}))
-        return 0
+        if controller['status'] == 'COMPLETE':
+            print(json.dumps({'status': 'ALREADY_COMPLETE', 'batch': batch_id}))
+            return 0
+        # A FAILED batch is re-issuable ONLY under a matching amendment, and
+        # only for the cells that have no receipt.  Its old controller is
+        # preserved under an attempt name; receipts are never overwritten.
+        need(scope is not None, 'R1_FAILED_CAMPAIGN_STOP: ' + batch_id)
     owner = root / 'replay.active'
     owner.parent.mkdir(parents=True, exist_ok=True)
     handle = os.open(owner, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
@@ -577,25 +812,48 @@ def batch(batch_id, fake=False, root=None):
         index = r['batch_ids'].index(batch_id)
         for prior in r['batch_ids'][:index]:
             need(prior in complete, 'R1_PRIOR_BATCH_INCOMPLETE: ' + prior)
-        lease = int(r['batch_lease_seconds'][batch_id])
+        attempt = 1
+        if scope is None:
+            lease = int(r['batch_lease_seconds'][batch_id])
+        else:
+            lease = int(scope['lease_seconds'])
+            while (destination / f'controller_attempt_{attempt}.json').exists():
+                attempt += 1
         need(charged + lease <= r['gpu_cap_seconds'], 'R1_GPU_BUDGET_RAIL')
         need(shutil.disk_usage(ROOT).free >= r['free_space_min_bytes'],
              'R1_FREE_SPACE_BELOW_MINIMUM')
-        destination.mkdir(parents=True, exist_ok=False)
-        write(destination / 'reservation.json',
-              {'seconds': lease, 'batch': batch_id,
-               'registration_sha256': sha(REG)})
+        if scope is None:
+            destination.mkdir(parents=True, exist_ok=False)
+            write(destination / 'reservation.json',
+                  {'seconds': lease, 'batch': batch_id,
+                   'registration_sha256': sha(REG)})
+        else:
+            # Archive the prior attempt's receipts create-only; the RETAINED
+            # cell receipts are left exactly where they are, byte-for-byte.
+            attempt += 1
+            for name in ('controller.json', 'reservation.json'):
+                p = destination / name
+                if p.exists():
+                    p.rename(destination
+                             / f'{p.stem}_attempt_{attempt - 1}{p.suffix}')
+            write(destination / 'reservation.json',
+                  {'seconds': lease, 'batch': batch_id, 'attempt': attempt,
+                   'amendment': 'amendment_1',
+                   'registration_sha256': sha(REG)})
         started = None
         elapsed = 0.0
         status = 'FAILED'
         error = None
         loaded = None
         red = []
+        ids = []
         try:
             # FIX-6 state contract: environment(flags) strips every ambient
             # GRM_ var, so the rule is pinned AFTER it, per arm, in pin_rule.
             from scripts.grm_c2_cells import environment, flags_for
-            ids = r['batches'][batch_id]
+            ids = (r['batches'][batch_id] if scope is None
+                   else list(scope['reissue']))
+            need(ids, 'R1_NOTHING_TO_REISSUE: ' + batch_id)
             sides = {cell_by_id(i)['side'] for i in ids}
             need(len(sides) == 1, 'R1_MIXED_SIDE_BATCH: ' + batch_id)
             env = environment(flags_for(sides.pop()))
@@ -628,6 +886,10 @@ def batch(batch_id, fake=False, root=None):
                    'charged_seconds': (elapsed if status == 'COMPLETE'
                                        else max(float(lease), elapsed)),
                    'reservation_seconds': lease, 'fake': bool(fake),
+                   'attempt': attempt,
+                   'amendment': None if scope is None else 'amendment_1',
+                   'cells_run': list(ids),
+                   'cells_retained': [] if scope is None else list(scope['retain']),
                    'registration_sha256': sha(REG)})
             if not fake:
                 time.sleep(30)  # foreground cooldown, outside the lease
@@ -667,8 +929,8 @@ def dry_run():
 
 
 def summary(root=None):
-    r = verify()
     root = Path(root) if root is not None else OUT
+    r = verify(root)
     values = {}
     complete = True
     charged = 0.0

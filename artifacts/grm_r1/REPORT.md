@@ -172,3 +172,124 @@ Every policy decision is computed by the unmodified `core/grm_admission.py`.
 No process was killed or signalled. No GPU lease was taken, no GPU device was
 touched, and GPT-OSS-20B was never loaded. Every Bash call ran foreground and
 completed; nothing was backgrounded. No git command was run by this seat.
+
+---
+
+# Amendment 1 — device-memory release + re-arm batch R1
+
+## The correction the lead should read first
+
+The amendment brief described batch R1 as "completed 7 of 8 cells ... the
+8th cell's second arm died", i.e. **one** missing cell. The receipts say
+**5 completed and 3 missing**, and I built the amendment from the receipts:
+
+* `gpu/R1/cells/` holds **5** receipts, not 7.
+* `gpu/R1/sessions/` holds **6** directories, each with both `off` and `on`.
+* `batch_R1.log` holds **12** probe lines — 11 clean, the 12th carrying the OOM.
+
+Cells 1–5 completed both arms. Cell 6
+(`defaults-census-restart-1--e2e_t22_mira_seal`) finished arm OFF and died on
+arm ON — hence two session dirs but no receipt. Cells 7–8
+(`longhistory-1--lh_t013`, `lh_t016`) never started. Re-arming for one cell
+would have left two cells silently unrun, and the campaign would have read as
+complete while 2 of 31 executions were missing. `resume_scope()` now
+cross-checks the amendment against disk and STOPS on disagreement.
+
+## Growth diagnosis, with numbers
+
+`GraftRepository.close()` (`core/graft_repository.py:368-372`) releases only
+the **native store**; it never touches the arena. `ArenaCache._graft_block`
+(`core/graft_arena.py:2351-2356`) says in its own docstring that "Grafts are
+device-resident tc tensors", so every `grafts[i]['h']` an arm harvests is
+VRAM that survives `close()`. A fresh arena per arm, two arms per cell, one
+process per batch ⇒ residency accumulates across the batch:
+
+| pass | cell / arm | turn | nodes | cumulative |
+|---|---|---|---|---|
+| 1–2 | census-1 t13 off, on | 13 | 16, 16 | 32 |
+| 3–4 | census-1 t16 off, on | 16 | 19, 19 | 70 |
+| 5–6 | census-2 t22 off, on | 22 | 26, 26 | 122 |
+| 7–8 | census-restart-0 t13 off, on | 13 | 16, 16 | 154 |
+| 9–10 | census-restart-0 t16 off, on | 16 | 19, 19 | 192 |
+| 11 | census-restart-1 t22 **off** | 22 | 26 | **218** |
+| 12 | census-restart-1 t22 **on** | 22 | 25 → **OOM** | — |
+
+218 payloads resident when the 12th pass tried to harvest ~26 more. Pass 12
+shows `nodes: 25` with `deposit_ms: 0.0` — it died mid-harvest. Corroborating
+signal: the ON arm consistently ran ~7.0 s against the OFF arm's ~10.2–11.1 s,
+because ON reused payloads OFF had already pinned.
+
+## The fix
+
+`release_arm()` runs in each arm's `finally`, **before the next arm
+allocates** (not at cell end, which would still let ON pile onto OFF):
+
+1. `arena.reset_live_cache()` — drops the live KV;
+2. `g['h'] = None` per graft — the pager's OWN idiom, used verbatim by
+   `_free_retired`, `_page`, `_mark_payload_missing`;
+3. `repo.close()` — the native store, unchanged;
+4. `tensor_cuda.empty_cache()` — returns blocks to the driver.
+
+Node text, metadata and lineage are untouched; the on-disk checkpoint stays
+the source of truth. Each cell now records `device_memory`: MiB before/after
+each arm and each cell, plus `payloads_freed`. Point samples, never peaks;
+nothing gates on them; `None` off-GPU rather than a fabricated `0`.
+
+**I did not switch to a child process per cell.** The in-process release is
+sufficient in principle and preserves one model load per batch. The honest
+position: that is a mechanism argument, and the `device_memory` receipts on
+the next run are what will actually settle it. If peaks still climb, the
+child-process route remains open and the estimates must be recomputed for a
+per-cell model load.
+
+## Scope and budget
+
+* Re-arms **only** batch R1, and within it **only** the 3 cells with no
+  receipt. The 5 completed receipts are retained byte-for-byte, never re-run
+  and never rewritten; a test asserts byte equality across a re-issue.
+* The prior attempt's controller and reservation are archived as
+  `controller_attempt_1.json` / `reservation_attempt_1.json`.
+* R2–R5 unchanged: the fix removes cross-cell accumulation rather than
+  changing per-cell cost, so the registered estimates stand.
+* New R1 lease **134 s**, measured — max both-arm wall (18.12 s) over R1's
+  own retained receipts × 3 cells + one model load + 60 s headroom.
+* The failed attempt's **263 s is not refunded**. Campaign total
+  263 + 134 + 794 = **1191 s = 0.331 GPU-h**, under the 1.0 GPU-h cap.
+* Amendment sha `fef08f656af51ef8e46431090f05e69c8c0ce8c9e13a0afcfd9f944d4a781683`,
+  bound to registration `b02593ec…a56cf5` and to the order file.
+
+## What the amendment deliberately does NOT relax
+
+* It un-closes **only** batch R1. Any other FAILED batch still stops the
+  whole campaign — a test asserts this.
+* `rebound_inputs` can only replace a hash for a path the registration
+  already listed (plus the amendment's own builder). A test asserts an
+  amendment cannot introduce a new core or scoring source, and another
+  asserts the un-rebound inputs still fail closed.
+* The prediction, the verdict rule and the parity barrier are unchanged.
+
+## Amendment prior art
+
+* **GRM C7 / C2 sha-bound amendment chains** (GRM contributors, 2026) —
+  TAKEN verbatim: an amendment is a separate create-only file bound to the
+  registration hash, widening scope explicitly, never editing the immutable
+  registration; the prior attempt is archived, not overwritten.
+* **GRM FIX8 `grm_scout_fix8_resume`** (GRM, 2026) — TAKEN: the shape of a
+  registered successor to a single OOM-failed batch, and the nvidia-smi
+  framebuffer probe (NVIDIA nvidia-smi XML/query docs, accessed 2026-09-09).
+  The lead notes C7 FIX-8 F5 hit this same class yesterday.
+* **The repository pager's own free idiom** (`g['h'] = None`, GRM, 2026) —
+  TAKEN verbatim rather than inventing a release routine.
+* **OURS**: the arena-payload release between arms, the per-cell device
+  probe receipt, and the "retain completed cells, re-issue only the missing
+  ones, and STOP if disk disagrees" scope. **No prior art known to me** for
+  that exact composition. Reference-counted / arena allocator reuse is
+  ordinary systems practice and I claim no novelty for the idea of freeing
+  what you allocated. **No new algorithm.**
+
+## Process safety (amendment 1)
+
+Nothing killed or signalled. No GPU lease taken and no GPU work run; the only
+device interaction was a read-only `nvidia-smi --query-gpu=memory.used` point
+sample (327 MiB, card idle), which allocates nothing. Every Bash call
+foreground and completed. No git command run.

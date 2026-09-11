@@ -1,72 +1,87 @@
-# GRM-R1 margin-first regression replay -- LEAD COMMANDS
+# GRM-R1 margin-first regression replay -- LEAD COMMANDS (amendment 1)
 # Seat: Opus 5 (opus-max).  The seat did NOT touch the GPU and did NOT run
 # GPT-OSS-20B.  Everything below is for the LEAD to run under the GPU lease.
 #
 # Registration : artifacts/grm_r1/registration.json
-# sha256       : b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5
-# Cohort       : 31 execution cells, 9 distinct C2 question ids
-# Budget       : 1057 s reserved = 0.2936 GPU-h, cap 3600 s = 1.0 GPU-h
-# Lease        : /tmp/forge-gpu.lock, acquired per batch by the worker itself
-#                (scripts/grm_cmc1_gpu_arms.gpu_lease, imported not forked)
-# Cooldown     : 30 s foreground, after the lease releases, inside the worker
+#   sha256     : b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5
+# Amendment 1  : artifacts/grm_r1/amendment_1.json
+#   sha256     : fef08f656af51ef8e46431090f05e69c8c0ce8c9e13a0afcfd9f944d4a781683
 #
-# Run every command from /mnt/ForgeRealm/wt/grm-r1 (the worktree root).
-# Run them FOREGROUND and IN ORDER.  Do not parallelise: the worker enforces
-# one owner (O_EXCL artifacts/grm_r1/replay.active) and refuses to start a
-# batch while an earlier one is incomplete.
+# WHY AMENDMENT 1: batch R1 died with cudaMalloc OOM at turn 22.  Cause:
+# GraftRepository.close() releases only the NATIVE STORE; the arena's
+# device-resident grafts[i]['h'] payloads survive it, so resident payloads
+# accumulated ACROSS cells in one batch process (218 node payloads resident
+# when the 12th arm-pass harvested 26 more).  Fix: release_arm() drops them
+# with the pager's own g['h']=None idiom + tensor_cuda.empty_cache() BEFORE
+# the next arm allocates, and every cell now records a device_memory probe.
+#
+# STATE ON DISK (verified, not assumed): batch R1 has 5 completed cell
+# receipts and 3 missing cells.  NOTE: this differs from the "7 of 8 / one
+# missing" figure in the amendment brief -- the receipts and batch_R1.log
+# agree on 5 and 3.  The amendment was built from the receipts.
+#
+# Run every command from /mnt/ForgeRealm/wt/grm-r1.  Foreground, in order.
 
 # ---------------------------------------------------------------- preflight
-# Verifies the registration, every sha-bound source, all 31 checkpoints and
-# their 614 payload/manifest files.  NO GPU, no model load.
+# Verifies the registration, the amendment chain, every sha-bound source
+# (including the re-bound worker), all 31 checkpoints and their 614 files.
 python3 scripts/grm_r1_replay.py --dry-run
+# Expect: "status": "READY_FOR_LEAD", "gpu_executed": false.
 
-# Expect: "status": "READY_FOR_LEAD", "gpu_executed": false,
-#         31 cells each with off_plan != on_plan and an estimate.
+# --------------------------------------------------- R1 re-issue (3 cells)
+# Runs ONLY the 3 cells with no receipt:
+#     fix6-replay-defaults-census-restart-1--e2e_t22_mira_seal
+#     fix6-replay-defaults-longhistory-1--lh_t013
+#     fix6-replay-defaults-longhistory-1--lh_t016
+# The 5 completed receipts are RETAINED byte-for-byte and are NOT re-run.
+# The prior attempt's controller/reservation are archived as
+# controller_attempt_1.json / reservation_attempt_1.json, never overwritten.
+# New lease 134 s (measured: max both-arm wall 18.12 s over R1's own retained
+# receipts, x3 cells, + one model load + 60 s headroom).
+python3 scripts/grm_r1_replay.py --batch R1
 
-# ------------------------------------------------------------------- batches
-# Each batch loads GPT-OSS-20B ONCE and runs both arms of each of its cells.
-# The worker acquires the GPU lease itself (wait=0: it fails fast if the lock
-# is held -- re-run it later, never clear another process's lock).
-python3 scripts/grm_r1_replay.py --batch R1     # 8 cells, defaults, lease 263 s
+# ------------------------------------------------------------ R2..R5 (new)
+# Unchanged by the amendment: the release fix removes cross-cell accumulation
+# rather than changing per-cell cost, so the registered estimates stand.
 python3 scripts/grm_r1_replay.py --batch R2     # 5 cells, defaults, lease 194 s
 python3 scripts/grm_r1_replay.py --batch R3     # 8 cells, profile,  lease 238 s
 python3 scripts/grm_r1_replay.py --batch R4     # 8 cells, profile,  lease 238 s
 python3 scripts/grm_r1_replay.py --batch R5     # 2 cells, profile,  lease 124 s
 
-# ------------------------------------------------------------------- resume
-# Resume is the SAME command.  A batch whose controller says COMPLETE prints
-# {"status":"ALREADY_COMPLETE"} and does nothing -- it is never re-executed.
-# A batch that died between its reservation and its controller leaves an
-# ORPHAN RESERVATION and the campaign STOPS (R1_ORPHAN_RESERVATION_STOP):
-# that is deliberate.  Do NOT delete the reservation to get moving; a killed
-# batch is a result.  Report it, and the lead decides on an amendment.
-python3 scripts/grm_r1_replay.py --batch <ID>   # re-issue the interrupted id
-
 # ------------------------------------------------------------------ summary
 python3 scripts/grm_r1_replay.py --summary
 
-# Reads every receipt and applies the REGISTERED verdict rule verbatim:
-#   adopt  iff  complete AND off_plan_parity AND answers_measured
-#               AND correct_to_wrong on sup == 0
-#               AND correct_to_wrong elsewhere <= 1
-# status is one of:
-#   NOT_MEASURED  -- incomplete, or no measured answers (e.g. a --fake run)
-#   RED           -- a cell's arm-OFF plan did not reproduce the recorded plan
-#   ADOPT         -- the registered verdict rule is satisfied
-#   DO_NOT_ADOPT  -- complete and parity-clean, but the rule is not satisfied
-# "prediction_held" separately records the plan's <=2-changed / 0-sup-regression
-# prediction.  It is an HONESTY RECORD, not the adoption gate.
+# ------------------------------------------------------ CHECK THE FIX WORKED
+# Each cell receipt now carries device_memory: MiB before/after each arm and
+# each cell, plus payloads_freed per arm.  If the fix holds, after_cell_mib
+# returns to roughly its before_cell_mib across successive cells instead of
+# climbing.  This is a POINT SAMPLE, not a peak, and nothing gates on it.
+python3 - <<'PY'
+import json, glob
+for p in sorted(glob.glob('artifacts/grm_r1/gpu/*/cells/*.json')):
+    d = json.load(open(p))
+    m = d['device_memory']
+    freed = {a: v['released']['payloads_freed'] for a, v in m['arms'].items()}
+    print(f"{d['cell']['id'][12:]:52s} before={m['before_cell_mib']} "
+          f"after={m['after_cell_mib']} freed={freed}")
+PY
+
+# ------------------------------------------------------------- BUDGET STATE
+# Prior FAILED attempt charged 263 s (not refunded -- it stays on the books).
+# Amendment adds 134 s for the R1 re-issue.  R2-R5 add 794 s.
+# Total 1191 s = 0.331 GPU-h, under the registered 3600 s = 1.0 GPU-h cap.
 
 # --------------------------------------------------------------- STOP rules
 # * A checkpoint hash mismatch is RED and is NOT retried.
-# * Arm OFF must reproduce the FIX-6 recorded off_plan byte for byte.  If it
-#   does not, the cell receipt is written with off_plan_parity=false and the
-#   run STOPS (R1_OFF_PLAN_PARITY_RED_STOP).  Do not re-bless the plan.
-# * A FAILED controller stops every later batch (R1_FAILED_CAMPAIGN_STOP).
+# * Arm OFF must reproduce the FIX-6 recorded off_plan byte for byte; a
+#   mismatch writes the receipt then STOPS (R1_OFF_PLAN_PARITY_RED_STOP).
+# * The amendment un-closes ONLY batch R1.  Any other FAILED batch still
+#   stops the whole campaign (R1_FAILED_CAMPAIGN_STOP).
+# * If the receipts on disk stop matching the amendment's retain/reissue
+#   lists, the run STOPS (R1_AMENDMENT_RETAIN_MISMATCH / _REISSUE_MISMATCH)
+#   rather than silently re-scoping.  That needs a new amendment, not a nudge.
 # * Never kill or signal a process this campaign did not start; wait on the
 #   flock, never clear it.
 
 # ------------------------------------------------------- CPU gate (no GPU)
-# What the seat actually ran.  Reproducible by the lead at any time; it
-# measures PLANS only and can never produce an adoption verdict.
 python3 -m pytest -q tests/test_grm_admission.py tests/test_grm_scout_fix4.py tests/test_grm_scout_fix6*.py tests/test_grm_r1*.py
