@@ -164,6 +164,41 @@ def test_leak_assertion_rejects_an_empty_run():
         grm_p1_smoke.assert_no_live_history([], ["anything"])
 
 
+def test_a_row_with_no_kind_gets_the_strict_rule():
+    """The fold exclusion must be opt-IN, never the default."""
+    prior = "The current orion pin value is Auric-4-Alpha."
+    with pytest.raises(AssertionError, match="LIVE_HISTORY_LEAK"):
+        grm_p1_smoke.assert_no_live_history(
+            [{"user_text": "q", "prompt": "leaked " + prior}], [prior, "q"])
+
+
+def test_consolidation_prompts_are_excluded_but_counted():
+    """A librarian fold quotes its sources by design — counted, not gated.
+
+    Folds are excluded ONLY when the probe labelled them, and the label is
+    derived from the arena's own DIGEST/ERA prompt text, so a chat turn
+    cannot be relabelled into the exclusion.
+    """
+    prior = "The current orion pin value is Auric-4-Alpha."
+    now = "What is the current orion pin value?"
+    from scripts.grm_e2e_session import harmony_turn
+    result = grm_p1_smoke.assert_no_live_history(
+        [{"user_text": now, "prompt": harmony_turn(now, None),
+          "kind": "chat_turn"},
+         {"user_text": "fold", "prompt": "archive: " + prior,
+          "kind": "consolidation"}],
+        [prior, now])
+    assert result["prompts_checked"] == 1
+    assert result["consolidation_prompts_excluded"] == 1
+
+
+def test_fold_markers_come_from_the_arena_not_a_literal():
+    """The probe's exclusion keys are the arena's real prompt constants."""
+    from core.graft_arena import ArenaCache
+    assert ArenaCache.DIGEST_PROMPTS
+    assert any("For the archive" in p for p in ArenaCache.DIGEST_PROMPTS)
+
+
 def test_live_prompt_is_the_current_turn_only():
     """The structural proof, read off the production prompt builder."""
     from core.graft_arena import ArenaCache
@@ -188,6 +223,33 @@ def smoke(tmp_path_factory):
 
 def test_smoke_passes(smoke):
     assert smoke["status"] == "PASS", json.dumps(smoke["checks"], indent=2)
+
+
+def test_smoke_restores_the_environment(tmp_path):
+    """A gate that changes another gate's result is not a gate.
+
+    The smoke pins ``GRM_ADMISSION_RULE=margin_first``; leaving it behind
+    re-ruled every suite that ran after it (test_grm_scout_fix4 and
+    test_grm_admission went RED only in combination, and passed alone).
+    """
+    import os
+    keys = ("GRM_ADMISSION_RULE", "GRM_CAPTURE_PIN", "GRM_SEAT_NEAR_LIVE",
+            "GRM_PROFILE", "GRM_PERSISTENT_BOAT")
+    before = {k: os.environ.get(k) for k in keys}
+    grm_p1_smoke.run(tmp_path / "session")
+    assert {k: os.environ.get(k) for k in keys} == before
+
+
+def test_pinned_environment_restores_on_an_exception():
+    """Restoration must survive a failing run, not just a clean one."""
+    import os
+    key = "GRM_ADMISSION_RULE"
+    before = os.environ.get(key)
+    with pytest.raises(RuntimeError):
+        with grm_p1_smoke.pinned_environment({key: "margin_first"}):
+            assert os.environ[key] == "margin_first"
+            raise RuntimeError("boom")
+    assert os.environ.get(key) == before
 
 
 def test_smoke_every_turn_has_a_route_receipt(smoke):

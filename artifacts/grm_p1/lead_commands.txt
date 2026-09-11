@@ -1,6 +1,21 @@
 GRM-P1 — REGISTERED GPU SMOKE (lead-run, <= 0.2 GPU-h)
-Registered 2026-09-10 by the GRM-P1 implementation seat. NOT RUN by the
-seat: the seat's sandbox has no GPU. This file is the registration.
+RE-REGISTRATION r2, 2026-09-10, by the GRM-P1 implementation seat.
+NOT RUN by the seat: the seat's sandbox has no GPU.
+
+  r1 was RUN by the lead and went RED at the first recall:
+    _commit_native_mount -> _native_mount_ids
+    RuntimeError: graft 0 has no native_node_id
+  CAUSE (surface, not core): the surface deposited its EB1 complete turn
+  with arena.feed() but never ran the production turn funnel
+  (repo.runtime._finish_turn_event), which is what reaches
+  _mark_mutations -> _native_sync_node and assigns native_node_id. Fed
+  nodes were therefore never published to the native store, and the first
+  turn that routed to one could not mount it.
+  FIX: scripts/grm_chat.py ChatSession.ask now calls the funnel after the
+  deposit, exactly as grm_e2e_session._probe_finish_deposit does. core/ is
+  UNCHANGED. Reproduction + RED->GREEN receipt:
+  tests/test_grm_chat_native_publication.py.
+  The gate is UNCHANGED from r1 (fresh >= 3/4); only the inputs moved.
 
 WHAT IT MEASURES
   The same 20-turn transcript the CPU fake-model smoke runs, served by
@@ -42,13 +57,15 @@ INPUT SHA256 (verify before running)
   fixtures/grm_p1/smoke_transcript.txt
     aac896b3fde9a97f41836b7b03abdb5e9ffffcf5026576cfd4763d78fccdd059
   scripts/grm_chat.py
-    df3d7a0d7788d2257c17c916f1f9ff9dc34ffad1e662924633baaeec9b1b5799
+    f934d74cc1f140a93dcf77d8748adb3af9f8b2e4b66e662f6a79dec60ac80eb7
   scripts/grm_profile.py
     9b51174e431690f8f2393d32e93690fcf7e5e40500034b612a612585a44301e3
   scripts/grm_p1_smoke.py
-    098401bbffe5ed0010e62446db94937fcc14d0be221aa81cd9c81f1b9f75ce34
+    96f34827f5fa6a5b91169fde2989975373a93013926ad785a3532632ac94b086
   tests/test_grm_chat.py
-    3d4f6c7b31dbd366315665d4a483485254aa7a3afccc5e65410292a8bef0ee5d
+    ec56748672041d1cf159a583451e2bfe9d8c86aa68d6e1a99438b39faf4bc0cc
+  tests/test_grm_chat_native_publication.py
+    f2c1ead32b2907b1a13d5d1add9ad176f8585a185f53babf5b22c4f512d13465
 
 PRECONDITIONS
   * GPU idle (the surface does not take the lease itself — the lead
@@ -129,7 +146,23 @@ print('live_history_leak_rows:', bad or 'NONE')
 PY
 
 # 5. the author gates still pass on the same tree
-python3 -m pytest -q tests/test_grm_chat.py
+python3 -m pytest -q tests/test_grm_chat.py \
+                    tests/test_grm_chat_native_publication.py
+
+# 6. the native-publication regression specifically (r1's RED)
+#    Every deposited turn must carry a native_node_id before the next
+#    turn routes to it. On the GPU this is observable directly:
+python3 - <<'PY'
+import json, sys
+sys.path.insert(0, '.')
+rows = [json.loads(l) for l in
+        open('artifacts/grm_p1/gpu_session/session_ledger.jsonl') if l.strip()]
+turns = [r for r in rows if r.get('schema') == 'grm.chat_turn.v1']
+print('turns_with_a_deposit:',
+      sum(1 for t in turns if t['deposited_node_id'] is not None))
+print('turns_that_mounted:', sum(1 for t in turns if t['mounted_ids']))
+print('NO native_node_id crash reached this point if the run completed.')
+PY
 
 --------------------------------------------------------------------
 WHAT TO RECORD

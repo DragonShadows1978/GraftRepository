@@ -30,6 +30,7 @@ prior art known to me for this exact gate composition.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 import os
 import shutil
@@ -68,20 +69,40 @@ RECALLS = (
 
 
 def _leak_probe(session, seen: list[dict[str, Any]]):
-    """Record every live prompt string the model is asked to read.
+    """Record every CHAT-TURN live prompt the model is asked to read.
 
     The choke point is ``ArenaCache._attempt``:
     ``prompt_ids = self.encode(self._format_step_prompt(user_text))``.
     Wrapping ``_format_step_prompt`` on the instance captures exactly the
-    text that becomes live tokens — grafts arrive as K/V and never pass
-    through here, which is the whole point.
+    text that becomes live tokens for a served turn — grafts arrive as K/V
+    and never pass through here, which is the whole point.
+
+    NOT every model call is a chat turn.  ``repo._librarian()`` runs
+    CONSOLIDATION (``ArenaCache.DIGEST_PROMPTS`` / ``ERA_PROMPTS``, built by
+    ``_consolidation_prompts``), which folds several grafts into one digest
+    node and therefore quotes their text into its own prompt on purpose.
+    That is a separate GRM operation with its own prompt shape, not the chat
+    log entering the model's context, so it is recorded and EXCLUDED here
+    rather than silently widening the chat-turn rule.  The exclusion is
+    keyed on the consolidation prompt's own first line, so a chat turn can
+    never be mistaken for a fold (a user would have to type that sentence
+    verbatim, and the rule below would still check it against every other
+    turn's text).
     """
     arena = session.repo.arena
     original = arena._format_step_prompt
+    markers = tuple(
+        p.split("\n", 1)[0].removeprefix("User: ")
+        for p in tuple(getattr(arena, "DIGEST_PROMPTS", ()))
+        + tuple(getattr(arena, "ERA_PROMPTS", ())))
 
     def traced(user_text):
         text = original(user_text)
-        seen.append({"user_text": str(user_text), "prompt": str(text)})
+        kind = ("consolidation"
+                if any(m and m in str(user_text) for m in markers)
+                else "chat_turn")
+        seen.append({"user_text": str(user_text), "prompt": str(text),
+                     "kind": kind})
         return text
 
     arena._format_step_prompt = traced
@@ -92,15 +113,25 @@ def assert_no_live_history(seen: list[dict[str, Any]],
                            user_turns: list[str]) -> dict[str, Any]:
     """THE LEAK ASSERTION.
 
-    For every live prompt: it must equal ``harmony_turn(its own user text,
-    None)`` exactly, and it must not contain any OTHER turn's user text.
-    Both halves matter — the first forbids any extra text at all, the second
-    names what we are actually afraid of.
+    For every CHAT-TURN live prompt: it must equal ``harmony_turn(its own
+    user text, None)`` exactly, and it must not contain any OTHER turn's
+    user text.  Both halves matter — the first forbids any extra text at
+    all, the second names what we are actually afraid of.
+
+    Consolidation prompts (``kind == "consolidation"``) are counted and
+    reported separately: a librarian fold quotes its source grafts by
+    design.  A row with no ``kind`` is treated as a chat turn, so the
+    strict rule is the default and an un-probed caller cannot opt out of
+    it by accident.
     """
     from scripts.grm_e2e_session import harmony_turn
 
     checked = 0
+    folds = 0
     for row in seen:
+        if row.get("kind") == "consolidation":
+            folds += 1
+            continue
         prompt, user = row["prompt"], row["user_text"]
         expected = harmony_turn(user, None)
         if prompt != expected:
@@ -117,6 +148,10 @@ def assert_no_live_history(seen: list[dict[str, Any]],
         raise AssertionError("LEAK_TEST_SAW_NO_PROMPTS: nothing was served")
     return {"prompts_checked": checked,
             "rule": "prompt == harmony_turn(this turn's user text, None)",
+            "consolidation_prompts_excluded": folds,
+            "consolidation_note": (
+                "librarian folds quote their source grafts by design; they "
+                "are a separate operation from a served chat turn"),
             "prior_turn_texts_checked": len(user_turns)}
 
 
@@ -131,16 +166,46 @@ def _user_turns(transcript: Path) -> list[str]:
     return out
 
 
+@contextlib.contextmanager
+def pinned_environment(env: dict[str, str]):
+    """Pin the profile's env for the duration, then put it back EXACTLY.
+
+    ``grm_chat.main`` pins the environment process-wide, which is right for
+    a real session: the process exists to serve one profile.  This function
+    runs IN-PROCESS under pytest alongside other suites, so leaving
+    ``GRM_ADMISSION_RULE=margin_first`` behind silently re-rules every test
+    that runs after it — which is exactly what it did (test_grm_scout_fix4
+    and test_grm_admission went RED only when run after this smoke, and
+    passed alone). Restoring is not tidiness; a gate that changes another
+    gate's result is not a gate.
+    """
+    previous = {k: os.environ.get(k) for k in env}
+    os.environ.update(env)
+    try:
+        yield
+    finally:
+        for key, value in previous.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+
+
 def run(repo_dir: Path, *, transcript: Path = TRANSCRIPT,
         profile: str = "eb1_c2") -> dict[str, Any]:
+    from scripts.grm_profile import resolve_profile
+    resolved = resolve_profile(selection=profile)
+    with pinned_environment(resolved["env"]):
+        return _run_pinned(repo_dir, transcript, resolved)
+
+
+def _run_pinned(repo_dir: Path, transcript: Path,
+                resolved: dict[str, Any]) -> dict[str, Any]:
     from scripts import grm_chat
     from scripts import grm_lt1 as lt
-    from scripts.grm_profile import resolve_profile
 
     if repo_dir.exists():
         shutil.rmtree(repo_dir)
-    resolved = resolve_profile(selection=profile)
-    os.environ.update(resolved["env"])
 
     session = grm_chat.ChatSession(repo_dir, resolved, fake=True)
     session.open()

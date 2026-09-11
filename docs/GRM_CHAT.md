@@ -171,6 +171,29 @@ Measured on LT1's 200-turn natural conversation, 2026-09-09, profile arm
   margin-first on; adopting it as the default is David's decision and is
   gated on replaying the 31 historical C2 plans it changes.
 
+**Native publication (fixed 2026-09-10, first GPU smoke).** The first GPU
+run went RED at the first recall with `RuntimeError: graft 0 has no
+native_node_id` from `_commit_native_mount`. `native_node_id` is assigned by
+`GraftRepository._native_sync_node`, reached via `_mark_mutations` inside
+`repo.runtime._finish_turn_event(...)` — the funnel every production deposit
+passes through (`grm_e2e_session._probe_finish_deposit` calls exactly it).
+The surface deposited its EB1 turn with `arena.feed()` and stopped there, so
+fed nodes were never published to the native store and the next turn could
+not mount them. **A battery may stop at `feed()` because it replays a frozen
+fixture; a product may not.** LT1 hit the same wall on 2026-09-09 and
+answered it with a harness workaround
+(`grm_lt1_amendment4.install_native_publication` monkey-patches
+`_commit_native_mount` to publish lazily) — right for a fixture replayer,
+wrong for a product. The fix calls the real funnel; **`core/` is unchanged**.
+Receipt: `tests/test_grm_chat_native_publication.py`.
+
+A consequence worth knowing: the funnel also runs `repo._librarian()`, whose
+**consolidation folds** (`ArenaCache.DIGEST_PROMPTS`) quote their source
+grafts into their own prompt on purpose. That is a separate GRM operation,
+not the chat log entering context, so the leak test classifies and reports
+folds separately rather than widening the chat-turn rule — the strict rule
+stays the default, and an unlabelled prompt is always checked strictly.
+
 One more, found by this surface's own smoke and fixed here rather than in
 the frozen fixture: `grm_c7_diagnose.CPUArena.deposit` overrides
 `ArenaCache.deposit` without the `_bump_cuda_gqa_epoch()` call the base

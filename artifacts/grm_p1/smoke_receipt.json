@@ -13,6 +13,8 @@
   },
   "evidence_class": "CPU fake model; PLUMBING only, not answer quality",
   "leak_test": {
+    "consolidation_note": "librarian folds quote their source grafts by design; they are a separate operation from a served chat turn",
+    "consolidation_prompts_excluded": 9,
     "prior_turn_texts_checked": 20,
     "prompts_checked": 24,
     "rule": "prompt == harmony_turn(this turn's user text, None)"
@@ -50,8 +52,8 @@
       "kind": "restart",
       "nodes_after": 15,
       "nodes_before": 15,
-      "previous_process_id": "0e0694f5-5f9b-4f1f-8f2a-8002d85f9d67",
-      "process_id": "20e16758-c84b-4789-b5b8-07dc822ba318",
+      "previous_process_id": "9277e20c-15f8-4d0e-b97c-4ea8b9f25e31",
+      "process_id": "c22b4977-03ee-4359-81e9-e0388f87de34",
       "retained": true,
       "schema": "grm.chat_event.v1"
     }
@@ -63,8 +65,8 @@
       "kind": "restart",
       "nodes_after": 15,
       "nodes_before": 15,
-      "previous_process_id": "0e0694f5-5f9b-4f1f-8f2a-8002d85f9d67",
-      "process_id": "20e16758-c84b-4789-b5b8-07dc822ba318",
+      "previous_process_id": "9277e20c-15f8-4d0e-b97c-4ea8b9f25e31",
+      "process_id": "c22b4977-03ee-4359-81e9-e0388f87de34",
       "retained": true
     }
   ],

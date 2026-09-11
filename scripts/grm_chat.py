@@ -191,10 +191,16 @@ class ChatSession:
         self.turn_idx += 1
         turn_idx = self.turn_idx
         started = time.perf_counter()
+        # ``before`` is the repository's own state snapshot (a LIST, one
+        # tuple per graft). It is what ``runtime._finish_turn_event`` uses
+        # to find the nodes this turn appended, so it must be taken before
+        # the deposit, and it is also the arena-state hash for the receipt.
+        before = self.repo._snapshot_state()
         try:
-            arena_before = self.repo._snapshot_state()
+            from core.grm_three_pass import arena_state_sha256
+            arena_before_sha = arena_state_sha256(self.repo)
         except Exception:                                   # pragma: no cover
-            arena_before = None
+            arena_before_sha = None
 
         answer, info = e2e._probe_ladder_chat(
             self.repo, user_text,
@@ -208,11 +214,36 @@ class ChatSession:
 
         node_id = None
         if deposit:
-            # EB1 complete-turn deposit, identical to grm_lt1_worker.execute:
-            # the question AND the answer go in as one turn node, AFTER the
-            # answer exists. Prior art: EB1/LT1 r1 frozen replay (GRM, 2026).
+            # EB1 complete-turn deposit: the question AND the answer go in as
+            # one turn node, AFTER the answer exists. Prior art: EB1/LT1 r1
+            # frozen replay (GRM, 2026), as grm_lt1_worker.execute does it.
             node_id = int(arena.feed(e2e.harmony_turn(user_text, answer)))
             arena.grafts[node_id]["kind"] = "turn"
+            # ...AND THEN THE PRODUCTION TURN FUNNEL. A battery may stop at
+            # feed() because it replays a frozen fixture; a product may not.
+            # ``runtime._finish_turn_event`` is the funnel every production
+            # deposit passes through (grm_e2e_session._probe_finish_deposit
+            # calls exactly this): it runs the LSR-P2C width guard, the
+            # librarian, and ``repo._mark_mutations(before)`` — which calls
+            # ``_mark_dirty(payload=True)`` -> ``_native_sync_node(idx)``,
+            # the ONLY thing that assigns ``native_node_id``.
+            #
+            # Skipping it is what sent GRM-P1's first GPU smoke RED at the
+            # first recall: ``_commit_native_mount`` -> ``_native_mount_ids``
+            # raised ``RuntimeError: graft 0 has no native_node_id`` because
+            # three fed turns had never been published to the native store.
+            # LT1 met the same wall on 2026-09-09 and answered it with a
+            # HARNESS workaround (grm_lt1_amendment4.install_native_
+            # publication monkey-patches _commit_native_mount to publish
+            # lazily); that is correct for a fixture replayer and wrong for
+            # a product surface, so this calls the real funnel instead.
+            self.repo.runtime._finish_turn_event(
+                "chat", before, autosave=True)
+            if arena.grafts[node_id].get("native_node_id") is None and (
+                    getattr(self.repo, "native_store", None) is not None):
+                raise RuntimeError(
+                    f"NATIVE_PUBLICATION_FAILED: graft {node_id} has no "
+                    "native_node_id after the turn funnel")
 
         event = {"kind": "chat", "user": user_text}
         receipt = e2e._turn_route_receipt(
@@ -220,9 +251,7 @@ class ChatSession:
             turn_idx=turn_idx,
             session_id=self.session_id,
             prep_receipt=None,
-            arena_before_sha256=(
-                arena_before.get("sha256") if isinstance(arena_before, dict)
-                else None),
+            arena_before_sha256=arena_before_sha,
             args=self.args)
         row = {
             "schema": "grm.chat_turn.v1",
