@@ -133,6 +133,15 @@ ALIAS_ENV = 'GRM_ALIAS_FOLD_MERGE'
 #: GRM-F1's flag. Carried across the `environment()` strip by
 #: `arm_environment` exactly as the arm pin is; see that docstring.
 RETAIN_ENV = 'GRM_FOLD_RETAIN_SOURCES'
+#: Every r3 treatment flag that must survive BOTH `environment()` strips --
+#: the in-process one (`arm_environment`) and the cross-process one
+#: (`spawn_env`, into the leased child). Core reads each of these from the
+#: environment, so a stripped flag is a silently wrong arm, not an error.
+TREATMENT_FLAGS = (
+    'GRM_FOLD_RETAIN_SOURCES',          # F1
+    'GRM_FOLD_ALIAS_GUARD',             # F2
+    'GRM_ROUTE_SOLE_BINDER_INSURANCE',  # F5
+)
 RULE_ENV = 'GRM_ADMISSION_RULE'
 ARMS = ('A', 'A+')
 
@@ -307,15 +316,16 @@ def arm_environment(arm, flags):
     so every pre-F1 caller's environment is byte-identical.
     """
     from scripts.grm_c2_cells import environment
-    retain = os.environ.get(RETAIN_ENV)
+    carried = {f: os.environ.get(f) for f in TREATMENT_FLAGS}
     env = environment(flags)
     env[RULE_ENV] = 'margin_first'
     env.pop(ALIAS_ENV, None)
     if ARM_ALIAS[arm] is not None:
         env[ALIAS_ENV] = ARM_ALIAS[arm]
-    env.pop(RETAIN_ENV, None)
-    if retain is not None:
-        env[RETAIN_ENV] = retain
+    for flag, value in carried.items():
+        env.pop(flag, None)
+        if value is not None:
+            env[flag] = value
     return env
 
 
@@ -354,9 +364,79 @@ def pinned_arm(arm):
                 os.environ[key] = value
 
 
+def resolved_roots(arm, root=None):
+    """Every root the resume route will consult, as ONE record.
+
+    Printed into the receipt so a reader never has to infer which directory a
+    campaign actually used, and consumed by `assert_root_isolation`.
+    """
+    campaign = Path(root) if root else out_dir(arm)
+    return dict(
+        campaign_root=str(campaign),
+        cells_root=str(campaign / 'cells'),
+        owner_file=str(campaign / 'campaign.active'),
+        worker_RUN=str(campaign),
+        arm_default_root=str(out_dir(arm)),
+        out_override=None if root is None else str(Path(root)),
+        arm_default_in_use=(root is None),
+    )
+
+
+def assert_root_isolation(arm, root, roots=None):
+    """With `--out` given, the arm's DEFAULT root must not be read at all.
+
+    The defect this makes unrepresentable (receipt: artifacts/grm_f1/red/):
+    `main()` forwarded `--out` to every mode EXCEPT `--resume`, so the one
+    route that spends GPU silently resumed into r2's frozen
+    `artifacts/grm_d1/lt1_1/run_A`. Its 26 COMPLETE cells carry r2's binding,
+    and `worker.pending` raised COMPLETED_CELL_BINDING_OR_STATUS on the FIRST
+    cell. A second, independent leak sat behind it: `lt1_1_seams` pinned
+    `worker.RUN` to `out_dir(arm)` regardless, so `run_cell`, `accounting`
+    and the leased child would have written into the default root even once
+    `pending()` was reading the right one.
+
+    Raises rather than warning: a campaign that reads a frozen run root is
+    not a degraded run, it is a run whose receipts belong to someone else.
+    """
+    if root is None:
+        return roots or resolved_roots(arm, root)
+    roots = roots or resolved_roots(arm, root)
+    default = Path(roots['arm_default_root']).resolve()
+    campaign = Path(roots['campaign_root']).resolve()
+    if campaign == default:
+        raise ValueError(
+            'LT11_OUT_EQUALS_ARM_DEFAULT: --out %s resolves to the arm\'s '
+            'own registered root. Pass a distinct directory, or omit --out.'
+            % campaign)
+    if default in campaign.parents:
+        raise ValueError(
+            'LT11_OUT_INSIDE_ARM_DEFAULT: --out %s is nested inside the '
+            'frozen arm root %s; a campaign there would mix its receipts '
+            'with r2\'s.' % (campaign, default))
+    if str(worker.RUN) != roots['worker_RUN']:
+        raise ValueError(
+            'LT11_WORKER_RUN_NOT_ISOLATED: worker.RUN is %s but the campaign '
+            'root is %s -- run_cell/accounting/the leased child would write '
+            'somewhere the selector never looked.'
+            % (worker.RUN, roots['worker_RUN']))
+    return roots
+
+
 @contextlib.contextmanager
-def lt1_1_seams(arm):
+def lt1_1_seams(arm, root=None):
     """Redirect the module seams `execute` and `run_cell` read from LT1 state.
+
+    `root` is the CAMPAIGN ROOT every seam below must agree on. It defaults to
+    the arm's registered directory, so every pre-existing caller is
+    byte-identical; `resume(--out)` passes the resolved root instead.
+
+    This parameter exists because `worker.RUN` is not one root among several
+    -- it is the root `run_cell` builds its cell directories under, the root
+    `accounting` sums reservations from, and the root the LEASED CHILD writes
+    its receipts into. Pinning `worker.RUN` to `out_dir(arm)` while
+    `resume()` handed a different root to `pending()` meant a campaign could
+    SELECT a cell from one root and EXECUTE it into another. See
+    `assert_root_isolation` for the check that now makes that unrepresentable.
 
     Everything else in `grm_lt1_worker` -- cells, leases, checkpoints,
     accounting -- is used unchanged through these.
@@ -396,6 +476,7 @@ def lt1_1_seams(arm):
              getattr(worker, 'recap_probe_turn', None))
     try:
         lt.FIX = FIXTURE
+        campaign_root = Path(root) if root else out_dir(arm)
         # Redirect `worker.bind`, NOT `lt.binding`.
         #
         # These look interchangeable (`worker.bind` is a one-line delegate to
@@ -411,7 +492,7 @@ def lt1_1_seams(arm):
         # signature fix, on KeyError: 'CPU'). The narrower seam leaves LT1's
         # self-validation untouched and still stamps every receipt ours.
         worker.bind = binding
-        worker.RUN = out_dir(arm)
+        worker.RUN = campaign_root
         # The child entry point and the argv that reaches it.
         worker.worker = lt1_1_worker
         worker.spawn_argv = spawn_argv
@@ -695,12 +776,26 @@ def spawn_argv(cell):
 
 
 def spawn_env(env, cell):
-    """Carry the pinned arm into the child.
+    """Carry the pinned arm AND the treatment flags into the child.
 
     `environment(flags)` strips every ambient `GRM_*`, and `run_cell` rebuilds
     the child environment from it, so the arm pin must be re-applied here or
     the child cannot tell A from A+. This is the same pin-after-the-strip
     contract R1's `pin_rule` states, applied across a process boundary.
+
+    THE SAME RAIL CARRIES THE r3 TREATMENT FLAGS, and it must: the LEASED
+    CHILD is the process that actually runs the turns, folds the windows and
+    routes the probes. Measured before this existed (receipt:
+    artifacts/grm_f1/red/red_child_env_strip.json): with
+    GRM_FOLD_RETAIN_SOURCES / GRM_FOLD_ALIAS_GUARD /
+    GRM_ROUTE_SOLE_BINDER_INSURANCE all exported in the parent, every one of
+    them was ABSENT from the child environment `run_cell` built. An r3
+    treatment arm would have EXECUTED AS THE CONTROL while its receipts
+    recorded the flags as on -- a silently wrong campaign, not a failed one.
+
+    Each flag is carried ONLY when actually set in the parent, so a
+    pre-existing caller with none of them set gets a byte-identical child
+    environment.
     """
     arm = current_arm()
     env[ARM_ENV] = arm
@@ -708,6 +803,11 @@ def spawn_env(env, cell):
     if ARM_ALIAS[arm] is not None:
         env[ALIAS_ENV] = ARM_ALIAS[arm]
     env[RULE_ENV] = 'margin_first'
+    for flag in TREATMENT_FLAGS:
+        value = os.environ.get(flag)
+        env.pop(flag, None)
+        if value is not None:
+            env[flag] = value
     # The campaign root, so the child writes into the SAME directory the
     # parent reserved rather than recomputing a default from the arm.
     env[RUN_ENV] = str(worker.RUN)
@@ -1179,6 +1279,7 @@ def resume(arm, *, root=None, dry_lease=False, host_gate=True):
     path always runs the gate.
     """
     reg = registration(arm)
+    root_override = root
     root = Path(root) if root else out_dir(arm)
     # The chain preflight runs OUTSIDE the seams -- `lt1_1_preflight` hashes
     # documents directly and must not see redirected module state -- but
@@ -1190,7 +1291,13 @@ def resume(arm, *, root=None, dry_lease=False, host_gate=True):
                 else dict(status='SKIPPED', reasons=['host_gate=False']))
     if host_gate and gate['status'] != 'READY':
         raise ValueError(json.dumps(gate))
-    with lt1_1_seams(arm), pinned_arm(arm) as pin:
+    # `root` is passed INTO the seams so `worker.RUN` -- which `run_cell`,
+    # `accounting` and the leased child all read -- is the same directory
+    # `pending()` selects from. Before this, the seams pinned it to
+    # `out_dir(arm)` unconditionally and a campaign could select a cell from
+    # one root and execute it into another.
+    with lt1_1_seams(arm, root), pinned_arm(arm) as pin:
+        roots = assert_root_isolation(arm, root_override)
         root.mkdir(parents=True, exist_ok=True)
         owner = root / 'campaign.active'
         fd = os.open(owner, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
@@ -1199,6 +1306,12 @@ def resume(arm, *, root=None, dry_lease=False, host_gate=True):
         # Progress goes to stderr so stdout stays a single parseable JSON
         # document for --dry-lease; the GPU path's operator log is unchanged.
         print('LT1.1 arm %s pinned %s' % (arm, json.dumps(pin)),
+              file=sys.stderr, flush=True)
+        # The resolved roots go in the OPERATOR LOG too, not only the JSON
+        # receipt: the GPU route returns an exit code, not a document, and
+        # "which root did this campaign actually write" must be answerable
+        # from the log alone.
+        print('LT1.1 roots %s' % json.dumps(roots),
               file=sys.stderr, flush=True)
         selected = []
         try:
@@ -1219,7 +1332,7 @@ def resume(arm, *, root=None, dry_lease=False, host_gate=True):
                                 next_cell=cell['id'],
                                 selected=selected,
                                 receipt_binding=worker.bind(cell['arm']),
-                                out_dir=str(root),
+                                out_dir=str(root), resolved_roots=roots,
                                 stopped_at='worker.run_cell (lease boundary)')
                 if not worker.run_cell(cell, reg):
                     return 2
@@ -1228,6 +1341,7 @@ def resume(arm, *, root=None, dry_lease=False, host_gate=True):
                             gpu_executed=False, arm=arm, pinned=pin,
                             host_preflight=gate['status'], next_cell=None,
                             selected=selected, out_dir=str(root),
+                            resolved_roots=roots,
                             stopped_at='campaign complete')
             return 0
         finally:
@@ -1308,7 +1422,15 @@ def parse_args(argv=None):
     mode.add_argument('--worker-cpu',
                       help='leased child with the CPU double (gate only); '
                            'same route as --worker, model replaced')
-    p.add_argument('--out', help='override the campaign root (dry-run/fake/summary)')
+    p.add_argument('--out',
+                   help='override the campaign root. GOVERNS EVERY ROOT the '
+                        'runner and the worker consult, on EVERY mode '
+                        'including --resume: pending(), run_cell(), '
+                        'accounting(), the cell directories, the '
+                        'checkpoints, the campaign-owner file and the '
+                        'leased child. When given, the arm default root is '
+                        'never read (asserted at start; resolved roots are '
+                        'printed in the receipt).')
     p.add_argument('--limit', type=int, help='fake mode: run only the first N cells')
     p.add_argument('--dry-lease', action='store_true',
                    help='with --resume: walk the real resume route (amendment '
@@ -1377,7 +1499,18 @@ def main(argv=None):
         print(json.dumps(resume(args.arm, root=args.out, dry_lease=True,
                                 host_gate=not args.no_host_gate), indent=2))
         return 0
-    return resume(args.arm)
+    # THE DEFECT, and the receipt for it: this line used to read
+    # `return resume(args.arm)`, silently DROPPING `--out` on the one route
+    # that actually spends GPU. Every other mode (`--dry-run`, `--summary`,
+    # `--fake`, `--dry-lease`) already forwarded `args.out`, so the flag
+    # looked honoured everywhere a gate could see it and was discarded
+    # exactly where it mattered. The lead's arm-A' run therefore resumed into
+    # r2's FROZEN root `artifacts/grm_d1/lt1_1/run_A`, whose 26 COMPLETE
+    # cells carry r2's binding, and `worker.pending` raised
+    # COMPLETED_CELL_BINDING_OR_STATUS on the FIRST cell (A-001-008) --
+    # verified by receipt, not inferred: artifacts/grm_f1/red/.
+    return resume(args.arm, root=args.out,
+                  host_gate=not args.no_host_gate)
 
 
 if __name__ == '__main__':

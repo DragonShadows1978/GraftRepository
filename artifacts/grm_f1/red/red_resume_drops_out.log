@@ -1,0 +1,16 @@
+LT1.1 arm A pinned {"arm": "A", "admission_rule": "margin_first", "alias_fold_merge": false}
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/mnt/ForgeRealm/wt/grm-f1/scripts/grm_lt1_1.py", line 1384, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/mnt/ForgeRealm/wt/grm-f1/scripts/grm_lt1_1.py", line 1380, in main
+    return resume(args.arm)
+           ^^^^^^^^^^^^^^^^
+  File "/mnt/ForgeRealm/wt/grm-f1/scripts/grm_lt1_1.py", line 1206, in resume
+    cell = worker.pending(reg, run=root)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/ForgeRealm/wt/grm-f1/scripts/grm_lt1_worker.py", line 240, in pending
+    raise ValueError('COMPLETED_CELL_BINDING_OR_STATUS')
+ValueError: COMPLETED_CELL_BINDING_OR_STATUS

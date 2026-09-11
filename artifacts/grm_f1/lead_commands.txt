@@ -1,6 +1,7 @@
 # LT1.1 r3 on the MERGED core -- THREE separately resumable arms
-# registration sha256: 2319938cd2039a6c6c51e1ba49e14500c2b0a529c726903ab06edae1a6eab8e4
-# amendment11   sha256: 7e0562f6d65bf0d3e9bb46d8054d23ef0fe1a663c62dbab463e45f1d31e84302
+# registration sha256: cc8ba32a1644f931ca3074b731c03811c15cb296f25973afa11f0506159d9627
+# amendment12   sha256: cee143a51112819eee599d4c63f52f378696140856d6ebac7b163527780ca6e6
+# (the GOVERNING amendment -- verify against this one)
 #
 # Per arm: reservation ceiling 7410 s (2.06 GPU-h), r2 unchanged;
 #          ORDER CAP on MEASURED work 4680 s (1.30 GPU-h).
@@ -10,6 +11,14 @@
 # A' or A+' may be attributed to F1/F2/F5 until that is explained.
 # Within an arm the flags move TOGETHER: a moved column belongs to
 # the SET, never to one flag.
+#
+# --out GOVERNS EVERY ROOT the runner and the worker consult:
+# pending(), run_cell(), accounting(), the cell directories, the
+# checkpoints and the leased child. With --out given the arm
+# default root is never read -- asserted at start, and the
+# resolved roots are printed in the receipt and the operator log
+# ("LT1.1 roots {...}"). Follow-up 3 fixed the drop that sent the
+# lead's first arm-A' run into r2's frozen run root.
 #
 # EVERY runnable line below ends in --dry-run. Removing it is a
 # deliberate act by the lead after reading the registration.

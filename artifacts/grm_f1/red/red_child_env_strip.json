@@ -1,0 +1,21 @@
+{
+  "child_after_fix": {
+    "GRM_FOLD_ALIAS_GUARD": "1",
+    "GRM_FOLD_RETAIN_SOURCES": "1",
+    "GRM_ROUTE_SOLE_BINDER_INSURANCE": "1"
+  },
+  "child_before_fix": {
+    "GRM_FOLD_ALIAS_GUARD": null,
+    "GRM_FOLD_RETAIN_SOURCES": null,
+    "GRM_ROUTE_SOLE_BINDER_INSURANCE": null
+  },
+  "defect": "r3 treatment flags stripped from the LEASED CHILD environment",
+  "mechanism": "run_cell builds the child env from grm_c2_cells.environment(flags), which deletes every ambient GRM_* name. spawn_env re-applied only the arm pin and the admission rule, so F1/F2/F5 never crossed the process boundary.",
+  "parent_environment": {
+    "GRM_FOLD_ALIAS_GUARD": "1",
+    "GRM_FOLD_RETAIN_SOURCES": "1",
+    "GRM_ROUTE_SOLE_BINDER_INSURANCE": "1"
+  },
+  "severity": "a treatment arm would EXECUTE AS THE CONTROL while its receipts recorded the flags as on -- silently wrong, not failed",
+  "verified_by": "tests/test_grm_f1_resume_out_root.py"
+}
