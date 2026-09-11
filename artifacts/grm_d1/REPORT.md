@@ -180,6 +180,8 @@ finding.
 | `scripts/grm_d1_emit_report.py` | this report and the ledger |
 | `tests/test_grm_d1_alias_cpu.py` | 14 tests |
 | `tests/test_grm_d1_amendment1.py` | 17 tests |
+| `tests/test_grm_d1_amendment2.py` | 18 tests |
+| `tests/test_grm_d1_amendment3.py` | 18 tests |
 | `tests/test_grm_d1_cause_table.py` | 12 tests |
 | `tests/test_grm_d1_recap.py` | 10 tests |
 | `tests/test_grm_d1_registration.py` | 18 tests |
@@ -434,6 +436,217 @@ uses, routing admits it, the ladder mounts it, and it fits the
 width. It does **not** show language-model recall: the reader is a
 regex stub. The GPU A+ arm is the test of sufficiency, and it is
 registered, not run.
+
+## 5c. Follow-up 2: the runner (the registration was not runnable)
+
+**The defect.** The `lead_commands.txt` this report previously
+described did not run. It named
+`scripts/grm_lt1.py --run --arm A --registration … --out …`; that
+script's CLI is `[--preflight] [--summary] [--cell] [--resume]
+[--dry-run]` and it reads its registration from a fixed path. I
+emitted an interface that does not exist and never executed it;
+the only test on those commands compared a sha string. A
+registration is not runnable until a worker executes it.
+
+**The runner.** `scripts/grm_lt1_1.py`, sha256
+`78fd7699acda6e0bd90daba512bbc6c1e68c05d7b57ca6066cd3ede34c3da3d5`,
+one arm per invocation, bound as a registered input by amendment 2.
+
+*Parameterized, not forked.* `grm_lt1_worker.execute` is already
+argument-driven (cell, directory, registration, loader, run, fake)
+-- `scripts/grm_lt1_worker_cpu.py` already reuses it that way.
+Only three things in that module are bound to LT1 module state:
+`lt.FIX`, `lt.binding` and `RUN`. The runner redirects exactly
+those three and calls `execute` / `run_cell` / `pending`
+unchanged. `test_the_reuse_claim_is_stated_and_true` greps the
+runner for `def execute(` / `def run_cell(` / `def pending(` and
+fails if any reappears, so "not forked" is checked, not asserted.
+
+*Proof it runs* (`artifacts/grm_d1/lt1_1/proof/`):
+
+- `--arm A --dry-run` -> exit 0, 26 cells, next `A-001-008`, estimate 4508 s, reservation 7410 s, budget 7410 s, within_budget True, alias pin False
+- `--arm A+ --dry-run` -> exit 0, 26 cells, next `A-001-008`, estimate 4508 s, reservation 7410 s, budget 7410 s, within_budget True, alias pin True
+- `--arm A --fake --limit 2` and `--arm A+ --fake --limit 2` -> 2
+  cells each, one subprocess per cell, writing real
+  `controller.json` / `worker.json` / `reservation.json` /
+  `checkpoint/` under `proof/fake/{A,Aplus}/cells/`.
+- `--summary` reads those receipts: 2/26 complete per arm, arm
+  bindings differ (`alias_fold_merge` False vs True).
+- resume: a third `--fake --limit 3` skipped `A-001-008`,
+  `A-009-016` and ran only `A-017-024`; `--summary` then reports
+  3/26 complete, 3 measured recalls, `partial raw rows`.
+
+**Amendment 2** — `artifacts/grm_d1/lt1_1/amendment2.json`, sha256
+`3bf21605058c86b15d3cb91784ea39409844838f20130b262dbadf1948417380`, chained to amendment 1
+`0a5754cd3e5bc91c…`. It binds the runner and
+corrects the budget.
+
+**A second defect the dry-run caught — a budget that would have
+railed.** Amendment 1 registered 6120 s (1.70 GPU-h) per arm. The
+26 cells reserve `sum(lease_seconds) = 7410 s` (2.06 GPU-h), and
+`run_cell` charges the LEASE, not the estimate, railing on
+`accounting()+lease`. The old ceiling sat below the reservation
+sum and would have tripped `COMBINED_GPU_BUDGET_RAIL` partway
+through a campaign that was going to finish. Amendment 2 raises
+the ceiling to the reservation sum.
+
+| | per arm | both arms |
+|---|---|---|
+| amendment 1 ceiling (superseded) | 1.70 GPU-h | 3.40 GPU-h |
+| amendment 2 ceiling (reservation) | **2.06 GPU-h** | **4.12 GPU-h** |
+| projected actual spend | 1.25 GPU-h | 2.50 GPU-h |
+
+**This is a budget INCREASE and needs the lead's eye.** Expected
+spend is unchanged at 1.25 GPU-h per arm; only the ceiling moves,
+to a number the machinery can honour. Registered before any run.
+
+**The gate that would have caught the original mistake.**
+`tests/test_grm_lt1_1_runner.py::test_every_emitted_command_
+actually_runs` parses every `python3 scripts/…` line out of
+`lead_commands.txt`, appends `--dry-run`, executes it, and
+requires exit 0. A companion test
+(`test_the_old_broken_invocation_would_have_been_caught`) runs the
+exact shape I shipped and asserts it fails with "unrecognized
+arguments", so the gate is proven to have teeth.
+
+## 5d. Follow-up 3: the resume route (the seam had drifted)
+
+**The defect.** `--arm A+ --resume` died on the card before taking
+any lease:
+
+```
+grm_lt1_amendment4.apply -> lt.binding('CPU') -> ARM_ALIAS['CPU']
+KeyError: 'CPU'
+```
+
+Two stacked mistakes, both mine:
+
+- **D3-C1 (signature drift).** the redirected `binding` took an ARM; LT1 callers pass a BACKEND LABEL ('CPU') as well as an arm, and LT1's own `binding` is label-agnostic
+  *Fix:* `binding(label)` keeps the LT1 signature and reads the arm from pinned runner state (`current_arm`)
+- **D3-C2 (seam too wide).** `lt.binding` was redirected, but LT1 uses it to validate ITS OWN chain (`apply4` compares a recorded `protocol_binding` against it); receipts are stamped through `worker.bind`
+  *Fix:* redirect `worker.bind` only; `lt.binding` stays LT1
+- **D3-C3 (ordering).** LT1's host preflight ran INSIDE the redirected window, so `lt.binding` hashed the LT1.1 fixture and failed AMENDMENT4_PROTOCOL_MISMATCH
+  *Fix:* `host_preflight()` runs before any seam moves
+
+**Why 115 passing tests said nothing.** Neither `--dry-run` nor the fake path traverses `grm_lt1_amendment4.apply`; only the resume route does. 115 passing tests covered everything except the one path the lead actually ran.
+
+**The seam audit.** Every redirected name was checked for arity and
+argument meaning against every call site:
+
+| name | moved? | why |
+|---|---|---|
+| `lt.FIX` | **yes** | PosixPath constant; same type, no signature. Read by `execute` for turns/probes/decisions AND by `lt.binding` for its fixture sha -- which is why the LT1 host preflight must run outside the window. |
+| `worker.RUN` | **yes** | PosixPath constant; per-arm campaign root. |
+| `worker.bind` | **yes** | callable(label) -> dict. Keeps the LT1 signature; stamps LT1.1 receipts. |
+| `lt.REG` | no | LT1's own registration; `verify` must validate it. |
+| `lt.RUN` | no | LT1's own campaign root; the runner has its own `summary` and never calls `lt.summary`. |
+| `lt.binding` | no | LT1's self-validation (verify/preflight/apply4). Redirecting it breaks the amendment-4 chain. |
+
+The two Path constants carry no signature. The one callable now
+matches LT1 exactly: `binding(label)` echoes its argument the way
+LT1's does, and reads the ARM from pinned runner state, which is
+where the arm actually lives.
+
+**The gate.** `--resume --dry-lease` walks the production route --
+amendment load, apply4-bearing preflight, seam redirection, arm
+pin, campaign owner file, `worker.pending` cell selection -- and
+stops at `worker.run_cell`, the lease boundary. Nothing before that
+point is stubbed.
+
+- `--arm A --resume --dry-lease` -> rc 0, status PASS, next `A-001-008`, stopped at worker.run_cell (lease boundary), alias pin False, receipt `campaign_arm=A alias_fold_merge=False`
+- `--arm A+ --resume --dry-lease` -> rc 0, status PASS, next `A-001-008`, stopped at worker.run_cell (lease boundary), alias pin True, receipt `campaign_arm=A+ alias_fold_merge=True`
+
+RED-before / GREEN-after are both gated:
+`test_the_shipped_seam_reproduces_the_leads_keyerror` reconstructs the shipped seam and asserts the exact
+`KeyError: 'CPU'` surfaces through `grm_lt1_amendment4.apply`;
+`test_resume_route_reaches_the_lease_boundary[A]` and `[A+]` prove
+the fixed route. `test_only_the_documented_seams_move` cross-checks
+the audit table against live behaviour.
+
+**Amendment 3** — `artifacts/grm_d1/lt1_1/amendment3.json`, sha256
+`09680a0567d2d74f0a9a491823cc627c1a8d609451fdf165b36384dc97e89a08`, chained to amendment 2
+`3bf21605058c86b1…`. Runner rebound: `17f1577006e04494…`
+supersedes `78fd7699acda6e0b…`.
+
+**OPEN BLOCKER — needs your decision.** With the seam fixed, the
+real `--resume` now reaches the genuine host check and stops there:
+
+```
+ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+```
+
+T.his worktree forks grm-merge, whose core has drifted past the SHAs the LT1 registration pins; `lt.preflight()` fails identically with or without the LT1.1 redirection
+`lt.preflight()` fails **identically with or without** the
+LT1.1 redirection, so this is not something the runner introduced —
+it is the same pre-existing core drift this report records in its
+RED items. Consequence: the GPU campaign cannot start on this tree until the lead decides how the LT1 core pins are rebound for the host preflight. The LT1.1 route itself is proven green up to the lease boundary.
+
+## 5e. Follow-up 4: LT1.1 validates its own chain (the ruling)
+
+**The ruling** (lead, 2026-09-11), recorded verbatim in the
+amendment and in the runner:
+
+> LT1's original registration is a frozen receipt of its day; it is NOT re-validated against today's core. LT1.1's host preflight must validate LT1.1's own chain — registration 02b44d02 + amendments 1–3, whose core pins were rebound to this tree with attribution — using the same verification functions (`grm_lt1.verify`-class checks: sha-bound inputs, fixture sha, cell schedule, budget) but pointed at LT1.1's registration/amendment set. LT1's registration sha and its recorded core pins are carried as `parent` lineage in the LT1.1 receipt (recorded, with the drift table you already attributed), not as a gate.
+
+**What changed.** `scripts/grm_lt1_1.py` replaced its
+`lt.preflight()` call with `lt1_1_preflight(arm)`, which applies
+the same verification classes to LT1.1's documents:
+
+- sha-bound documents: registration + amendments 1-4 vs sidecars
+- chain continuity: each amendment names its parent sha
+- sha-bound inputs: every rebound core pin + the bound runner vs the file on disk
+- fixture sha: dialogue.json vs the registered digest
+- cell schedule: 26 arm-A cells matching the amendment
+- budget: reservation sum within the registered ceiling
+- host readiness: free space, pinned admission rule
+
+Not checked, by the ruling: LT1 day-of core pins -- frozen receipt, see parent_lineage (this is the ruling)
+
+**The `apply4` question you asked — measured, not assumed.**
+`grm_lt1_amendment4.apply`'s protocol-binding check
+(`a['protocol_binding'] != lt.binding('CPU')`) **passes on this
+tree, unchanged and untouched** — recorded equals live: True.
+`lt.binding` reports the core shas RECORDED in LT1 amendment 3, not live ones, so it is already immune to core drift. The whole of lt.verify() failure on this tree was its final input loop (INPUT_SHA_MISMATCH: core/graft_arena.py), which is exactly the re-validation the ruling removes.
+So no second ruling is needed: amendment 4 never gated on drifted
+core. Its recorded binding is reported as parent lineage, and
+LT1.1 stamps its own through `worker.bind`.
+
+**Parent lineage, recorded not gated.** LT1 registration
+`e1913b144087ea79…`, 26 recorded core pins. Drift table:
+
+| input | LT1 recorded | LT1.1 rebound = on tree now | attribution |
+|---|---|---|---|
+| `core/graft_arena.py` | `83a2d4a2bc0e…` | `918f5d0b202b…` | pre-A1 drift on grm-merge, not attributable to A1 |
+| `core/graft_repository.py` | `fc6b9448efb4…` | `591657233106…` | A1 (alias fold-merge hooks) |
+| `core/grm_admission.py` | `d1afc26a68b4…` | `ebdfd84af435…` | pre-A1 drift on grm-merge, not attributable to A1 |
+| `core/grm_runtime.py` | `39f823cbdb98…` | `973addc491a2…` | A1 (alias fold-merge hooks) |
+| `core/grm_text_norm.py` | `c4e496848b01…` | `e968d6879195…` | pre-A1 drift on grm-merge, not attributable to A1 |
+| `core/grm_alias_fold.py` | — (new) | `147ea9687112…` | A1 (new module; did not exist at the LT1 run) |
+
+**The gate still has teeth.** The risk in "stop checking X" is
+that it becomes "stop checking".
+`test_a_planted_drift_in_our_own_amendment_goes_red` plants a bad
+core sha in LT1.1's OWN amendment 1 — sidecar kept consistent, so
+the failure is the input check and not a document mismatch — and
+requires `INPUT_SHA_MISMATCH` for that input. Five more tamper
+tests cover the new-input branch, chain continuity, a tampered
+document, a tampered fixture and an unpinned admission rule.
+
+**Both arms, host gate ON, no escape hatch:**
+
+- `--arm A --resume --dry-lease` -> rc 0, host_preflight **READY**, status PASS, next `A-001-008`, stopped at worker.run_cell (lease boundary), alias pin False — **no INPUT_SHA_MISMATCH**
+- `--arm A+ --resume --dry-lease` -> rc 0, host_preflight **READY**, status PASS, next `A-001-008`, stopped at worker.run_cell (lease boundary), alias pin True — **no INPUT_SHA_MISMATCH**
+
+**Amendment 3's blocker is resolved, and the test is inverted
+with its receipt.** `test_the_host_blocker_claim_is_true_right_now`
+became `test_the_host_blocker_claim_was_true_and_is_now_resolved`,
+which asserts BOTH halves: LT1's own gate still refuses (the drift
+is real and we did not paper over it) AND LT1.1's gate is READY.
+Amendment 3 stays as written; amendment 4 records the resolution.
+
+**Amendment 4** — `artifacts/grm_d1/lt1_1/amendment4.json`, sha256
+`0b5da2387791e871759cf1d11c5ad27c4e4559642d81200a01bb2d9e7c85659d`, chained to amendment 3
+`09680a0567d2d74f…`. Runner rebound `29c916601d4a3775…`.
 
 ## 6. Deviations, RED items, process safety
 

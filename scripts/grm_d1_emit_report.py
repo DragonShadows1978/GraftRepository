@@ -542,6 +542,271 @@ def report():
         add('registered, not run.')
         add('')
 
+    # -------------------------------------------------- follow-up 2: runner
+    amend2_path = OUT / 'lt1_1/amendment2.json'
+    if amend2_path.exists():
+        a2 = json.loads(amend2_path.read_text())
+        a2_sha = (OUT / 'lt1_1/amendment2.sha256').read_text().split()[0]
+        correction = a2['budget_correction']
+        add('## 5c. Follow-up 2: the runner (the registration was not runnable)')
+        add('')
+        add('**The defect.** The `lead_commands.txt` this report previously')
+        add('described did not run. It named')
+        add('`scripts/grm_lt1.py --run --arm A --registration … --out …`; that')
+        add("script's CLI is `[--preflight] [--summary] [--cell] [--resume]")
+        add('[--dry-run]` and it reads its registration from a fixed path. I')
+        add('emitted an interface that does not exist and never executed it;')
+        add('the only test on those commands compared a sha string. A')
+        add('registration is not runnable until a worker executes it.')
+        add('')
+        add('**The runner.** `scripts/grm_lt1_1.py`, sha256')
+        add('`%s`,' % a2['runner']['sha256'])
+        add('one arm per invocation, bound as a registered input by amendment 2.')
+        add('')
+        add('*Parameterized, not forked.* `grm_lt1_worker.execute` is already')
+        add('argument-driven (cell, directory, registration, loader, run, fake)')
+        add('-- `scripts/grm_lt1_worker_cpu.py` already reuses it that way.')
+        add('Only three things in that module are bound to LT1 module state:')
+        add('`lt.FIX`, `lt.binding` and `RUN`. The runner redirects exactly')
+        add('those three and calls `execute` / `run_cell` / `pending`')
+        add('unchanged. `test_the_reuse_claim_is_stated_and_true` greps the')
+        add('runner for `def execute(` / `def run_cell(` / `def pending(` and')
+        add('fails if any reappears, so "not forked" is checked, not asserted.')
+        add('')
+        add('*Proof it runs* (`artifacts/grm_d1/lt1_1/proof/`):')
+        add('')
+        for name, arm in (('A', 'A'), ('Aplus', 'A+')):
+            path = OUT / ('lt1_1/proof/dry_run_%s.json' % name)
+            if path.exists():
+                d = json.loads(path.read_text())
+                add('- `--arm %s --dry-run` -> exit 0, %d cells, next `%s`, '
+                    'estimate %.0f s, reservation %d s, budget %d s, '
+                    'within_budget %s, alias pin %s'
+                    % (arm, d['cells'], d['next_cell'], d['estimate_seconds'],
+                       d['lease_seconds'], d['budget_gpu_seconds'],
+                       d['within_budget'], d['pinned']['alias_fold_merge']))
+        add('- `--arm A --fake --limit 2` and `--arm A+ --fake --limit 2` -> 2')
+        add('  cells each, one subprocess per cell, writing real')
+        add('  `controller.json` / `worker.json` / `reservation.json` /')
+        add('  `checkpoint/` under `proof/fake/{A,Aplus}/cells/`.')
+        add('- `--summary` reads those receipts: 2/26 complete per arm, arm')
+        add('  bindings differ (`alias_fold_merge` False vs True).')
+        add('- resume: a third `--fake --limit 3` skipped `A-001-008`,')
+        add('  `A-009-016` and ran only `A-017-024`; `--summary` then reports')
+        add('  3/26 complete, 3 measured recalls, `partial raw rows`.')
+        add('')
+        add('**Amendment 2** — `artifacts/grm_d1/lt1_1/amendment2.json`, sha256')
+        add('`%s`, chained to amendment 1' % a2_sha)
+        add('`%s…`. It binds the runner and' % a2['previous_amendment_sha256'][:16])
+        add('corrects the budget.')
+        add('')
+        add('**A second defect the dry-run caught — a budget that would have')
+        add('railed.** Amendment 1 registered %d s (%.2f GPU-h) per arm. The'
+            % (correction['superseded_gpu_seconds_per_arm'],
+               correction['superseded_gpu_hours_per_arm']))
+        add('26 cells reserve `sum(lease_seconds) = %d s` (%.2f GPU-h), and'
+            % (correction['reservation_seconds'],
+               correction['reservation_gpu_hours']))
+        add('`run_cell` charges the LEASE, not the estimate, railing on')
+        add('`accounting()+lease`. The old ceiling sat below the reservation')
+        add('sum and would have tripped `COMBINED_GPU_BUDGET_RAIL` partway')
+        add('through a campaign that was going to finish. Amendment 2 raises')
+        add('the ceiling to the reservation sum.')
+        add('')
+        add('| | per arm | both arms |')
+        add('|---|---|---|')
+        add('| amendment 1 ceiling (superseded) | %.2f GPU-h | %.2f GPU-h |'
+            % (correction['superseded_gpu_hours_per_arm'],
+               2 * correction['superseded_gpu_hours_per_arm']))
+        add('| amendment 2 ceiling (reservation) | **%.2f GPU-h** | **%.2f GPU-h** |'
+            % (correction['corrected_gpu_hours_per_arm'],
+               a2['budget_gpu_hours_total']))
+        add('| projected actual spend | %.2f GPU-h | %.2f GPU-h |'
+            % (correction['projected_gpu_hours'],
+               2 * correction['projected_gpu_hours']))
+        add('')
+        add('**This is a budget INCREASE and needs the lead\'s eye.** Expected')
+        add('spend is unchanged at %.2f GPU-h per arm; only the ceiling moves,'
+            % correction['projected_gpu_hours'])
+        add('to a number the machinery can honour. Registered before any run.')
+        add('')
+        add('**The gate that would have caught the original mistake.**')
+        add('`tests/test_grm_lt1_1_runner.py::test_every_emitted_command_')
+        add('actually_runs` parses every `python3 scripts/…` line out of')
+        add('`lead_commands.txt`, appends `--dry-run`, executes it, and')
+        add('requires exit 0. A companion test')
+        add('(`test_the_old_broken_invocation_would_have_been_caught`) runs the')
+        add('exact shape I shipped and asserts it fails with "unrecognized')
+        add('arguments", so the gate is proven to have teeth.')
+        add('')
+
+    # ------------------------------------------- follow-up 3: the seam fix
+    amend3_path = OUT / 'lt1_1/amendment3.json'
+    if amend3_path.exists():
+        a3 = json.loads(amend3_path.read_text())
+        a3_sha = (OUT / 'lt1_1/amendment3.sha256').read_text().split()[0]
+        add('## 5d. Follow-up 3: the resume route (the seam had drifted)')
+        add('')
+        add('**The defect.** `--arm A+ --resume` died on the card before taking')
+        add('any lease:')
+        add('')
+        add('```')
+        add("grm_lt1_amendment4.apply -> lt.binding('CPU') -> ARM_ALIAS['CPU']")
+        add("KeyError: 'CPU'")
+        add('```')
+        add('')
+        add('Two stacked mistakes, both mine:')
+        add('')
+        for cause in a3['defect']['causes']:
+            add('- **%s (%s).** %s' % (cause['id'], cause['kind'], cause['what']))
+            add('  *Fix:* %s' % cause['fix'])
+        add('')
+        add('**Why 115 passing tests said nothing.** %s'
+            % a3['defect']['why_the_gates_missed_it'])
+        add('')
+        add('**The seam audit.** Every redirected name was checked for arity and')
+        add('argument meaning against every call site:')
+        add('')
+        add('| name | moved? | why |')
+        add('|---|---|---|')
+        for name, why in sorted(a3['seam_audit']['redirected'].items()):
+            add('| `%s` | **yes** | %s |' % (name, why))
+        for name, why in sorted(
+                a3['seam_audit']['deliberately_not_redirected'].items()):
+            add('| `%s` | no | %s |' % (name, why))
+        add('')
+        add('The two Path constants carry no signature. The one callable now')
+        add('matches LT1 exactly: `binding(label)` echoes its argument the way')
+        add("LT1's does, and reads the ARM from pinned runner state, which is")
+        add('where the arm actually lives.')
+        add('')
+        add('**The gate.** `--resume --dry-lease` walks the production route --')
+        add('amendment load, apply4-bearing preflight, seam redirection, arm')
+        add('pin, campaign owner file, `worker.pending` cell selection -- and')
+        add('stops at `worker.run_cell`, the lease boundary. Nothing before that')
+        add('point is stubbed.')
+        add('')
+        for name, arm in (('A', 'A'), ('Aplus', 'A+')):
+            path = OUT / ('lt1_1/proof/resume_dry_lease_%s.json' % name)
+            if path.exists():
+                v = json.loads(path.read_text())
+                add('- `--arm %s --resume --dry-lease` -> rc 0, status %s, next '
+                    '`%s`, stopped at %s, alias pin %s, receipt '
+                    '`campaign_arm=%s alias_fold_merge=%s`'
+                    % (arm, v['status'], v['next_cell'], v['stopped_at'],
+                       v['pinned']['alias_fold_merge'],
+                       v['receipt_binding']['campaign_arm'],
+                       v['receipt_binding']['alias_fold_merge']))
+        add('')
+        add('RED-before / GREEN-after are both gated:')
+        add('`%s` reconstructs the shipped seam and asserts the exact'
+            % a3['gate']['red_before'].split(' ')[0])
+        add("`KeyError: 'CPU'` surfaces through `grm_lt1_amendment4.apply`;")
+        add('`test_resume_route_reaches_the_lease_boundary[A]` and `[A+]` prove')
+        add('the fixed route. `test_only_the_documented_seams_move` cross-checks')
+        add('the audit table against live behaviour.')
+        add('')
+        add('**Amendment 3** — `artifacts/grm_d1/lt1_1/amendment3.json`, sha256')
+        add('`%s`, chained to amendment 2' % a3_sha)
+        add('`%s…`. Runner rebound: `%s…`'
+            % (a3['previous_amendment_sha256'][:16], a3['runner']['sha256'][:16]))
+        add('supersedes `%s…`.' % a3['runner']['superseded_sha256'][:16])
+        add('')
+        blocker = a3['host_blocker']
+        add('**OPEN BLOCKER — needs your decision.** With the seam fixed, the')
+        add('real `--resume` now reaches the genuine host check and stops there:')
+        add('')
+        add('```')
+        add('ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py')
+        add('```')
+        add('')
+        add('%s.' % blocker['cause'][0].upper() + blocker['cause'][1:])
+        add('`lt.preflight()` fails **identically with or without** the')
+        add('LT1.1 redirection, so this is not something the runner introduced —')
+        add('it is the same pre-existing core drift this report records in its')
+        add('RED items. Consequence: %s' % blocker['consequence'])
+        add('')
+
+    # ------------------------------------------- follow-up 4: the ruling
+    amend4_path = OUT / 'lt1_1/amendment4.json'
+    if amend4_path.exists():
+        a4 = json.loads(amend4_path.read_text())
+        a4_sha = (OUT / 'lt1_1/amendment4.sha256').read_text().split()[0]
+        add('## 5e. Follow-up 4: LT1.1 validates its own chain (the ruling)')
+        add('')
+        add('**The ruling** (lead, 2026-09-11), recorded verbatim in the')
+        add('amendment and in the runner:')
+        add('')
+        add('> %s' % a4['ruling'])
+        add('')
+        add('**What changed.** `scripts/grm_lt1_1.py` replaced its')
+        add('`lt.preflight()` call with `lt1_1_preflight(arm)`, which applies')
+        add("the same verification classes to LT1.1's documents:")
+        add('')
+        for item in a4['preflight']['verification_classes']:
+            add('- %s' % item)
+        add('')
+        add('Not checked, by the ruling: %s'
+            % a4['preflight']['not_checked'][0])
+        add('')
+        add('**The `apply4` question you asked — measured, not assumed.**')
+        add('`grm_lt1_amendment4.apply`\'s protocol-binding check')
+        add('(`a[\'protocol_binding\'] != lt.binding(\'CPU\')`) **passes on this')
+        add('tree, unchanged and untouched** — recorded equals live: %s.'
+            % a4['apply4_finding']['recorded_equals_live'])
+        add('%s' % a4['apply4_finding']['why'])
+        add('So no second ruling is needed: amendment 4 never gated on drifted')
+        add('core. Its recorded binding is reported as parent lineage, and')
+        add('LT1.1 stamps its own through `worker.bind`.')
+        add('')
+        add('**Parent lineage, recorded not gated.** LT1 registration')
+        add('`%s…`, %d recorded core pins. Drift table:'
+            % (a4['parent_lineage']['lt1_registration_sha256'][:16],
+               a4['parent_lineage']['lt1_recorded_core_pins']))
+        add('')
+        add('| input | LT1 recorded | LT1.1 rebound = on tree now | attribution |')
+        add('|---|---|---|---|')
+        for row in a4['parent_lineage']['drift_table']:
+            add('| `%s` | %s | `%s…` | %s |'
+                % (row['input'],
+                   ('`%s…`' % row['lt1_recorded'][:12]) if row['lt1_recorded']
+                   else '— (new)',
+                   row['lt1_1_rebound'][:12], row['attribution']))
+        add('')
+        add('**The gate still has teeth.** The risk in "stop checking X" is')
+        add('that it becomes "stop checking".')
+        add('`test_a_planted_drift_in_our_own_amendment_goes_red` plants a bad')
+        add("core sha in LT1.1's OWN amendment 1 — sidecar kept consistent, so")
+        add('the failure is the input check and not a document mismatch — and')
+        add('requires `INPUT_SHA_MISMATCH` for that input. Five more tamper')
+        add('tests cover the new-input branch, chain continuity, a tampered')
+        add('document, a tampered fixture and an unpinned admission rule.')
+        add('')
+        add('**Both arms, host gate ON, no escape hatch:**')
+        add('')
+        for name, arm in (('A', 'A'), ('Aplus', 'A+')):
+            path = OUT / ('lt1_1/proof/resume_dry_lease_%s.json' % name)
+            if path.exists():
+                v = json.loads(path.read_text())
+                add('- `--arm %s --resume --dry-lease` -> rc 0, '
+                    'host_preflight **%s**, status %s, next `%s`, stopped at '
+                    '%s, alias pin %s — **no INPUT_SHA_MISMATCH**'
+                    % (arm, v['host_preflight'], v['status'], v['next_cell'],
+                       v['stopped_at'], v['pinned']['alias_fold_merge']))
+        add('')
+        add('**Amendment 3\'s blocker is resolved, and the test is inverted')
+        add('with its receipt.** `test_the_host_blocker_claim_is_true_right_now`')
+        add('became `test_the_host_blocker_claim_was_true_and_is_now_resolved`,')
+        add('which asserts BOTH halves: LT1\'s own gate still refuses (the drift')
+        add('is real and we did not paper over it) AND LT1.1\'s gate is READY.')
+        add('Amendment 3 stays as written; amendment 4 records the resolution.')
+        add('')
+        add('**Amendment 4** — `artifacts/grm_d1/lt1_1/amendment4.json`, sha256')
+        add('`%s`, chained to amendment 3' % a4_sha)
+        add('`%s…`. Runner rebound `%s…`.'
+            % (a4['previous_amendment_sha256'][:16], a4['runner']['sha256'][:16]))
+        add('')
+
     add('## 6. Deviations, RED items, process safety')
     add('')
     add('**Deviations from the order**')

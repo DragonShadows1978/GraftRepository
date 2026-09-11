@@ -189,22 +189,48 @@ def test_the_amendment_records_the_flag_as_present_with_its_reader(doc):
     assert af.ENV_NAME == am.ALIAS_FLAG
 
 
-def test_lead_commands_carry_both_arms_and_the_flag_discipline():
-    text = am.lead_commands('0' * 64)
-    assert 'env -u %s' % am.ALIAS_FLAG in text, 'arm A must UNSET the flag'
-    assert 'env %s=1' % am.ALIAS_FLAG in text, 'arm A+ must SET the flag'
-    assert text.count('flock --wait') == 2
-    assert 'run_A\n' in text
-    assert 'run_Aplus' in text
-    assert 'alias_fold_enabled() -> True' in text
-    assert am.BASE_SHA in text
+def test_amendment1_no_longer_owns_lead_commands():
+    """Amendment 1's command generator described a runner that never existed.
+
+    It emitted `grm_lt1.py --run --arm … --registration … --out …`; that
+    script has no such flags, so the commands could not run and the only
+    test on them checked a sha string. `lead_commands.txt` is now generated
+    by amendment 2 from the ACTUAL argparse of `scripts/grm_lt1_1.py`, and
+    gated by `test_every_emitted_command_actually_runs`, which executes each
+    emitted command. This test pins that ownership so the dead generator
+    cannot quietly come back.
+    """
+    text = (am.OUT / 'lead_commands.txt').read_text()
+    # Whichever amendment currently owns the file, it is not amendment 1.
+    latest = max(int(p.stem.replace('amendment', ''))
+                 for p in am.OUT.glob('amendment[0-9]*.json'))
+    assert 'amendment %d' % latest in text
+    assert latest >= 2
+    assert 'scripts/grm_lt1_1.py' in text
+    # The broken shape must be gone.
+    assert '--registration' not in text
+    assert 'grm_lt1.py --run' not in text
+    # And amendment 1's own generator is no longer the source of truth.
+    stale = am.lead_commands('0' * 64)
+    assert stale != text
 
 
-def test_emitted_lead_commands_are_current():
-    path = am.OUT / 'lead_commands.txt'
-    if not path.exists():
-        pytest.skip('lead_commands not emitted yet')
-    text = path.read_text()
-    digest = am.sha_path(am.OUT / 'amendment1.json')
-    assert digest in text, 'lead_commands cites a stale amendment sha'
-    assert 'run_Aplus' in text and 'env -u %s' % am.ALIAS_FLAG in text
+def test_the_amendment1_budget_was_superseded_by_amendment_two(doc):
+    """Amendment 1 registered a ceiling below the reservation sum.
+
+    `--dry-run` against the real cell list showed 26 cells reserve 7410 s,
+    and `run_cell` charges the lease. Amendment 1's 6120 s would have railed
+    mid-campaign; amendment 2 corrects it. Amendment 1 is NOT rewritten -- it
+    stays at its sha -- so this test records that its budget is superseded.
+    """
+    lease = sum(c['lease_seconds'] for c in doc['arms']['A']['cells'])
+    assert doc['budget_gpu_seconds_per_arm'] == 6120
+    assert lease > doc['budget_gpu_seconds_per_arm'], (
+        'the defect this documents has disappeared; re-check the cell list')
+    amendment2 = am.OUT / 'amendment2.json'
+    if not amendment2.exists():
+        pytest.skip('amendment 2 not emitted yet')
+    corrected = json.loads(amendment2.read_text())
+    assert corrected['budget_gpu_seconds_per_arm'] == lease
+    assert corrected['previous_amendment_sha256'] == am.sha_path(
+        am.OUT / 'amendment1.json')
