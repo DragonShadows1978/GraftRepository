@@ -191,12 +191,30 @@ def pinned_environment(env: dict[str, str]):
                 os.environ[key] = value
 
 
+#: The registered arms. ``r3-A`` is the r2 configuration; ``r3-A+`` adds
+#: A1's alias fold-merge (``core/grm_alias_fold.py``, default OFF). Both
+#: gate on plumbing only — see the module docstring.
+ARMS = {
+    "A": (),
+    "A+": ("GRM_ALIAS_FOLD_MERGE",),
+}
+
+
 def run(repo_dir: Path, *, transcript: Path = TRANSCRIPT,
-        profile: str = "eb1_c2") -> dict[str, Any]:
+        profile: str = "eb1_c2",
+        pinned: tuple[str, ...] | None = None,
+        arm: str | None = None) -> dict[str, Any]:
+    """Run one arm. ``arm`` names a registered pin set; ``pinned`` overrides."""
     from scripts.grm_profile import resolve_profile
-    resolved = resolve_profile(selection=profile)
+    if pinned is None:
+        pinned = ARMS[arm] if arm is not None else ()
+    resolved = resolve_profile(selection=profile, pinned=list(pinned))
     with pinned_environment(resolved["env"]):
-        return _run_pinned(repo_dir, transcript, resolved)
+        result = _run_pinned(repo_dir, transcript, resolved)
+    result["arm"] = arm
+    result["pinned"] = list(pinned)
+    result["named_flags_applied"] = resolved["named_flags_applied"]
+    return result
 
 
 def _run_pinned(repo_dir: Path, transcript: Path,
@@ -238,15 +256,27 @@ def _run_pinned(repo_dir: Path, transcript: Path,
 
     leak = assert_no_live_history(seen, _user_turns(transcript))
 
+    # A turn that raised carries answer=None and an `error` field. It is
+    # evidence, not a reason to stop scoring — and it must never be counted
+    # as a receipt or a correct answer.
+    failed = [{"turn": r["turn"], "user": r["user"], "error": r["error"]}
+              for r in turns if r.get("error")]
     receipts_ok = all(
         (r.get("route_receipt") or {}).get("schema") == "grm.route_receipt.v1"
-        for r in turns)
+        for r in turns if not r.get("error"))
     mounted_turns = [r["turn"] for r in turns if r["mounted_ids"]]
     by_turn = {r["turn"]: r for r in turns}
     scored = []
     for spec in RECALLS:
         row = by_turn.get(spec["turn"])
         if row is None:
+            scored.append({**spec, "answer": None, "mounted_ids": None,
+                           "correct": False, "category": "MISSING_ROW"})
+            continue
+        if row.get("error"):
+            scored.append({**spec, "answer": None, "mounted_ids": [],
+                           "correct": False, "category": "TURN_FAILED",
+                           "error": row["error"]})
             continue
         verdict = lt.score(row["answer"], spec["expected"])
         scored.append({**spec, "answer": row["answer"],
@@ -261,6 +291,7 @@ def _run_pinned(repo_dir: Path, transcript: Path,
 
     checks = {
         "turns_recorded": len(turns) == 19,
+        "no_failed_turns": not failed,
         "route_receipt_schema_every_turn": receipts_ok,
         "mounts_happen": bool(mounted_turns),
         "restart_recorded": len(restarts) == 1,
@@ -278,6 +309,7 @@ def _run_pinned(repo_dir: Path, transcript: Path,
         "profile": resolved["profile"],
         "admission_rule": resolved["admission_rule"],
         "checks": checks,
+        "failed_turns": failed,
         "leak_test": leak,
         "turns": len(turns),
         "mounted_turns": mounted_turns,
@@ -295,17 +327,40 @@ def _run_pinned(repo_dir: Path, transcript: Path,
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--repo", type=Path, default=OUT / "smoke_session")
+    p.add_argument("--repo", type=Path, default=None,
+                   help="session directory (default: per-arm under OUT)")
     p.add_argument("--transcript", type=Path, default=TRANSCRIPT)
     p.add_argument("--profile", default="eb1_c2")
-    p.add_argument("--receipt", type=Path, default=OUT / "smoke_receipt.json")
+    p.add_argument("--arm", choices=sorted(ARMS) + ["all"], default="all",
+                   help="A = as r2; A+ = A1 alias fold-merge pinned")
+    p.add_argument("--receipt", type=Path, default=None,
+                   help="receipt path (default: per-arm under OUT)")
     args = p.parse_args(argv)
-    result = run(args.repo, transcript=args.transcript, profile=args.profile)
-    args.receipt.parent.mkdir(parents=True, exist_ok=True)
-    args.receipt.write_text(json.dumps(result, indent=2, sort_keys=True,
-                                       default=str) + "\n")
-    print(json.dumps(result, indent=2, sort_keys=True, default=str))
-    return 0 if result["status"] == "PASS" else 1
+
+    arms = sorted(ARMS) if args.arm == "all" else [args.arm]
+    results = {}
+    for arm in arms:
+        slug = arm.replace("+", "plus")
+        repo = args.repo or OUT / f"smoke_session_{slug}"
+        result = run(repo, transcript=args.transcript, profile=args.profile,
+                     arm=arm)
+        receipt = args.receipt or OUT / f"smoke_receipt_{slug}.json"
+        receipt.parent.mkdir(parents=True, exist_ok=True)
+        receipt.write_text(json.dumps(result, indent=2, sort_keys=True,
+                                      default=str) + "\n")
+        result["receipt"] = str(receipt)
+        results[arm] = result
+        print(json.dumps(result, indent=2, sort_keys=True, default=str))
+
+    print("\n=== ARM SUMMARY ===")
+    for arm, result in results.items():
+        flags = ", ".join(result["named_flags_applied"]) or "(none)"
+        print(f"  {arm:3} {result['status']:4} "
+              f"turns={result['turns']:2} "
+              f"value_span={result['value_span_correct']}/"
+              f"{result['value_span_of']} "
+              f"failed={len(result['failed_turns'])} pinned={flags}")
+    return 0 if all(r["status"] == "PASS" for r in results.values()) else 1
 
 
 if __name__ == "__main__":

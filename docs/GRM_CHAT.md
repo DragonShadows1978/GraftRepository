@@ -71,10 +71,15 @@ Two properties worth knowing:
 * **An unknown name is an error**, not a fallback to defaults. A profile you
   can silently mistype is a profile you cannot trust a receipt from.
 
-`--pin-flag NAME[=VALUE]` pins an extra named flag. If nothing on the tree
-reads it, the session says so in its startup notes and does **not** set it —
-`GRM_ALIAS_FOLD_MERGE` is in that state today (the alias fold-merge
-mechanism is designed but not landed here).
+`--pin-flag NAME[=VALUE]` pins an extra named flag. Whether a flag is
+*effective* is decided by looking for a reader on the tree, never by a list:
+one that nothing reads is reported in the startup notes as absent and is
+**not** set, and one that has a reader prints as `(pinned, effective)`.
+
+`--pin-flag GRM_ALIAS_FOLD_MERGE` turns on A1's alias fold-merge
+(`core/grm_alias_fold.py`, **default OFF**). Unset stays off — the profile
+does not enable it by itself. Before A1 landed this same resolver reported
+that flag as absent; the transition needed no code change here.
 
 The resolved flag set prints at the top of every session, so any receipt you
 paste carries the conditions it was taken under.
@@ -141,7 +146,69 @@ result is **reported, never gated** — the stub reader is a regex that copies
 a visible value, so its hit rate says nothing about GRM.
 
 Quality is the registered GPU smoke: `artifacts/grm_p1/lead_commands.txt`
-(≤ 0.2 GPU-h, lead-run, gate = fresh recall ≥ 3/4).
+(≤ 0.2 GPU-h per arm, lead-run, gate = fresh recall ≥ 3/4).
+
+The fake smoke runs two arms, `--arm A` (as r2) and `--arm A+`
+(`GRM_ALIAS_FOLD_MERGE` pinned); `--arm all` is the default.
+
+## Measured on GPT-OSS-20B (r2, 2026-09-10)
+
+The first clean end-to-end run of this surface on the real model: one
+lease, ~6 min, 18 chat turns under `GRM_PROFILE=eb1_c2`.
+Receipts: `artifacts/grm_p1/gpu_smoke_r2.log`,
+`artifacts/grm_p1/gpu_session/session_ledger.jsonl`.
+
+| | result |
+|---|---|
+| **fresh facts** | **3/4 — GATE PASS** |
+| alias | 1/1 |
+| corrections | 0/2 |
+| recap | **crashed** (see below) |
+| route receipt every turn | yes |
+| restart retained | yes (17 → 17 nodes) |
+| live-history leak | none |
+
+Per probe: t6 `Auric-4-Alpha` ✓ · t14 refused, "I don't have that
+information" · t16 `Nadir-1-Delta` ✓ · t17 `Vortex-3-Sierra` ✓ · alias t18
+`Nadir-1-Delta` ✓ · corrections t11 answered the **stale** `Auric-4-Alpha`,
+t15 refused.
+
+Read honestly: fresh recall and the alias worked; **both corrections
+failed, in the two different ways LT1 predicted** — one stale value, one
+refusal. Four fresh probes is a small sample and 3/4 is one miss from the
+floor. Corrections remain the residual.
+
+**The recap turn crashed**, and the run had no error isolation, so it left
+no ledger row — which is why the r2 scorer died with `KeyError: 19` looking
+for a 19th turn among 18:
+
+```
+core.grm_admission.AdmissionPolicyError: production route ranking differs
+from frozen A-DEC score reconstruction: backend=native
+production=[18, 21, 13, 8, 15, 16] reference=[18, 21, 20, 13, 8, 15]
+```
+
+Mechanism, diagnosed but **not fixed** (it is in read-only `core/`, and it
+is not a defect of this surface): node 20 is a **degenerate fold** —
+`kind=digest`, `ntok=4`, text exactly `"ARCHIVE NOTE."`, a librarian
+consolidation that emitted its header and no content. Its manifest entry
+has `cent = None` (no route centroid) but `rare = ['archive','note']` and a
+live `native_node_id`. The native router omits a node with no route key;
+the Python reconstruction in `decisive_admission_profile` scores it from
+the lexical channel alone and ranks it third. The two disagree and the
+integrity guard correctly refuses to proceed. It surfaced here and in no
+prior battery because that reconstruction only runs under `margin_first`
+(or ≤ 16 eligible nodes) — and `margin_first` is exactly what `eb1_c2`
+pins. **Open for the lead:** whether a centroid-less digest should be
+route-eligible at all. Until it is answered, a session long enough to
+trigger a degenerate fold can abort a turn under `eb1_c2`.
+
+Two surface fixes shipped in response (r3): a turn that raises now writes a
+ledger row with `answer: null` and an `error` field instead of escaping the
+loop, so the batch completes and the failure is *in* the ledger; and the
+interactive loop reports a failed turn and hands the prompt back rather
+than ending the session. The registered scorer finds the recap by its
+question text, never by a turn index.
 
 ## Known residuals
 
@@ -153,10 +220,14 @@ Measured on LT1's 200-turn natural conversation, 2026-09-09, profile arm
 * **Corrections: 5/10.** A value that was stated and later revised is
   recalled correctly about half the time. Superseded values are the residual
   C7 isolated; the mechanism is open.
-* **Aliases: 5/10.** "Call the Vega station the Hub" then asking about the
-  Hub requires composing two records. The fold-merge design exists
+* **Aliases: 5/10** (LT1). "Call the Vega station the Hub" then asking about
+  the Hub requires composing two records. The fold-merge design
   (`ALIAS_DESIGN_OPTIONS.md`, fold-merge first, two-hop read as fallback)
-  but is not landed — hence `GRM_ALIAS_FOLD_MERGE` having no reader.
+  **has since landed as A1** (`core/grm_alias_fold.py`, default OFF) and is
+  reachable here as `--pin-flag GRM_ALIAS_FOLD_MERGE`. The r3 GPU smoke runs
+  it as a second arm against the same transcript. r2 (flag off) got the
+  single alias probe right, so one probe cannot separate the arms — treat
+  the pair as a first exposure, not a measurement.
 * **The recap scored 0/5.** The profile listed five real quantities from
   memory, but not the five decisions the fixture had registered. LT1's
   conclusion is that "the five biggest decisions" is under-specified as a
