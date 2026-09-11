@@ -1931,6 +1931,22 @@ class ArenaCache:
     EXTRACTIVE_ERA_CONSOLIDATION = False
     EXTRACTIVE_ERA_MAX_CHARS = 9000
 
+    #: GRM-F2 (b) ATTRIBUTION QC HOOK.  ``None`` (the permanent default) means
+    #: no check runs and ``consolidate`` keeps its pre-F2 bytes exactly.  When
+    #: the F2 flag is ON, ``GraftRepository`` installs a callable
+    #: ``(source_texts, digest_text) -> receipt_dict``; a receipt whose
+    #: ``attribution_ok`` is False ABORTS the fold through the SAME return
+    #: path a coverage abort takes (``(None, None)``, sources untouched and
+    #: still active), so the caller's abort contract is unchanged and no new
+    #: failure mode is introduced.  The hook is a seam, not a policy: the
+    #: policy lives in ``core/grm_fold_alias_guard.py``.
+    #:
+    #: WHY HERE and not in ``_fold_once``: ``_deposit_consolidation`` RETIRES
+    #: the sources, so a check that ran after it would have to reverse a
+    #: retirement and a deposit.  Checking immediately before deposit means a
+    #: rejected digest was never written and no node ever changed state.
+    fold_attribution_guard = None
+
     def _source_scaffold(self, source_texts):
         remaining = int(self.TEXT_SCAFFOLD_MAX_CHARS)
         parts = []
@@ -2230,6 +2246,8 @@ class ArenaCache:
             })
             if not qc or cov < self.MIN_FOLD_KEEP:
                 return None, None
+            if not self._fold_attribution_ok(srcs, text):
+                return None, None
             self.last_consolidation_result["accepted"] = True
             return self._deposit_consolidation(idxs, text,
                                                prefix="ERA INDEX.")
@@ -2338,8 +2356,35 @@ class ArenaCache:
         # coverage bar keeps such digests directly routable instead.
         if text is None or best_cov < self.MIN_FOLD_KEEP:
             return None, None
+        # GRM-F2 (b): a digest that passed coverage can still have filed the
+        # sources' facts under the WRONG entity — coverage scores values and
+        # is blind to attribution by construction (measured: LT1.1 r2 arm A
+        # digest 24, best_cov 1.0, every fact rebound onto "the Beacon").
+        # Rejection reuses this method's own abort contract exactly.
+        if not self._fold_attribution_ok(srcs, text):
+            return None, None
         self.last_consolidation_result["accepted"] = True
         return self._deposit_consolidation(idxs, text)
+
+    def _fold_attribution_ok(self, source_texts, text):
+        """Run the F2 attribution hook, if one is installed.
+
+        Returns True when no hook is installed (the permanent default), so
+        every caller that never sets ``fold_attribution_guard`` executes the
+        identical sequence it executed before F2.  The receipt the hook
+        returns is stashed on ``last_consolidation_result`` so the fold
+        history carries it without a second call.
+
+        Prior art: the hook shape is this class's own optional-seam idiom
+        (``node_loader``, ``native_store``), reused; the policy behind it is
+        annotated in ``core/grm_fold_alias_guard.py``.
+        """
+        guard = self.fold_attribution_guard
+        if guard is None:
+            return True
+        receipt = guard(list(source_texts), text)
+        self.last_consolidation_result["attribution"] = receipt
+        return bool(receipt.get("attribution_ok", True))
 
     # ------------------------------------------------------------ cache ops
     def _ensure_h(self, idxs):

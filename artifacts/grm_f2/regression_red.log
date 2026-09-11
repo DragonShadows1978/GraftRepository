@@ -1,0 +1,534 @@
+.FFFFFFFF......................s.                                        [100%]
+=================================== FAILURES ===================================
+___________ test_s4_orders_hits_ascending_with_existing_age_tiebreak ___________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-f2/artifacts/grm_f2/tmp/test_s4_orders_hits_ascending_0')
+
+    def test_s4_orders_hits_ascending_with_existing_age_tiebreak(tmp_path):
+        # Index is the pre-existing age order.  The four zero-hit sources must
+        # retain their age order rather than introducing any new score tiebreak.
+        hits = [5, 0, 3, 0, 2, 0, 0, 4]
+        repo = _planner_repo(
+            [_graft(n_grounded=hits_i) for hits_i in hits], tmp_path,
+            fold_order="s4")
+    
+>       assert _digest_sources(repo) == [1, 3, 5, 6]
+               ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_s4_fold_order.py:143: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_s4_fold_order.py:122: in _digest_sources
+    jobs = repo._librarian_jobs(
+core/graft_repository.py:4104: in _librarian_jobs
+    return self._guard_fold_windows(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <core.graft_repository.GraftRepository object at 0x7514b433a630>
+jobs = [('digest', [1, 3, 5, 6])]
+
+    def _guard_fold_windows(self, jobs):
+        """F2 (a): drop FACT-LESS alias/rename turns from each fold window.
+    
+        Reached from BOTH ``_librarian_jobs`` return paths (native plan and
+        fallback) so the treatment cannot depend on which planner ran.  With
+        ``fold_alias_guard`` False this returns ``jobs`` unchanged, by
+        identity, from its first line — the window plan keeps its pre-F2
+        bytes and no method below is ever called.
+    
+        WHY THIS AND NOT A COVERAGE TWEAK.  Measured on the receipt
+        (``artifacts/grm_f2/receipt_digest24.json``): the two alias turns in
+        that window contribute ZERO facts to ``_fact_set``, so FIX-5's
+        ``[source N]`` enumeration and the fold's ``need`` are byte-identical
+        with and without them.  Their only contribution is the K/V mount
+        ``consolidate`` makes over every source, which is what the model read
+        "the Beacon" from.  Removing them removes the contamination and
+        changes nothing the fold was asked to preserve.
+    
+        A window is never emptied: ``fold_window_excludes`` returns nothing
+        when every source is a fact-less alias turn, and a window reduced to
+        a single source is still a legal fold (``consolidate`` handles
+        ``len(idxs) == 1`` on its existing path).  The excluded node is NOT
+        marked ``no_fold``: it stays an ordinary active turn, which is where
+        A1's ``_alias_fold_jobs`` looks for an alias edge, so F2's exclusion
+        and A1's merge compose instead of competing.
+    
+        Prior art: the job list is FIX-3/FIX-5's own (``_librarian_jobs``),
+        unchanged; the alias detector is A1's ``parse_alias_edge``, unchanged.
+        Full annotation in ``core/grm_fold_alias_guard.py``.
+        """
+>       if not self.fold_alias_guard:
+               ^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'GraftRepository' object has no attribute 'fold_alias_guard'
+
+core/graft_repository.py:4148: AttributeError
+___________ test_s4_orders_eligible_digest_sources_with_the_same_key ___________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-f2/artifacts/grm_f2/tmp/test_s4_orders_eligible_digest0')
+
+    def test_s4_orders_eligible_digest_sources_with_the_same_key(tmp_path):
+        hits = [4, 0, 2, 0, 1, 0]
+        repo = _planner_repo(
+            [_graft(n_grounded=hits_i, kind="digest") for hits_i in hits],
+            tmp_path, fold_order="s4")
+    
+>       assert repo._librarian_jobs() == [("era", [1, 3, 5])]
+               ^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_s4_fold_order.py:152: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+core/graft_repository.py:4104: in _librarian_jobs
+    return self._guard_fold_windows(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <core.graft_repository.GraftRepository object at 0x7514af6ee600>
+jobs = [('era', [1, 3, 5])]
+
+    def _guard_fold_windows(self, jobs):
+        """F2 (a): drop FACT-LESS alias/rename turns from each fold window.
+    
+        Reached from BOTH ``_librarian_jobs`` return paths (native plan and
+        fallback) so the treatment cannot depend on which planner ran.  With
+        ``fold_alias_guard`` False this returns ``jobs`` unchanged, by
+        identity, from its first line — the window plan keeps its pre-F2
+        bytes and no method below is ever called.
+    
+        WHY THIS AND NOT A COVERAGE TWEAK.  Measured on the receipt
+        (``artifacts/grm_f2/receipt_digest24.json``): the two alias turns in
+        that window contribute ZERO facts to ``_fact_set``, so FIX-5's
+        ``[source N]`` enumeration and the fold's ``need`` are byte-identical
+        with and without them.  Their only contribution is the K/V mount
+        ``consolidate`` makes over every source, which is what the model read
+        "the Beacon" from.  Removing them removes the contamination and
+        changes nothing the fold was asked to preserve.
+    
+        A window is never emptied: ``fold_window_excludes`` returns nothing
+        when every source is a fact-less alias turn, and a window reduced to
+        a single source is still a legal fold (``consolidate`` handles
+        ``len(idxs) == 1`` on its existing path).  The excluded node is NOT
+        marked ``no_fold``: it stays an ordinary active turn, which is where
+        A1's ``_alias_fold_jobs`` looks for an alias edge, so F2's exclusion
+        and A1's merge compose instead of competing.
+    
+        Prior art: the job list is FIX-3/FIX-5's own (``_librarian_jobs``),
+        unchanged; the alias detector is A1's ``parse_alias_edge``, unchanged.
+        Full annotation in ``core/grm_fold_alias_guard.py``.
+        """
+>       if not self.fold_alias_guard:
+               ^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'GraftRepository' object has no attribute 'fold_alias_guard'
+
+core/graft_repository.py:4148: AttributeError
+________________ test_age_default_takes_no_new_ordering_branch _________________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-f2/artifacts/grm_f2/tmp/test_age_default_takes_no_new_0')
+
+    def test_age_default_takes_no_new_ordering_branch(tmp_path):
+        hits = [5, 0, 3, 0, 2, 0, 0, 4]
+        repo = _planner_repo(
+            [_graft(n_grounded=hits_i) for hits_i in hits], tmp_path,
+            fold_order="age")
+    
+        def unexpected_sort(_sources):
+            pytest.fail("the default age arm must not invoke S4 ordering")
+    
+        repo._order_fold_sources_s4 = unexpected_sort
+>       assert _digest_sources(repo) == [0, 1, 2, 3]
+               ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_s4_fold_order.py:165: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_s4_fold_order.py:122: in _digest_sources
+    jobs = repo._librarian_jobs(
+core/graft_repository.py:4104: in _librarian_jobs
+    return self._guard_fold_windows(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <core.graft_repository.GraftRepository object at 0x7514af68ef90>
+jobs = [('digest', [0, 1, 2, 3])]
+
+    def _guard_fold_windows(self, jobs):
+        """F2 (a): drop FACT-LESS alias/rename turns from each fold window.
+    
+        Reached from BOTH ``_librarian_jobs`` return paths (native plan and
+        fallback) so the treatment cannot depend on which planner ran.  With
+        ``fold_alias_guard`` False this returns ``jobs`` unchanged, by
+        identity, from its first line — the window plan keeps its pre-F2
+        bytes and no method below is ever called.
+    
+        WHY THIS AND NOT A COVERAGE TWEAK.  Measured on the receipt
+        (``artifacts/grm_f2/receipt_digest24.json``): the two alias turns in
+        that window contribute ZERO facts to ``_fact_set``, so FIX-5's
+        ``[source N]`` enumeration and the fold's ``need`` are byte-identical
+        with and without them.  Their only contribution is the K/V mount
+        ``consolidate`` makes over every source, which is what the model read
+        "the Beacon" from.  Removing them removes the contamination and
+        changes nothing the fold was asked to preserve.
+    
+        A window is never emptied: ``fold_window_excludes`` returns nothing
+        when every source is a fact-less alias turn, and a window reduced to
+        a single source is still a legal fold (``consolidate`` handles
+        ``len(idxs) == 1`` on its existing path).  The excluded node is NOT
+        marked ``no_fold``: it stays an ordinary active turn, which is where
+        A1's ``_alias_fold_jobs`` looks for an alias edge, so F2's exclusion
+        and A1's merge compose instead of competing.
+    
+        Prior art: the job list is FIX-3/FIX-5's own (``_librarian_jobs``),
+        unchanged; the alias detector is A1's ``parse_alias_edge``, unchanged.
+        Full annotation in ``core/grm_fold_alias_guard.py``.
+        """
+>       if not self.fold_alias_guard:
+               ^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'GraftRepository' object has no attribute 'fold_alias_guard'
+
+core/graft_repository.py:4148: AttributeError
+_________ test_s4_source_order_reaches_both_librarian_paths[deferred] __________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-f2/artifacts/grm_f2/tmp/test_s4_source_order_reaches_b0')
+deferred_backpressure = False, n_sources = 8
+
+    @pytest.mark.parametrize(
+        "deferred_backpressure,n_sources",
+        [(False, GraftRepository.TURNS_HIGH),
+         (True, GraftRepository.TURNS_HIGH * 2)],
+        ids=["deferred", "backpressure"],
+    )
+    def test_s4_source_order_reaches_both_librarian_paths(
+            tmp_path, deferred_backpressure, n_sources):
+        hits = [6, 0, 4, 0, 2, 0, 0, 5]
+        hits.extend([7] * (n_sources - len(hits)))
+        repo = _planner_repo(
+            [_graft(n_grounded=hits_i) for hits_i in hits], tmp_path,
+            fold_order="s4")
+    
+>       assert _digest_sources(
+            repo, deferred_backpressure=deferred_backpressure) == [1, 3, 5, 6]
+
+tests/test_grm_s4_fold_order.py:182: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_s4_fold_order.py:122: in _digest_sources
+    jobs = repo._librarian_jobs(
+core/graft_repository.py:4104: in _librarian_jobs
+    return self._guard_fold_windows(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <core.graft_repository.GraftRepository object at 0x7514af6ccf80>
+jobs = [('digest', [1, 3, 5, 6])]
+
+    def _guard_fold_windows(self, jobs):
+        """F2 (a): drop FACT-LESS alias/rename turns from each fold window.
+    
+        Reached from BOTH ``_librarian_jobs`` return paths (native plan and
+        fallback) so the treatment cannot depend on which planner ran.  With
+        ``fold_alias_guard`` False this returns ``jobs`` unchanged, by
+        identity, from its first line — the window plan keeps its pre-F2
+        bytes and no method below is ever called.
+    
+        WHY THIS AND NOT A COVERAGE TWEAK.  Measured on the receipt
+        (``artifacts/grm_f2/receipt_digest24.json``): the two alias turns in
+        that window contribute ZERO facts to ``_fact_set``, so FIX-5's
+        ``[source N]`` enumeration and the fold's ``need`` are byte-identical
+        with and without them.  Their only contribution is the K/V mount
+        ``consolidate`` makes over every source, which is what the model read
+        "the Beacon" from.  Removing them removes the contamination and
+        changes nothing the fold was asked to preserve.
+    
+        A window is never emptied: ``fold_window_excludes`` returns nothing
+        when every source is a fact-less alias turn, and a window reduced to
+        a single source is still a legal fold (``consolidate`` handles
+        ``len(idxs) == 1`` on its existing path).  The excluded node is NOT
+        marked ``no_fold``: it stays an ordinary active turn, which is where
+        A1's ``_alias_fold_jobs`` looks for an alias edge, so F2's exclusion
+        and A1's merge compose instead of competing.
+    
+        Prior art: the job list is FIX-3/FIX-5's own (``_librarian_jobs``),
+        unchanged; the alias detector is A1's ``parse_alias_edge``, unchanged.
+        Full annotation in ``core/grm_fold_alias_guard.py``.
+        """
+>       if not self.fold_alias_guard:
+               ^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'GraftRepository' object has no attribute 'fold_alias_guard'
+
+core/graft_repository.py:4148: AttributeError
+_______ test_s4_source_order_reaches_both_librarian_paths[backpressure] ________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-f2/artifacts/grm_f2/tmp/test_s4_source_order_reaches_b1')
+deferred_backpressure = True, n_sources = 16
+
+    @pytest.mark.parametrize(
+        "deferred_backpressure,n_sources",
+        [(False, GraftRepository.TURNS_HIGH),
+         (True, GraftRepository.TURNS_HIGH * 2)],
+        ids=["deferred", "backpressure"],
+    )
+    def test_s4_source_order_reaches_both_librarian_paths(
+            tmp_path, deferred_backpressure, n_sources):
+        hits = [6, 0, 4, 0, 2, 0, 0, 5]
+        hits.extend([7] * (n_sources - len(hits)))
+        repo = _planner_repo(
+            [_graft(n_grounded=hits_i) for hits_i in hits], tmp_path,
+            fold_order="s4")
+    
+>       assert _digest_sources(
+            repo, deferred_backpressure=deferred_backpressure) == [1, 3, 5, 6]
+
+tests/test_grm_s4_fold_order.py:182: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_s4_fold_order.py:122: in _digest_sources
+    jobs = repo._librarian_jobs(
+core/graft_repository.py:4104: in _librarian_jobs
+    return self._guard_fold_windows(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <core.graft_repository.GraftRepository object at 0x7514af6ccb00>
+jobs = [('digest', [1, 3, 5, 6])]
+
+    def _guard_fold_windows(self, jobs):
+        """F2 (a): drop FACT-LESS alias/rename turns from each fold window.
+    
+        Reached from BOTH ``_librarian_jobs`` return paths (native plan and
+        fallback) so the treatment cannot depend on which planner ran.  With
+        ``fold_alias_guard`` False this returns ``jobs`` unchanged, by
+        identity, from its first line — the window plan keeps its pre-F2
+        bytes and no method below is ever called.
+    
+        WHY THIS AND NOT A COVERAGE TWEAK.  Measured on the receipt
+        (``artifacts/grm_f2/receipt_digest24.json``): the two alias turns in
+        that window contribute ZERO facts to ``_fact_set``, so FIX-5's
+        ``[source N]`` enumeration and the fold's ``need`` are byte-identical
+        with and without them.  Their only contribution is the K/V mount
+        ``consolidate`` makes over every source, which is what the model read
+        "the Beacon" from.  Removing them removes the contamination and
+        changes nothing the fold was asked to preserve.
+    
+        A window is never emptied: ``fold_window_excludes`` returns nothing
+        when every source is a fact-less alias turn, and a window reduced to
+        a single source is still a legal fold (``consolidate`` handles
+        ``len(idxs) == 1`` on its existing path).  The excluded node is NOT
+        marked ``no_fold``: it stays an ordinary active turn, which is where
+        A1's ``_alias_fold_jobs`` looks for an alias edge, so F2's exclusion
+        and A1's merge compose instead of competing.
+    
+        Prior art: the job list is FIX-3/FIX-5's own (``_librarian_jobs``),
+        unchanged; the alias detector is A1's ``parse_alias_edge``, unchanged.
+        Full annotation in ``core/grm_fold_alias_guard.py``.
+        """
+>       if not self.fold_alias_guard:
+               ^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'GraftRepository' object has no attribute 'fold_alias_guard'
+
+core/graft_repository.py:4148: AttributeError
+______ test_m11_placeholder_stays_excluded_regardless_of_fold_order[age] _______
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-f2/artifacts/grm_f2/tmp/test_m11_placeholder_stays_exc0')
+fold_order = 'age'
+
+    @pytest.mark.parametrize("fold_order", FOLD_ORDERS)
+    def test_m11_placeholder_stays_excluded_regardless_of_fold_order(
+            tmp_path, fold_order):
+        # The placeholder is index zero and a zero-hit source, so S4 would pick
+        # it before every real node if eligibility moved behind ordering.
+        hits = [5, 0, 3, 0, 2, 0, 0, 4]
+        repo = _planner_repo(
+            [_placeholder(n_grounded=0)]
+            + [_graft(n_grounded=hits_i) for hits_i in hits],
+            tmp_path, fold_order=fold_order)
+    
+>       sources = _digest_sources(repo)
+                  ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_s4_fold_order.py:197: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_s4_fold_order.py:122: in _digest_sources
+    jobs = repo._librarian_jobs(
+core/graft_repository.py:4104: in _librarian_jobs
+    return self._guard_fold_windows(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <core.graft_repository.GraftRepository object at 0x7514af6ce2a0>
+jobs = [('digest', [1, 2, 3, 4])]
+
+    def _guard_fold_windows(self, jobs):
+        """F2 (a): drop FACT-LESS alias/rename turns from each fold window.
+    
+        Reached from BOTH ``_librarian_jobs`` return paths (native plan and
+        fallback) so the treatment cannot depend on which planner ran.  With
+        ``fold_alias_guard`` False this returns ``jobs`` unchanged, by
+        identity, from its first line — the window plan keeps its pre-F2
+        bytes and no method below is ever called.
+    
+        WHY THIS AND NOT A COVERAGE TWEAK.  Measured on the receipt
+        (``artifacts/grm_f2/receipt_digest24.json``): the two alias turns in
+        that window contribute ZERO facts to ``_fact_set``, so FIX-5's
+        ``[source N]`` enumeration and the fold's ``need`` are byte-identical
+        with and without them.  Their only contribution is the K/V mount
+        ``consolidate`` makes over every source, which is what the model read
+        "the Beacon" from.  Removing them removes the contamination and
+        changes nothing the fold was asked to preserve.
+    
+        A window is never emptied: ``fold_window_excludes`` returns nothing
+        when every source is a fact-less alias turn, and a window reduced to
+        a single source is still a legal fold (``consolidate`` handles
+        ``len(idxs) == 1`` on its existing path).  The excluded node is NOT
+        marked ``no_fold``: it stays an ordinary active turn, which is where
+        A1's ``_alias_fold_jobs`` looks for an alias edge, so F2's exclusion
+        and A1's merge compose instead of competing.
+    
+        Prior art: the job list is FIX-3/FIX-5's own (``_librarian_jobs``),
+        unchanged; the alias detector is A1's ``parse_alias_edge``, unchanged.
+        Full annotation in ``core/grm_fold_alias_guard.py``.
+        """
+>       if not self.fold_alias_guard:
+               ^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'GraftRepository' object has no attribute 'fold_alias_guard'
+
+core/graft_repository.py:4148: AttributeError
+_______ test_m11_placeholder_stays_excluded_regardless_of_fold_order[s4] _______
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-f2/artifacts/grm_f2/tmp/test_m11_placeholder_stays_exc1')
+fold_order = 's4'
+
+    @pytest.mark.parametrize("fold_order", FOLD_ORDERS)
+    def test_m11_placeholder_stays_excluded_regardless_of_fold_order(
+            tmp_path, fold_order):
+        # The placeholder is index zero and a zero-hit source, so S4 would pick
+        # it before every real node if eligibility moved behind ordering.
+        hits = [5, 0, 3, 0, 2, 0, 0, 4]
+        repo = _planner_repo(
+            [_placeholder(n_grounded=0)]
+            + [_graft(n_grounded=hits_i) for hits_i in hits],
+            tmp_path, fold_order=fold_order)
+    
+>       sources = _digest_sources(repo)
+                  ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_s4_fold_order.py:197: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_s4_fold_order.py:122: in _digest_sources
+    jobs = repo._librarian_jobs(
+core/graft_repository.py:4104: in _librarian_jobs
+    return self._guard_fold_windows(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <core.graft_repository.GraftRepository object at 0x7514af72c440>
+jobs = [('digest', [2, 4, 6, 7])]
+
+    def _guard_fold_windows(self, jobs):
+        """F2 (a): drop FACT-LESS alias/rename turns from each fold window.
+    
+        Reached from BOTH ``_librarian_jobs`` return paths (native plan and
+        fallback) so the treatment cannot depend on which planner ran.  With
+        ``fold_alias_guard`` False this returns ``jobs`` unchanged, by
+        identity, from its first line — the window plan keeps its pre-F2
+        bytes and no method below is ever called.
+    
+        WHY THIS AND NOT A COVERAGE TWEAK.  Measured on the receipt
+        (``artifacts/grm_f2/receipt_digest24.json``): the two alias turns in
+        that window contribute ZERO facts to ``_fact_set``, so FIX-5's
+        ``[source N]`` enumeration and the fold's ``need`` are byte-identical
+        with and without them.  Their only contribution is the K/V mount
+        ``consolidate`` makes over every source, which is what the model read
+        "the Beacon" from.  Removing them removes the contamination and
+        changes nothing the fold was asked to preserve.
+    
+        A window is never emptied: ``fold_window_excludes`` returns nothing
+        when every source is a fact-less alias turn, and a window reduced to
+        a single source is still a legal fold (``consolidate`` handles
+        ``len(idxs) == 1`` on its existing path).  The excluded node is NOT
+        marked ``no_fold``: it stays an ordinary active turn, which is where
+        A1's ``_alias_fold_jobs`` looks for an alias edge, so F2's exclusion
+        and A1's merge compose instead of competing.
+    
+        Prior art: the job list is FIX-3/FIX-5's own (``_librarian_jobs``),
+        unchanged; the alias detector is A1's ``parse_alias_edge``, unchanged.
+        Full annotation in ``core/grm_fold_alias_guard.py``.
+        """
+>       if not self.fold_alias_guard:
+               ^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'GraftRepository' object has no attribute 'fold_alias_guard'
+
+core/graft_repository.py:4148: AttributeError
+____________ test_s4_exclusions_do_not_count_or_jam_later_progress _____________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-f2/artifacts/grm_f2/tmp/test_s4_exclusions_do_not_coun0')
+
+    def test_s4_exclusions_do_not_count_or_jam_later_progress(tmp_path):
+        # 816a0a0's lesson: permanently excluded nodes cannot contribute to a
+        # threshold or get a future window stuck retrying them.  Give both
+        # exclusions attractive zero-hit metadata; S4 must still advance only
+        # across real sources after enough real turns arrive.
+        real = [_graft(n_grounded=(index % 3)) for index in range(
+            GraftRepository.TURNS_HIGH - 1)]
+        excluded_placeholder = _placeholder(n_grounded=0)
+        excluded_no_fold = _graft(n_grounded=0, no_fold=True)
+        repo = _planner_repo(
+            [excluded_placeholder, excluded_no_fold] + real,
+            tmp_path, fold_order="s4")
+    
+>       assert _digest_sources(repo) == []
+               ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_s4_fold_order.py:219: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_s4_fold_order.py:122: in _digest_sources
+    jobs = repo._librarian_jobs(
+core/graft_repository.py:4104: in _librarian_jobs
+    return self._guard_fold_windows(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <core.graft_repository.GraftRepository object at 0x7514af6cca40>
+jobs = []
+
+    def _guard_fold_windows(self, jobs):
+        """F2 (a): drop FACT-LESS alias/rename turns from each fold window.
+    
+        Reached from BOTH ``_librarian_jobs`` return paths (native plan and
+        fallback) so the treatment cannot depend on which planner ran.  With
+        ``fold_alias_guard`` False this returns ``jobs`` unchanged, by
+        identity, from its first line — the window plan keeps its pre-F2
+        bytes and no method below is ever called.
+    
+        WHY THIS AND NOT A COVERAGE TWEAK.  Measured on the receipt
+        (``artifacts/grm_f2/receipt_digest24.json``): the two alias turns in
+        that window contribute ZERO facts to ``_fact_set``, so FIX-5's
+        ``[source N]`` enumeration and the fold's ``need`` are byte-identical
+        with and without them.  Their only contribution is the K/V mount
+        ``consolidate`` makes over every source, which is what the model read
+        "the Beacon" from.  Removing them removes the contamination and
+        changes nothing the fold was asked to preserve.
+    
+        A window is never emptied: ``fold_window_excludes`` returns nothing
+        when every source is a fact-less alias turn, and a window reduced to
+        a single source is still a legal fold (``consolidate`` handles
+        ``len(idxs) == 1`` on its existing path).  The excluded node is NOT
+        marked ``no_fold``: it stays an ordinary active turn, which is where
+        A1's ``_alias_fold_jobs`` looks for an alias edge, so F2's exclusion
+        and A1's merge compose instead of competing.
+    
+        Prior art: the job list is FIX-3/FIX-5's own (``_librarian_jobs``),
+        unchanged; the alias detector is A1's ``parse_alias_edge``, unchanged.
+        Full annotation in ``core/grm_fold_alias_guard.py``.
+        """
+>       if not self.fold_alias_guard:
+               ^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'GraftRepository' object has no attribute 'fold_alias_guard'
+
+core/graft_repository.py:4148: AttributeError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_grm_s4_fold_order.py::test_s4_orders_hits_ascending_with_existing_age_tiebreak
+FAILED tests/test_grm_s4_fold_order.py::test_s4_orders_eligible_digest_sources_with_the_same_key
+FAILED tests/test_grm_s4_fold_order.py::test_age_default_takes_no_new_ordering_branch
+FAILED tests/test_grm_s4_fold_order.py::test_s4_source_order_reaches_both_librarian_paths[deferred]
+FAILED tests/test_grm_s4_fold_order.py::test_s4_source_order_reaches_both_librarian_paths[backpressure]
+FAILED tests/test_grm_s4_fold_order.py::test_m11_placeholder_stays_excluded_regardless_of_fold_order[age]
+FAILED tests/test_grm_s4_fold_order.py::test_m11_placeholder_stays_excluded_regardless_of_fold_order[s4]
+FAILED tests/test_grm_s4_fold_order.py::test_s4_exclusions_do_not_count_or_jam_later_progress
+8 failed, 24 passed, 1 skipped, 2 warnings in 157.07s (0:02:37)
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
