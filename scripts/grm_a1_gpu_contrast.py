@@ -108,6 +108,14 @@ LOCK_WAIT_SECONDS = 7200
 #: payload_accounting.json.
 NODE_VRAM_BUDGET_MB = 64
 
+#: Seconds to reserve for the FIRST row of an invocation, before any row has
+#: finished and set a real worst case. That row pays the COLD model load
+#: inside its own wall: the a3_1 lease held 163 s for 7 rows, while every row
+#: in the warm a4 leases took 20-33 s. 200 s is the cold-load observation
+#: rounded up, so a 560 s lease still admits a first row with room to spare
+#: and never starts one it cannot finish.
+LOAD_RESERVE_SECONDS = 200
+
 
 def _lease_seconds(value):
     """argparse type: reject an over-cap lease AT PARSE TIME.
@@ -1065,6 +1073,11 @@ def main(argv=None):
                          f'{LEASE_SECONDS}s; house cap 590s)')
     ap.add_argument('--lock-wait-seconds', type=int,
                     default=LOCK_WAIT_SECONDS)
+    ap.add_argument('--load-reserve-seconds', type=int,
+                    default=LOAD_RESERVE_SECONDS,
+                    help='worst-case seconds to reserve for a row before any '
+                         'row of this invocation has finished (the cold '
+                         f'model load; default {LOAD_RESERVE_SECONDS}s)')
     args = ap.parse_args(argv)
 
     registration = read(args.registration)
@@ -1110,9 +1123,8 @@ def main(argv=None):
             'A1_PRECONDITION_MISSING: '
             + json.dumps(pre['missing'], sort_keys=True))
 
-    rows = plan_rows(registration)
-    if args.limit:
-        rows = rows[:args.limit]
+    planned = plan_rows(registration)
+    rows = planned[:args.limit] if args.limit else planned
     pending = [r for r in rows if not receipt_path(out_dir, r).exists()]
     print(f'rows total={len(rows)} pending={len(pending)} '
           f'fake={bool(args.fake)} lease_s={args.lease_seconds}', flush=True)
@@ -1120,12 +1132,60 @@ def main(argv=None):
     # One model for the whole invocation (prior art: FIX-8's `open_copy`
     # `loaded` carry). Rebuilding it per row is what OOM'd the lead's run.
     cache = {}
+    #: Filled by execute() when the lease budget stops the loop early.
+    budget_stop = {'stopped': False}
 
     def execute():
-        for row in rows:
+        """Run rows until the plan is done or the NEXT row would overrun.
+
+        AMENDMENT 4, defect 1. Previously the loop only noticed the lease
+        BETWEEN rows, via ``gpu_lease``'s SIGALRM, and never budgeted the
+        next row against what was left. With ``--lease-seconds 560`` and no
+        ``--limit`` the lead's run held the flock past 900 s and had to be
+        killed by an outer timeout (``gpu_contrast_a4_1.log``).
+
+        The rail: before STARTING a row, stop if
+        ``elapsed + reserve > lease``, where ``reserve`` is the worst case
+        seen so far in this invocation — the longest row wall, or the load
+        cost if no row has finished yet (the first row of a cold invocation
+        pays the model load inside its own wall, so the load IS the
+        reserve until a row has completed). Stopping is exit 4, the same
+        resumable "re-run me" the operator's loop already handles, because
+        every finished row is a create-only receipt.
+        """
+        started_at = time.monotonic()
+        lease = None if args.fake else float(args.lease_seconds)
+        worst_row = 0.0
+        for index, row in enumerate(rows):
+            if receipt_path(out_dir, row).exists():
+                # A skip costs nothing; never let it trip the budget gate.
+                run_row(row, registration, out_dir, fake=args.fake,
+                        rule=args.rule, provenance=provenance, cache=cache)
+                print(f"  {row['row_id']:34s} SKIPPED_ALREADY_DONE",
+                      flush=True)
+                continue
+            if lease is not None:
+                elapsed = time.monotonic() - started_at
+                # Until a row completes, the reserve is the cold-load
+                # estimate; afterwards it is the worst row wall observed.
+                reserve = worst_row or float(args.load_reserve_seconds)
+                if elapsed + reserve > lease:
+                    budget_stop.update({
+                        'stopped': True, 'at_row': row['row_id'],
+                        'rows_done_this_lease': index,
+                        'elapsed_s': round(elapsed, 1),
+                        'reserve_s': round(reserve, 1),
+                        'lease_s': lease,
+                    })
+                    print(f'  lease budget: {elapsed:.0f}s used + '
+                          f'{reserve:.0f}s reserve > {lease:.0f}s lease — '
+                          f"stopping before {row['row_id']}", flush=True)
+                    return
             result = run_row(row, registration, out_dir, fake=args.fake,
                              rule=args.rule, provenance=provenance,
                              cache=cache)
+            wall = float(result.get('elapsed_s') or 0.0)
+            worst_row = max(worst_row, wall)
             status = result.get('status') or (
                 'EXACT' if result.get('exact_correct') else 'MISS')
             memory = (result.get('memory') or {}).get('residency_after_mount')
@@ -1134,7 +1194,8 @@ def main(argv=None):
                 detail = (f"  [payloads device={memory['payloads_device_resident']}"
                           f" {memory['device_payload_mb']}MB"
                           f" page_ins={memory['page_ins']}]")
-            print(f"  {row['row_id']:34s} {status}{detail}", flush=True)
+            print(f"  {row['row_id']:34s} {status}  {wall:.1f}s{detail}",
+                  flush=True)
 
     lease_expired = False
     if args.fake:
@@ -1160,6 +1221,25 @@ def main(argv=None):
     summary['pending'] = len(remaining)
     summary['lease_expired'] = bool(lease_expired)
     summary['complete'] = not remaining
+    summary['lease_budget_stop'] = dict(budget_stop)
+    # AMENDMENT 4, defect 2. `rows` counted only the receipts on disk, so a
+    # partial campaign reported `rows: 8, complete: true` while 15 planned
+    # rows had never run. The PLAN size is now reported alongside, and
+    # `complete` already keyed off `remaining` — but a reader seeing
+    # "rows: 8" next to a 23-row registration deserves to be told which is
+    # which without having to count receipts.
+    # `rows_planned` is the REGISTRATION's plan, not the --limit slice: the
+    # whole point of the field is to let a reader see "8 of 23" without
+    # counting receipts, and a limited invocation must not shrink the
+    # denominator it is measured against.
+    summary['rows_planned'] = len(planned)
+    summary['rows_never_run'] = len(
+        [r for r in planned if not receipt_path(out_dir, r).exists()])
+    summary['rows_limited_to'] = (int(args.limit) if args.limit else None)
+    # `complete` means THIS INVOCATION's slice finished, which is what drives
+    # the exit code. `campaign_complete` is the honest whole-battery answer —
+    # the distinction the a4 run's "rows: 8, complete: true" obscured.
+    summary['campaign_complete'] = summary['rows_never_run'] == 0
     # The summary is a DERIVED view and is rewritten on each invocation; the
     # per-row receipts underneath it stay create-only.
     (out_dir / 'summary.json').write_text(
@@ -1177,7 +1257,10 @@ def main(argv=None):
     if remaining:
         # Rows still pending: NOT a verdict. Exit 4 so the operator's loop
         # can tell "re-run me" apart from "the prediction failed" (1).
-        print(f'pending={len(remaining)} — re-run with --resume', flush=True)
+        why = ('lease budget' if budget_stop.get('stopped')
+               else ('lease expired' if lease_expired else 'not started'))
+        print(f'pending={len(remaining)} ({why}) — re-run with --resume',
+              flush=True)
         return 4
     if summary['rows_non_fit']:
         print(f"NON_FIT rows (unmeasured): {summary['rows_non_fit']} "

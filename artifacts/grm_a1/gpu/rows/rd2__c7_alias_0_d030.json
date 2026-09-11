@@ -1,0 +1,90 @@
+{
+  "abstain_reason": null,
+  "abstained": false,
+  "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+  "admission_rank_plan": [
+    16
+  ],
+  "answer": "Basalt\u2011812",
+  "answerable": true,
+  "cell": "A-032-039",
+  "checkpoint_dir": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/cells/A-032-039/checkpoint",
+  "class": "alias",
+  "control_broken": false,
+  "elapsed_s": 26.65,
+  "exact_correct": false,
+  "expected": "Jasper-711",
+  "fake": false,
+  "group": "rd2",
+  "merge": {
+    "decisions": [],
+    "digests": 0,
+    "over_width": 0,
+    "widths": []
+  },
+  "model": {
+    "expert_mode": "resident_packed_mxfp4",
+    "framework": "tensor_cuda GptOss20B_TC",
+    "full_attention_layers": [
+      1,
+      3,
+      5,
+      7,
+      9,
+      11,
+      13,
+      15,
+      17,
+      19,
+      21,
+      23
+    ],
+    "head_dim": 64,
+    "hidden_dim": 2880,
+    "layers": 24,
+    "loaded": "GPT-OSS-20B (resident_packed_mxfp4)",
+    "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "num_heads": 64,
+    "num_kv_heads": 8,
+    "repository": "openai/gpt-oss-20b",
+    "revision": "6cee5e81ee83917806bbde320786a8fb61efebee",
+    "sliding_attention_layers": [
+      0,
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      16,
+      18,
+      20,
+      22
+    ]
+  },
+  "mount_count": 1,
+  "mounted_ids": [
+    16
+  ],
+  "mounted_text": "ARCHIVE NOTE. For the archive: the  current C7\u2011Fresh\u20110 value is Basalt\u2011811, the current C7\u2011Fresh\u20111 value is Basalt\u2011812, the current C7\u2011Fresh\u20112 value is Basalt\u2011813, and C7\u2011Signal\u20110 is an alias for C7\u2011AliasBase\u20110.\n",
+  "pins": {
+    "GRM_ADMISSION_RULE": null,
+    "GRM_ALIAS_FOLD_MERGE": "1",
+    "admission_rule": "all_tokens_bind",
+    "alias_fold_enabled": true
+  },
+  "probe_id": "c7_alias_0_d030",
+  "question_registered": "What is the current value for C7-Signal-0? Reply only with the answer.",
+  "question_served": "What is the current value for C7-Signal-0? Reply only with the answer.",
+  "row_id": "rd2::c7_alias_0_d030",
+  "schema": "grm.a1.gpu_contrast_row.v1",
+  "scored_for_prediction": true,
+  "single_mount": true,
+  "worker_provenance": {
+    "matches_amendment": true,
+    "path": "/mnt/ForgeRealm/wt/grm-a1/scripts/grm_a1_gpu_contrast.py",
+    "pinned_sha256": "1cf8675547aee2b4be4f97ded2403758989ee7e9a03b69161002a2032117ad50",
+    "sha256": "1cf8675547aee2b4be4f97ded2403758989ee7e9a03b69161002a2032117ad50"
+  }
+}

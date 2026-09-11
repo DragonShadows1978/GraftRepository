@@ -1,0 +1,37 @@
+registration sha256=329d5865d437598f41fe9569fe8c06a4c2da64544476cf3ee73eb5e3efa9d8cd
+  amendment gpu_contrast_amendment_1.json sha256=68ed211759797346ee6f83fd8b6fec46c78f94e18bf1f347bd073a8bde82e9ed
+  amendment gpu_contrast_amendment_2.json sha256=412c422b49571618ecb393f8b0a903d5883e4105045476c74fa2990612fbf065
+  amendment gpu_contrast_amendment_3.json sha256=15cabb9233a5ace4760e86d8d4e2363c6caad7cc9fc68db534859a3edb30d3de
+pinned inputs verified: 23
+worker sha256=b91719f5eeb7c55961e6b62ca38167c7bc15dd01b8f68847c1f2c305bde613bc matches_amendment=True
+  ok  input         runtime_frame          /mnt/ForgeRealm/wt/grm-a1/artifacts/grm_det1/run_20260831T160525Z_2/runtime_frame_28b3196f8fb04a41.json
+  ok  input         c7_r3_registration     /mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/registration.json
+  ok  precondition  model_snapshot         /home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee  [GPT-OSS-20B snapshot, scripts/grm_det1_gpu.py MODEL_DIR.]
+  ok  precondition  native_runtime         /mnt/ForgeRealm/wt/grm-a1/cpp/build/libgrm_runtime.so  [libgrm_runtime.so, loaded by GraftRepository via native_lib_path. NOT sha-pinned: it is a build artifact, not evidence. cpp/ is unchanged by A1; the lead copied it from canonical /mnt/ForgeRealm/GraftRepository/cpp/build/.]
+rows total=3 pending=0 fake=False lease_s=560
+gpu_lease_acquired=/tmp/forge-gpu.lock cap_s=560
+  rd2::c7_alias_0_d030               SKIPPED_ALREADY_DONE
+  rd2::c7_alias_1_d030               SKIPPED_ALREADY_DONE
+  rd2::c7_alias_0_d060               SKIPPED_ALREADY_DONE
+gpu_lease_released_s=0.001
+{
+ "aliases_exact": 0,
+ "aliases_single_mount": 8,
+ "complete": true,
+ "controls": 0,
+ "controls_broken": 0,
+ "digests_over_width": 0,
+ "fake": false,
+ "lease_expired": false,
+ "non_fit_note": "NON_FIT rows are UNMEASURED: excluded from the prediction numerator AND denominator, never counted as wrong answers.",
+ "non_fit_row_ids": [],
+ "pending": 0,
+ "prediction": "aliases >= 5/8 exact AND 0 controls broken",
+ "prediction_met": false,
+ "rows": 8,
+ "rows_measured": 8,
+ "rows_non_fit": 0,
+ "schema": "grm.a1.gpu_contrast_summary.v1",
+ "scored_rows": 8,
+ "verdict": "RED"
+}

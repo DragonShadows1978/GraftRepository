@@ -1,0 +1,171 @@
+{
+ "amendment": 4,
+ "authorized_by": "lead follow-up message, 2026-09-11 (completed GPU run)",
+ "changed_inputs": {
+  "/mnt/ForgeRealm/wt/grm-a1/scripts/grm_a1_gpu_contrast.py": {
+   "after": "d15acaf006f8421588be72e754d6543d9f7ebf9e96ceab39d5414375b5877ea8",
+   "before": "b91719f5eeb7c55961e6b62ca38167c7bc15dd01b8f68847c1f2c305bde613bc"
+  },
+  "/mnt/ForgeRealm/wt/grm-a1/tests/test_grm_a1_gpu_contrast.py": {
+   "after": "27a0a75472f1bb1c7122907a57b4dda795d84c55529138110ff847d6a62f12b2",
+   "before": "e225304e4768fa08121f6c09cd74547c0184890f3389b2078bfac75a2bad552d"
+  }
+ },
+ "dry_run_receipt": {
+  "exit": 0,
+  "log": "artifacts/grm_a1/dry_run.log",
+  "sha256": "db95439d3804b8b99992768f4132a864a48a4a1b8ca7067693e43452c131e2e8"
+ },
+ "fake_run_receipt": {
+  "lease_budget_stop": {
+   "stopped": false
+  },
+  "log": "artifacts/grm_a1/fake_run.log",
+  "log_sha256": "ea690a4a8c6653fdf7a4b7bbb691a2ec99294c466cbac458bad4e02502cc8d3e",
+  "rows": 23,
+  "rows_non_fit": 0,
+  "rows_planned": 23,
+  "summary": "artifacts/grm_a1/gpu_fake/summary.json",
+  "verdict": "FAKE_RUN_NOT_A_PREDICTION"
+ },
+ "lease_budget": {
+  "defect": "With --lease-seconds 560 and no --limit, the run held the flock past 900 s and was killed by the lead outer timeout (gpu_contrast_a4_1.log). Rows were only checked BETWEEN rows via gpu_lease's SIGALRM; the loop never budgeted the NEXT row against the remaining lease.",
+  "limit_unchanged": "--limit remains an operator override.",
+  "load_reserve_basis": "The cold a3_1 lease held 163.3 s for a 7-row batch; every row in the warm a4 leases took 20.0-32.9 s. 200 s rounds the cold observation up and still leaves a 560 s lease room for a first row.",
+  "load_reserve_seconds": 200,
+  "observed_row_walls_s": {
+   "max": 32.926,
+   "mean": 24.5,
+   "min": 20.014,
+   "total": 195.6
+  },
+  "per_row_wall_recorded": true,
+  "rail": "Before STARTING a row, stop when elapsed + reserve > lease. reserve = the worst row wall seen so far in this invocation, or --load-reserve-seconds until a row has completed (the first row of a cold invocation pays the model load inside its own wall). Stopping is exit 4 — the same resumable \"re-run me\" the operator loop already handles, because every finished row is a create-only receipt.",
+  "skips_are_free": "An already-done row is walked and reported as SKIPPED_ALREADY_DONE without being charged to the budget."
+ },
+ "lt1_correction": {
+  "cause_of_the_wrong_reading": "The measurement did not pin GRM_ADMISSION_RULE, so it ran under the default all_tokens_bind. LT1 is registered at margin_first (scripts/grm_lt1.py:98, enforced :197, exported grm_lt1_worker.py:245); grm_c2_cells.environment() strips every GRM_* key and re-pins a fixed set that does NOT include GRM_ADMISSION_RULE, so the pin must come AFTER it (contract recorded verbatim at grm_scout_fix6_replay.py:55).",
+  "corrected_reading": "Under margin_first, 10/10 LT1 alias probes are ADMITTED, each mounting exactly ONE merged digest (branch fit_margin_decisive_rank1), and the fixture-blind alias reader answers 10/10 exact. The ideal-digest arm and the A1-merged arm agree probe for probe.",
+  "receipt": "artifacts/grm_a1/lt1_margin_first.json",
+  "receipt_sha256": "556cbe462cb3ad220f51fe038708f5d3445edece2035357c47684958c430b25c",
+  "scope": "LT1 remains OUT of the GPU contrast: its rows have no pinned C7 r3 checkpoint. The correction changes the seat report, not the registered GPU prediction.",
+  "status": "RETRACTED",
+  "supersedes": "RED item 1 of the seat report: \"LT1 alias probes abstain identifier_unbound; pre-existing, not A1's\"."
+ },
+ "new_inputs": {
+  "artifacts/grm_a1/LEDGER.md": "0e4bf49910e7b47d5256f90eb5740e489e8b4dab4f30d72566c74aa54945d791",
+  "artifacts/grm_a1/REPORT.md": "921375137cea183d5b7c5539def06c5ca5b0f139ab0e73a909e90969415a6ff4",
+  "scripts/grm_a1_report.py": "aff30aa75da0e23bd1e626e482e05339f2f4cc87998bfce77a77bbb194f4b87b"
+ },
+ "pinned_inputs_sha256": {
+  "/mnt/ForgeRealm/wt/grm-a1/artifacts/grm_a1/LEDGER.md": "0e4bf49910e7b47d5256f90eb5740e489e8b4dab4f30d72566c74aa54945d791",
+  "/mnt/ForgeRealm/wt/grm-a1/artifacts/grm_a1/REPORT.md": "921375137cea183d5b7c5539def06c5ca5b0f139ab0e73a909e90969415a6ff4",
+  "/mnt/ForgeRealm/wt/grm-a1/artifacts/grm_a1/alias_fixture.json": "e8119ce85b9a8e944fe0a3d78ee1ad049a6b8100f04d8c7f83f469955887af41",
+  "/mnt/ForgeRealm/wt/grm-a1/artifacts/grm_a1/lt1_margin_first.json": "556cbe462cb3ad220f51fe038708f5d3445edece2035357c47684958c430b25c",
+  "/mnt/ForgeRealm/wt/grm-a1/artifacts/grm_a1/off_parity.json": "7e2610a4df7eb989b70c05c3489f185209a5849e0e4688eb9d279f64c35eb33e",
+  "/mnt/ForgeRealm/wt/grm-a1/artifacts/grm_a1/payload_accounting.json": "c581d2ec3a764215f2c7441310eb8734a24a4dd0a51cdc47f183406d1ba4e36c",
+  "/mnt/ForgeRealm/wt/grm-a1/artifacts/grm_a1/width_receipts.json": "96170784d022452c8b32d9425d3b8c57b9e31e2cd299093fa9a33d88ed90da8f",
+  "/mnt/ForgeRealm/wt/grm-a1/artifacts/grm_det1/run_20260831T160525Z_2/runtime_frame_28b3196f8fb04a41.json": "28b3196f8fb04a4123fcf21b1e61f8bb1b8a0e64fadcfc6643801f3e19c4ac02",
+  "/mnt/ForgeRealm/wt/grm-a1/core/graft_arena.py": "918f5d0b202b4efabfaa1c37c965cdf3ce8fbd7e6b69045c4dafd985bee820a9",
+  "/mnt/ForgeRealm/wt/grm-a1/core/graft_repository.py": "59165723310605d599088718b486066cdfad90e16c15d9af83cf64726a52c2e4",
+  "/mnt/ForgeRealm/wt/grm-a1/core/grm_admission.py": "ebdfd84af435a163dfe4a37281d489047acd974bf76190b79622340c29af7ab6",
+  "/mnt/ForgeRealm/wt/grm-a1/core/grm_alias_fold.py": "8e3810106d0e93a5da7bcf1c09dc80bcc4c561c5c334b634a96419ce475c97a5",
+  "/mnt/ForgeRealm/wt/grm-a1/core/grm_runtime.py": "973addc491a29eda9bac611a9c3f0cc25cd1033395ecc39b84b19c6f1b8f0646",
+  "/mnt/ForgeRealm/wt/grm-a1/scripts/grm_a1_gpu_contrast.py": "69a5542dc6777a7c74fa5427787ea294abafaca2ad32477a64b477babe0ccf97",
+  "/mnt/ForgeRealm/wt/grm-a1/scripts/grm_a1_off_parity.py": "c45db4a88fe2cafbef3fcd33d41ee020563e9c6c8bb57fa0b0cb91af05714a48",
+  "/mnt/ForgeRealm/wt/grm-a1/scripts/grm_a1_report.py": "aff30aa75da0e23bd1e626e482e05339f2f4cc87998bfce77a77bbb194f4b87b",
+  "/mnt/ForgeRealm/wt/grm-a1/scripts/grm_a1_width_receipts.py": "4873dd0ea18ca3754fd044815762e93a9e43309f4e7613ecdf22cd6d9857183d",
+  "/mnt/ForgeRealm/wt/grm-a1/tests/test_grm_a1_alias_fold.py": "583bf1277b168ae96fd91e2fcb78e1769c51c8e51cbc268f25319cb0acc58053",
+  "/mnt/ForgeRealm/wt/grm-a1/tests/test_grm_a1_gpu_contrast.py": "4c8eddebccfc6a4630a9a6b5fe1b1ffe1ad4fdb009a2f79c108fed0d722a106c",
+  "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/ALIAS_DESIGN_OPTIONS.md": "f8486fee2f516bac338bbff8ef757c75e7906de3a66a791cf4b43fe7ce8e3e4f",
+  "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/SHA256SUMS": "8496db79a1651fa3fbec772bcaea60313131a30a88613eddd73a083682a26a35",
+  "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/effective_questions.json": "355f5c6a2f1948c46f3a172ce0bd5576863b18b32f199f5d497834b187125b5b",
+  "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/fixture.json": "b648ebb71072d1c357146f6cedb22f6d93dd259a69cb50d912e1e9b564624c17",
+  "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/registration.json": "65c543b1904e6e3bd81d95316dbc092fd72f70ae164044cce036ce8a6ec04b1c",
+  "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/registration.sha256": "3de5da39d52a63d41070531e78ad9206a36965a7c2997ca168b58f3e707c93f5",
+  "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/stop_receipt.json": "99de4e999b7686a8a18b13da7eb4466e3f4896f977019a52405dcabd02f8a714",
+  "/mnt/ForgeRealm/wt/grm-rd1/artifacts/grm_rd2/rows.json": "26d72f3545743ab0f4104826a758feb23d7c171daceec0de402c4d5a026a3971"
+ },
+ "previous_amendment": {
+  "amendment": 3,
+  "path": "/mnt/ForgeRealm/wt/grm-a1/artifacts/grm_a1/gpu_contrast_amendment_3.json",
+  "sha256": "15cabb9233a5ace4760e86d8d4e2363c6caad7cc9fc68db534859a3edb30d3de"
+ },
+ "previous_amendment_sha256": "15cabb9233a5ace4760e86d8d4e2363c6caad7cc9fc68db534859a3edb30d3de",
+ "red_by_fixture": {
+  "aliases_exact": 0,
+  "aliases_single_mount": 8,
+  "controls_broken": 0,
+  "does_not_license": [
+   "It does NOT refute alias fold-merge — the mechanism never ran.",
+   "It does NOT confirm it — the contrast produced no A1 evidence."
+  ],
+  "live_measurement": "LT1.1 A+ (aliases deposited during the run, A1 ON from turn 1). The lead DECLINED registered option 2 (replaying the C7 fixture with A1 ON from turn 1): LT1.1 answers the same question at about half the cost.",
+  "merge_digests_per_row": 0,
+  "mounted": "the librarian relation digests [16] / [22], not A1 digests",
+  "prediction_met": false,
+  "reading": "RED-by-fixture: the treatment never fired, so this is a NULL on the C7 r3 checkpoints and NOT a measurement of fold-merge. The librarian had already retired the raw alias edges and folded the relation into digest 16 and the values into 27/89, so A1 correctly planned no job and on 20 of 23 rows the ON and OFF arms are the same repository. RED is a true statement about this battery and a false statement about the treatment.",
+  "receipts": [
+   "artifacts/grm_a1/gpu/rows/*.json",
+   "artifacts/grm_a1/gpu/summary.json",
+   "artifacts/grm_a1/gpu/probes.jsonl",
+   "artifacts/grm_a1/gpu_contrast_a3_1.log",
+   "artifacts/grm_a1/gpu_contrast_a4_1.log"
+  ],
+  "scored_rows": 8,
+  "served_vs_expected": {
+   "alias_0 rows": "Basalt-812 served, Jasper-711 expected",
+   "alias_1 rows": "Onyx-911 served, Jasper-712 expected"
+  },
+  "verdict": "RED",
+  "written_up_in": [
+   "artifacts/grm_a1/REPORT.md",
+   "artifacts/grm_a1/LEDGER.md"
+  ]
+ },
+ "registration": {
+  "path": "/mnt/ForgeRealm/wt/grm-a1/artifacts/grm_a1/gpu_contrast_registration.json",
+  "sha256": "329d5865d437598f41fe9569fe8c06a4c2da64544476cf3ee73eb5e3efa9d8cd"
+ },
+ "registration_sha256": "329d5865d437598f41fe9569fe8c06a4c2da64544476cf3ee73eb5e3efa9d8cd",
+ "report_receipt": {
+  "generator": "scripts/grm_a1_report.py",
+  "ledger": "artifacts/grm_a1/LEDGER.md",
+  "ledger_sha256": "0e4bf49910e7b47d5256f90eb5740e489e8b4dab4f30d72566c74aa54945d791",
+  "note": "Both are BUILD OUTPUTS generated from the committed receipts, so the narrative cannot drift from the evidence.",
+  "report": "artifacts/grm_a1/REPORT.md",
+  "report_sha256": "921375137cea183d5b7c5539def06c5ca5b0f139ab0e73a909e90969415a6ff4"
+ },
+ "row_scope_finding": {
+  "answer": "NOT a re-scope. The plan had all 23 rows — gpu_contrast_a4_1.log shows \"rows total=23 pending=16\" — and the campaign was killed by the lead outer timeout partway through row 16. Amendment 3 did not narrow the battery and neither does this one.",
+  "decision": "The 15 unrun rows are deliberately NOT being run: they are the same fixture null (lead ruling, 2026-09-11).",
+  "never_run_composition": "10 C7 answerable + 5 C7 controls",
+  "question": "Why did the summary count only 8 rows when the registration has 23?",
+  "rescoped": false,
+  "rows_never_run": 15,
+  "rows_planned": 23,
+  "rows_run": 8,
+  "summary_defect": "The summary reported \"rows: 8, complete: true\" because `rows` counted receipts on disk rather than the plan. Fixed: rows_planned and rows_never_run are reported alongside, and lease_budget_stop records whether the loop stopped itself."
+ },
+ "schema": "grm.a1.lead-amendment.v1",
+ "summary_not_pinned_note": "artifacts/grm_a1/gpu/summary.json is a DERIVED view rewritten on every invocation, so it is deliberately NOT in the pinned set — pinning it would guarantee a spurious A1_INPUT_SHA_MISMATCH on the next run. The create-only row receipts under gpu/rows/ are the durable evidence.",
+ "title": "A1 amendment 4 — lease budget rail, planned-vs-run row accounting, and the RED-by-fixture reading",
+ "unchanged": {
+  "budget_gpu_hours_max": 0.5,
+  "lease": "unchanged from amendment 2: <=590 s each, looped --resume",
+  "model": "openai/gpt-oss-20b rev 6cee5e81ee83917806bbde320786a8fb61efebee",
+  "note": "Prediction, budget, rows, prompt and lease cap are untouched. This amendment adds a per-row budget gate, honest row accounting, and the written reading of a run that already happened.",
+  "read_prompt": "plain production template, unchanged",
+  "registered_prediction": "aliases >= 5/8 exact from a single digest mount; 0 controls broken",
+  "rows": "23 unchanged (8 RD2 + 10 C7 answerable + 5 C7 controls)"
+ },
+ "worker": {
+  "fake_vs_real": "Identical control flow; the ONLY difference is the loader (_load_fake vs _load_gpu) and which tokenizer measures the width receipt.",
+  "gate": "python3 scripts/grm_a1_gpu_contrast.py --fake — drives every branch on the CPU doubles: all 23 rows, resume-after-interrupt, drift RED, over-width path. See tests/test_grm_a1_gpu_contrast.py.",
+  "path": "scripts/grm_a1_gpu_contrast.py",
+  "reason": "The registration previously named no worker because the seat had not written one. It is now an INPUT and is sha-pinned like every other input, so the lead runs the exact bytes the fake-path gate exercised.",
+  "rebound_reason": "rebound by amendment 4 (lease budget rail)",
+  "self_pin_note": "The worker EXCLUDES its own path from the drift set and checks it separately (verify_self), recording worker_provenance on every row. A self-pinned file inside its own drift set can never be edited without a same-breath re-amendment, and the two failures — \"an input moved\" vs \"the worker is not the reviewed bytes\" — are different facts.",
+  "sha256": "69a5542dc6777a7c74fa5427787ea294abafaca2ad32477a64b477babe0ccf97"
+ }
+}

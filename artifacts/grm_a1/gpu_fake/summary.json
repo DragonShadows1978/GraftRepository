@@ -1,12 +1,16 @@
 {
  "aliases_exact": 4,
  "aliases_single_mount": 8,
+ "campaign_complete": true,
  "complete": true,
  "controls": 5,
  "controls_broken": 0,
  "digests_over_width": 0,
  "fake": true,
  "fake_note": "CPU doubles. aliases_exact is NOT the registered measurement: the stub reader is entity-blind on the compound RD2 base. The meaningful fake-path assertions are structural \u2014 rows, single_mount, controls_broken, digests_over_width.",
+ "lease_budget_stop": {
+  "stopped": false
+ },
  "lease_expired": false,
  "non_fit_note": "NON_FIT rows are UNMEASURED: excluded from the prediction numerator AND denominator, never counted as wrong answers.",
  "non_fit_row_ids": [],
@@ -14,8 +18,11 @@
  "prediction": "aliases >= 5/8 exact AND 0 controls broken",
  "prediction_met": null,
  "rows": 23,
+ "rows_limited_to": null,
  "rows_measured": 23,
+ "rows_never_run": 0,
  "rows_non_fit": 0,
+ "rows_planned": 23,
  "schema": "grm.a1.gpu_contrast_summary.v1",
  "scored_rows": 8,
  "verdict": "FAKE_RUN_NOT_A_PREDICTION"

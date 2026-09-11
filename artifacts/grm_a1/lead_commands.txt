@@ -6,6 +6,15 @@
 # and underneath that a d250 row pinned ~659 MB of node payloads for a mount
 # plan needing 4.5 MB. Both are repaired; see "What changed" below.
 #
+# RESULT (amendment 4): the contrast RAN and is RED-BY-FIXTURE.
+#   8 of 23 planned rows measured, 0 NON_FIT, merge digests 0 on EVERY row,
+#   aliases 0/8 exact, verdict RED, prediction NOT met.
+#   The treatment never fired, so this is a NULL on these checkpoints and NOT
+#   a measurement of fold-merge. Full reading + numbers:
+#     artifacts/grm_a1/REPORT.md   artifacts/grm_a1/LEDGER.md
+#   The live measurement is LT1.1 A+. Do NOT re-run the 15 unrun rows: same
+#   fixture null (lead ruling). Section 2 below remains for a future battery.
+#
 # READ THIS FIRST — the contrast's premise has moved:
 #   The C7 r3 checkpoints no longer contain UNMERGED alias edges at distance
 #   >= 30. The ordinary librarian has already folded the Signal edge and the
@@ -80,6 +89,14 @@ CUDA_VISIBLE_DEVICES='' python3 scripts/grm_a1_gpu_contrast.py \
 #             2 = precondition failed · 3 = unexpected exception
 #             4 = rows pending, re-run · 5 = incomplete, a scored row NON_FIT
 
+# AMENDMENT 4: the worker now budgets EACH row against the remaining lease
+# and stops itself (exit 4) rather than overrunning. `--limit` is no longer
+# needed to keep the lease honest — it stays as an operator override.
+#   reserve = worst row wall seen this invocation, or --load-reserve-seconds
+#             (default 200 s) until a row has completed.
+#   Observed: cold first row <= 163 s (a3_1), warm rows 20-33 s.
+# An already-done row is walked as SKIPPED and never charged to the budget.
+
 for attempt in $(seq 1 12); do
     set +e
     python3 scripts/grm_a1_gpu_contrast.py \
@@ -103,9 +120,11 @@ CUDA_VISIBLE_DEVICES='' python3 - <<'SUMMARY'
 import json, pathlib
 s = json.loads(pathlib.Path('artifacts/grm_a1/gpu/summary.json').read_text())
 print(json.dumps(s, indent=1, sort_keys=True))
-print('measured %s/%s   NON_FIT (unmeasured) %s %s'
-      % (s['rows_measured'], s['rows'], s['rows_non_fit'],
-         s['non_fit_row_ids'] or ''))
+print('measured %s   of %s PLANNED   never run %s   NON_FIT %s %s'
+      % (s['rows_measured'], s['rows_planned'], s['rows_never_run'],
+         s['rows_non_fit'], s['non_fit_row_ids'] or ''))
+print('campaign_complete', s['campaign_complete'],
+      ' lease_budget_stop', s['lease_budget_stop'])
 print('aliases exact %s/%s   single-mount %s/%s   controls broken %s/%s'
       % (s['aliases_exact'], s['scored_rows'],
          s['aliases_single_mount'], s['scored_rows'],
