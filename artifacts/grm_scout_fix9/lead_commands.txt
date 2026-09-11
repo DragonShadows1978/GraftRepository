@@ -1,0 +1,104 @@
+GRM-SCOUT-FIX-9 — REGISTERED GPU REPLAY (lead-run, <= 0.1 GPU-h)
+Registered 2026-09-11 by the SCOUT-FIX-9 implementation seat.
+NOT RUN by the seat: the seat's sandbox has no GPU (and a foreign
+process held 10.3 GB of the card for the whole session; the seat did
+not signal it).
+
+WHAT IT REPLAYS
+  The P1 GPU smoke r2 recap turn (ledger turn 19, "/recap") from the
+  SAVED session repository, under the same profile that crashed:
+
+    artifacts/grm_p1/gpu_session/repository
+    GRM_PROFILE=eb1_c2  (width 96, capture pin live, seat-near-live,
+                         RT1, GRM_ADMISSION_RULE=margin_first)
+    model: GPT-OSS-20B
+    question: "recap the five biggest decisions we made"
+
+RECORDED FAILURE (the thing being fixed)
+  artifacts/grm_p1/gpu_smoke_r2.log, last line:
+    core.grm_admission.AdmissionPolicyError: production route ranking
+    differs from frozen A-DEC score reconstruction: backend=native
+    production=[18, 21, 13, 8, 15, 16] reference=[18, 21, 20, 13, 8, 15]
+
+PREDICTION — REGISTERED BEFORE THE RUN
+  The turn NO LONGER RAISES. The native router and the Python A-DEC
+  reconstruction rank one identical candidate set from one identical
+  route-key set, so the integrity guard passes and the recap answer is
+  PRODUCED. The answer's CONTENT is REPORTED, NOT GATED: this replay is
+  a regression receipt on a recorded crash, not a recall measurement.
+  Recall on this transcript is already gated by the GRM-P1 registration
+  (artifacts/grm_p1/lead_commands.txt) and is not re-gated here.
+
+  No new gated threshold is introduced. Pass condition: the turn
+  completes without AdmissionPolicyError.
+
+HOST-ONLY PRE-CHECK ALREADY DONE BY THE SEAT (no GPU)
+  The same saved repository was loaded host-only (real repository,
+  routing, native store and admission code; stubbed harvest/payload and
+  a deterministic RNG probe key) and the divergence reproduced:
+
+    RED   (pre-fix core, from wt/grm-merge):
+      AdmissionPolicyError ... backend=native
+      production=[13, 8, 20, 21, 15, 16] reference=[13, 8, 15, 16, 18, 20]
+      native RAW order != python RAW order
+      descent-key counts for nodes 18/20/21 = 12 / 9 / 9
+    GREEN (post-fix core):
+      no exception; ranking [13, 8, 15, 16, 18, 20], plan [13, 8, 15]
+      native RAW order == python RAW order, element for element
+      descent-key counts for nodes 18/20/21 = 2 / 2 / 2
+
+  Absolute ids differ from the GPU log because the probe key is an RNG
+  draw rather than a GPT-OSS harvest. What reproduces is the DIVERGENCE,
+  which is a property of the stored route keys, not of the probe.
+
+  Receipts: artifacts/grm_scout_fix9/red.json
+            artifacts/grm_scout_fix9/green.json
+  Runner  : scripts/grm_scout_fix9_repro.py --phase {red,green}
+
+COMMANDS
+
+  cd /mnt/ForgeRealm/wt/grm-fix9
+
+  # 1. Confirm the host-only GREEN still holds on the lead's machine.
+  python3 scripts/grm_scout_fix9_repro.py --phase green
+
+  # 2. The GPU replay itself. Copy the saved session to a scratch path
+  #    so the receipt under artifacts/grm_p1/ is never mutated, then
+  #    serve the single recap turn against it.
+  #
+  #    argv VERIFIED against this worktree's scripts/grm_chat.py:
+  #      --repo takes the SESSION directory (whose child is repository/),
+  #      --resume is a bare flag, and /recap is driven by --transcript.
+  SESS=$(mktemp -d)/session
+  mkdir -p "$SESS"
+  cp -r artifacts/grm_p1/gpu_session/repository "$SESS/repository"
+  printf '/recap\n' > "$SESS/recap.txt"
+  GRM_ADMISSION_RULE=margin_first \
+  python3 scripts/grm_chat.py \
+    --repo "$SESS" --resume --profile eb1_c2 \
+    --transcript "$SESS/recap.txt" \
+    > artifacts/grm_scout_fix9/gpu_replay.log 2>&1
+  #
+  #    --profile eb1_c2 resolves the whole flag set (width 96, capture pin
+  #    live, seat-near-live, RT1, storage bits 8, probe ladder, sup
+  #    resolve, A-DEC) and PINS it into the process before the arena is
+  #    built, so the individual GRM_* exports the r2 run listed are not
+  #    repeated here. GRM_ADMISSION_RULE is passed explicitly because it
+  #    is the switch that makes the reconstruction run at all. Confirm
+  #    with:  python3 scripts/grm_chat.py --repo /tmp/x --profile eb1_c2 \
+  #             --print-flags
+
+  # 3. Verdict.
+  #    PASS  : no AdmissionPolicyError in gpu_replay.log, and a recap
+  #            answer was emitted. Report the answer text; do not gate
+  #            on its content.
+  #    FAIL  : AdmissionPolicyError still raised — the fix did not hold
+  #            on the real route keys. Report the production/reference
+  #            pair verbatim.
+  grep -n "AdmissionPolicyError" artifacts/grm_scout_fix9/gpu_replay.log || \
+    echo "NO AdmissionPolicyError — predicted outcome"
+
+GPU BUDGET
+  One recap turn on a 23-node repository. <= 0.1 GPU-h, well inside the
+  order's cap. Use the flock (--wait) convention; the operator has
+  absolute right of way.

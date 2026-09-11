@@ -1450,9 +1450,23 @@ class ArenaCache:
                 "candidate_count": len(cached),
             }
             return cached
+        # SCOUT-FIX-9 defect 2, lead ruling: a node you cannot ROUTE TO is
+        # not a candidate.  The native router already drops a keyless entry
+        # outright (grm_runtime.cpp `route_gqa_raw`: an entry with no route
+        # key never sets `have[]`, so it is absent from the returned order),
+        # while this base admitted it and the Python A-DEC reconstruction
+        # then scored it from `_lex_bonus` alone.  Two different candidate
+        # sets is exactly what `decisive_admission_profile`'s integrity guard
+        # fires on.  Making the rule ONE rule here fixes it at the source for
+        # every consumer of this base (route(), the reconstruction, and the
+        # CPU fake alike).  Lexical bonus alone does not make a node a
+        # candidate.  NOTE: the r2 receipt's node 20 DID carry a key — its
+        # divergence was stale native keys (see `_rebuild_child_keys`) — so
+        # this closes the second, independent path to the same guard.
         base = [i for i, g in enumerate(self.grafts)
                 if not g.get("retired")
-                and g.get("kind", "turn") != "recall"]
+                and g.get("kind", "turn") != "recall"
+                and g.get("cent") is not None]
         self._route_cand_base_cache = base
         self._route_cand_base_epoch = epoch
         self._last_route_cand_base_event = {

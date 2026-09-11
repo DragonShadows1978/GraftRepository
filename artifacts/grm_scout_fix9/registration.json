@@ -1,0 +1,37 @@
+{
+  "cpu_receipts": {
+    "green_after": "artifacts/grm_scout_fix9/green.json",
+    "red_before": "artifacts/grm_scout_fix9/red.json"
+  },
+  "gpu_cap_hours": 0.1,
+  "gpu_executed": false,
+  "inputs": {
+    "core/graft_arena.py": "ee455a6a8b77016f5ad4c9047d9b02376e655eab596b9cb790d7bde7faa1c6da",
+    "core/graft_repository.py": "092cca898f20b0c1350aeb129f364c6fd5e55ecca8a6a796fd030e72efb9b50e",
+    "core/grm_admission.py": "ebdfd84af435a163dfe4a37281d489047acd974bf76190b79622340c29af7ab6",
+    "scripts/grm_scout_fix9_repro.py": "bbe252c65998df16d2080b56e75f86ab94c3e654403b6f78b18b0395a04966fb",
+    "tests/test_grm_scout_fix9.py": "4e9052bd56d46c33c08c614c51eb3e1272fcde841e688b7f2a3cf6b6e0c3f6b8"
+  },
+  "model": "GPT-OSS-20B",
+  "prediction": {
+    "content_gated": false,
+    "host_only_precheck": "Reproduced host-only on the same saved repository (no GPU): RED before the fix (AdmissionPolicyError, backend=native), GREEN after (ranking [13, 8, 15, 16, 18, 20], native RAW order == python RAW order element-for-element).",
+    "raises": false,
+    "statement": "The turn no longer raises AdmissionPolicyError: the native router and the Python A-DEC reconstruction rank one identical candidate set from one identical route-key set. The recap answer is PRODUCED; its content is reported, not gated."
+  },
+  "profile": "eb1_c2",
+  "reason_not_run": "seat sandbox has no GPU; CPU fixtures only",
+  "recorded_failure": {
+    "exception": "core.grm_admission.AdmissionPolicyError",
+    "log": "artifacts/grm_p1/gpu_smoke_r2.log",
+    "message": "production route ranking differs from frozen A-DEC score reconstruction: backend=native production=[18, 21, 13, 8, 15, 16] reference=[18, 21, 20, 13, 8, 15]",
+    "question": "recap the five biggest decisions we made",
+    "turn": 19
+  },
+  "registered": "2026-09-11",
+  "registered_by": "SCOUT-FIX-9 implementation seat (Opus 5, effort max)",
+  "registration": "GRM-SCOUT-FIX-9 — registered GPU replay (lead-run)",
+  "status": "NOT_MEASURED",
+  "threshold_note": "No new gated threshold. This replay is a REGRESSION receipt on a recorded crash: the registered pass condition is simply that the turn completes without AdmissionPolicyError. Recall quality on this transcript is already gated by the GRM-P1 registration (artifacts/grm_p1/lead_commands.txt) and is not re-gated here.",
+  "what_it_measures": "Replay of the P1 GPU smoke r2 recap turn (turn 19, /recap) from the SAVED session repository at artifacts/grm_p1/gpu_session/repository, under GRM_PROFILE=eb1_c2 with GRM_ADMISSION_RULE=margin_first — the exact configuration that raised AdmissionPolicyError."
+}
