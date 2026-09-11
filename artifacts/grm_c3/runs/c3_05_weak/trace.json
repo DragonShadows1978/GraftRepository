@@ -1,0 +1,327 @@
+{
+  "id": "c3_05_weak",
+  "class": "weak",
+  "case_sha256": "bfb2c5400a27566b14579fb0471161013514a020f32103f1c5ee5df5df89efbf",
+  "registration": {
+    "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/registration.json",
+    "sha256": "048e4c7e786be8bb26685abbdd21ce710c9d0f4f2f8fa5e6b3722538820c5666",
+    "bytes": 45383
+  },
+  "execution_manifest": {
+    "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/execution_manifest.json",
+    "sha256": "f120564fa2e5224f3a5a86a883d2016d239571e3e92c3a7cb6e175eb3be0a9c3",
+    "bytes": 71327
+  },
+  "answer": "926<|channel|>analysis<|message|>926-43<|channel|>analysis<|message|>926",
+  "answer_correct": false,
+  "signals": {
+    "schema": "grm.det1.signals.v1",
+    "active_detectors": [
+      "D-NGH"
+    ],
+    "ngh_schedule": "legacy_inline",
+    "token_indexing": "zero_based_generated_prediction",
+    "tokens": [
+      {
+        "token_index": 0,
+        "prediction_token_id": 49639,
+        "lqr": null,
+        "ngh": {
+          "physical_sink_mass": 0.05607243642831842,
+          "mounted_mass": 0.3133770947655042,
+          "live_mass": 0.40801433473825455,
+          "learned_sink_mass": 0.222534473054111
+        },
+        "ent": null,
+        "full_attention_layers": 12
+      },
+      {
+        "token_index": 1,
+        "prediction_token_id": 200005,
+        "lqr": null,
+        "ngh": {
+          "physical_sink_mass": 0.08842314888412754,
+          "mounted_mass": 0.3611460415025552,
+          "live_mass": 0.2288985177874565,
+          "learned_sink_mass": 0.3216161069770654
+        },
+        "ent": null,
+        "full_attention_layers": 12
+      },
+      {
+        "token_index": 2,
+        "prediction_token_id": 35644,
+        "lqr": null,
+        "ngh": {
+          "physical_sink_mass": 0.10546082071959972,
+          "mounted_mass": 0.332971037675937,
+          "live_mass": 0.24059908837080002,
+          "learned_sink_mass": 0.32094967054824036
+        },
+        "ent": null,
+        "full_attention_layers": 12
+      },
+      {
+        "token_index": 3,
+        "prediction_token_id": 200008,
+        "lqr": null,
+        "ngh": {
+          "physical_sink_mass": 0.1186134001861016,
+          "mounted_mass": 0.3225610063721736,
+          "live_mass": 0.22636327023307481,
+          "learned_sink_mass": 0.33241679271062213
+        },
+        "ent": null,
+        "full_attention_layers": 12
+      },
+      {
+        "token_index": 4,
+        "prediction_token_id": 49639,
+        "lqr": null,
+        "ngh": {
+          "physical_sink_mass": 0.10077158827334642,
+          "mounted_mass": 0.33088134229183197,
+          "live_mass": 0.284215750793616,
+          "learned_sink_mass": 0.2841093149036169
+        },
+        "ent": null,
+        "full_attention_layers": 12
+      },
+      {
+        "token_index": 5,
+        "prediction_token_id": 12,
+        "lqr": null,
+        "ngh": {
+          "physical_sink_mass": 0.06440663547255099,
+          "mounted_mass": 0.35062794759869576,
+          "live_mass": 0.29073236882686615,
+          "learned_sink_mass": 0.29422423740228015
+        },
+        "ent": null,
+        "full_attention_layers": 12
+      },
+      {
+        "token_index": 6,
+        "prediction_token_id": 5320,
+        "lqr": null,
+        "ngh": {
+          "physical_sink_mass": 0.07978668102684121,
+          "mounted_mass": 0.33106247956554097,
+          "live_mass": 0.2995637928446134,
+          "learned_sink_mass": 0.2894717864692211
+        },
+        "ent": null,
+        "full_attention_layers": 12
+      },
+      {
+        "token_index": 7,
+        "prediction_token_id": 200005,
+        "lqr": null,
+        "ngh": {
+          "physical_sink_mass": 0.09607553730408351,
+          "mounted_mass": 0.30454396456480026,
+          "live_mass": 0.2814459080497424,
+          "learned_sink_mass": 0.3179802733163039
+        },
+        "ent": null,
+        "full_attention_layers": 12
+      },
+      {
+        "token_index": 8,
+        "prediction_token_id": 35644,
+        "lqr": null,
+        "ngh": {
+          "physical_sink_mass": 0.09970903644959132,
+          "mounted_mass": 0.2851055823266506,
+          "live_mass": 0.3028329921265443,
+          "learned_sink_mass": 0.31230488792061806
+        },
+        "ent": null,
+        "full_attention_layers": 12
+      },
+      {
+        "token_index": 9,
+        "prediction_token_id": 200008,
+        "lqr": null,
+        "ngh": {
+          "physical_sink_mass": 0.11923496300975482,
+          "mounted_mass": 0.28736411159237224,
+          "live_mass": 0.2972542817393939,
+          "learned_sink_mass": 0.29610034947594005
+        },
+        "ent": null,
+        "full_attention_layers": 12
+      },
+      {
+        "token_index": 10,
+        "prediction_token_id": 49639,
+        "lqr": null,
+        "ngh": {
+          "physical_sink_mass": 0.08098179396862785,
+          "mounted_mass": 0.29304949070016545,
+          "live_mass": 0.3427826948463917,
+          "learned_sink_mass": 0.2831405509884159
+        },
+        "ent": null,
+        "full_attention_layers": 12
+      },
+      {
+        "token_index": 11,
+        "prediction_token_id": 200002,
+        "lqr": null,
+        "ngh": {
+          "physical_sink_mass": 0.06448024092242122,
+          "mounted_mass": 0.25556588421265286,
+          "live_mass": 0.38257856915394467,
+          "learned_sink_mass": 0.29744218041499454
+        },
+        "ent": null,
+        "full_attention_layers": 12
+      }
+    ],
+    "prediction_token_ids": [
+      49639,
+      200005,
+      35644,
+      200008,
+      49639,
+      12,
+      5320,
+      200005,
+      35644,
+      200008,
+      49639,
+      200002
+    ],
+    "unused_final_cache_flush_dropped": false,
+    "lqr_semantics": "contextual_pre_rope_q_semantic_only_post_l2_logical_index",
+    "ngh_semantics": "actual_standard_attention_operands_full_layers_only_absolute_mounted_probability",
+    "ent_semantics": "exact_host_fp32_logit_row_entropy_and_top1_top2_margin"
+  },
+  "mounted_ids": [
+    0
+  ],
+  "mounted_node_ids": [
+    "c3_05_weak_node"
+  ],
+  "mounted_token_count": 48,
+  "repository_node_ids": [
+    "c3_05_weak_node"
+  ],
+  "token_ledgers": {
+    "0": [
+      200006,
+      17360,
+      200008,
+      3575,
+      553,
+      17554,
+      162016,
+      13,
+      57369,
+      289,
+      25,
+      4465,
+      13,
+      13888,
+      9334,
+      25,
+      1721,
+      13,
+      200007,
+      200006,
+      1428,
+      200008,
+      43605,
+      495,
+      3704,
+      13,
+      200007,
+      200006,
+      173781,
+      200005,
+      17196,
+      200008,
+      976,
+      457,
+      1116,
+      23910,
+      99733,
+      3158,
+      2086,
+      382,
+      220,
+      49639,
+      12,
+      5320,
+      12,
+      43890,
+      13,
+      200007
+    ]
+  },
+  "qualification_pass": false,
+  "weakness_empirically_confirmed": null,
+  "detector_on": false,
+  "model": {
+    "id": "openai/gpt-oss-20b",
+    "revision": "6cee5e81ee83917806bbde320786a8fb61efebee",
+    "generation": "greedy, no explicit reasoning-effort override; inherited Harmony prompt"
+  },
+  "model_info": {
+    "loaded": "GPT-OSS-20B (resident_packed_mxfp4)",
+    "framework": "tensor_cuda GptOss20B_TC",
+    "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "repository": "openai/gpt-oss-20b",
+    "revision": "6cee5e81ee83917806bbde320786a8fb61efebee",
+    "layers": 24,
+    "full_attention_layers": [
+      1,
+      3,
+      5,
+      7,
+      9,
+      11,
+      13,
+      15,
+      17,
+      19,
+      21,
+      23
+    ],
+    "sliding_attention_layers": [
+      0,
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      16,
+      18,
+      20,
+      22
+    ],
+    "hidden_dim": 2880,
+    "num_heads": 64,
+    "num_kv_heads": 8,
+    "head_dim": 64,
+    "expert_mode": "resident_packed_mxfp4"
+  },
+  "environment": {
+    "GRM_DEMAND_NGH": "0",
+    "GRM_DEMAND_EARLY_ABORT": "0",
+    "GRM_PERSISTENT_BOAT": "0",
+    "GRM_CAPTURE_PIN": "off",
+    "GRM_SEAT_NEAR_LIVE": "0",
+    "GRM_ADM_DECISIVE": "1",
+    "GRM_LSR_FIXES": "1",
+    "GRM_RT1_RULE": "1",
+    "CUDA_VISIBLE_DEVICES": "0"
+  },
+  "pid": 2757313,
+  "python": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+  "elapsed_seconds": 24.066015257965773,
+  "threshold_caveat": "THIN ENVELOPE: this threshold was fit on 2 calibration turns (served controls only, strict minimum-of-minima envelope). It is CARRIED verbatim from the GRM-DET1 race and is never refit or adjusted from serving traffic. Any receipt that reports a D-NGH decision must restate this caveat."
+}

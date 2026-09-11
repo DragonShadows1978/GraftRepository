@@ -1,0 +1,188 @@
+{
+  "gpu_execution": false,
+  "registration": {
+    "path": "/mnt/ForgeRealm/wt/grm-c3/artifacts/grm_c3/registration.json",
+    "sha256": "048e4c7e786be8bb26685abbdd21ce710c9d0f4f2f8fa5e6b3722538820c5666",
+    "bytes": 45383
+  },
+  "cells": [
+    {
+      "id": "trace_01",
+      "case_ids": [
+        "c3_01_correct",
+        "c3_01_decoy",
+        "c3_01_unavailable",
+        "c3_01_weak"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    },
+    {
+      "id": "trace_02",
+      "case_ids": [
+        "c3_02_decoy",
+        "c3_02_unavailable",
+        "c3_02_weak",
+        "c3_02_correct"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    },
+    {
+      "id": "trace_03",
+      "case_ids": [
+        "c3_03_unavailable",
+        "c3_03_weak",
+        "c3_03_correct",
+        "c3_03_decoy"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    },
+    {
+      "id": "trace_04",
+      "case_ids": [
+        "c3_04_weak",
+        "c3_04_correct",
+        "c3_04_decoy",
+        "c3_04_unavailable"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    },
+    {
+      "id": "trace_05",
+      "case_ids": [
+        "c3_05_correct",
+        "c3_05_decoy",
+        "c3_05_unavailable",
+        "c3_05_weak"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    },
+    {
+      "id": "trace_06",
+      "case_ids": [
+        "c3_06_decoy",
+        "c3_06_unavailable",
+        "c3_06_weak",
+        "c3_06_correct"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    },
+    {
+      "id": "trace_07",
+      "case_ids": [
+        "c3_07_unavailable",
+        "c3_07_weak",
+        "c3_07_correct",
+        "c3_07_decoy"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    },
+    {
+      "id": "trace_08",
+      "case_ids": [
+        "c3_08_weak",
+        "c3_08_correct",
+        "c3_08_decoy",
+        "c3_08_unavailable"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    },
+    {
+      "id": "trace_09",
+      "case_ids": [
+        "c3_09_correct",
+        "c3_09_decoy",
+        "c3_09_unavailable",
+        "c3_09_weak"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    },
+    {
+      "id": "trace_10",
+      "case_ids": [
+        "c3_10_decoy",
+        "c3_10_unavailable",
+        "c3_10_weak",
+        "c3_10_correct"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    },
+    {
+      "id": "trace_11",
+      "case_ids": [
+        "c3_11_unavailable",
+        "c3_11_weak",
+        "c3_11_correct",
+        "c3_11_decoy"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    },
+    {
+      "id": "trace_12",
+      "case_ids": [
+        "c3_12_weak",
+        "c3_12_correct",
+        "c3_12_decoy",
+        "c3_12_unavailable"
+      ],
+      "estimate_seconds": 200,
+      "worker_cap_seconds": 225,
+      "outer_cap_seconds": 590,
+      "cooldown_seconds": 30,
+      "estimate_basis": "reasoning only: four fresh processes-in-sequence model loads at 25s plus 25s planting/decode/cleanup each; no live C3 timing"
+    }
+  ],
+  "offline_arms": [
+    "carried",
+    "candidate",
+    "near_zero",
+    "empty_band"
+  ],
+  "estimated_gpu_seconds": 2400,
+  "maximum_gpu_seconds": 2700,
+  "estimated_cooldown_seconds": 360,
+  "timing_evidence": "reasoning; unmeasured"
+}
