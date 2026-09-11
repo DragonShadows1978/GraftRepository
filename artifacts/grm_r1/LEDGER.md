@@ -221,3 +221,132 @@ No process killed or signalled. No GPU lease taken and no GPU work run; the
 only device interaction was a read-only `nvidia-smi --query-gpu=memory.used`
 point sample (returned 327 MiB, card idle), which allocates nothing. Every
 Bash call foreground and completed. No git command run.
+
+---
+
+# Amendment 2 — stale-session archiving + environment restoration (2026-09-10)
+
+Two defects, both mine, both found by the lead AFTER amendment 1 was
+verified and committed (c2c8865).
+
+## Defect 1 — the re-issue collided with its own scratch
+
+`artifacts/grm_r1/batch_R1_a1.log`, lease acquired then released in 4.67 s:
+
+```
+FileExistsError: [Errno 17] File exists: '.../gpu/R1/sessions/
+fix6-replay-defaults-census-restart-1--e2e_t22_mira_seal/off'
+```
+
+Verified on disk: that cell (the one whose arm OFF finished and whose arm ON
+OOMed) still has BOTH `off/` and `on/`. `open_arm` creates the session with
+`mkdir(exist_ok=False)` — correct for a first run, fatal for a re-issue.
+
+I had applied create-only uniformly. That is right for **evidence** and wrong
+for **scratch**: amendment 1 taught the campaign to re-issue a cell but left
+the cell's own working directory in the way. Fix:
+`archive_stale_sessions()` moves that cell's own stale arm dirs to
+`sessions/<cell>/attempt_<n>/` before the arms run. Archived, not deleted —
+the failed attempt's scratch stays inspectable. Nothing outside that cell's
+session directory is touched, and a cell that already has a receipt is never
+re-run, so this code never sees a receipt.
+
+## Defect 2 — the rule pin leaked into the process environment
+
+`pin_rule` set `GRM_ADMISSION_RULE`; `environment(flags)` rewrote the whole
+`GRM_` frame; neither restored. `admission_rule()` reads `os.environ` at CALL
+time, so every module importing after a R1 test in the same process was
+silently re-ruled to `margin_first`.
+
+Reproduced before the fix:
+
+```
+$ pytest -q tests/test_grm_r1_replay.py tests/test_grm_scout_fix4.py tests/test_grm_admission.py
+4 failed, 54 passed
+  test_grm_scout_fix4.py::test_identifier_binds_nothing_still_abstains[core]
+  test_grm_scout_fix4.py::test_identifier_binds_nothing_still_abstains[ladder]
+  test_grm_scout_fix4.py::test_nonrecency_existing_fixture_receipt_byte_identical
+  test_grm_admission.py::test_decisive_profile_reuses_route_laws_and_frozen_receipt
+```
+
+and directly:
+
+```
+after pin_rule(on): 'margin_first'
+admission_rule() now: margin_first   <-- every later module sees this
+```
+
+**My earlier "91 passed" ran R1 LAST, which is exactly why I never saw it.**
+A suite whose greenness depends on file order is not green. The refreshed
+`lead_commands.txt` now runs R1 FIRST on purpose, so a future leak turns the
+following suites red instead of hiding.
+
+Fix: `scoped_env()` snapshots and restores the EXACT prior environment in a
+`finally`, around each arm's pin and around the batch frame pin. A key absent
+before is REMOVED, not set to `''`; keys the body ADDED (the whole frame) are
+dropped. Tests use `monkeypatch` so no test can itself leak.
+
+After the fix:
+
+```
+env after batch: None
+leaked GRM_ vars: NONE
+admission_rule(): all_tokens_bind
+```
+
+## Commands and results
+
+| # | Command | Result |
+|---|---|---|
+| 1 | read `batch_R1_a1.log`, list `gpu/R1/sessions/` | collision confirmed; cell 6 holds `off/` + `on/` |
+| 2 | `pin_rule('on')` then `admission_rule()` | leak confirmed: `margin_first` persists |
+| 3 | `pytest r1_replay + scout_fix4 + admission` (R1 first) | **4 failed, 54 passed** — the lead's defect reproduced |
+| 4 | implement `scoped_env`, `archive_stale_sessions`; chain-aware `amendment()` | — |
+| 5 | env probe after a fake batch | `None` / no leaked `GRM_` vars / `all_tokens_bind` |
+| 6 | collision fixture (plant stale scratch, re-issue) | archived to `attempt_1/`, fresh arms created, retained receipts byte-identical, all cells have receipts |
+| 7 | `python3 scripts/grm_r1_amend_2.py` | amendment 2 written, sha `e2d4b743…6ddfc`, chains to a1 |
+| 8 | `pytest` all four R1 files | **80 passed** |
+| 9 | `pytest` R1 FIRST + fix4 + admission (the ordering that failed) | **98 passed** |
+
+## Findings
+
+1. **Create-only is right for evidence and wrong for scratch.** The
+   receipt/session distinction now has to be explicit, or the no-overwrite
+   rule becomes a self-collision on any re-issue. Receipts: never touched.
+   Scratch: archived per attempt.
+2. **Process-global state defeats file-scoped gates.** `admission_rule()`
+   reading `os.environ` at call time means an unrestored pin is not
+   untidiness, it is a correctness defect in OTHER suites. The worker now
+   restores in production too, not just under pytest — production has no
+   monkeypatch.
+3. **Test ordering is part of the gate.** Placing the mutating module last
+   hid a real defect through two rounds of review, including mine.
+4. Three fixtures of mine that planted only `amendment_1.json` broke once the
+   loader required the full chain; they now copy the real chain. That is the
+   chain check working, not a false alarm.
+
+## RED items
+
+None outstanding. Both defects are fixed, reproduced-before and
+verified-after, with the reproduction commands recorded above.
+
+## Process safety (amendment 2)
+
+No process killed or signalled. No GPU lease taken, no GPU work run, no model
+loaded. Every Bash call foreground and completed. No git command run.
+
+## Third defect, found while verifying amendment 2 (accounting)
+
+Checking `campaign_state` against the real receipts after the lead's second
+attempt, the campaign reported **134 s charged for a batch that had actually
+spent 263 + 134 = 397 s**. Cause: amendment 1 archives the prior attempt's
+controller to `controller_attempt_1.json`, but `campaign_state` globbed only
+`controller.json` -- so every re-issue silently REFUNDED the failed attempt's
+GPU time. On a 1.0 GPU-h cap that is a budget rail that does not hold.
+
+Fix: `campaign_state` now also sums `controller_attempt_*.json` (binding-
+checked the same way). Verified on the real receipts: 397.0 s, complete=[].
+A test asserts a re-issue ADDS to the prior charge rather than replacing it.
+
+This one was mine too, introduced by amendment 1's archiving and caught only
+because I re-read the live numbers instead of trusting the passing suite.

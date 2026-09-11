@@ -16,6 +16,24 @@ import pytest
 from scripts import grm_r1_replay as run
 
 
+def _chain_into(tmp_path, mutate=None):
+    """Copy the REAL amendment chain into tmp_path, optionally mutating link 1.
+
+    Amendment 2 chains to amendment 1, so a fixture that plants only link 1
+    would break the chain.  ``mutate`` receives each link's dict.
+    """
+    for index in (1, 2):
+        a = json.loads((run.OUT / f'amendment_{index}.json').read_text())
+        if mutate is not None:
+            mutate(a, index)
+        if index == 2:
+            a['previous_amendment_sha256'] = run.sha(
+                tmp_path / 'amendment_1.json')
+        run.write(tmp_path / f'amendment_{index}.json', a)
+        (tmp_path / f'amendment_{index}.sha256').write_text(
+            run.sha(tmp_path / f'amendment_{index}.json')
+            + f'  amendment_{index}.json\n')
+
 # --------------------------------------------------------------------------
 # the fix: device payloads are released between arms
 # --------------------------------------------------------------------------
@@ -134,12 +152,12 @@ def test_amendment_chain_drift_is_rejected(tmp_path):
 
 
 def test_amendment_cannot_rebind_an_unlisted_source(tmp_path):
-    a = dict(run.amendment())
-    a['rebound_inputs'] = dict(a['rebound_inputs'])
-    a['rebound_inputs']['core/graft_arena.py.evil'] = 'deadbeef'
-    run.write(tmp_path / 'amendment_1.json', a)
-    (tmp_path / 'amendment_1.sha256').write_text(
-        run.sha(tmp_path / 'amendment_1.json') + '  amendment_1.json\n')
+    def poison(a, index):
+        if index == 2:
+            a['rebound_inputs'] = dict(a['rebound_inputs'])
+            a['rebound_inputs']['core/graft_arena.py.evil'] = 'deadbeef'
+
+    _chain_into(tmp_path, poison)
     with pytest.raises(ValueError, match='R1_AMENDMENT_REBIND_OUT_OF_SCOPE'):
         run.verify(tmp_path)
 
@@ -238,16 +256,13 @@ def test_completed_cells_retained_and_missing_reissued_on_the_fake_path(tmp_path
                'amendment': None, 'cells_run': ids, 'cells_retained': [],
                'registration_sha256': run.sha(run.REG)})
 
-    a = dict(run.amendment())
-    a['rearm'] = {batch_id: {'retain': keep, 'reissue': drop,
-                             'lease_seconds': 200,
-                             'prior_status': 'FAILED', 'prior_error': 'oom',
-                             'prior_charged_seconds': 263.0,
-                             'measured_per_cell_seconds': 18.0,
-                             'estimate_basis': 'test fixture'}}
-    run.write(tmp_path / 'amendment_1.json', a)
-    (tmp_path / 'amendment_1.sha256').write_text(
-        run.sha(tmp_path / 'amendment_1.json') + '  amendment_1.json\n')
+    rearm = {batch_id: {'retain': keep, 'reissue': drop,
+                        'lease_seconds': 200,
+                        'prior_status': 'FAILED', 'prior_error': 'oom',
+                        'prior_charged_seconds': 263.0,
+                        'measured_per_cell_seconds': 18.0,
+                        'estimate_basis': 'test fixture'}}
+    _chain_into(tmp_path, lambda a, index: a.__setitem__('rearm', rearm))
 
     # The campaign is un-closed by the amendment ...
     charged, complete = run.campaign_state(run.verify(tmp_path), tmp_path)
@@ -282,15 +297,12 @@ def test_reissue_refuses_when_nothing_is_missing(tmp_path):
                'reservation_seconds': 263, 'fake': True, 'attempt': 1,
                'amendment': None, 'cells_run': [], 'cells_retained': [],
                'registration_sha256': run.sha(run.REG)})
-    a = dict(run.amendment())
-    a['rearm'] = {batch_id: {'retain': r['batches'][batch_id], 'reissue': [],
-                             'lease_seconds': 60, 'prior_status': 'FAILED',
-                             'prior_error': 'x', 'prior_charged_seconds': 263.0,
-                             'measured_per_cell_seconds': 18.0,
-                             'estimate_basis': 'test fixture'}}
-    run.write(tmp_path / 'amendment_1.json', a)
-    (tmp_path / 'amendment_1.sha256').write_text(
-        run.sha(tmp_path / 'amendment_1.json') + '  amendment_1.json\n')
+    _chain_into(tmp_path,
+                lambda a, index: a.__setitem__('rearm', {batch_id: {'retain': r['batches'][batch_id], 'reissue': [],
+                                 'lease_seconds': 60, 'prior_status': 'FAILED',
+                                 'prior_error': 'x', 'prior_charged_seconds': 263.0,
+                                 'measured_per_cell_seconds': 18.0,
+                                 'estimate_basis': 'test fixture'}}))
     with pytest.raises(RuntimeError, match='R1_NOTHING_TO_REISSUE'):
         run.batch(batch_id, fake=True, root=tmp_path)
 
@@ -306,10 +318,7 @@ def test_an_unamended_failed_batch_still_closes_the_campaign(tmp_path):
                'reservation_seconds': 194, 'fake': True, 'attempt': 1,
                'amendment': None, 'cells_run': [], 'cells_retained': [],
                'registration_sha256': run.sha(run.REG)})
-    a = dict(run.amendment())
-    a['rearm'] = {'R1': a['rearm']['R1']}
-    run.write(tmp_path / 'amendment_1.json', a)
-    (tmp_path / 'amendment_1.sha256').write_text(
-        run.sha(tmp_path / 'amendment_1.json') + '  amendment_1.json\n')
+    _chain_into(tmp_path,
+                lambda a, index: a.__setitem__('rearm', {'R1': a['rearm']['R1']}))
     with pytest.raises(ValueError, match='R1_FAILED_CAMPAIGN_STOP'):
         run.campaign_state(run.verify(tmp_path), tmp_path)

@@ -6,6 +6,26 @@
 #   sha256     : b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5
 # Amendment 1  : artifacts/grm_r1/amendment_1.json
 #   sha256     : fef08f656af51ef8e46431090f05e69c8c0ce8c9e13a0afcfd9f944d4a781683
+# Amendment 2  : artifacts/grm_r1/amendment_2.json
+#   sha256     : d62d9a2c43fcb89c7ea8d3ff8a799e9c4691ce706bb32d1e69cf31aaf59da076
+#   chains to amendment 1; re-binds the worker sha; R1 scope UNCHANGED
+#   (retain 5 / reissue 3 / lease 134 s), R2-R5 unchanged.
+#
+# WHY AMENDMENT 2 (two defects the lead found after a1 was committed):
+#  D1 the re-issue collided with its own scratch --
+#     FileExistsError .../sessions/<cell>/off, because cell 6 (arm OFF done,
+#     arm ON OOMed) kept its session dirs and open_arm uses
+#     mkdir(exist_ok=False). Fix: archive_stale_sessions() moves that cell's
+#     OWN stale arm dirs to sessions/<cell>/attempt_<n>/ before the arms run.
+#     Cell RECEIPTS are create-only evidence and are never touched; session
+#     dirs are scratch, so they are ARCHIVED (still inspectable), not deleted.
+#  D2 the rule pin leaked into os.environ -- pin_rule set
+#     GRM_ADMISSION_RULE and environment(flags) rewrote the GRM_ frame, and
+#     neither restored. admission_rule() reads os.environ at CALL time, so
+#     every module importing after a R1 test was silently re-ruled. Fix:
+#     scoped_env() restores the exact prior environment in a finally.
+#     NOTE the seat's earlier "91 passed" ran R1 LAST, which is why it never
+#     surfaced. The gate below now runs R1 FIRST on purpose.
 #
 # WHY AMENDMENT 1: batch R1 died with cudaMalloc OOM at turn 22.  Cause:
 # GraftRepository.close() releases only the NATIVE STORE; the arena's
@@ -67,9 +87,12 @@ for p in sorted(glob.glob('artifacts/grm_r1/gpu/*/cells/*.json')):
 PY
 
 # ------------------------------------------------------------- BUDGET STATE
-# Prior FAILED attempt charged 263 s (not refunded -- it stays on the books).
-# Amendment adds 134 s for the R1 re-issue.  R2-R5 add 794 s.
-# Total 1191 s = 0.331 GPU-h, under the registered 3600 s = 1.0 GPU-h cap.
+# Charged so far 397 s = 263 s (OOM attempt 1) + 134 s (collision attempt 2).
+# Both are REAL GPU time and neither is refunded; campaign_state now reads
+# archived controller_attempt_*.json too, which it did not before amendment 2
+# (it had been reporting 134 s for a batch that had spent 397 s).
+# Next R1 re-issue adds 134 s -> 531 s; R2-R5 add 794 s -> 1325 s = 0.368
+# GPU-h, under the registered 3600 s = 1.0 GPU-h cap.
 
 # --------------------------------------------------------------- STOP rules
 # * A checkpoint hash mismatch is RED and is NOT retried.
@@ -82,6 +105,14 @@ PY
 #   rather than silently re-scoping.  That needs a new amendment, not a nudge.
 # * Never kill or signal a process this campaign did not start; wait on the
 #   flock, never clear it.
+# * A re-issued cell archives its own stale scratch to
+#   sessions/<cell>/attempt_<n>/ and leaves it there. Do NOT delete those:
+#   they are the failed attempt's evidence. No cell receipt is ever touched.
 
 # ------------------------------------------------------- CPU gate (no GPU)
-python3 -m pytest -q tests/test_grm_admission.py tests/test_grm_scout_fix4.py tests/test_grm_scout_fix6*.py tests/test_grm_r1*.py
+# R1 runs FIRST on purpose: if the worker ever leaks GRM_ADMISSION_RULE
+# again, the FIX-4 and admission suites after it go red instead of hiding it.
+python3 -m pytest -q tests/test_grm_r1_replay.py tests/test_grm_r1_cpu_gate.py tests/test_grm_r1_amendment1.py tests/test_grm_r1_amendment2.py tests/test_grm_scout_fix4.py tests/test_grm_admission.py
+
+# The full battery (order-independent now, but keep R1 first by habit):
+python3 -m pytest -q tests/test_grm_r1*.py tests/test_grm_scout_fix4.py tests/test_grm_admission.py tests/test_grm_scout_fix6*.py

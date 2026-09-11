@@ -1,0 +1,73 @@
+{
+  "acceptance_unchanged": true,
+  "added_reserved_seconds": 134,
+  "amendment": 2,
+  "defects": [
+    {
+      "cause": "open_arm creates the session with mkdir(exist_ok=False); the re-issued cell 6 still had the off/ and on/ scratch dirs from the attempt that OOMed, so the re-issue collided with its own debris.",
+      "evidence": "artifacts/grm_r1/batch_R1_a1.log",
+      "fix": "archive_stale_sessions() moves that cell's own stale arm dirs to sessions/<cell>/attempt_<n>/ before the arms run. Receipts are create-only and untouched; session dirs are scratch, archived not deleted.",
+      "id": "R1-D1-stale-session-collision",
+      "symptom": "FileExistsError: [Errno 17] File exists: .../gpu/R1/sessions/fix6-replay-defaults-census-restart-1--e2e_t22_mira_seal/off"
+    },
+    {
+      "cause": "pin_rule and environment(flags) mutate os.environ, which admission_rule() reads at call time, and neither restored the prior values.",
+      "evidence": "lead: 3 FIX-4 + 20 A1 failures that vanish when R1 runs alone; seat reproduced 4 failures with pytest tests/test_grm_r1_replay.py tests/test_grm_scout_fix4.py tests/test_grm_admission.py",
+      "fix": "scoped_env() snapshots and restores the exact prior environment in a finally around each arm's pin and the batch frame pin; a key absent before is REMOVED, not set to empty. Tests use monkeypatch so nothing outlives a test.",
+      "id": "R1-D2-environment-leak",
+      "symptom": "GRM_ADMISSION_RULE=margin_first survived the run and re-ruled every module imported afterwards in the same process."
+    }
+  ],
+  "evidence_class": "Campaign-control and process-hygiene amendment. Changes scratch-directory lifecycle and environment restoration only; no admission, routing or scoring logic is touched, and the prediction and verdict rule are unchanged.",
+  "gpu_cap_seconds": 3600,
+  "lessons": [
+    "A suite whose greenness depends on file order is not green: the seat's earlier 91-passed run placed R1 last and hid a real cross-module defect. Gate batteries should run the suspect module FIRST, not last.",
+    "Create-only is right for evidence and wrong for scratch. The receipt/session distinction has to be explicit, or the no-overwrite rule turns into a self-collision on any re-issue."
+  ],
+  "order": "orders/GRM_R1_MARGIN_FIRST_REPLAY.md",
+  "order_sha256": "b351d8c25d1c2f5ab5a9a439e00adfb70a3535f9a5242508583ee83edd3dcda7",
+  "prediction": "Registered prediction: <= 2 of 31 executions change their answer; 0 correct->wrong on supersession.",
+  "previous_amendment_sha256": "fef08f656af51ef8e46431090f05e69c8c0ce8c9e13a0afcfd9f944d4a781683",
+  "prior_art": "GRM-R1 amendment 2: stale-session archiving + environment restoration.\n\nTwo defects found by the lead after amendment 1 was committed (c2c8865).\nBoth are mine; both are fixed in the worker, and this amendment re-binds it.\n\nDEFECT 1 -- re-issue collides with its own scratch.\n`artifacts/grm_r1/batch_R1_a1.log`:\n    FileExistsError: [Errno 17] File exists:\n    '.../gpu/R1/sessions/fix6-replay-defaults-census-restart-1--e2e_t22_mira_seal/off'\nCell 6 is the cell whose arm OFF finished and whose arm ON hit the OOM, so\nits `off/` and `on/` session directories survived.  `open_arm` creates the\nsession with `mkdir(exist_ok=False)` -- correct for a first run, fatal for a\nre-issue.  Fix: `archive_stale_sessions()` moves that cell's OWN stale arm\ndirectories to `sessions/<cell>/attempt_<n>/` before the arms run.  Cell\nRECEIPTS are create-only evidence and are never touched; session dirs are\nscratch, so they are archived (still inspectable), never deleted.  A cell\nthat already has a receipt is never re-run, so this never sees one.\n\nDEFECT 2 -- the rule pin leaked into the process environment.\n`pin_rule` sets `GRM_ADMISSION_RULE`, and `environment(flags)` rewrites the\nwhole `GRM_` frame, but neither was restored.  `core.grm_admission.\nadmission_rule()` reads `os.environ` at CALL time, so in one pytest process\nevery module importing after a R1 test was silently re-ruled to\n`margin_first`.  The lead observed 3 FIX-4 and 20 A1 failures that vanish\nwhen R1 runs alone; I reproduced 4 failures with\n`pytest tests/test_grm_r1_replay.py tests/test_grm_scout_fix4.py\ntests/test_grm_admission.py`.  My own earlier \"91 passed\" put R1 LAST, which\nis exactly why I never saw it -- a green suite whose greenness depends on\nfile order is not green.  Fix: `scoped_env()` snapshots and restores the\nexact prior environment in a `finally` around each arm's pin and around the\nbatch's frame pin; a key absent before is REMOVED, not set to ''.\n\nScope: rebind the worker sha only.  R1 keeps amendment 1's retain-5 /\nreissue-3 scope and its 134 s lease; R2-R5 unchanged.  Neither fix changes\nadmission, routing or scoring, and the prediction, verdict rule and parity\nbarrier are untouched.\n\nPrior art: GRM C7/C2 sha-bound amendment chains (GRM contributors, 2026) --\nTAKEN verbatim, including chaining to the PREVIOUS amendment's hash.\nFIX8/C7 \"archive the prior attempt, never overwrite\" (GRM, 2026) -- TAKEN,\napplied here to per-cell scratch instead of the batch controller.\nGRM-A1 `grm_a1_gpu_contrast.pin_flags` (GRM, 2026) -- independently hit the\nsame \"pin AFTER environment()\" trap and records that pinning before it\n\"fails silently, and that exact mistake produced a wrong reading earlier in\nthis arc\"; A1 pins and asserts but does not restore, which is the half this\namendment adds.  `unittest.mock.patch.dict(os.environ)` / pytest\n`monkeypatch.setenv` (Python and pytest contributors) -- the standard\nenvironment snapshot and restore idiom, reproduced in the worker because\nproduction has no pytest fixture.  Nothing novel; no new algorithm.\n",
+  "prior_charged_seconds": 263.0,
+  "rearm": {
+    "R1": {
+      "estimate_basis": "max both-arm wall over this batch's retained receipts, plus one model load and 60 s headroom; measured, not guessed",
+      "lease_seconds": 134,
+      "measured_per_cell_seconds": 18.12,
+      "prior_charged_seconds": 263.0,
+      "prior_error": "RuntimeError: turn 22 failed: RuntimeError('cudaMalloc failed: out of memory')",
+      "prior_status": "FAILED",
+      "reissue": [
+        "fix6-replay-defaults-census-restart-1--e2e_t22_mira_seal",
+        "fix6-replay-defaults-longhistory-1--lh_t013",
+        "fix6-replay-defaults-longhistory-1--lh_t016"
+      ],
+      "retain": [
+        "fix6-replay-defaults-census-1--e2e_t13_orion_pin",
+        "fix6-replay-defaults-census-1--e2e_t16_lyra_dock",
+        "fix6-replay-defaults-census-2--e2e_t22_mira_seal",
+        "fix6-replay-defaults-census-restart-0--e2e_t13_orion_pin",
+        "fix6-replay-defaults-census-restart-0--e2e_t16_lyra_dock"
+      ]
+    }
+  },
+  "rearm_unchanged_from_amendment_1": true,
+  "rebound_inputs": {
+    "scripts/grm_r1_amend_2.py": "c35c2449edfcf6df256dadd21065a415f45baf8cda633cb3df55b6dd6ae818c5",
+    "scripts/grm_r1_replay.py": "9301c7f8add467cbb1682cbdc65dfb108f66f6ab6089adfac9e135f38fd048c7"
+  },
+  "rebound_reason": "Both fixes live in the worker, so its hash changes; every other registered input keeps its original hash and still fails closed.",
+  "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+  "retained_receipts_policy": "Completed cell receipts are VALID create-only receipts: retained byte-for-byte, never re-run, never rewritten. Only cells with no receipt are re-issued. resume_scope() compares the amendment's retain/reissue lists against what is actually on disk and STOPS (R1_AMENDMENT_RETAIN_MISMATCH / _REISSUE_MISMATCH) if they disagree, rather than silently re-scoping.",
+  "schema": "grm.r1.amendment.v1",
+  "total_reserved_seconds": 397.0,
+  "unchanged_batches": [
+    "R2",
+    "R3",
+    "R4",
+    "R5"
+  ],
+  "unchanged_reason": "Neither fix changes per-cell cost: one moves scratch directories, the other restores environment variables.",
+  "verdict_rule": "Verdict rule: margin_first is adoptable as the profile default iff correct->wrong = 0 on sup and <= 1 elsewhere."
+}

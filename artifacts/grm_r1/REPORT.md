@@ -293,3 +293,116 @@ Nothing killed or signalled. No GPU lease taken and no GPU work run; the only
 device interaction was a read-only `nvidia-smi --query-gpu=memory.used` point
 sample (327 MiB, card idle), which allocates nothing. Every Bash call
 foreground and completed. No git command run.
+
+---
+
+# Amendment 2 — stale-session archiving + environment restoration
+
+Two defects, both mine, both found by the lead after amendment 1 was verified
+and committed (c2c8865). Neither touches admission, routing or scoring; the
+prediction, verdict rule and parity barrier are unchanged.
+
+## Defect 1 — the re-issue collided with its own scratch
+
+`batch_R1_a1.log`: lease acquired, released 4.67 s later, with
+`FileExistsError: .../sessions/fix6-replay-defaults-census-restart-1--e2e_t22_mira_seal/off`.
+
+That is cell 6 — the one whose arm OFF finished and whose arm ON hit the OOM —
+so it still holds both `off/` and `on/`. `open_arm` creates the session with
+`mkdir(exist_ok=False)`: correct for a first run, fatal for a re-issue.
+
+The underlying mistake is mine and worth naming: **I applied create-only
+uniformly.** It is right for *evidence* and wrong for *scratch*. Amendment 1
+taught the campaign to re-issue a cell but left that cell's own working
+directory in the way. `archive_stale_sessions()` now moves the cell's own
+stale arm dirs to `sessions/<cell>/attempt_<n>/` before the arms run —
+archived, not deleted, so the failed attempt stays inspectable. Nothing
+outside that cell's session directory is touched, and a cell that already has
+a receipt is never re-run, so this code never sees a receipt.
+
+## Defect 2 — the rule pin leaked into the process environment
+
+`pin_rule` set `GRM_ADMISSION_RULE`, `environment(flags)` rewrote the whole
+`GRM_` frame, and neither restored. `admission_rule()` reads `os.environ` at
+CALL time, so every module importing after a R1 test in the same process was
+silently re-ruled to `margin_first`.
+
+Reproduced before the fix — the lead's exact symptom:
+
+```
+$ pytest -q tests/test_grm_r1_replay.py tests/test_grm_scout_fix4.py tests/test_grm_admission.py
+4 failed, 54 passed
+```
+
+**My earlier "91 passed" ran R1 LAST, which is precisely why I never saw it.**
+A suite whose greenness depends on file order is not green. That is the real
+lesson here, and it is now built into the gate: `lead_commands.txt` runs R1
+FIRST on purpose, so a future leak turns the following suites red rather than
+hiding behind ordering.
+
+`scoped_env()` restores the exact prior environment in a `finally` around each
+arm's pin and the batch frame pin: a key absent before is REMOVED (not set to
+`''`), and keys the body added are dropped. It lives in the worker, not only
+in tests, because production has no `monkeypatch`. After the fix a fake batch
+leaves `GRM_ADMISSION_RULE` absent, no `GRM_` vars at all, and
+`admission_rule() == 'all_tokens_bind'`.
+
+## Amendment
+
+`artifacts/grm_r1/amendment_2.json`, sha
+`e2d4b7439a78f07400ecd12dcfc403adeb46770d368cd01cf798c4a638d6ddfc`, bound to
+registration `b02593ec…a56cf5`, to the order file, and to amendment 1's hash.
+`amendment()` now walks the chain, checks each link's index and predecessor
+hash, and accumulates re-binds (a later link wins; an earlier link's re-bind
+is not silently dropped). R1 keeps retain-5 / reissue-3 / 134 s; R2–R5
+unchanged — neither fix changes per-cell cost.
+
+## Gate lines
+
+```
+BEFORE the fix (the lead's ordering):            4 failed, 54 passed
+R1 suites (replay + cpu_gate + a1 + a2):         80 passed
+R1 FIRST + scout_fix4 + admission (the gate):    98 passed
+env after a fake batch: None | leaked GRM_ vars: NONE | admission_rule(): all_tokens_bind
+collision fixture: archived to attempt_1/, fresh arms created,
+                   retained receipts byte-identical, all cells have receipts
+```
+
+## Prior art (new in amendment 2)
+
+* **GRM C7/C2 sha-bound amendment chains** (GRM contributors, 2026) — TAKEN
+  verbatim, extended to chain each link to its predecessor's hash.
+* **FIX8/C7 "archive the prior attempt, never overwrite"** (GRM, 2026) —
+  TAKEN, applied to per-cell scratch instead of the batch controller.
+* **GRM-A1 `grm_a1_gpu_contrast.pin_flags`** (GRM, 2026) — independently hit
+  the same "pin AFTER `environment()`" trap, and its comment records that
+  pinning before it "fails silently, and that exact mistake produced a wrong
+  reading earlier in this arc". A1 pins and asserts but does not RESTORE;
+  restoration is the half this amendment adds. Found via the local
+  code-similarity index, not searched for — worth the lead knowing two
+  independent seats hit one trap.
+* **`unittest.mock.patch.dict(os.environ)` / pytest `monkeypatch.setenv`**
+  (Python and pytest contributors) — the standard environment snapshot and
+  restore idiom, reproduced in the worker because production has no pytest
+  fixture. Nothing novel; no new algorithm.
+
+## Process safety (amendment 2)
+
+Nothing killed or signalled. No GPU lease taken, no GPU work run, no model
+loaded. Every Bash call foreground and completed. No git command run.
+
+## Third defect, found while verifying amendment 2 (accounting)
+
+Checking `campaign_state` against the real receipts after the lead's second
+attempt, the campaign reported **134 s charged for a batch that had actually
+spent 263 + 134 = 397 s**. Cause: amendment 1 archives the prior attempt's
+controller to `controller_attempt_1.json`, but `campaign_state` globbed only
+`controller.json` -- so every re-issue silently REFUNDED the failed attempt's
+GPU time. On a 1.0 GPU-h cap that is a budget rail that does not hold.
+
+Fix: `campaign_state` now also sums `controller_attempt_*.json` (binding-
+checked the same way). Verified on the real receipts: 397.0 s, complete=[].
+A test asserts a re-issue ADDS to the prior charge rather than replacing it.
+
+This one was mine too, introduced by amendment 1's archiving and caught only
+because I re-read the live numbers instead of trusting the passing suite.

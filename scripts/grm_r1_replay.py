@@ -52,6 +52,7 @@ import argparse
 import copy
 import json
 import os
+from contextlib import contextmanager
 import shutil
 import sys
 import time
@@ -80,7 +81,7 @@ TRANSITIONS = ('unchanged_correct', 'unchanged_wrong', 'correct_to_wrong',
 #: Paths an amendment may bind that the registration could not list, because
 #: they did not exist when it was written.  Strictly the amendment's own
 #: builder: an amendment can never smuggle in a new core or scoring source.
-REBINDABLE_NEW = ('scripts/grm_r1_amend_1.py',)
+REBINDABLE_NEW = ('scripts/grm_r1_amend_1.py', 'scripts/grm_r1_amend_2.py')
 
 
 # --------------------------------------------------------------------------
@@ -106,7 +107,9 @@ def verify(root=None):
             need(path in inputs or path in REBINDABLE_NEW,
                  'R1_AMENDMENT_REBIND_OUT_OF_SCOPE: ' + path)
             inputs[path] = digest
-        r['amendment_1_sha256'] = a['_self_sha256']
+        r['amendment_sha256'] = a['_self_sha256']
+        r['amendment_chain_sha256'] = a.get('_chain', [])
+        r['amendment_index'] = a['amendment']
     for path, digest in inputs.items():
         p = Path(path) if Path(path).is_absolute() else ROOT / path
         need(sha(p) == digest, 'R1_INPUT_SHA_MISMATCH: ' + path)
@@ -258,6 +261,47 @@ def pin_rule(arm):
     need(observed == ('margin_first' if arm == 'on' else 'all_tokens_bind'),
          'R1_RULE_PIN_FAILED: arm=' + arm + ' observed=' + observed)
     return observed
+
+
+@contextmanager
+def scoped_env(keys=None):
+    """Restore the EXACT prior environment on the way out, always.
+
+    AMENDMENT-2 DEFECT FIX.  ``pin_rule`` and ``environment(flags)`` both
+    mutate ``os.environ`` process-wide, and ``core.grm_admission.
+    admission_rule()`` reads ``os.environ`` at CALL time.  Without
+    restoration the pin outlives the run: in one pytest process every module
+    imported after a R1 test saw ``GRM_ADMISSION_RULE=margin_first`` and was
+    silently re-ruled (the lead observed 3 FIX-4 and 20 A1 failures that
+    vanish when R1 runs alone).  A leaked experimental flag that changes
+    OTHER suites' results is a correctness defect, not untidiness.
+
+    ``keys=None`` snapshots and restores every ``GRM_`` variable plus the
+    rule; a explicit key list narrows that.  Restoration is exact: a key
+    absent before is REMOVED, not set to ''.
+
+    Prior art: ``unittest.mock.patch.dict(os.environ)`` and pytest's
+    ``monkeypatch.setenv`` (Python/pytest contributors) -- the standard
+    snapshot/restore idiom, reproduced here because the worker must restore
+    in production too, where no pytest fixture exists.  Nothing novel.
+    """
+    if keys is None:
+        names = {k for k in os.environ if k.startswith('GRM_')} | {RULE_ENV}
+    else:
+        names = set(keys)
+    saved = {k: os.environ.get(k) for k in names}
+    try:
+        yield
+    finally:
+        # Re-read: the body may have ADDED GRM_ keys that were not in the
+        # snapshot (environment(flags) sets a whole frame), so drop those too.
+        current = {k for k in os.environ if k.startswith('GRM_')} | names
+        for k in current:
+            before = saved.get(k, None) if k in saved else None
+            if before is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = before
 
 
 def open_arm(c, session, flags, loaded):
@@ -434,6 +478,46 @@ def run_arm(repo, c, descriptor, flags, arm, session, process_id):
             'registration_sha256': sha(REG)}
 
 
+def archive_stale_sessions(destination, c):
+    """Move a re-issued cell's stale session dirs aside before it runs.
+
+    AMENDMENT-2 DEFECT FIX.  A cell that died part-way (cell 6 of batch R1:
+    arm OFF finished, arm ON OOMed) leaves its ``sessions/<cell>/off`` and
+    ``.../on`` behind.  ``open_arm`` creates the session with
+    ``mkdir(exist_ok=False)``, so the re-issue collided with its own debris:
+    ``FileExistsError: .../sessions/<cell>/off``.
+
+    THE DISTINCTION THAT MATTERS: cell RECEIPTS are create-only evidence and
+    are never touched -- a retained receipt stays byte-identical, and a cell
+    that already HAS a receipt is never re-run, so this function never sees
+    it.  Session directories are SCRATCH (a copied repository plus driver
+    stage files), so they are ARCHIVED, not deleted: the failed attempt's
+    scratch stays inspectable under ``sessions/<cell>/attempt_<n>/``.
+
+    Nothing outside this cell's own session directory is touched.
+
+    Prior art: FIX8/C7 "archive the prior attempt, never overwrite it"
+    (GRM contributors, 2026) -- the same rule amendment 1 applies to the
+    batch controller, here applied to per-cell scratch.  Nothing novel.
+    """
+    root = Path(destination) / 'sessions' / c['id']
+    stale = [p for p in (root / arm for arm in ARMS) if p.exists()]
+    if not stale:
+        return None
+    attempt = 1
+    while (root / f'attempt_{attempt}').exists():
+        attempt += 1
+    target = root / f'attempt_{attempt}'
+    target.mkdir(parents=True, exist_ok=False)
+    moved = []
+    for p in stale:
+        p.rename(target / p.name)
+        moved.append(p.name)
+    return {'attempt': attempt, 'archived_arms': moved,
+            'archived_to': str(target),
+            'note': 'scratch session dirs only; no cell receipt is touched'}
+
+
 class _FakeArena:
     """Minimal arena stand-in so the CPU gate exercises the real release path.
 
@@ -476,26 +560,31 @@ def run_cell(c, destination, loaded, fake=False):
     # on them.  ``None`` off-GPU (the fake path) rather than a fabricated 0.
     device = {'before_cell_mib': None if fake else device_memory_mib(),
               'arms': {}, 'after_cell_mib': None}
+    archived = archive_stale_sessions(destination, c)
     for arm in ARMS:
-        pins[arm] = pin_rule(arm)
         session = destination / 'sessions' / c['id'] / arm
-        if fake:
-            arms[arm] = fake_arm(c, descriptor, arm, session)
-            device['arms'][arm] = {'before_mib': None, 'after_mib': None,
-                                   'released': release_arm(_FakeRepo())}
-        else:
-            before = device_memory_mib()
-            repo, loaded = open_arm(c, session, flags, loaded)
-            try:
-                arms[arm] = run_arm(repo, c, descriptor, flags, arm,
-                                    session, process_id)
-            finally:
-                # Release BEFORE the next arm allocates, not at cell end:
-                # otherwise arm ON runs on top of arm OFF's resident payloads.
-                released = release_arm(repo)
-            device['arms'][arm] = {'before_mib': before,
-                                   'after_mib': device_memory_mib(),
-                                   'released': released}
+        # AMENDMENT 2: the rule pin is scoped.  It mutates os.environ, which
+        # admission_rule() reads at call time, so an unrestored pin re-rules
+        # every module that runs later in the process.
+        with scoped_env():
+            pins[arm] = pin_rule(arm)
+            if fake:
+                arms[arm] = fake_arm(c, descriptor, arm, session)
+                device['arms'][arm] = {'before_mib': None, 'after_mib': None,
+                                       'released': release_arm(_FakeRepo())}
+            else:
+                before = device_memory_mib()
+                repo, loaded = open_arm(c, session, flags, loaded)
+                try:
+                    arms[arm] = run_arm(repo, c, descriptor, flags, arm,
+                                        session, process_id)
+                finally:
+                    # Release BEFORE the next arm allocates, not at cell end:
+                    # otherwise arm ON runs on arm OFF's resident payloads.
+                    released = release_arm(repo)
+                device['arms'][arm] = {'before_mib': before,
+                                       'after_mib': device_memory_mib(),
+                                       'released': released}
     device['after_cell_mib'] = None if fake else device_memory_mib()
     # PARITY BARRIER (RD1 A0 shape): arm OFF must reproduce the FIX-6 recorded
     # plan byte-for-byte.  A mismatch means the replayed frame is NOT the
@@ -507,6 +596,7 @@ def run_cell(c, destination, loaded, fake=False):
     on_bytes = json.dumps(arms['on']['rank_plan'], separators=(',', ':')).encode()
     value = {'cell': c, 'arms': arms, 'process_id': process_id,
              'rule_pins': pins, 'device_memory': device,
+             'archived_stale_sessions': archived,
              'off_plan_parity': parity,
              'off_plan_bytes_hex': off_bytes.hex(),
              'recorded_off_plan_bytes_hex': recorded_bytes.hex(),
@@ -645,27 +735,8 @@ def fake_arm(c, descriptor, arm, session):
 # campaign: leases, reservations, resume
 # --------------------------------------------------------------------------
 
-def amendment(root=None):
-    """Load amendment 1 if present: sha-bound, create-only, never inferred.
-
-    Prior art: GRM C7/C2 sha-bound amendment chains (GRM contributors, 2026).
-    TAKEN verbatim: an amendment is a SEPARATE create-only file bound to the
-    registration hash, which widens scope explicitly and never edits the
-    immutable registration.  OURS: the "re-arm one FAILED batch for its
-    MISSING cells only, retaining completed receipts" scope.
-    """
-    root = Path(root) if root is not None else OUT
-    path = root / 'amendment_1.json'
-    if not path.is_file():
-        # An amendment binds the CAMPAIGN (registration + sources), not a
-        # particular receipt directory.  A gate or test pointed at an
-        # alternate --out still runs the amended worker, so it must see the
-        # canonical amendment; otherwise the re-bound source hash would fail
-        # closed against the pre-amendment registration.
-        path = OUT / 'amendment_1.json'
-        if not path.is_file():
-            return None
-        root = OUT
+def _load_amendment(path):
+    """One link: sha-bound, create-only, schema- and order-checked."""
     checksum = path.with_suffix('.sha256')
     need(checksum.is_file(), 'R1_AMENDMENT_SHA_MISSING')
     need(sha(path) == checksum.read_text().split()[0],
@@ -678,6 +749,54 @@ def amendment(root=None):
     a['_self_sha256'] = sha(path)
     a['_path'] = str(path)
     return a
+
+
+def amendment(root=None):
+    """Load the LATEST amendment in the chain: sha-bound, never inferred.
+
+    Amendments chain: each one binds the registration hash, and every one
+    after the first also binds its PREDECESSOR's hash, so a link cannot be
+    swapped or skipped.  The newest link is the effective one; its
+    ``rebound_inputs`` supersede earlier re-binds of the same path.
+
+    Prior art: GRM C7/C2 sha-bound amendment chains (GRM contributors, 2026).
+    TAKEN verbatim: a SEPARATE create-only file bound to the registration
+    hash (and, from A2 on, to the previous amendment) which widens scope
+    explicitly and never edits the immutable registration.  OURS: the
+    "re-arm one FAILED batch for its MISSING cells only, retaining completed
+    receipts" scope.
+    """
+    root = Path(root) if root is not None else OUT
+    if not (root / 'amendment_1.json').is_file():
+        # An amendment binds the CAMPAIGN (registration + sources), not a
+        # particular receipt directory.  A gate or test pointed at an
+        # alternate --out still runs the amended worker, so it must see the
+        # canonical amendment; otherwise the re-bound source hash would fail
+        # closed against the pre-amendment registration.
+        if not (OUT / 'amendment_1.json').is_file():
+            return None
+        root = OUT
+    chain = []
+    index = 1
+    while (root / f'amendment_{index}.json').is_file():
+        link = _load_amendment(root / f'amendment_{index}.json')
+        need(link['amendment'] == index, 'R1_AMENDMENT_INDEX_MISMATCH')
+        if index > 1:
+            need(link.get('previous_amendment_sha256')
+                 == chain[-1]['_self_sha256'],
+                 f'R1_AMENDMENT_{index}_CHAIN_MISMATCH')
+        chain.append(link)
+        index += 1
+    need(chain, 'R1_AMENDMENT_CHAIN_EMPTY')
+    latest = dict(chain[-1])
+    # Re-binds accumulate along the chain; a later link wins on a path both
+    # touched, and an earlier link's re-bind is NOT silently dropped.
+    rebound = {}
+    for link in chain:
+        rebound.update(link.get('rebound_inputs', {}))
+    latest['rebound_inputs'] = rebound
+    latest['_chain'] = [link['_self_sha256'] for link in chain]
+    return latest
 
 
 def resume_scope(r, root, a=None):
@@ -756,6 +875,15 @@ def campaign_state(r, root):
         need(p.with_name('controller.json').exists()
              or p.parent.name in rearmed,
              'R1_ORPHAN_RESERVATION_STOP: ' + p.parent.name)
+    # AMENDMENT-2 ACCOUNTING FIX: an ARCHIVED attempt's charge is still real
+    # GPU time and stays on the books.  Reading only controller.json would
+    # silently refund every re-issued attempt -- batch R1 showed 134 s after
+    # its second attempt, having actually spent 263 + 134 = 397 s.
+    for p in sorted(gpu.glob('*/controller_attempt_*.json')):
+        archived = read(p)
+        need(archived['registration_sha256'] == sha(REG),
+             'R1_ARCHIVED_RESULT_BINDING_MISMATCH: ' + p.parent.name)
+        charged += float(archived['charged_seconds'])
     for p in sorted(gpu.glob('*/controller.json')):
         controller = read(p)
         need(controller['registration_sha256'] == sha(REG),
@@ -857,24 +985,28 @@ def batch(batch_id, fake=False, root=None):
             sides = {cell_by_id(i)['side'] for i in ids}
             need(len(sides) == 1, 'R1_MIXED_SIDE_BATCH: ' + batch_id)
             env = environment(flags_for(sides.pop()))
-            for key in list(os.environ):
-                if key.startswith('GRM_'):
-                    del os.environ[key]
-            os.environ.update({k: v for k, v in env.items()
-                               if k.startswith('GRM_')})
-            with (_cpu_context() if fake else _gpu_lease(lease)):
-                started = time.monotonic()
-                for cell_id in ids:
-                    try:
-                        _, loaded = run_cell(cell_by_id(cell_id), destination,
-                                             loaded, fake=fake)
-                    except ValueError as exc:
-                        if 'R1_OFF_PLAN_PARITY_RED_STOP' in str(exc):
-                            red.append(str(exc))
-                        raise
-                elapsed = time.monotonic() - started
-                need(fake or elapsed <= lease, 'R1_LEASE_OVERRUN_RED')
-                status = 'COMPLETE'
+            # AMENDMENT 2: the whole frame pin is scoped too, so a batch (in
+            # a test, a gate, or any caller that runs more afterwards) cannot
+            # leave the process re-framed or re-ruled on the way out.
+            with scoped_env():
+                for key in list(os.environ):
+                    if key.startswith('GRM_'):
+                        del os.environ[key]
+                os.environ.update({k: v for k, v in env.items()
+                                   if k.startswith('GRM_')})
+                with (_cpu_context() if fake else _gpu_lease(lease)):
+                    started = time.monotonic()
+                    for cell_id in ids:
+                        try:
+                            _, loaded = run_cell(cell_by_id(cell_id),
+                                                 destination, loaded, fake=fake)
+                        except ValueError as exc:
+                            if 'R1_OFF_PLAN_PARITY_RED_STOP' in str(exc):
+                                red.append(str(exc))
+                            raise
+                    elapsed = time.monotonic() - started
+                    need(fake or elapsed <= lease, 'R1_LEASE_OVERRUN_RED')
+                    status = 'COMPLETE'
         except BaseException as exc:            # noqa: BLE001 -- receipt first
             error = f'{type(exc).__name__}: {exc}'
         finally:
