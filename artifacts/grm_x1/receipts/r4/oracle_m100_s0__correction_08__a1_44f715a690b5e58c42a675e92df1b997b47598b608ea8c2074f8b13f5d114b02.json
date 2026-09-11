@@ -1,0 +1,520 @@
+{
+  "attempt": 1,
+  "cell": "oracle_m100_s0",
+  "completed_unix_ns": 1788938450544926731,
+  "content_sha256": "4fb829b78188092fd2a8a793578d7fa2406de50e31ab531fe27aeecb9c83bb2c",
+  "error": null,
+  "evidence_class": "E2E session receipt",
+  "fingerprint": "44f715a690b5e58c42a675e92df1b997b47598b608ea8c2074f8b13f5d114b02",
+  "fit_status": "FIT",
+  "registration_sha256": "defb5014f6ee66113139c1ca3fe902f9bdc51fb81d137cbc0a47e5d06f8f3e57",
+  "rows": [
+    {
+      "abstained": false,
+      "address_coverage": true,
+      "answer": "The lyra dock value is Zenith-2-Echo.",
+      "arm": "C",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "zenith-2-echo",
+      "false_answer": true,
+      "family_id": "census_lyra",
+      "generation_calls": 1,
+      "info": {
+        "demand_fired": false,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 54
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_actual_pages": [
+          1
+        ],
+        "x1_address": {
+          "entity": "lyra",
+          "relation": "dock"
+        },
+        "x1_address_coverage": true,
+        "x1_generation_calls": 1,
+        "x1_missing_pages": [],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          1
+        ],
+        "x1_structural_demand_fired": false,
+        "x1_version": 2
+      },
+      "kind": "correction",
+      "mounted_ids": [
+        1
+      ],
+      "multiplicity": 100,
+      "query_id": "correction_08",
+      "question": "After all recorded revisions, what dock should I use for Lyra?",
+      "resolved_address": [
+        "lyra",
+        "dock"
+      ],
+      "seed": 20260928,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": true,
+      "wall_s": 3.8133263397030532
+    },
+    {
+      "abstained": true,
+      "address_coverage": false,
+      "answer": "Not in memory: no stored record matches after, recorded, revisions, dock, use, lyra.",
+      "arm": "A",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "zenith-2-echo",
+      "false_answer": false,
+      "family_id": "census_lyra",
+      "generation_calls": 0,
+      "info": {
+        "abstain_identifier_tokens": [
+          "after",
+          "recorded",
+          "revisions",
+          "dock",
+          "use",
+          "lyra"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          1,
+          0,
+          2
+        ],
+        "admission_ranking_before_demotion": [
+          1,
+          0,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        }
+      },
+      "kind": "correction",
+      "mounted_ids": [],
+      "multiplicity": 100,
+      "query_id": "correction_08",
+      "question": "After all recorded revisions, what dock should I use for Lyra?",
+      "resolved_address": [
+        "lyra",
+        "dock"
+      ],
+      "seed": 20260928,
+      "served_text_class": "abstention",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 6.585185192991048
+    },
+    {
+      "abstained": false,
+      "address_coverage": true,
+      "answer": "The lyra dock value is Zenith-2-Echo.",
+      "arm": "B",
+      "condition": "present",
+      "correct_abstention": false,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "zenith-2-echo",
+      "false_answer": true,
+      "family_id": "census_lyra",
+      "generation_calls": 1,
+      "info": {
+        "demand_fired": false,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [
+          {
+            "graft_id": null,
+            "ntok": 54
+          }
+        ],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_actual_pages": [
+          1
+        ],
+        "x1_address": {
+          "entity": "lyra",
+          "relation": "dock"
+        },
+        "x1_address_coverage": true,
+        "x1_generation_calls": 1,
+        "x1_missing_pages": [],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          1
+        ],
+        "x1_structural_demand_fired": false,
+        "x1_version": 2
+      },
+      "kind": "correction",
+      "mounted_ids": [
+        1
+      ],
+      "multiplicity": 100,
+      "query_id": "correction_08",
+      "question": "After all recorded revisions, what dock should I use for Lyra?",
+      "resolved_address": [
+        "lyra",
+        "dock"
+      ],
+      "seed": 20260928,
+      "served_text_class": "answer",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": true,
+      "wall_s": 3.8361423150636256
+    },
+    {
+      "abstained": true,
+      "address_coverage": false,
+      "answer": "Not in memory: no stored record matches after, recorded, revisions, dock, use, lyra.",
+      "arm": "A",
+      "condition": "absent",
+      "correct_abstention": true,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "zenith-2-echo",
+      "false_answer": false,
+      "family_id": "census_lyra",
+      "generation_calls": 0,
+      "info": {
+        "abstain_identifier_tokens": [
+          "after",
+          "recorded",
+          "revisions",
+          "dock",
+          "use",
+          "lyra"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          0,
+          2,
+          3
+        ],
+        "admission_ranking_before_demotion": [
+          0,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        }
+      },
+      "kind": "correction",
+      "mounted_ids": [],
+      "multiplicity": 100,
+      "query_id": "correction_08",
+      "question": "After all recorded revisions, what dock should I use for Lyra?",
+      "resolved_address": [
+        "lyra",
+        "dock"
+      ],
+      "seed": 20260928,
+      "served_text_class": "abstention",
+      "structural_demand_fired": false,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 6.3557280781678855
+    },
+    {
+      "abstained": true,
+      "address_coverage": false,
+      "answer": "Not in memory: no stored record matches after, recorded, revisions, dock, use, lyra.",
+      "arm": "B",
+      "condition": "absent",
+      "correct_abstention": true,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "zenith-2-echo",
+      "false_answer": false,
+      "family_id": "census_lyra",
+      "generation_calls": 0,
+      "info": {
+        "abstain_identifier_tokens": [
+          "after",
+          "recorded",
+          "revisions",
+          "dock",
+          "use",
+          "lyra"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          0,
+          2,
+          3
+        ],
+        "admission_ranking_before_demotion": [
+          0,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "demand_fired": false,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "recency_mounted_ids": [],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [],
+          "nominated_ntok": 0
+        },
+        "x1_address": {
+          "entity": "lyra",
+          "relation": "dock"
+        },
+        "x1_fallback_reason": "pages_absent",
+        "x1_missing_pages": [
+          1
+        ],
+        "x1_page_fault": false,
+        "x1_requested_pages": [
+          1
+        ],
+        "x1_structural_demand_fired": true,
+        "x1_version": 2
+      },
+      "kind": "correction",
+      "mounted_ids": [],
+      "multiplicity": 100,
+      "query_id": "correction_08",
+      "question": "After all recorded revisions, what dock should I use for Lyra?",
+      "resolved_address": [
+        "lyra",
+        "dock"
+      ],
+      "seed": 20260928,
+      "served_text_class": "abstention",
+      "structural_demand_fired": true,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 6.020057286135852
+    },
+    {
+      "abstained": true,
+      "address_coverage": false,
+      "answer": "I cannot answer from the mounted memory: PAGE_FAULT.",
+      "arm": "C",
+      "condition": "absent",
+      "correct_abstention": true,
+      "demand_fired": false,
+      "evidence_class": "E2E session receipt",
+      "exact_answer": false,
+      "expected": "zenith-2-echo",
+      "false_answer": false,
+      "family_id": "census_lyra",
+      "generation_calls": 0,
+      "info": {
+        "abstain": true,
+        "demand_fired": false,
+        "x1_address": {
+          "entity": "lyra",
+          "relation": "dock"
+        },
+        "x1_fault_reason": "pages_absent",
+        "x1_generation_calls": 0,
+        "x1_missing_pages": [
+          1
+        ],
+        "x1_page_fault": true,
+        "x1_requested_pages": [
+          1
+        ],
+        "x1_structural_demand_fired": true,
+        "x1_version": 2
+      },
+      "kind": "correction",
+      "mounted_ids": [],
+      "multiplicity": 100,
+      "query_id": "correction_08",
+      "question": "After all recorded revisions, what dock should I use for Lyra?",
+      "resolved_address": [
+        "lyra",
+        "dock"
+      ],
+      "seed": 20260928,
+      "served_text_class": "abstention",
+      "structural_demand_fired": true,
+      "target_page_ids": [
+        1
+      ],
+      "value_match_diagnostic": false,
+      "wall_s": 3.0347146093845367e-05
+    }
+  ],
+  "rows_sha256": "f903f616aabfcecfbce1ae51f3cca559f26480633ec6dcbce49be0515a99766d",
+  "schema": "grm.x1.gpu-unit.v4",
+  "session_digests": {
+    "census_lyra_addresses.json": "532bd78ee0ceffa1c7701136491576cc16da29fc0cba2711ad47d0bb456a6ac2",
+    "census_lyra_pages.json": "7b8c22c9e72c1f90f1845cf9d7e6856a674c1db9d6b4a62c14aa6dd92f3d7c87",
+    "correction_08_absent_A/turn_receipt.json": "39b934884720bef9d7f00799da46e6f93c318978acce570ac803ca4efd7016e6",
+    "correction_08_absent_B/turn_receipt.json": "1da613ed05c39382147542f0cd5c10892348d89e26e541afe7bb42570c65af28",
+    "correction_08_absent_C/turn_receipt.json": "714a3f2ca9c1fd21064eaca210fc2d5e76beb101796bacc7762a21d5b4372894",
+    "correction_08_present_A/turn_receipt.json": "680775ddf808d04df177ff2b388593b32fbe5265039872b062913e62850b084a",
+    "correction_08_present_B/turn_receipt.json": "1146fb059f612699cd854449107ad26aeaeca9bcfb432e18671b83ca16ba9b8a",
+    "correction_08_present_C/turn_receipt.json": "6dfaecd1e8e7fcfb7fb3f7b8daffb88eff37acb1167568e582b94a966f311cf4",
+    "model.json": "e6aeae06c7872817a4037787fc5e2407888ecb9a68097014b87f69ab31d4750d"
+  },
+  "status": "COMPLETE",
+  "unit_id": "oracle_m100_s0__correction_08",
+  "worker_wall_s": 86.00933782802895
+}

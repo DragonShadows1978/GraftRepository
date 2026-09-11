@@ -1,0 +1,1777 @@
+{
+  "bindings": {
+    "artifacts/grm_x1/AMENDMENT_1_REPORT.md": "f55278d82dde3717136730d811292a762892366dc276aad5da36198338d0415d",
+    "artifacts/grm_x1/AMENDMENT_2_REPORT.md": "e4807b6ca620ddde77bbcb579ef3995693308bd40c03077d2d2c737de94c04f1",
+    "artifacts/grm_x1/AMENDMENT_3_REPORT.md": "c82a9828e1da4d4804fef8e812b9f24188af9af25819f0105bb97f57f31ef996",
+    "artifacts/grm_x1/BLOCKED_REPORT.md": "84e060fea5dfa51f906d67428da083cc924f357aa370741225796118da35507a",
+    "artifacts/grm_x1/active_fixture_inventory.json": "23687e09e7f89511c703745125b42f981274741b1611276bd44114793406ed45",
+    "artifacts/grm_x1/claims/oracle_m1_s0_bf923a9ccb4f06a8d2ae643cb2727de5f7c116304febf429f71a2da7e9087121.json": "9c9cae3c19950137c6c1ab181a333f84fa3961e1a5f85d46f97ac291583906b5",
+    "artifacts/grm_x1/claims/r2/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20.json": "33dd12225d99b3c2cd325f50f02a170b32f6f2b91bb44b572c245793846af2f4",
+    "artifacts/grm_x1/claims/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10.json": "e6f585179eb37f9455a3097a8d060d0f4c3111f5383e1943bee1c6387046effa",
+    "artifacts/grm_x1/continuation_02.json": "a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20",
+    "artifacts/grm_x1/continuation_02.sha256": "c0c61c05257921142252aa1973c3892fadf80492c325b085c4740201f182d190",
+    "artifacts/grm_x1/continuation_02_delivery.json": "d46e32be8fbfa0d2fb6e420c3b62c8c5704d1fc411e38c546a0dd85880ff3529",
+    "artifacts/grm_x1/continuation_02_registration.json": "26dc26ddae0e505421c192a0b15ed89ad8d83b7589bc4e518054fcb3a726b293",
+    "artifacts/grm_x1/continuation_03.json": "e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10",
+    "artifacts/grm_x1/continuation_03.sha256": "79842a010fd07695938edb7cdf6eb3e25bdec45083b90e092925124c715a091c",
+    "artifacts/grm_x1/continuation_03_delivery.json": "28bab523a4fe62e4ec9bb1daf6fdece76ddf977ea978a501d1cc9acbe4283f37",
+    "artifacts/grm_x1/continuation_03_registration.json": "0262299553a7123b297488383de9cfd4bf3922a1195e9f23e7068ac4f00a4729",
+    "artifacts/grm_x1/continuation_03_shell_gate_registration.json": "fb38e5abeabf2785b357cfcef49906f48647ad1f1191cf14f109645a0ef36032",
+    "artifacts/grm_x1/continuation_04_registration.json": "288ba57b95fd5bb88e6fa9660fcb4733cddb648867950986bfe6c23d3602b420",
+    "artifacts/grm_x1/cpu_mutation_registration.json": "3634eace71e86c2598c5e690cf628a0327a9247dabccd88991f82b6562f1c939",
+    "artifacts/grm_x1/cpu_token_counts_01.json": "a1ca633947bf52dc8c9581e65dfdabe5f6a16df0771502e74a94ea5a9c1f19b7",
+    "artifacts/grm_x1/delivery_manifest.json": "1f158f8419f8ac4394620842fd99efe4c671b39d79f08b4a2654e2d7a1a06101",
+    "artifacts/grm_x1/fixture_amendment_01.json": "2bac1548aa8da82fe8a224e94550b96dfb4810da51e3a565d5dd3ebb969721ea",
+    "artifacts/grm_x1/fixtures/SHA256SUMS": "cbca6284ffd48ec22e10dcf5be48b9e7992f4eb26e7553765161837ef9d0d869",
+    "artifacts/grm_x1/fixtures/aliases.json": "7fe07f19dec9ca1a579ee8a384e3bcb650f24e33d132ca6eac0369ac08f149d4",
+    "artifacts/grm_x1/fixtures/cells.json": "aa8bc47894492743ea24d13c4a4b0b0e372c72e3ff4cebe43c97c83d19166e59",
+    "artifacts/grm_x1/fixtures/families.json": "a7078fb17e89c80a28a1f7ff1d464a1633f11ba58250972d44f6a455e4900e41",
+    "artifacts/grm_x1/fixtures/queries.json": "49059487a8f75ed983f07e248feba6f3850fe54e6b60cb1c56c6c219950df76a",
+    "artifacts/grm_x1/fixtures/queries_amendment_01.json": "abfac7da02c0c1fec32ef98c6bb27694005e5259d2581cc8b476a22c7eea3af6",
+    "artifacts/grm_x1/fixtures/sources/census_events.json": "7241151e1953b06cdfbfa3ff2290c03db1377b1f4f26dd245c52b72075dde9dc",
+    "artifacts/grm_x1/fixtures/sources/correction_then_restatement.json": "ea97d4007d66357442f0424f76200984e8c2f39311618a4b892e88db9ad90f4b",
+    "artifacts/grm_x1/fixtures/sources/fresh_fact_controls.json": "9b75e1e4f70d77524d7d099f1416ae34ea3cafc149e749e26e7a5dd47b298d75",
+    "artifacts/grm_x1/fixtures/sources/multi_hop_a_b_c.json": "036f291dc4f91d7e38b23d033f97d45b8d4b1176afa1741624f7728355a13d90",
+    "artifacts/grm_x1/fixtures/sources/short_correction_long_competitor.json": "c06decbe127dd228bdf6529b002ccdaaf5f628addda003692e5e49d9e47c1221",
+    "artifacts/grm_x1/handoff_manifest.json": "bf923a9ccb4f06a8d2ae643cb2727de5f7c116304febf429f71a2da7e9087121",
+    "artifacts/grm_x1/lead_commands_amendment_01.txt": "d0cf7fb9f9204e919377572b52e41e3642dcd0feb9afea8251acb4c4d0dc254a",
+    "artifacts/grm_x1/lead_commands_r1.txt": "a9e6e6295dfc363a824df4fd70f981a77c9f648c8f5b5991e3a35cfa81806b8b",
+    "artifacts/grm_x1/lead_commands_r2.txt": "c13d0068a91d8219756bb41ecdb7cad3b9459da323ceec7437135331bead3dff",
+    "artifacts/grm_x1/lead_commands_r3.txt": "dbe6cd0c5d5a1539bf84b92a776d18e0748de2318088a8abd3b7342cf20bca2d",
+    "artifacts/grm_x1/payload_amendment_01.json": "57c913cffc07d6dac756b84b8d718d944a96d2dfb4b70889edd7a20261f39b16",
+    "artifacts/grm_x1/payload_amendment_01_delivery.json": "e64cc19b461ae88df0968d78f1b89ed93967e6692b3478c06e1788145715496e",
+    "artifacts/grm_x1/payload_amendment_01_handoff.json": "e208379019aa2dc59091def442b3cb9eae5923af4e8aeecc20f605cef22cae4b",
+    "artifacts/grm_x1/receipts/continuation_02_gates.json": "92bce1182cfad72d49d793bbf9e37963764a05dd10990030324e3ea96a4fedeb",
+    "artifacts/grm_x1/receipts/continuation_02_lead_checks.json": "35b8efdeabdeee9f4502bb43e7a8094596f3ddc42244d9aaff5d515aca0ce000",
+    "artifacts/grm_x1/receipts/continuation_03_gates.json": "881b19923126e27196b6478f9b77edb30689e1446427b7f668fe05fa31f1ca35",
+    "artifacts/grm_x1/receipts/continuation_03_lead_checks.json": "98641433031074536fb79dd83771f4f776aee3b3bac1013c66373610b44fb830",
+    "artifacts/grm_x1/receipts/continuation_03_shell_gates.json": "2bbfb7a655add55254e5839c4b0e02d3d09116e0268f02440d15a7815bd100bd",
+    "artifacts/grm_x1/receipts/controller_a506c79ed4cdf46b347ab7392d828d26bddf999686513846ebcb136854b06882.json": "a506c79ed4cdf46b347ab7392d828d26bddf999686513846ebcb136854b06882",
+    "artifacts/grm_x1/receipts/cpu_baseline_0d8b663a1e90e0204f3a43c9b0d0eb20b7c35420ca62d40916768519ca929f07.json": "0d8b663a1e90e0204f3a43c9b0d0eb20b7c35420ca62d40916768519ca929f07",
+    "artifacts/grm_x1/receipts/cpu_baseline_33650dfe7eeb39c929150efe1a705981e5723077376b91d7800f25f19235c8a4.json": "33650dfe7eeb39c929150efe1a705981e5723077376b91d7800f25f19235c8a4",
+    "artifacts/grm_x1/receipts/cpu_baseline_6d40d49c1487aabf745aadd1bda77e4e7f83b2cdb834fdcc1380400ea7d474d0.json": "6d40d49c1487aabf745aadd1bda77e4e7f83b2cdb834fdcc1380400ea7d474d0",
+    "artifacts/grm_x1/receipts/cpu_baseline_b1a5012ed9e8c8d294b710e1a02731a93e153a354b20d4a09d650a7d3eeb222c.json": "b1a5012ed9e8c8d294b710e1a02731a93e153a354b20d4a09d650a7d3eeb222c",
+    "artifacts/grm_x1/receipts/cpu_baseline_cbb1b285a457ec672461c6580f8c891b46b63eb12e5d3474656fd8fd6bb32bd1.json": "cbb1b285a457ec672461c6580f8c891b46b63eb12e5d3474656fd8fd6bb32bd1",
+    "artifacts/grm_x1/receipts/cpu_baseline_d28bc39096c2a9498530bb8f27a0503364c07f330bca9ea3990571bb07f2a393.json": "d28bc39096c2a9498530bb8f27a0503364c07f330bca9ea3990571bb07f2a393",
+    "artifacts/grm_x1/receipts/cpu_mutations_03998a4e42aa129fd0dc58cb12fe6cf94613ba311a6a57ff5948dfff1932e846.json": "03998a4e42aa129fd0dc58cb12fe6cf94613ba311a6a57ff5948dfff1932e846",
+    "artifacts/grm_x1/receipts/cpu_mutations_7112056e61db4558269ca982c03c15f6b843b44228bd749a68dc87905206e4b8.json": "7112056e61db4558269ca982c03c15f6b843b44228bd749a68dc87905206e4b8",
+    "artifacts/grm_x1/receipts/cpu_mutations_b940a51b38035709415ba52c331f90f51d8fa3626933be2e9b35ea537c952154.json": "b940a51b38035709415ba52c331f90f51d8fa3626933be2e9b35ea537c952154",
+    "artifacts/grm_x1/receipts/cpu_mutations_ea64e5341fdffd12fa2079dd4505815b661da1a3aa5f86c1d9c3ab1ec34125bd.json": "ea64e5341fdffd12fa2079dd4505815b661da1a3aa5f86c1d9c3ab1ec34125bd",
+    "artifacts/grm_x1/receipts/cpu_pytest_08ae49c9c4c2dc2f8070b2e086cbf2b2c7b5ea7d75a813bd595f0e1e1eb3e81a.json": "08ae49c9c4c2dc2f8070b2e086cbf2b2c7b5ea7d75a813bd595f0e1e1eb3e81a",
+    "artifacts/grm_x1/receipts/cpu_pytest_2f54a3cf1d61d7d94d3be10c874187c0bf1f3bc443bae7b3b4c9f0140ede1396.json": "2f54a3cf1d61d7d94d3be10c874187c0bf1f3bc443bae7b3b4c9f0140ede1396",
+    "artifacts/grm_x1/receipts/cpu_pytest_88bea04f528ad2ce122b59ba3fd0337808d1b347b633fc1809b910526561358b.json": "88bea04f528ad2ce122b59ba3fd0337808d1b347b633fc1809b910526561358b",
+    "artifacts/grm_x1/receipts/cpu_pytest_960aa2d5c8e5a2d11473495832549f08ae0cedd5fb258f4a9e3093ddd573614f.json": "960aa2d5c8e5a2d11473495832549f08ae0cedd5fb258f4a9e3093ddd573614f",
+    "artifacts/grm_x1/receipts/cpu_pytest_c0783512f6b00c202d591999ef3a8277214fd85054012e1c17f434333e8782f6.json": "c0783512f6b00c202d591999ef3a8277214fd85054012e1c17f434333e8782f6",
+    "artifacts/grm_x1/receipts/cpu_pytest_d805cdafaed8b580f1d31384860f015364d7ec0248988dec5c63ca1814ddd74a.json": "d805cdafaed8b580f1d31384860f015364d7ec0248988dec5c63ca1814ddd74a",
+    "artifacts/grm_x1/receipts/gpu_oracle_m1_s0_0c1bf61590059cad2b207f0edef2da421f64639f69c41d4b6282cc7ba3c35bba.json": "0c1bf61590059cad2b207f0edef2da421f64639f69c41d4b6282cc7ba3c35bba",
+    "artifacts/grm_x1/receipts/payload_amendment_01_handoff_check.json": "60dc1e31471d934d205d8aff7c52da52474d46bcdcdc0994873dcad5ced8343d",
+    "artifacts/grm_x1/receipts/payload_amendment_01_reproduction.json": "400043f44c83d435eed2442764ae109f05e05d130801282ce59618cc6c8e454a",
+    "artifacts/grm_x1/receipts/r2/controller_04b12f34d8e2eef0594878be3bab09a8841cff25cfebf66f1cd0e10944f6525a.json": "04b12f34d8e2eef0594878be3bab09a8841cff25cfebf66f1cd0e10944f6525a",
+    "artifacts/grm_x1/receipts/r2/gpu_oracle_m1_s0_374c534e547b8d9116d7d43fe5cfedd5f44fd9c81af007714286440f4fe1bf7c.json": "374c534e547b8d9116d7d43fe5cfedd5f44fd9c81af007714286440f4fe1bf7c",
+    "artifacts/grm_x1/receipts/r3/controller_15479065bd42aa7109a73bc86af0da97857b4f210295b0fccd86b852e7365cdf.json": "15479065bd42aa7109a73bc86af0da97857b4f210295b0fccd86b852e7365cdf",
+    "artifacts/grm_x1/receipts/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10.json": "a6fa9cc279ffcd25510348c437190047dfb0f7d8cb119b9e7b3b8e4f31df55d9",
+    "artifacts/grm_x1/registration.json": "defb5014f6ee66113139c1ca3fe902f9bdc51fb81d137cbc0a47e5d06f8f3e57",
+    "artifacts/grm_x1/registration.sha256": "0c1b981cb460ee1ff79918b67bb6a4b1f07d4ec878470c295fd0fcf309f64cb3",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_00_absent_A/turn_receipt.json": "d644d209ce860e5c82c18b3290c92c32ae951a875e137ed7070d309c6fe9f4f9",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_00_absent_B/turn_receipt.json": "67d78ae680ca26e301052b33b361c79e52cd2bed69d1d11423a3005ced51ade9",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_00_absent_C/turn_receipt.json": "2b6bb9f2886d7e08407c6baaef7417df6f861b7537cd5a1787eb04680b23be10",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_00_present_A/turn_receipt.json": "1ae8cccaf1c1e9d5c6f1b6498523069b36a69e5bedfa4568f112f5a53051ef08",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_00_present_B/turn_receipt.json": "4dc1619a0c7feb9fff50b2154a39177abd7238a94906b8e6d4d4e683cb8238b3",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_00_present_C/turn_receipt.json": "368bdc81a41c0c78a0e9d2da218df63a15f3a2b85359d8609c75d51d1c20ead4",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_02_absent_A/turn_receipt.json": "abb74965baacdfafb735d03f93c0442913188c15164eff51d965f6f9b2cf09ff",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_02_absent_B/turn_receipt.json": "bc8809475d2a58d3ad39e13f14827e522d9640f2277558041326946cbf7c083c",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_02_absent_C/turn_receipt.json": "ca7831553c63162cdf0f55062270fd483e807538401671a095ee4d98fe7e2502",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_02_present_A/turn_receipt.json": "39183267b3c1c3085fceb0ab4ca44aad183862035f3671f86d8ff9e5a27fc64d",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_02_present_B/turn_receipt.json": "f1d5442290ddb7328233f82ba11823ea1a477ad3bfcca20722cc46d73fdd3cc1",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_02_present_C/turn_receipt.json": "0d009a9f16456a4eddd0a7f420512971d2abe0666532554272a52c4b3491d0ba",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_04_absent_A/turn_receipt.json": "74ca475a26c79b6361dc6f4bd1a0a849d9bed6ddb0d09ad98d738105f9dd1d16",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_04_absent_C/turn_receipt.json": "8c407c2bb46c199e17c9facf468178c7ad8b17c24811123f84bc1182a51016f8",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_04_present_A/turn_receipt.json": "208e9ccb4f249e99480231b28ed274920129748e0db63a1a554f67fe9bab12a5",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_04_present_B/turn_receipt.json": "bc17a3eb2fbd2ba08a553e785f85e27b81e99a89fadb66114942f94ad5f87656",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_04_present_C/turn_receipt.json": "3e7a0edb61c1aec8abca71e08335d15cdfc910f2b9185e78cdb521d74dbab70e",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/model.json": "e6aeae06c7872817a4037787fc5e2407888ecb9a68097014b87f69ab31d4750d",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/sup_lumen_addresses.json": "19f7fac37537caac8f03e62059896072a5684680d5e2edb0430e74597e66a62b",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/sup_lumen_capture/wal/000001.wal": "26468de758d5c2498243060b8c92dce5d149965449e441d7a61aed6d3931b58f",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/sup_lumen_pages.json": "1da049ccc5b354785d769bf5f05e4f9206022647e03e9e5bbd690194a20f3265",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/sup_orion_addresses.json": "14709645dc95bc809ec12014b7126941d1c1095384fe1870acffc07005ddaa88",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/sup_orion_capture/wal/000001.wal": "bf8c58df7b89cfc222660b32b9fd774029c3c794539491704b819e8d2f47209f",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/sup_orion_pages.json": "6aebb977312f34b9b161e9c93ada3a373779debd47bb4ffe3c0386f22c2fda55",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/sup_solace_addresses.json": "b48964d29955483e6d04370f7211520f6d12ebf7f734d9e94c929008bba86037",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/sup_solace_capture/wal/000001.wal": "89aa9f6b2445e5e7b55a6cad1725f9b3c365c09ca85e9b74b11f910c0d3864e0",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/sup_solace_pages.json": "8878dfccd5f3a8c1be4948fd773e9ed225e00e97af619ad3698bec89ed8c68a6",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_bf923a9ccb4f06a8d2ae643cb2727de5f7c116304febf429f71a2da7e9087121/model.json": "e6aeae06c7872817a4037787fc5e2407888ecb9a68097014b87f69ab31d4750d",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_bf923a9ccb4f06a8d2ae643cb2727de5f7c116304febf429f71a2da7e9087121/sup_lumen_capture/wal/000001.wal": "0051b3bf911b6082e526ce543f0b593d0033a34972da5d7ccadf89735e12cd58",
+    "artifacts/grm_x1/sessions/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10/alias_00_absent_A/turn_receipt.json": "e82d22a68f911b15e59ba815435b9e3eb1b56602ba9ad202a2fb907362bc0f50",
+    "artifacts/grm_x1/sessions/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10/alias_00_absent_B/turn_receipt.json": "46885cb881e33ee37ae29f3e3240ebf2a2a42244f88b33a06c7314499de152a7",
+    "artifacts/grm_x1/sessions/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10/alias_00_absent_C/turn_receipt.json": "1fc1c4ea875389e21740c8e1667b079918d6ffa7525ee99f95eaff3d592b04a6",
+    "artifacts/grm_x1/sessions/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10/alias_00_present_A/turn_receipt.json": "e170b99a376f420e7c988e1cf3bea498b40a920f71142804df1d20b3876d7cd3",
+    "artifacts/grm_x1/sessions/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10/alias_00_present_B/turn_receipt.json": "3b70bcb9b19f1169be7f9b206d446cf9553a4da6e111718ff061b710f82ba769",
+    "artifacts/grm_x1/sessions/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10/alias_00_present_C/turn_receipt.json": "009de28b952748b579d25d2bbdc997be6dd8d8846adaab8d3ec8186f7ec84e29",
+    "artifacts/grm_x1/sessions/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10/model.json": "e6aeae06c7872817a4037787fc5e2407888ecb9a68097014b87f69ab31d4750d",
+    "artifacts/grm_x1/sessions/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10/sup_lumen_addresses.json": "19f7fac37537caac8f03e62059896072a5684680d5e2edb0430e74597e66a62b",
+    "artifacts/grm_x1/sessions/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10/sup_lumen_capture/wal/000001.wal": "a49021021a99b71984ab9ec047509e86b7bff4bdbcf21b878ec23bc3d6b9eb59",
+    "artifacts/grm_x1/sessions/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10/sup_lumen_pages.json": "1da049ccc5b354785d769bf5f05e4f9206022647e03e9e5bbd690194a20f3265",
+    "orders/GRM_X1_AMENDMENT_4.md": "360df5bd4e89a300a27a0f891a0be5e7fb239dcdf6d3155732e7bc55e93f2292"
+  },
+  "budget": {
+    "accounting": "570 historical plus measured r3 and r4 worker walls, outstanding claims 285 each; require 285 room before lease. Reused r3 wall counted once. Projection uses first completed r3 wall, all 72 units plus 570; remaining projection includes incurred work and pending units.",
+    "gpu_hours": 3.0,
+    "historical_consumed_s": 570,
+    "planning_total_s": 8220.607533250004,
+    "planning_unit_s": 106.25843796180561,
+    "r3_consumed_s": 106.25843796180561,
+    "remaining_units": 71,
+    "total_s": 10800
+  },
+  "cells": [
+    "oracle_m1_s0",
+    "oracle_m100_s0",
+    "natural_m1",
+    "natural_m100"
+  ],
+  "claim_directory": "artifacts/grm_x1/claims/r4",
+  "evidence_class": "reasoning: sealed before CPU gates; r3 receipt reused, no new GPU run",
+  "failure_policy": "One RED receipt consumes unit and normal resume advances. Timeout => RED with NON_FIT; no forward chunking. Explicit retry-unit only for non-timeout RED once; second RED stops campaign. Incomplete claim stops pending lead, never auto-retry.",
+  "historical_files": {
+    "artifacts/grm_x1/AMENDMENT_1_REPORT.md": "f55278d82dde3717136730d811292a762892366dc276aad5da36198338d0415d",
+    "artifacts/grm_x1/AMENDMENT_2_REPORT.md": "e4807b6ca620ddde77bbcb579ef3995693308bd40c03077d2d2c737de94c04f1",
+    "artifacts/grm_x1/AMENDMENT_3_REPORT.md": "c82a9828e1da4d4804fef8e812b9f24188af9af25819f0105bb97f57f31ef996",
+    "artifacts/grm_x1/BLOCKED_REPORT.md": "84e060fea5dfa51f906d67428da083cc924f357aa370741225796118da35507a",
+    "artifacts/grm_x1/active_fixture_inventory.json": "23687e09e7f89511c703745125b42f981274741b1611276bd44114793406ed45",
+    "artifacts/grm_x1/claims/oracle_m1_s0_bf923a9ccb4f06a8d2ae643cb2727de5f7c116304febf429f71a2da7e9087121.json": "9c9cae3c19950137c6c1ab181a333f84fa3961e1a5f85d46f97ac291583906b5",
+    "artifacts/grm_x1/claims/r2/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20.json": "33dd12225d99b3c2cd325f50f02a170b32f6f2b91bb44b572c245793846af2f4",
+    "artifacts/grm_x1/claims/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10.json": "e6f585179eb37f9455a3097a8d060d0f4c3111f5383e1943bee1c6387046effa",
+    "artifacts/grm_x1/continuation_02.json": "a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20",
+    "artifacts/grm_x1/continuation_02.sha256": "c0c61c05257921142252aa1973c3892fadf80492c325b085c4740201f182d190",
+    "artifacts/grm_x1/continuation_02_delivery.json": "d46e32be8fbfa0d2fb6e420c3b62c8c5704d1fc411e38c546a0dd85880ff3529",
+    "artifacts/grm_x1/continuation_02_registration.json": "26dc26ddae0e505421c192a0b15ed89ad8d83b7589bc4e518054fcb3a726b293",
+    "artifacts/grm_x1/continuation_03.json": "e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10",
+    "artifacts/grm_x1/continuation_03.sha256": "79842a010fd07695938edb7cdf6eb3e25bdec45083b90e092925124c715a091c",
+    "artifacts/grm_x1/continuation_03_delivery.json": "28bab523a4fe62e4ec9bb1daf6fdece76ddf977ea978a501d1cc9acbe4283f37",
+    "artifacts/grm_x1/continuation_03_registration.json": "0262299553a7123b297488383de9cfd4bf3922a1195e9f23e7068ac4f00a4729",
+    "artifacts/grm_x1/continuation_03_shell_gate_registration.json": "fb38e5abeabf2785b357cfcef49906f48647ad1f1191cf14f109645a0ef36032",
+    "artifacts/grm_x1/cpu_mutation_registration.json": "3634eace71e86c2598c5e690cf628a0327a9247dabccd88991f82b6562f1c939",
+    "artifacts/grm_x1/cpu_token_counts_01.json": "a1ca633947bf52dc8c9581e65dfdabe5f6a16df0771502e74a94ea5a9c1f19b7",
+    "artifacts/grm_x1/delivery_manifest.json": "1f158f8419f8ac4394620842fd99efe4c671b39d79f08b4a2654e2d7a1a06101",
+    "artifacts/grm_x1/fixture_amendment_01.json": "2bac1548aa8da82fe8a224e94550b96dfb4810da51e3a565d5dd3ebb969721ea",
+    "artifacts/grm_x1/fixtures/SHA256SUMS": "cbca6284ffd48ec22e10dcf5be48b9e7992f4eb26e7553765161837ef9d0d869",
+    "artifacts/grm_x1/fixtures/aliases.json": "7fe07f19dec9ca1a579ee8a384e3bcb650f24e33d132ca6eac0369ac08f149d4",
+    "artifacts/grm_x1/fixtures/cells.json": "aa8bc47894492743ea24d13c4a4b0b0e372c72e3ff4cebe43c97c83d19166e59",
+    "artifacts/grm_x1/fixtures/families.json": "a7078fb17e89c80a28a1f7ff1d464a1633f11ba58250972d44f6a455e4900e41",
+    "artifacts/grm_x1/fixtures/queries.json": "49059487a8f75ed983f07e248feba6f3850fe54e6b60cb1c56c6c219950df76a",
+    "artifacts/grm_x1/fixtures/queries_amendment_01.json": "abfac7da02c0c1fec32ef98c6bb27694005e5259d2581cc8b476a22c7eea3af6",
+    "artifacts/grm_x1/fixtures/sources/census_events.json": "7241151e1953b06cdfbfa3ff2290c03db1377b1f4f26dd245c52b72075dde9dc",
+    "artifacts/grm_x1/fixtures/sources/correction_then_restatement.json": "ea97d4007d66357442f0424f76200984e8c2f39311618a4b892e88db9ad90f4b",
+    "artifacts/grm_x1/fixtures/sources/fresh_fact_controls.json": "9b75e1e4f70d77524d7d099f1416ae34ea3cafc149e749e26e7a5dd47b298d75",
+    "artifacts/grm_x1/fixtures/sources/multi_hop_a_b_c.json": "036f291dc4f91d7e38b23d033f97d45b8d4b1176afa1741624f7728355a13d90",
+    "artifacts/grm_x1/fixtures/sources/short_correction_long_competitor.json": "c06decbe127dd228bdf6529b002ccdaaf5f628addda003692e5e49d9e47c1221",
+    "artifacts/grm_x1/handoff_manifest.json": "bf923a9ccb4f06a8d2ae643cb2727de5f7c116304febf429f71a2da7e9087121",
+    "artifacts/grm_x1/lead_commands_amendment_01.txt": "d0cf7fb9f9204e919377572b52e41e3642dcd0feb9afea8251acb4c4d0dc254a",
+    "artifacts/grm_x1/lead_commands_r1.txt": "a9e6e6295dfc363a824df4fd70f981a77c9f648c8f5b5991e3a35cfa81806b8b",
+    "artifacts/grm_x1/lead_commands_r2.txt": "c13d0068a91d8219756bb41ecdb7cad3b9459da323ceec7437135331bead3dff",
+    "artifacts/grm_x1/lead_commands_r3.txt": "dbe6cd0c5d5a1539bf84b92a776d18e0748de2318088a8abd3b7342cf20bca2d",
+    "artifacts/grm_x1/payload_amendment_01.json": "57c913cffc07d6dac756b84b8d718d944a96d2dfb4b70889edd7a20261f39b16",
+    "artifacts/grm_x1/payload_amendment_01_delivery.json": "e64cc19b461ae88df0968d78f1b89ed93967e6692b3478c06e1788145715496e",
+    "artifacts/grm_x1/payload_amendment_01_handoff.json": "e208379019aa2dc59091def442b3cb9eae5923af4e8aeecc20f605cef22cae4b",
+    "artifacts/grm_x1/receipts/continuation_02_gates.json": "92bce1182cfad72d49d793bbf9e37963764a05dd10990030324e3ea96a4fedeb",
+    "artifacts/grm_x1/receipts/continuation_02_lead_checks.json": "35b8efdeabdeee9f4502bb43e7a8094596f3ddc42244d9aaff5d515aca0ce000",
+    "artifacts/grm_x1/receipts/continuation_03_gates.json": "881b19923126e27196b6478f9b77edb30689e1446427b7f668fe05fa31f1ca35",
+    "artifacts/grm_x1/receipts/continuation_03_lead_checks.json": "98641433031074536fb79dd83771f4f776aee3b3bac1013c66373610b44fb830",
+    "artifacts/grm_x1/receipts/continuation_03_shell_gates.json": "2bbfb7a655add55254e5839c4b0e02d3d09116e0268f02440d15a7815bd100bd",
+    "artifacts/grm_x1/receipts/controller_a506c79ed4cdf46b347ab7392d828d26bddf999686513846ebcb136854b06882.json": "a506c79ed4cdf46b347ab7392d828d26bddf999686513846ebcb136854b06882",
+    "artifacts/grm_x1/receipts/cpu_baseline_0d8b663a1e90e0204f3a43c9b0d0eb20b7c35420ca62d40916768519ca929f07.json": "0d8b663a1e90e0204f3a43c9b0d0eb20b7c35420ca62d40916768519ca929f07",
+    "artifacts/grm_x1/receipts/cpu_baseline_33650dfe7eeb39c929150efe1a705981e5723077376b91d7800f25f19235c8a4.json": "33650dfe7eeb39c929150efe1a705981e5723077376b91d7800f25f19235c8a4",
+    "artifacts/grm_x1/receipts/cpu_baseline_6d40d49c1487aabf745aadd1bda77e4e7f83b2cdb834fdcc1380400ea7d474d0.json": "6d40d49c1487aabf745aadd1bda77e4e7f83b2cdb834fdcc1380400ea7d474d0",
+    "artifacts/grm_x1/receipts/cpu_baseline_b1a5012ed9e8c8d294b710e1a02731a93e153a354b20d4a09d650a7d3eeb222c.json": "b1a5012ed9e8c8d294b710e1a02731a93e153a354b20d4a09d650a7d3eeb222c",
+    "artifacts/grm_x1/receipts/cpu_baseline_cbb1b285a457ec672461c6580f8c891b46b63eb12e5d3474656fd8fd6bb32bd1.json": "cbb1b285a457ec672461c6580f8c891b46b63eb12e5d3474656fd8fd6bb32bd1",
+    "artifacts/grm_x1/receipts/cpu_baseline_d28bc39096c2a9498530bb8f27a0503364c07f330bca9ea3990571bb07f2a393.json": "d28bc39096c2a9498530bb8f27a0503364c07f330bca9ea3990571bb07f2a393",
+    "artifacts/grm_x1/receipts/cpu_mutations_03998a4e42aa129fd0dc58cb12fe6cf94613ba311a6a57ff5948dfff1932e846.json": "03998a4e42aa129fd0dc58cb12fe6cf94613ba311a6a57ff5948dfff1932e846",
+    "artifacts/grm_x1/receipts/cpu_mutations_7112056e61db4558269ca982c03c15f6b843b44228bd749a68dc87905206e4b8.json": "7112056e61db4558269ca982c03c15f6b843b44228bd749a68dc87905206e4b8",
+    "artifacts/grm_x1/receipts/cpu_mutations_b940a51b38035709415ba52c331f90f51d8fa3626933be2e9b35ea537c952154.json": "b940a51b38035709415ba52c331f90f51d8fa3626933be2e9b35ea537c952154",
+    "artifacts/grm_x1/receipts/cpu_mutations_ea64e5341fdffd12fa2079dd4505815b661da1a3aa5f86c1d9c3ab1ec34125bd.json": "ea64e5341fdffd12fa2079dd4505815b661da1a3aa5f86c1d9c3ab1ec34125bd",
+    "artifacts/grm_x1/receipts/cpu_pytest_08ae49c9c4c2dc2f8070b2e086cbf2b2c7b5ea7d75a813bd595f0e1e1eb3e81a.json": "08ae49c9c4c2dc2f8070b2e086cbf2b2c7b5ea7d75a813bd595f0e1e1eb3e81a",
+    "artifacts/grm_x1/receipts/cpu_pytest_2f54a3cf1d61d7d94d3be10c874187c0bf1f3bc443bae7b3b4c9f0140ede1396.json": "2f54a3cf1d61d7d94d3be10c874187c0bf1f3bc443bae7b3b4c9f0140ede1396",
+    "artifacts/grm_x1/receipts/cpu_pytest_88bea04f528ad2ce122b59ba3fd0337808d1b347b633fc1809b910526561358b.json": "88bea04f528ad2ce122b59ba3fd0337808d1b347b633fc1809b910526561358b",
+    "artifacts/grm_x1/receipts/cpu_pytest_960aa2d5c8e5a2d11473495832549f08ae0cedd5fb258f4a9e3093ddd573614f.json": "960aa2d5c8e5a2d11473495832549f08ae0cedd5fb258f4a9e3093ddd573614f",
+    "artifacts/grm_x1/receipts/cpu_pytest_c0783512f6b00c202d591999ef3a8277214fd85054012e1c17f434333e8782f6.json": "c0783512f6b00c202d591999ef3a8277214fd85054012e1c17f434333e8782f6",
+    "artifacts/grm_x1/receipts/cpu_pytest_d805cdafaed8b580f1d31384860f015364d7ec0248988dec5c63ca1814ddd74a.json": "d805cdafaed8b580f1d31384860f015364d7ec0248988dec5c63ca1814ddd74a",
+    "artifacts/grm_x1/receipts/gpu_oracle_m1_s0_0c1bf61590059cad2b207f0edef2da421f64639f69c41d4b6282cc7ba3c35bba.json": "0c1bf61590059cad2b207f0edef2da421f64639f69c41d4b6282cc7ba3c35bba",
+    "artifacts/grm_x1/receipts/payload_amendment_01_handoff_check.json": "60dc1e31471d934d205d8aff7c52da52474d46bcdcdc0994873dcad5ced8343d",
+    "artifacts/grm_x1/receipts/payload_amendment_01_reproduction.json": "400043f44c83d435eed2442764ae109f05e05d130801282ce59618cc6c8e454a",
+    "artifacts/grm_x1/receipts/r2/controller_04b12f34d8e2eef0594878be3bab09a8841cff25cfebf66f1cd0e10944f6525a.json": "04b12f34d8e2eef0594878be3bab09a8841cff25cfebf66f1cd0e10944f6525a",
+    "artifacts/grm_x1/receipts/r2/gpu_oracle_m1_s0_374c534e547b8d9116d7d43fe5cfedd5f44fd9c81af007714286440f4fe1bf7c.json": "374c534e547b8d9116d7d43fe5cfedd5f44fd9c81af007714286440f4fe1bf7c",
+    "artifacts/grm_x1/receipts/r3/controller_15479065bd42aa7109a73bc86af0da97857b4f210295b0fccd86b852e7365cdf.json": "15479065bd42aa7109a73bc86af0da97857b4f210295b0fccd86b852e7365cdf",
+    "artifacts/grm_x1/receipts/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10.json": "a6fa9cc279ffcd25510348c437190047dfb0f7d8cb119b9e7b3b8e4f31df55d9",
+    "artifacts/grm_x1/registration.json": "defb5014f6ee66113139c1ca3fe902f9bdc51fb81d137cbc0a47e5d06f8f3e57",
+    "artifacts/grm_x1/registration.sha256": "0c1b981cb460ee1ff79918b67bb6a4b1f07d4ec878470c295fd0fcf309f64cb3",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_00_absent_A/turn_receipt.json": "d644d209ce860e5c82c18b3290c92c32ae951a875e137ed7070d309c6fe9f4f9",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_00_absent_B/turn_receipt.json": "67d78ae680ca26e301052b33b361c79e52cd2bed69d1d11423a3005ced51ade9",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_00_absent_C/turn_receipt.json": "2b6bb9f2886d7e08407c6baaef7417df6f861b7537cd5a1787eb04680b23be10",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_00_present_A/turn_receipt.json": "1ae8cccaf1c1e9d5c6f1b6498523069b36a69e5bedfa4568f112f5a53051ef08",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_00_present_B/turn_receipt.json": "4dc1619a0c7feb9fff50b2154a39177abd7238a94906b8e6d4d4e683cb8238b3",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_00_present_C/turn_receipt.json": "368bdc81a41c0c78a0e9d2da218df63a15f3a2b85359d8609c75d51d1c20ead4",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_02_absent_A/turn_receipt.json": "abb74965baacdfafb735d03f93c0442913188c15164eff51d965f6f9b2cf09ff",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_02_absent_B/turn_receipt.json": "bc8809475d2a58d3ad39e13f14827e522d9640f2277558041326946cbf7c083c",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_02_absent_C/turn_receipt.json": "ca7831553c63162cdf0f55062270fd483e807538401671a095ee4d98fe7e2502",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_02_present_A/turn_receipt.json": "39183267b3c1c3085fceb0ab4ca44aad183862035f3671f86d8ff9e5a27fc64d",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_02_present_B/turn_receipt.json": "f1d5442290ddb7328233f82ba11823ea1a477ad3bfcca20722cc46d73fdd3cc1",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_02_present_C/turn_receipt.json": "0d009a9f16456a4eddd0a7f420512971d2abe0666532554272a52c4b3491d0ba",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_04_absent_A/turn_receipt.json": "74ca475a26c79b6361dc6f4bd1a0a849d9bed6ddb0d09ad98d738105f9dd1d16",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_04_absent_C/turn_receipt.json": "8c407c2bb46c199e17c9facf468178c7ad8b17c24811123f84bc1182a51016f8",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_04_present_A/turn_receipt.json": "208e9ccb4f249e99480231b28ed274920129748e0db63a1a554f67fe9bab12a5",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_04_present_B/turn_receipt.json": "bc17a3eb2fbd2ba08a553e785f85e27b81e99a89fadb66114942f94ad5f87656",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/alias_04_present_C/turn_receipt.json": "3e7a0edb61c1aec8abca71e08335d15cdfc910f2b9185e78cdb521d74dbab70e",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/model.json": "e6aeae06c7872817a4037787fc5e2407888ecb9a68097014b87f69ab31d4750d",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/sup_lumen_addresses.json": "19f7fac37537caac8f03e62059896072a5684680d5e2edb0430e74597e66a62b",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/sup_lumen_capture/wal/000001.wal": "26468de758d5c2498243060b8c92dce5d149965449e441d7a61aed6d3931b58f",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/sup_lumen_pages.json": "1da049ccc5b354785d769bf5f05e4f9206022647e03e9e5bbd690194a20f3265",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/sup_orion_addresses.json": "14709645dc95bc809ec12014b7126941d1c1095384fe1870acffc07005ddaa88",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/sup_orion_capture/wal/000001.wal": "bf8c58df7b89cfc222660b32b9fd774029c3c794539491704b819e8d2f47209f",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/sup_orion_pages.json": "6aebb977312f34b9b161e9c93ada3a373779debd47bb4ffe3c0386f22c2fda55",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/sup_solace_addresses.json": "b48964d29955483e6d04370f7211520f6d12ebf7f734d9e94c929008bba86037",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/sup_solace_capture/wal/000001.wal": "89aa9f6b2445e5e7b55a6cad1725f9b3c365c09ca85e9b74b11f910c0d3864e0",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20/sup_solace_pages.json": "8878dfccd5f3a8c1be4948fd773e9ed225e00e97af619ad3698bec89ed8c68a6",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_bf923a9ccb4f06a8d2ae643cb2727de5f7c116304febf429f71a2da7e9087121/model.json": "e6aeae06c7872817a4037787fc5e2407888ecb9a68097014b87f69ab31d4750d",
+    "artifacts/grm_x1/sessions/oracle_m1_s0_bf923a9ccb4f06a8d2ae643cb2727de5f7c116304febf429f71a2da7e9087121/sup_lumen_capture/wal/000001.wal": "0051b3bf911b6082e526ce543f0b593d0033a34972da5d7ccadf89735e12cd58",
+    "artifacts/grm_x1/sessions/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10/alias_00_absent_A/turn_receipt.json": "e82d22a68f911b15e59ba815435b9e3eb1b56602ba9ad202a2fb907362bc0f50",
+    "artifacts/grm_x1/sessions/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10/alias_00_absent_B/turn_receipt.json": "46885cb881e33ee37ae29f3e3240ebf2a2a42244f88b33a06c7314499de152a7",
+    "artifacts/grm_x1/sessions/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10/alias_00_absent_C/turn_receipt.json": "1fc1c4ea875389e21740c8e1667b079918d6ffa7525ee99f95eaff3d592b04a6",
+    "artifacts/grm_x1/sessions/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10/alias_00_present_A/turn_receipt.json": "e170b99a376f420e7c988e1cf3bea498b40a920f71142804df1d20b3876d7cd3",
+    "artifacts/grm_x1/sessions/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10/alias_00_present_B/turn_receipt.json": "3b70bcb9b19f1169be7f9b206d446cf9553a4da6e111718ff061b710f82ba769",
+    "artifacts/grm_x1/sessions/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10/alias_00_present_C/turn_receipt.json": "009de28b952748b579d25d2bbdc997be6dd8d8846adaab8d3ec8186f7ec84e29",
+    "artifacts/grm_x1/sessions/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10/model.json": "e6aeae06c7872817a4037787fc5e2407888ecb9a68097014b87f69ab31d4750d",
+    "artifacts/grm_x1/sessions/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10/sup_lumen_addresses.json": "19f7fac37537caac8f03e62059896072a5684680d5e2edb0430e74597e66a62b",
+    "artifacts/grm_x1/sessions/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10/sup_lumen_capture/wal/000001.wal": "a49021021a99b71984ab9ec047509e86b7bff4bdbcf21b878ec23bc3d6b9eb59",
+    "artifacts/grm_x1/sessions/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10/sup_lumen_pages.json": "1da049ccc5b354785d769bf5f05e4f9206022647e03e9e5bbd690194a20f3265"
+  },
+  "lead_commands_sha256": "dfe53b5762ab210dbe1ff0b7941cd98715e94f5c0fe32fe08ec081062b65d4ea",
+  "natural_unlock": "Only reduced oracle_positive, no override. Natural retains all 24 queries per cell. Original rate-based S5 comparison unchanged; natural and oracle query populations differ under reduction.",
+  "not_run": [
+    {
+      "additional_estimated_gpu_s": 1275.1012555416673,
+      "cell": "oracle_m1_s1",
+      "reason": "second oracle seed/query stratum dropped",
+      "status": "NOT RUN",
+      "units": 12
+    },
+    {
+      "additional_estimated_gpu_s": 1275.1012555416673,
+      "cell": "oracle_m10_s0",
+      "reason": "m10 dropped",
+      "status": "NOT RUN",
+      "units": 12
+    },
+    {
+      "additional_estimated_gpu_s": 1275.1012555416673,
+      "cell": "oracle_m10_s1",
+      "reason": "m10 dropped",
+      "status": "NOT RUN",
+      "units": 12
+    },
+    {
+      "additional_estimated_gpu_s": 1275.1012555416673,
+      "cell": "oracle_m100_s1",
+      "reason": "second oracle seed/query stratum dropped",
+      "status": "NOT RUN",
+      "units": 12
+    },
+    {
+      "additional_estimated_gpu_s": 2550.2025110833347,
+      "cell": "natural_m10",
+      "reason": "m10 dropped",
+      "status": "NOT RUN",
+      "units": 24
+    }
+  ],
+  "oracle_positive": "Both reduced oracle cells fully COMPLETE with no r4 RED/incomplete unit evidence; B present min exact >=0.80, spread<=0.05, B100-A100>=0.20, C absent false=0, C present>=B present-0.05 at m1 and m100, B/C present mount address coverage=1. Thresholds unchanged from r1; required observations restricted to registered reduced cells.",
+  "rails": {
+    "cooldown_s": 30,
+    "lock_wait_s": 250,
+    "outer_s": 590,
+    "work_alarm_s": 280,
+    "worker_s": 285
+  },
+  "receipt_directory": "artifacts/grm_x1/receipts/r4",
+  "reuse": {
+    "claim_path": "artifacts/grm_x1/claims/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10.json",
+    "receipt_path": "artifacts/grm_x1/receipts/r3/oracle_m1_s0__alias_00__a1_e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10.json",
+    "receipt_sha256": "a6fa9cc279ffcd25510348c437190047dfb0f7d8cb119b9e7b3b8e4f31df55d9",
+    "status": "VALID_BYTE_IDENTICAL",
+    "unit_definition_sha256": "f1debede5d0b7bef9f2150b2089ecea5dc3be9334a16c9679483b4f8c48fc14a",
+    "unit_id": "oracle_m1_s0__alias_00",
+    "worker_wall_s": 106.25843796180561
+  },
+  "schema": "grm.x1.continuation.v4",
+  "served_text_class": {
+    "classes": [
+      "answer",
+      "abstention",
+      "refusal-style"
+    ],
+    "historical": "Compute derived labels in r4 summary with provenance to untouched r3 receipt; do not rewrite original.",
+    "rule": "Scored abstained first -> abstention. Else NFKC/casefold, normalize curly apostrophes and whitespace; anchored full-string refusal template (optional sorry prefix, cannot/can not/can't/unable to help/assist/comply/provide, optional with that/this/request or assistance/information). Else answer. Diagnostic only, answer includes wrong/verbose outputs; no score changes."
+  },
+  "sources": {
+    "artifacts/grm_x1/cpu_mutation_registration.json": "3634eace71e86c2598c5e690cf628a0327a9247dabccd88991f82b6562f1c939",
+    "artifacts/grm_x1/fixture_amendment_01.json": "2bac1548aa8da82fe8a224e94550b96dfb4810da51e3a565d5dd3ebb969721ea",
+    "core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "core/deepseek_v2_lite_tc.py": "96e371754496eb2ca467ad199bebed07c354cf5eae4b0a08daf571c6f04f0d07",
+    "core/gemma4_tc.py": "c9a8cc1d01c30bb2b20e9c2e477d4bedf21072d0b1b6b157f3ba75c78a271d8b",
+    "core/gpt_oss20b_tc.py": "da8ca3bc8c961d731d9e32bf4558702ad1b8b10c8ecc37b18326e7df4ade74a1",
+    "core/graft_arena.py": "e03a44b5e0155fc10a0be5c56e66e117c768a67993fab76df3ecf3aa62cdb20b",
+    "core/graft_quant.py": "ebe40790286a719db38de403210aa20e17e7e4d2699f7b7dae452e014f4fa130",
+    "core/graft_repository.py": "e0a0fc777d3c0f535ec915238390d7c1f1a6d43e927976351b8441a1b1358e89",
+    "core/grm_admission.py": "62510861b5b1a33af375a4120d78351d2f880b2618a5462c1776a073f3f2d00f",
+    "core/grm_cuda_router.py": "8dfd7a6ff5395eb846996c67b1570c9fb0e8b26dd78e84f28059f1b291766ce5",
+    "core/grm_demand.py": "2fd50307650af0c72c19ecb4f7ce6eb11c3bbf9d5b3439905007b87857b195b3",
+    "core/grm_frame.py": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2",
+    "core/grm_native.py": "1f5a69716d751c670f37328cf012544b800f86226ad4549a0781bac654aaf3df",
+    "core/grm_runtime.py": "39f823cbdb98e32528fb5240777cb8c0144f3be77fa86466a67f1f636505c13e",
+    "core/grm_supersession.py": "c8e9baf7c69e41ebdcf05fda84a2895ed7d2b6f7ff67903fdb655924510fdd5e",
+    "core/grm_text_norm.py": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8",
+    "core/grm_three_pass.py": "71e0e4f8503d4e132101fc79cce9d64daf399ffe73892e2f0102c8568d0ec0f3",
+    "core/grm_x1_addresses.py": "90ef90820023621cebf1b3f22eb8d243cd7f149d87a80d8a496eed0941ca3fa7",
+    "core/kv_graft.py": "d8d44d032c5398c4606b1b6f1b547a94baa2415e36225cb04dd6ef313622ef2d",
+    "core/minicpm3_tc.py": "3d19734f51d28eb48dc20a62658f2bfc250fdac4fce2cb906116d034b1371a69",
+    "core/mistral7b_tc.py": "49430e5920508d740a2f8be7b6ba0caadd0442c7798454cf6fa2a808204bf1c4",
+    "core/paging_telemetry.py": "4eb484b1f6b512962b18d08cb714dd61346980a8af550c1fd814bcbad474097c",
+    "core/qwen35_tc.py": "3f84f8e99f5cf8932440e5d6ff29df41cbf3fdaf13d27f3bbe8fb1dc3a7ec41b",
+    "core/qwen35_translation_poc.py": "5a7f364aa7a4ff24bb9299671fc945626037cff44595f0b80364ebe9d1cfa3d1",
+    "core/qwen38_tc.py": "39875f97f09906ccdfcdf6f510c9ed2f7cad01e85007363a8d7ad00869f9d67e",
+    "core/qwen3_1p7b_tc.py": "1a563f502753a86b57abff8710440ae0e1921ed083481dee8232872704093c0f",
+    "core/qwen3_tc.py": "ba0e2d9ab68716922b9f942bc4bb8cd2c4a791abe2a2fabd42a65799212d95aa",
+    "core/qwen_tc.py": "1353e44f727fc24d1638e4e238d160619fea561602c921259b010af5f63478e3",
+    "scripts/grm_e2e_session.py": "74434dbb750e8e7635afa2f55709ae0533a3562f5b63aa54fc1f81d664bfd450",
+    "scripts/grm_probe_ladder.py": "d1ad0ad74ba522b96c39c634c86ba3292b887af39321f7fc105a62f82fa26d0d",
+    "scripts/grm_x1_campaign.py": "807bebba226654215439c0a5c17c08a166edeab9d30f379808f48a70f80f0b45",
+    "scripts/grm_x1_cpu.py": "a50bd9146271cb6a464ee1a42b87cf35eac61b882d59237f57bbe2da28aa8698",
+    "scripts/grm_x1_gpu.py": "1831261b5274981cf8383a246c3737c427591b4a098a176ddea899696645405f",
+    "scripts/grm_x1_lead_gpu.sh": "f711ae7852b18e2e477dadee93c88bba2e5f19ad030221c69b3cc35d62450b43",
+    "scripts/grm_x1_reduced.py": "5719253c7393a2deb1cbef29e643e4ff97728352e33a05491b1853f145f9b406",
+    "scripts/grm_x1_register.py": "bedb423411063f15eec06b2c8538799188dc026370471521646fb42ab351f1f1",
+    "scripts/grm_x1_units.py": "db599237394e3db05b360e4faae54a6dffce13652f440ff511b5b13dd71d8418",
+    "tests/test_grm_x1_addresses.py": "a3adcceae308d13e1096b6d58c992a1bbf608ed4b68d91ffbc78dc11f2c1eb95",
+    "tests/test_grm_x1_campaign.py": "5975d6347afcd3bd041de39577b3449ef9d85f7cc10fa73631b68f81a0efe7d5",
+    "tests/test_grm_x1_reduced.py": "252cf262698033c2a8a29b051e2e744cebd10123f5700f8465b6691cbd20791f",
+    "tests/test_grm_x1_units.py": "b07ed5dc584f831693b28c5fd7780b40c894446cc0d3d6d4642a1c269d3af54a"
+  },
+  "unit_scheme": "One query per unit, original global query ordinal and cell query order. All registered arms and conditions share an in-unit capture; fresh model per lease. 12 per oracle cell, 24 per conditional natural cell; 144 total.",
+  "units": [
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_00"
+      ],
+      "query_ordinal": 0,
+      "unit_id": "oracle_m1_s0__alias_00",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_02"
+      ],
+      "query_ordinal": 2,
+      "unit_id": "oracle_m1_s0__alias_02",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_solace",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_04"
+      ],
+      "query_ordinal": 4,
+      "unit_id": "oracle_m1_s0__alias_04",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_cypher",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_06"
+      ],
+      "query_ordinal": 6,
+      "unit_id": "oracle_m1_s0__alias_06",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_08"
+      ],
+      "query_ordinal": 8,
+      "unit_id": "oracle_m1_s0__alias_08",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_ember",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_10"
+      ],
+      "query_ordinal": 10,
+      "unit_id": "oracle_m1_s0__alias_10",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_00"
+      ],
+      "query_ordinal": 12,
+      "unit_id": "oracle_m1_s0__correction_00",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_02"
+      ],
+      "query_ordinal": 14,
+      "unit_id": "oracle_m1_s0__correction_02",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_04"
+      ],
+      "query_ordinal": 16,
+      "unit_id": "oracle_m1_s0__correction_04",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_orion",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_06"
+      ],
+      "query_ordinal": 18,
+      "unit_id": "oracle_m1_s0__correction_06",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_08"
+      ],
+      "query_ordinal": 20,
+      "unit_id": "oracle_m1_s0__correction_08",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_10"
+      ],
+      "query_ordinal": 22,
+      "unit_id": "oracle_m1_s0__correction_10",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_00"
+      ],
+      "query_ordinal": 0,
+      "unit_id": "oracle_m100_s0__alias_00",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_02"
+      ],
+      "query_ordinal": 2,
+      "unit_id": "oracle_m100_s0__alias_02",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_solace",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_04"
+      ],
+      "query_ordinal": 4,
+      "unit_id": "oracle_m100_s0__alias_04",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_cypher",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_06"
+      ],
+      "query_ordinal": 6,
+      "unit_id": "oracle_m100_s0__alias_06",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_08"
+      ],
+      "query_ordinal": 8,
+      "unit_id": "oracle_m100_s0__alias_08",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_ember",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_10"
+      ],
+      "query_ordinal": 10,
+      "unit_id": "oracle_m100_s0__alias_10",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_00"
+      ],
+      "query_ordinal": 12,
+      "unit_id": "oracle_m100_s0__correction_00",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_02"
+      ],
+      "query_ordinal": 14,
+      "unit_id": "oracle_m100_s0__correction_02",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_04"
+      ],
+      "query_ordinal": 16,
+      "unit_id": "oracle_m100_s0__correction_04",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_orion",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_06"
+      ],
+      "query_ordinal": 18,
+      "unit_id": "oracle_m100_s0__correction_06",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_08"
+      ],
+      "query_ordinal": 20,
+      "unit_id": "oracle_m100_s0__correction_08",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_10"
+      ],
+      "query_ordinal": 22,
+      "unit_id": "oracle_m100_s0__correction_10",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_00"
+      ],
+      "query_ordinal": 0,
+      "unit_id": "natural_m1__alias_00",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_01"
+      ],
+      "query_ordinal": 1,
+      "unit_id": "natural_m1__alias_01",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_02"
+      ],
+      "query_ordinal": 2,
+      "unit_id": "natural_m1__alias_02",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_praxis",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_03"
+      ],
+      "query_ordinal": 3,
+      "unit_id": "natural_m1__alias_03",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_solace",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_04"
+      ],
+      "query_ordinal": 4,
+      "unit_id": "natural_m1__alias_04",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_05"
+      ],
+      "query_ordinal": 5,
+      "unit_id": "natural_m1__alias_05",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_cypher",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_06"
+      ],
+      "query_ordinal": 6,
+      "unit_id": "natural_m1__alias_06",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_nova",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_07"
+      ],
+      "query_ordinal": 7,
+      "unit_id": "natural_m1__alias_07",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_08"
+      ],
+      "query_ordinal": 8,
+      "unit_id": "natural_m1__alias_08",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_terra",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_09"
+      ],
+      "query_ordinal": 9,
+      "unit_id": "natural_m1__alias_09",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_ember",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_10"
+      ],
+      "query_ordinal": 10,
+      "unit_id": "natural_m1__alias_10",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_atlas",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_11"
+      ],
+      "query_ordinal": 11,
+      "unit_id": "natural_m1__alias_11",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_00"
+      ],
+      "query_ordinal": 12,
+      "unit_id": "natural_m1__correction_00",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_01"
+      ],
+      "query_ordinal": 13,
+      "unit_id": "natural_m1__correction_01",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_02"
+      ],
+      "query_ordinal": 14,
+      "unit_id": "natural_m1__correction_02",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_03"
+      ],
+      "query_ordinal": 15,
+      "unit_id": "natural_m1__correction_03",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_04"
+      ],
+      "query_ordinal": 16,
+      "unit_id": "natural_m1__correction_04",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_05"
+      ],
+      "query_ordinal": 17,
+      "unit_id": "natural_m1__correction_05",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_orion",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_06"
+      ],
+      "query_ordinal": 18,
+      "unit_id": "natural_m1__correction_06",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_orion",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_07"
+      ],
+      "query_ordinal": 19,
+      "unit_id": "natural_m1__correction_07",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_08"
+      ],
+      "query_ordinal": 20,
+      "unit_id": "natural_m1__correction_08",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_09"
+      ],
+      "query_ordinal": 21,
+      "unit_id": "natural_m1__correction_09",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_10"
+      ],
+      "query_ordinal": 22,
+      "unit_id": "natural_m1__correction_10",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_11"
+      ],
+      "query_ordinal": 23,
+      "unit_id": "natural_m1__correction_11",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_00"
+      ],
+      "query_ordinal": 0,
+      "unit_id": "natural_m100__alias_00",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_01"
+      ],
+      "query_ordinal": 1,
+      "unit_id": "natural_m100__alias_01",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_02"
+      ],
+      "query_ordinal": 2,
+      "unit_id": "natural_m100__alias_02",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_praxis",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_03"
+      ],
+      "query_ordinal": 3,
+      "unit_id": "natural_m100__alias_03",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_solace",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_04"
+      ],
+      "query_ordinal": 4,
+      "unit_id": "natural_m100__alias_04",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_05"
+      ],
+      "query_ordinal": 5,
+      "unit_id": "natural_m100__alias_05",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_cypher",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_06"
+      ],
+      "query_ordinal": 6,
+      "unit_id": "natural_m100__alias_06",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_nova",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_07"
+      ],
+      "query_ordinal": 7,
+      "unit_id": "natural_m100__alias_07",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_08"
+      ],
+      "query_ordinal": 8,
+      "unit_id": "natural_m100__alias_08",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_terra",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_09"
+      ],
+      "query_ordinal": 9,
+      "unit_id": "natural_m100__alias_09",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_ember",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_10"
+      ],
+      "query_ordinal": 10,
+      "unit_id": "natural_m100__alias_10",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_atlas",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_11"
+      ],
+      "query_ordinal": 11,
+      "unit_id": "natural_m100__alias_11",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_00"
+      ],
+      "query_ordinal": 12,
+      "unit_id": "natural_m100__correction_00",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_01"
+      ],
+      "query_ordinal": 13,
+      "unit_id": "natural_m100__correction_01",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_02"
+      ],
+      "query_ordinal": 14,
+      "unit_id": "natural_m100__correction_02",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_03"
+      ],
+      "query_ordinal": 15,
+      "unit_id": "natural_m100__correction_03",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_04"
+      ],
+      "query_ordinal": 16,
+      "unit_id": "natural_m100__correction_04",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_05"
+      ],
+      "query_ordinal": 17,
+      "unit_id": "natural_m100__correction_05",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_orion",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_06"
+      ],
+      "query_ordinal": 18,
+      "unit_id": "natural_m100__correction_06",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_orion",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_07"
+      ],
+      "query_ordinal": 19,
+      "unit_id": "natural_m100__correction_07",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_08"
+      ],
+      "query_ordinal": 20,
+      "unit_id": "natural_m100__correction_08",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_09"
+      ],
+      "query_ordinal": 21,
+      "unit_id": "natural_m100__correction_09",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_10"
+      ],
+      "query_ordinal": 22,
+      "unit_id": "natural_m100__correction_10",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_11"
+      ],
+      "query_ordinal": 23,
+      "unit_id": "natural_m100__correction_11",
+      "worker_cap_s": 285
+    }
+  ]
+}

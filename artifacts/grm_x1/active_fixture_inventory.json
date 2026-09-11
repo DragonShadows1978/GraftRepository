@@ -1,0 +1,20 @@
+{
+  "active_queries": "artifacts/grm_x1/fixtures/queries_amendment_01.json",
+  "amendment_path": "artifacts/grm_x1/fixture_amendment_01.json",
+  "amendment_sha256": "2bac1548aa8da82fe8a224e94550b96dfb4810da51e3a565d5dd3ebb969721ea",
+  "evidence_class": "unit test: immutable input inventory",
+  "fixture_files": {
+    "artifacts/grm_x1/fixtures/aliases.json": "7fe07f19dec9ca1a579ee8a384e3bcb650f24e33d132ca6eac0369ac08f149d4",
+    "artifacts/grm_x1/fixtures/cells.json": "aa8bc47894492743ea24d13c4a4b0b0e372c72e3ff4cebe43c97c83d19166e59",
+    "artifacts/grm_x1/fixtures/families.json": "a7078fb17e89c80a28a1f7ff1d464a1633f11ba58250972d44f6a455e4900e41",
+    "artifacts/grm_x1/fixtures/queries.json": "49059487a8f75ed983f07e248feba6f3850fe54e6b60cb1c56c6c219950df76a",
+    "artifacts/grm_x1/fixtures/queries_amendment_01.json": "abfac7da02c0c1fec32ef98c6bb27694005e5259d2581cc8b476a22c7eea3af6",
+    "artifacts/grm_x1/fixtures/sources/census_events.json": "7241151e1953b06cdfbfa3ff2290c03db1377b1f4f26dd245c52b72075dde9dc",
+    "artifacts/grm_x1/fixtures/sources/correction_then_restatement.json": "ea97d4007d66357442f0424f76200984e8c2f39311618a4b892e88db9ad90f4b",
+    "artifacts/grm_x1/fixtures/sources/fresh_fact_controls.json": "9b75e1e4f70d77524d7d099f1416ae34ea3cafc149e749e26e7a5dd47b298d75",
+    "artifacts/grm_x1/fixtures/sources/multi_hop_a_b_c.json": "036f291dc4f91d7e38b23d033f97d45b8d4b1176afa1741624f7728355a13d90",
+    "artifacts/grm_x1/fixtures/sources/short_correction_long_competitor.json": "c06decbe127dd228bdf6529b002ccdaaf5f628addda003692e5e49d9e47c1221"
+  },
+  "original_queries_status": "preserved superseded wording fixture; uniqueness defect recorded",
+  "registration_sha256": "defb5014f6ee66113139c1ca3fe902f9bdc51fb81d137cbc0a47e5d06f8f3e57"
+}

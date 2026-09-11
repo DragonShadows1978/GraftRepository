@@ -1,0 +1,216 @@
+{
+  "baseline_receipt": "artifacts/grm_x1/receipts/cpu_baseline_856df4ed4562402db57b2b915aabd86845f112acee2a94455657db83b25fbe2f.json",
+  "baseline_sha256": "856df4ed4562402db57b2b915aabd86845f112acee2a94455657db83b25fbe2f",
+  "evidence_class": "unit test: author baseline; no blind or E2E validation",
+  "initial_red_receipt": "artifacts/grm_x1/receipts/cpu_pytest_ee60aefa39f95ecbd934b58b1df4840e129a89a0aacf7621685d5aaaf4c3c7d7.json",
+  "pytest_receipt": "artifacts/grm_x1/receipts/cpu_pytest_3963f6c4b1138ea2d8bfa0fc5c5dae50e72c76f53cee52450f057c0f4a819321.json",
+  "r4_case_count": 48,
+  "source_shas": {
+    "artifacts/grm_x1/cpu_mutation_registration.json": "3634eace71e86c2598c5e690cf628a0327a9247dabccd88991f82b6562f1c939",
+    "artifacts/grm_x1/fixture_amendment_01.json": "2bac1548aa8da82fe8a224e94550b96dfb4810da51e3a565d5dd3ebb969721ea",
+    "core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "core/deepseek_v2_lite_tc.py": "96e371754496eb2ca467ad199bebed07c354cf5eae4b0a08daf571c6f04f0d07",
+    "core/gemma4_tc.py": "c9a8cc1d01c30bb2b20e9c2e477d4bedf21072d0b1b6b157f3ba75c78a271d8b",
+    "core/gpt_oss20b_tc.py": "da8ca3bc8c961d731d9e32bf4558702ad1b8b10c8ecc37b18326e7df4ade74a1",
+    "core/graft_arena.py": "e03a44b5e0155fc10a0be5c56e66e117c768a67993fab76df3ecf3aa62cdb20b",
+    "core/graft_quant.py": "ebe40790286a719db38de403210aa20e17e7e4d2699f7b7dae452e014f4fa130",
+    "core/graft_repository.py": "e0a0fc777d3c0f535ec915238390d7c1f1a6d43e927976351b8441a1b1358e89",
+    "core/grm_admission.py": "62510861b5b1a33af375a4120d78351d2f880b2618a5462c1776a073f3f2d00f",
+    "core/grm_cuda_router.py": "8dfd7a6ff5395eb846996c67b1570c9fb0e8b26dd78e84f28059f1b291766ce5",
+    "core/grm_demand.py": "2fd50307650af0c72c19ecb4f7ce6eb11c3bbf9d5b3439905007b87857b195b3",
+    "core/grm_frame.py": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2",
+    "core/grm_native.py": "1f5a69716d751c670f37328cf012544b800f86226ad4549a0781bac654aaf3df",
+    "core/grm_runtime.py": "39f823cbdb98e32528fb5240777cb8c0144f3be77fa86466a67f1f636505c13e",
+    "core/grm_supersession.py": "c8e9baf7c69e41ebdcf05fda84a2895ed7d2b6f7ff67903fdb655924510fdd5e",
+    "core/grm_text_norm.py": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8",
+    "core/grm_three_pass.py": "71e0e4f8503d4e132101fc79cce9d64daf399ffe73892e2f0102c8568d0ec0f3",
+    "core/grm_x1_addresses.py": "90ef90820023621cebf1b3f22eb8d243cd7f149d87a80d8a496eed0941ca3fa7",
+    "core/kv_graft.py": "d8d44d032c5398c4606b1b6f1b547a94baa2415e36225cb04dd6ef313622ef2d",
+    "core/minicpm3_tc.py": "3d19734f51d28eb48dc20a62658f2bfc250fdac4fce2cb906116d034b1371a69",
+    "core/mistral7b_tc.py": "49430e5920508d740a2f8be7b6ba0caadd0442c7798454cf6fa2a808204bf1c4",
+    "core/paging_telemetry.py": "4eb484b1f6b512962b18d08cb714dd61346980a8af550c1fd814bcbad474097c",
+    "core/qwen35_tc.py": "3f84f8e99f5cf8932440e5d6ff29df41cbf3fdaf13d27f3bbe8fb1dc3a7ec41b",
+    "core/qwen35_translation_poc.py": "5a7f364aa7a4ff24bb9299671fc945626037cff44595f0b80364ebe9d1cfa3d1",
+    "core/qwen38_tc.py": "39875f97f09906ccdfcdf6f510c9ed2f7cad01e85007363a8d7ad00869f9d67e",
+    "core/qwen3_1p7b_tc.py": "1a563f502753a86b57abff8710440ae0e1921ed083481dee8232872704093c0f",
+    "core/qwen3_tc.py": "ba0e2d9ab68716922b9f942bc4bb8cd2c4a791abe2a2fabd42a65799212d95aa",
+    "core/qwen_tc.py": "1353e44f727fc24d1638e4e238d160619fea561602c921259b010af5f63478e3",
+    "scripts/grm_e2e_session.py": "74434dbb750e8e7635afa2f55709ae0533a3562f5b63aa54fc1f81d664bfd450",
+    "scripts/grm_probe_ladder.py": "d1ad0ad74ba522b96c39c634c86ba3292b887af39321f7fc105a62f82fa26d0d",
+    "scripts/grm_x1_campaign.py": "807bebba226654215439c0a5c17c08a166edeab9d30f379808f48a70f80f0b45",
+    "scripts/grm_x1_cpu.py": "a50bd9146271cb6a464ee1a42b87cf35eac61b882d59237f57bbe2da28aa8698",
+    "scripts/grm_x1_gpu.py": "1831261b5274981cf8383a246c3737c427591b4a098a176ddea899696645405f",
+    "scripts/grm_x1_lead_gpu.sh": "f711ae7852b18e2e477dadee93c88bba2e5f19ad030221c69b3cc35d62450b43",
+    "scripts/grm_x1_reduced.py": "f2831d8900379add8ecaefb9f19be1acba7d3815543180a3ffbbaad2434c3ab8",
+    "scripts/grm_x1_register.py": "bedb423411063f15eec06b2c8538799188dc026370471521646fb42ab351f1f1",
+    "scripts/grm_x1_units.py": "761f31f390d4bbf0eea88db335f2ac55a184042ccc71aa3b642499502b022b93",
+    "tests/test_grm_x1_addresses.py": "a3adcceae308d13e1096b6d58c992a1bbf608ed4b68d91ffbc78dc11f2c1eb95",
+    "tests/test_grm_x1_campaign.py": "0bbf7a4f6d42553f55db15e0246642abe45877587fddf767cbea4e05e7d309d2",
+    "tests/test_grm_x1_reduced.py": "8806e8f79bcaef99ddc3f9f8cfd205d035a2e040b18fd19cd30db70320e6502d",
+    "tests/test_grm_x1_units.py": "b07ed5dc584f831693b28c5fd7780b40c894446cc0d3d6d4642a1c269d3af54a"
+  },
+  "status": "PASS",
+  "suite": "245 passed, 2 existing SWIG warnings in 14.30 s",
+  "tests": [
+    {
+      "case_count": 1,
+      "cases": [
+        "tests/test_grm_x1_reduced.py::test_r4_continuation_accepted"
+      ],
+      "name": "test_r4_continuation_accepted",
+      "status": "PASS"
+    },
+    {
+      "case_count": 8,
+      "cases": [
+        "tests/test_grm_x1_reduced.py::test_r4_forged_continuation[budget]",
+        "tests/test_grm_x1_reduced.py::test_r4_forged_continuation[cells]",
+        "tests/test_grm_x1_reduced.py::test_r4_forged_continuation[reuse]",
+        "tests/test_grm_x1_reduced.py::test_r4_forged_continuation[commands]",
+        "tests/test_grm_x1_reduced.py::test_r4_forged_continuation[order]",
+        "tests/test_grm_x1_reduced.py::test_r4_forged_continuation[checksum]",
+        "tests/test_grm_x1_reduced.py::test_r4_forged_continuation[registration]",
+        "tests/test_grm_x1_reduced.py::test_r4_forged_continuation[source_seal]"
+      ],
+      "name": "test_r4_forged_continuation",
+      "status": "PASS"
+    },
+    {
+      "case_count": 3,
+      "cases": [
+        "tests/test_grm_x1_reduced.py::test_r4_stale_continuation[scripts/grm_x1_units.py]",
+        "tests/test_grm_x1_reduced.py::test_r4_stale_continuation[scripts/grm_x1_gpu.py]",
+        "tests/test_grm_x1_reduced.py::test_r4_stale_continuation[core/grm_x1_addresses.py]"
+      ],
+      "name": "test_r4_stale_continuation",
+      "status": "PASS"
+    },
+    {
+      "case_count": 1,
+      "cases": [
+        "tests/test_grm_x1_reduced.py::test_r4_historical_bytes"
+      ],
+      "name": "test_r4_historical_bytes",
+      "status": "PASS"
+    },
+    {
+      "case_count": 1,
+      "cases": [
+        "tests/test_grm_x1_reduced.py::test_r4_dry_run_72"
+      ],
+      "name": "test_r4_dry_run_72",
+      "status": "PASS"
+    },
+    {
+      "case_count": 1,
+      "cases": [
+        "tests/test_grm_x1_reduced.py::test_r4_reuse_identical_unit"
+      ],
+      "name": "test_r4_reuse_identical_unit",
+      "status": "PASS"
+    },
+    {
+      "case_count": 1,
+      "cases": [
+        "tests/test_grm_x1_reduced.py::test_r4_unit_definition_drift"
+      ],
+      "name": "test_r4_unit_definition_drift",
+      "status": "PASS"
+    },
+    {
+      "case_count": 1,
+      "cases": [
+        "tests/test_grm_x1_reduced.py::test_r4_create_only"
+      ],
+      "name": "test_r4_create_only",
+      "status": "PASS"
+    },
+    {
+      "case_count": 1,
+      "cases": [
+        "tests/test_grm_x1_reduced.py::test_r4_aggregate_sum"
+      ],
+      "name": "test_r4_aggregate_sum",
+      "status": "PASS"
+    },
+    {
+      "case_count": 1,
+      "cases": [
+        "tests/test_grm_x1_reduced.py::test_r4_resume_next_missing"
+      ],
+      "name": "test_r4_resume_next_missing",
+      "status": "PASS"
+    },
+    {
+      "case_count": 1,
+      "cases": [
+        "tests/test_grm_x1_reduced.py::test_r4_red_advances_second_red_stops"
+      ],
+      "name": "test_r4_red_advances_second_red_stops",
+      "status": "PASS"
+    },
+    {
+      "case_count": 4,
+      "cases": [
+        "tests/test_grm_x1_reduced.py::test_r4_budget[projection]",
+        "tests/test_grm_x1_reduced.py::test_r4_budget[admission]",
+        "tests/test_grm_x1_reduced.py::test_r4_budget[incomplete]",
+        "tests/test_grm_x1_reduced.py::test_r4_budget[timeout]"
+      ],
+      "name": "test_r4_budget",
+      "status": "PASS"
+    },
+    {
+      "case_count": 10,
+      "cases": [
+        "tests/test_grm_x1_reduced.py::test_r4_natural_gate[None]",
+        "tests/test_grm_x1_reduced.py::test_r4_natural_gate[minimum]",
+        "tests/test_grm_x1_reduced.py::test_r4_natural_gate[spread]",
+        "tests/test_grm_x1_reduced.py::test_r4_natural_gate[gain]",
+        "tests/test_grm_x1_reduced.py::test_r4_natural_gate[coverage]",
+        "tests/test_grm_x1_reduced.py::test_r4_natural_gate[fault]",
+        "tests/test_grm_x1_reduced.py::test_r4_natural_gate[retains]",
+        "tests/test_grm_x1_reduced.py::test_r4_natural_gate[incomplete]",
+        "tests/test_grm_x1_reduced.py::test_r4_natural_gate[duplicate]",
+        "tests/test_grm_x1_reduced.py::test_r4_natural_gate[natural_missing]"
+      ],
+      "name": "test_r4_natural_gate",
+      "status": "PASS"
+    },
+    {
+      "case_count": 8,
+      "cases": [
+        "tests/test_grm_x1_reduced.py::test_r4_served_text_classes[I\\u2019m sorry, but I can\\u2019t help with that.-False-refusal-style]",
+        "tests/test_grm_x1_reduced.py::test_r4_served_text_classes[I'm sorry, but I can't help with that-False-refusal-style]",
+        "tests/test_grm_x1_reduced.py::test_r4_served_text_classes[I cannot assist with your request.-False-refusal-style]",
+        "tests/test_grm_x1_reduced.py::test_r4_served_text_classes[I cannot answer-True-abstention]",
+        "tests/test_grm_x1_reduced.py::test_r4_served_text_classes[I cannot answer from the mounted memory: PAGE_FAULT.-True-abstention]",
+        "tests/test_grm_x1_reduced.py::test_r4_served_text_classes[cobalt-3-comet-False-answer]",
+        "tests/test_grm_x1_reduced.py::test_r4_served_text_classes[I cannot help with that. cobalt-3-comet-False-answer]",
+        "tests/test_grm_x1_reduced.py::test_r4_served_text_classes[The answer contains the words I cannot help with that.-False-answer]"
+      ],
+      "name": "test_r4_served_text_classes",
+      "status": "PASS"
+    },
+    {
+      "case_count": 2,
+      "cases": [
+        "tests/test_grm_x1_reduced.py::test_r4_worker_cpu[False]",
+        "tests/test_grm_x1_reduced.py::test_r4_worker_cpu[True]"
+      ],
+      "name": "test_r4_worker_cpu",
+      "status": "PASS"
+    },
+    {
+      "case_count": 4,
+      "cases": [
+        "tests/test_grm_x1_reduced.py::test_r4_lead_loop[normal-71-0]",
+        "tests/test_grm_x1_reduced.py::test_r4_lead_loop[budget-1-2]",
+        "tests/test_grm_x1_reduced.py::test_r4_lead_loop[locked-24-0]",
+        "tests/test_grm_x1_reduced.py::test_r4_lead_loop[stop-1-1]"
+      ],
+      "name": "test_r4_lead_loop",
+      "status": "PASS"
+    }
+  ]
+}

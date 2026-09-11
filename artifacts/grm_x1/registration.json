@@ -1,0 +1,131 @@
+{
+  "arms": {
+    "A": "Unmodified EB1 arena.step, addresses OFF",
+    "B": "Exact fixture address -> current pages -> native _attempt; absent/invalid mount falls back to A",
+    "C": "B with structural PAGE_FAULT abstention before generation on absent/invalid mount",
+    "N": "Conditional C with frozen unique token-span dictionary resolver; no per-query oracle lookup"
+  },
+  "author": {
+    "model": "GPT-6 (system identity; exact deployment ID unavailable)",
+    "reasoning_effort": "not exposed; not inferred"
+  },
+  "budget": {
+    "all_gpu_s_max": 2565,
+    "conditional_cells": 3,
+    "cooldown_s": 30,
+    "lock_wait_s": 250,
+    "order_gpu_s_max": 2700,
+    "outer_cap_s": 590,
+    "primary_cells": 6,
+    "primary_gpu_s_max": 1710,
+    "resume": "one next eligible cell per foreground invocation; never an unbounded loop",
+    "timeout": "Worker self SIGALRM raises TimeoutError; no external signals or kill. Non-returning native calls cannot be hard-preempted without violating never-kill; residual explicitly RED.",
+    "worker_cap_s": 285
+  },
+  "created_utc": "2026-09-08",
+  "evidence_class": "reasoning: pre-gate registration",
+  "fixture_contract": {
+    "absence": "Same query, remove ALL target-current-version pages from eligible mounted set. Keep oracle version pointer and stale/decoy pages. Also CPU-test unknown address and partial page sets.",
+    "alias": 12,
+    "census_decoy_limit": "Census controls reuse existing Falcon competitor verbatim; it does not name every census target. Report source-stratified results.",
+    "correction": 12,
+    "decoys": "Exactly m additional children per target's existing competitor family; cycle native width-split children in source order. Original children remain. Shared immutable K/V backing, distinct IDs and metadata; no new harvest for duplicates.",
+    "families": 13,
+    "held_out": "New query wording, frozen before tests; existing values/documents are NOT held-out entities or unseen facts. No fitting on these queries.",
+    "multiplicity": [
+      1,
+      10,
+      100
+    ],
+    "pairing": "seed 20260908; balanced rotation A/B/C by query index and condition; reset repository/cache and RNG before every arm from shared native payload snapshot; no query answer deposits",
+    "queries": 24
+  },
+  "fixture_manifest_sha": "cbca6284ffd48ec22e10dcf5be48b9e7992f4eb26e7553765161837ef9d0d869",
+  "fixture_shas": {
+    "artifacts/grm_x1/fixtures/aliases.json": "7fe07f19dec9ca1a579ee8a384e3bcb650f24e33d132ca6eac0369ac08f149d4",
+    "artifacts/grm_x1/fixtures/cells.json": "aa8bc47894492743ea24d13c4a4b0b0e372c72e3ff4cebe43c97c83d19166e59",
+    "artifacts/grm_x1/fixtures/families.json": "a7078fb17e89c80a28a1f7ff1d464a1633f11ba58250972d44f6a455e4900e41",
+    "artifacts/grm_x1/fixtures/queries.json": "49059487a8f75ed983f07e248feba6f3850fe54e6b60cb1c56c6c219950df76a",
+    "artifacts/grm_x1/fixtures/sources/census_events.json": "7241151e1953b06cdfbfa3ff2290c03db1377b1f4f26dd245c52b72075dde9dc",
+    "artifacts/grm_x1/fixtures/sources/correction_then_restatement.json": "ea97d4007d66357442f0424f76200984e8c2f39311618a4b892e88db9ad90f4b",
+    "artifacts/grm_x1/fixtures/sources/fresh_fact_controls.json": "9b75e1e4f70d77524d7d099f1416ae34ea3cafc149e749e26e7a5dd47b298d75",
+    "artifacts/grm_x1/fixtures/sources/multi_hop_a_b_c.json": "036f291dc4f91d7e38b23d033f97d45b8d4b1176afa1741624f7728355a13d90",
+    "artifacts/grm_x1/fixtures/sources/short_correction_long_competitor.json": "c06decbe127dd228bdf6529b002ccdaaf5f628addda003692e5e49d9e47c1221"
+  },
+  "frame": {
+    "adm_decisive": true,
+    "arena_width": 96,
+    "capture_pin": "live",
+    "demand_ngh": false,
+    "demand_note": "Production D-NGH default OFF, threshold config frozen unchanged. Count structural X1 demands separately; no attention telemetry.",
+    "ephemeral": true,
+    "lsr_fixes": true,
+    "max_trips": 2,
+    "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "model_id": "openai/gpt-oss-20b",
+    "native_lib": "/mnt/ForgeRealm/GraftRepository/cpp/build/libgrm_runtime.so",
+    "ngen": 24,
+    "reasoning_effort": "low (existing Harmony sink)",
+    "seat_near_live": true,
+    "storage_bits": 8,
+    "sup_resolve": true,
+    "topk": 3
+  },
+  "lead_predictions": {
+    "P1": "A present exact(1)-exact(100) >= 0.20",
+    "P2": "B present max exact-min exact across 1,10,100 <= 0.05",
+    "P3": "C all-condition false(100) <= 0.5*A all-condition false(100); requires A false > 0",
+    "P4": "B/A and C/A mean wall-per-turn ratios at each multiplicity in [0.90,1.10]"
+  },
+  "order": "orders/GRM_X1_VIRTUAL_ADDRESSES.md",
+  "prior_art": {
+    "Codd 1970": "logical relational identity; https://doi.org/10.1145/362384.362685; bibliography checked via ACM SIGMOD",
+    "Denning 1968": "bounded working sets/page absence; https://denninginstitute.com/pjd/PUBS/WSModel_1968.pdf (primary source checked)",
+    "Fisher 1935": "blocked paired experiment; unverified — lead to check: The Design of Experiments",
+    "Reed 1978": "multiversion indirection; unverified — lead to check: Naming and Synchronization in a Decentralized Computer System",
+    "Unicode UAX15": "NFKC normalization; unverified — lead to check: Unicode normalization annex 15",
+    "house 2026": "reuse EB1/SUP/RT1/RS3/RS4 and census; new work is additive address contract and this registered comparison, no novelty claim"
+  },
+  "rails": {
+    "blind_verification": "Lead dispatch required; author does not select or launch verifier",
+    "cpu": [
+      "X1 invariant tests",
+      "existing RT1 and RS3 frame tests",
+      "fixture hash/content checks",
+      "dry-run every cell",
+      "mutants killed >=0.80 after passing baseline"
+    ],
+    "failures": "Any worker failure/incomplete receipt stops resume; no automatic retry or new fingerprint campaign. Amendment/lead decision required.",
+    "kill": "With exact addresses: selection depends on decoy ranking (coverage changes/missing under present) OR B present spread>0.05. Natural: N loses >0.05 exact or advantage over A100 <0.20. Strict empirical rail; thin paired sample is not a universal refutation.",
+    "natural_unlock": "Only oracle_positive; no override. If oracle null/negative, natural is NOT RUN.",
+    "oracle_positive": "All 6 cells complete, B present min exact >=0.80, spread<=0.05, B100-A100>=0.20, C absent false=0, C present>=B present-0.05 at every m, B/C present mount address coverage=1"
+  },
+  "schema": "grm.x1.registration.v1",
+  "scoring": {
+    "abstention": "Structural X1 fault, production abstain info, or registered full-string refusal vocabulary; no substring refusal escape",
+    "abstention_correctness": "correct abstentions/all abstentions; null when none. Also report absent recall and present false abstention rate",
+    "demand": "structural address misses counted separately from D-NGH demand_fired (OFF); no fabricated telemetry",
+    "exact": "Full answer strip, casefold, normalized Unicode dash/whitespace, remove outer quotes and terminal . only; equality to expected value. Present denominator only.",
+    "false_answer": "Any non-abstaining non-exact present answer, or any non-abstaining absent answer. Conservative: verbose correct answers still fail strict exact; record value-match diagnostic separately.",
+    "wall": "GPU synchronize outside/inside timed turn boundaries; exclude reset, install, load, scoring. Raw per-turn rows plus per-condition and all-condition means"
+  },
+  "seat_predictions": {
+    "S1": "A present decline < 0.20: existing RT1 may already resist duplicate children",
+    "S2": "B present exact spread <= 0.05, but correctly mounted read errors may persist",
+    "S3": "C absent false rate = 0 and structural abstention correctness = 1; no generation on fault",
+    "S4": "B/C mean wall no more than 1.10*A; C may be faster than the P4 lower bound",
+    "S5": "N present exact >= C present exact-0.05, limited to the frozen dictionary aliases"
+  },
+  "source_shas": {
+    "config/grm_demand_registered.json": "1408d0b1c2ecd91ce89172add0f7d25248953f55e0dd1594cf8d54eab8a14a98",
+    "config/grm_live_registered_baselines.json": "48609fa2e179c14401c4cbeb35c03157a8d8b241af90f15ae9568b23826da708",
+    "docs/GRM_SCOUT_2026-09-08.md": "edfec33a6af463d851f85c5ca7775b854ec254bf49906610fd94d732ebfaef39",
+    "orders/GRM_X1_VIRTUAL_ADDRESSES.md": "027be67c6353b5b33a45d3718599a6b6feef337f413788821aa3490ab7daeaed",
+    "scripts/grm_e2e_session.py": "74434dbb750e8e7635afa2f55709ae0533a3562f5b63aa54fc1f81d664bfd450",
+    "scripts/grm_x1_register.py": "bedb423411063f15eec06b2c8538799188dc026370471521646fb42ab351f1f1",
+    "tests/fixtures/supersession_battery/correction_then_restatement.json": "ea97d4007d66357442f0424f76200984e8c2f39311618a4b892e88db9ad90f4b",
+    "tests/fixtures/supersession_battery/fresh_fact_controls.json": "9b75e1e4f70d77524d7d099f1416ae34ea3cafc149e749e26e7a5dd47b298d75",
+    "tests/fixtures/supersession_battery/multi_hop_a_b_c.json": "036f291dc4f91d7e38b23d033f97d45b8d4b1176afa1741624f7728355a13d90",
+    "tests/fixtures/supersession_battery/short_correction_long_competitor.json": "c06decbe127dd228bdf6529b002ccdaaf5f628addda003692e5e49d9e47c1221"
+  }
+}

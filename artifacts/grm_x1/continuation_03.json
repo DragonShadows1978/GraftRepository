@@ -1,0 +1,3007 @@
+{
+  "bindings": {
+    "artifacts/grm_x1/claims/oracle_m1_s0_bf923a9ccb4f06a8d2ae643cb2727de5f7c116304febf429f71a2da7e9087121.json": "9c9cae3c19950137c6c1ab181a333f84fa3961e1a5f85d46f97ac291583906b5",
+    "artifacts/grm_x1/claims/r2/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20.json": "33dd12225d99b3c2cd325f50f02a170b32f6f2b91bb44b572c245793846af2f4",
+    "artifacts/grm_x1/continuation_02.json": "a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20",
+    "artifacts/grm_x1/continuation_02_registration.json": "26dc26ddae0e505421c192a0b15ed89ad8d83b7589bc4e518054fcb3a726b293",
+    "artifacts/grm_x1/continuation_03_registration.json": "0262299553a7123b297488383de9cfd4bf3922a1195e9f23e7068ac4f00a4729",
+    "artifacts/grm_x1/handoff_manifest.json": "bf923a9ccb4f06a8d2ae643cb2727de5f7c116304febf429f71a2da7e9087121",
+    "artifacts/grm_x1/payload_amendment_01_handoff.json": "e208379019aa2dc59091def442b3cb9eae5923af4e8aeecc20f605cef22cae4b",
+    "artifacts/grm_x1/receipts/continuation_02_gates.json": "92bce1182cfad72d49d793bbf9e37963764a05dd10990030324e3ea96a4fedeb",
+    "artifacts/grm_x1/receipts/continuation_02_lead_checks.json": "35b8efdeabdeee9f4502bb43e7a8094596f3ddc42244d9aaff5d515aca0ce000",
+    "artifacts/grm_x1/receipts/controller_a506c79ed4cdf46b347ab7392d828d26bddf999686513846ebcb136854b06882.json": "a506c79ed4cdf46b347ab7392d828d26bddf999686513846ebcb136854b06882",
+    "artifacts/grm_x1/receipts/cpu_baseline_33650dfe7eeb39c929150efe1a705981e5723077376b91d7800f25f19235c8a4.json": "33650dfe7eeb39c929150efe1a705981e5723077376b91d7800f25f19235c8a4",
+    "artifacts/grm_x1/receipts/cpu_baseline_6d40d49c1487aabf745aadd1bda77e4e7f83b2cdb834fdcc1380400ea7d474d0.json": "6d40d49c1487aabf745aadd1bda77e4e7f83b2cdb834fdcc1380400ea7d474d0",
+    "artifacts/grm_x1/receipts/cpu_baseline_b1a5012ed9e8c8d294b710e1a02731a93e153a354b20d4a09d650a7d3eeb222c.json": "b1a5012ed9e8c8d294b710e1a02731a93e153a354b20d4a09d650a7d3eeb222c",
+    "artifacts/grm_x1/receipts/cpu_baseline_cbb1b285a457ec672461c6580f8c891b46b63eb12e5d3474656fd8fd6bb32bd1.json": "cbb1b285a457ec672461c6580f8c891b46b63eb12e5d3474656fd8fd6bb32bd1",
+    "artifacts/grm_x1/receipts/cpu_baseline_d28bc39096c2a9498530bb8f27a0503364c07f330bca9ea3990571bb07f2a393.json": "d28bc39096c2a9498530bb8f27a0503364c07f330bca9ea3990571bb07f2a393",
+    "artifacts/grm_x1/receipts/cpu_mutations_03998a4e42aa129fd0dc58cb12fe6cf94613ba311a6a57ff5948dfff1932e846.json": "03998a4e42aa129fd0dc58cb12fe6cf94613ba311a6a57ff5948dfff1932e846",
+    "artifacts/grm_x1/receipts/cpu_mutations_7112056e61db4558269ca982c03c15f6b843b44228bd749a68dc87905206e4b8.json": "7112056e61db4558269ca982c03c15f6b843b44228bd749a68dc87905206e4b8",
+    "artifacts/grm_x1/receipts/cpu_mutations_b940a51b38035709415ba52c331f90f51d8fa3626933be2e9b35ea537c952154.json": "b940a51b38035709415ba52c331f90f51d8fa3626933be2e9b35ea537c952154",
+    "artifacts/grm_x1/receipts/cpu_mutations_ea64e5341fdffd12fa2079dd4505815b661da1a3aa5f86c1d9c3ab1ec34125bd.json": "ea64e5341fdffd12fa2079dd4505815b661da1a3aa5f86c1d9c3ab1ec34125bd",
+    "artifacts/grm_x1/receipts/cpu_pytest_08ae49c9c4c2dc2f8070b2e086cbf2b2c7b5ea7d75a813bd595f0e1e1eb3e81a.json": "08ae49c9c4c2dc2f8070b2e086cbf2b2c7b5ea7d75a813bd595f0e1e1eb3e81a",
+    "artifacts/grm_x1/receipts/cpu_pytest_2f54a3cf1d61d7d94d3be10c874187c0bf1f3bc443bae7b3b4c9f0140ede1396.json": "2f54a3cf1d61d7d94d3be10c874187c0bf1f3bc443bae7b3b4c9f0140ede1396",
+    "artifacts/grm_x1/receipts/cpu_pytest_960aa2d5c8e5a2d11473495832549f08ae0cedd5fb258f4a9e3093ddd573614f.json": "960aa2d5c8e5a2d11473495832549f08ae0cedd5fb258f4a9e3093ddd573614f",
+    "artifacts/grm_x1/receipts/cpu_pytest_c0783512f6b00c202d591999ef3a8277214fd85054012e1c17f434333e8782f6.json": "c0783512f6b00c202d591999ef3a8277214fd85054012e1c17f434333e8782f6",
+    "artifacts/grm_x1/receipts/cpu_pytest_d805cdafaed8b580f1d31384860f015364d7ec0248988dec5c63ca1814ddd74a.json": "d805cdafaed8b580f1d31384860f015364d7ec0248988dec5c63ca1814ddd74a",
+    "artifacts/grm_x1/receipts/gpu_oracle_m1_s0_0c1bf61590059cad2b207f0edef2da421f64639f69c41d4b6282cc7ba3c35bba.json": "0c1bf61590059cad2b207f0edef2da421f64639f69c41d4b6282cc7ba3c35bba",
+    "artifacts/grm_x1/receipts/payload_amendment_01_handoff_check.json": "60dc1e31471d934d205d8aff7c52da52474d46bcdcdc0994873dcad5ced8343d",
+    "artifacts/grm_x1/receipts/payload_amendment_01_reproduction.json": "400043f44c83d435eed2442764ae109f05e05d130801282ce59618cc6c8e454a",
+    "artifacts/grm_x1/receipts/r2/controller_04b12f34d8e2eef0594878be3bab09a8841cff25cfebf66f1cd0e10944f6525a.json": "04b12f34d8e2eef0594878be3bab09a8841cff25cfebf66f1cd0e10944f6525a",
+    "artifacts/grm_x1/receipts/r2/gpu_oracle_m1_s0_374c534e547b8d9116d7d43fe5cfedd5f44fd9c81af007714286440f4fe1bf7c.json": "374c534e547b8d9116d7d43fe5cfedd5f44fd9c81af007714286440f4fe1bf7c",
+    "artifacts/grm_x1/registration.json": "defb5014f6ee66113139c1ca3fe902f9bdc51fb81d137cbc0a47e5d06f8f3e57",
+    "orders/GRM_X1_AMENDMENT_2.md": "f8d29fba246fbbc6f30495d1b430c86ec2004fb5022bb4b443f8d38e3dc2445c",
+    "orders/GRM_X1_AMENDMENT_3.md": "64be22e16eb6855a2a7190cd983d1fabb7bf098e48479236feb56a19541dbfc4"
+  },
+  "budget": {
+    "accounting": "Completed r3 leases charged measured worker wall; incomplete claims charged full 285; require room for 285 before each lease.",
+    "gpu_hours": 1.5,
+    "historical_consumed_s": 570,
+    "planning": "144 * first successful unit wall + 570; exceed => NON_FIT_BUDGET, stop pending lead. Also project remaining units after later actual costs.",
+    "total_s": 5400
+  },
+  "claim_directory": "artifacts/grm_x1/claims/r3",
+  "evidence_class": "reasoning: registration before CPU gates, no GPU execution",
+  "failure_policy": "One RED receipt consumes unit and normal resume advances. Timeout => RED with NON_FIT; no forward chunking. Explicit retry-unit only for non-timeout RED once; second RED stops campaign. Incomplete claim stops pending lead, never auto-retry.",
+  "historical_files": {
+    "artifacts/grm_x1/claims/oracle_m1_s0_bf923a9ccb4f06a8d2ae643cb2727de5f7c116304febf429f71a2da7e9087121.json": "9c9cae3c19950137c6c1ab181a333f84fa3961e1a5f85d46f97ac291583906b5",
+    "artifacts/grm_x1/claims/r2/oracle_m1_s0_a49cd7a3453fde39c5a8b575fa0a0e92d5d134c2fc948b362ba8dab362204c20.json": "33dd12225d99b3c2cd325f50f02a170b32f6f2b91bb44b572c245793846af2f4",
+    "artifacts/grm_x1/receipts/continuation_02_gates.json": "92bce1182cfad72d49d793bbf9e37963764a05dd10990030324e3ea96a4fedeb",
+    "artifacts/grm_x1/receipts/continuation_02_lead_checks.json": "35b8efdeabdeee9f4502bb43e7a8094596f3ddc42244d9aaff5d515aca0ce000",
+    "artifacts/grm_x1/receipts/controller_a506c79ed4cdf46b347ab7392d828d26bddf999686513846ebcb136854b06882.json": "a506c79ed4cdf46b347ab7392d828d26bddf999686513846ebcb136854b06882",
+    "artifacts/grm_x1/receipts/cpu_baseline_33650dfe7eeb39c929150efe1a705981e5723077376b91d7800f25f19235c8a4.json": "33650dfe7eeb39c929150efe1a705981e5723077376b91d7800f25f19235c8a4",
+    "artifacts/grm_x1/receipts/cpu_baseline_6d40d49c1487aabf745aadd1bda77e4e7f83b2cdb834fdcc1380400ea7d474d0.json": "6d40d49c1487aabf745aadd1bda77e4e7f83b2cdb834fdcc1380400ea7d474d0",
+    "artifacts/grm_x1/receipts/cpu_baseline_b1a5012ed9e8c8d294b710e1a02731a93e153a354b20d4a09d650a7d3eeb222c.json": "b1a5012ed9e8c8d294b710e1a02731a93e153a354b20d4a09d650a7d3eeb222c",
+    "artifacts/grm_x1/receipts/cpu_baseline_cbb1b285a457ec672461c6580f8c891b46b63eb12e5d3474656fd8fd6bb32bd1.json": "cbb1b285a457ec672461c6580f8c891b46b63eb12e5d3474656fd8fd6bb32bd1",
+    "artifacts/grm_x1/receipts/cpu_baseline_d28bc39096c2a9498530bb8f27a0503364c07f330bca9ea3990571bb07f2a393.json": "d28bc39096c2a9498530bb8f27a0503364c07f330bca9ea3990571bb07f2a393",
+    "artifacts/grm_x1/receipts/cpu_mutations_03998a4e42aa129fd0dc58cb12fe6cf94613ba311a6a57ff5948dfff1932e846.json": "03998a4e42aa129fd0dc58cb12fe6cf94613ba311a6a57ff5948dfff1932e846",
+    "artifacts/grm_x1/receipts/cpu_mutations_7112056e61db4558269ca982c03c15f6b843b44228bd749a68dc87905206e4b8.json": "7112056e61db4558269ca982c03c15f6b843b44228bd749a68dc87905206e4b8",
+    "artifacts/grm_x1/receipts/cpu_mutations_b940a51b38035709415ba52c331f90f51d8fa3626933be2e9b35ea537c952154.json": "b940a51b38035709415ba52c331f90f51d8fa3626933be2e9b35ea537c952154",
+    "artifacts/grm_x1/receipts/cpu_mutations_ea64e5341fdffd12fa2079dd4505815b661da1a3aa5f86c1d9c3ab1ec34125bd.json": "ea64e5341fdffd12fa2079dd4505815b661da1a3aa5f86c1d9c3ab1ec34125bd",
+    "artifacts/grm_x1/receipts/cpu_pytest_08ae49c9c4c2dc2f8070b2e086cbf2b2c7b5ea7d75a813bd595f0e1e1eb3e81a.json": "08ae49c9c4c2dc2f8070b2e086cbf2b2c7b5ea7d75a813bd595f0e1e1eb3e81a",
+    "artifacts/grm_x1/receipts/cpu_pytest_2f54a3cf1d61d7d94d3be10c874187c0bf1f3bc443bae7b3b4c9f0140ede1396.json": "2f54a3cf1d61d7d94d3be10c874187c0bf1f3bc443bae7b3b4c9f0140ede1396",
+    "artifacts/grm_x1/receipts/cpu_pytest_960aa2d5c8e5a2d11473495832549f08ae0cedd5fb258f4a9e3093ddd573614f.json": "960aa2d5c8e5a2d11473495832549f08ae0cedd5fb258f4a9e3093ddd573614f",
+    "artifacts/grm_x1/receipts/cpu_pytest_c0783512f6b00c202d591999ef3a8277214fd85054012e1c17f434333e8782f6.json": "c0783512f6b00c202d591999ef3a8277214fd85054012e1c17f434333e8782f6",
+    "artifacts/grm_x1/receipts/cpu_pytest_d805cdafaed8b580f1d31384860f015364d7ec0248988dec5c63ca1814ddd74a.json": "d805cdafaed8b580f1d31384860f015364d7ec0248988dec5c63ca1814ddd74a",
+    "artifacts/grm_x1/receipts/gpu_oracle_m1_s0_0c1bf61590059cad2b207f0edef2da421f64639f69c41d4b6282cc7ba3c35bba.json": "0c1bf61590059cad2b207f0edef2da421f64639f69c41d4b6282cc7ba3c35bba",
+    "artifacts/grm_x1/receipts/payload_amendment_01_handoff_check.json": "60dc1e31471d934d205d8aff7c52da52474d46bcdcdc0994873dcad5ced8343d",
+    "artifacts/grm_x1/receipts/payload_amendment_01_reproduction.json": "400043f44c83d435eed2442764ae109f05e05d130801282ce59618cc6c8e454a",
+    "artifacts/grm_x1/receipts/r2/controller_04b12f34d8e2eef0594878be3bab09a8841cff25cfebf66f1cd0e10944f6525a.json": "04b12f34d8e2eef0594878be3bab09a8841cff25cfebf66f1cd0e10944f6525a",
+    "artifacts/grm_x1/receipts/r2/gpu_oracle_m1_s0_374c534e547b8d9116d7d43fe5cfedd5f44fd9c81af007714286440f4fe1bf7c.json": "374c534e547b8d9116d7d43fe5cfedd5f44fd9c81af007714286440f4fe1bf7c"
+  },
+  "lead_commands_sha256": "dbe6cd0c5d5a1539bf84b92a776d18e0748de2318088a8abd3b7342cf20bca2d",
+  "rails": {
+    "cooldown_s": 30,
+    "lock_wait_s": 250,
+    "outer_s": 590,
+    "work_alarm_s": 280,
+    "worker_s": 285
+  },
+  "receipt_directory": "artifacts/grm_x1/receipts/r3",
+  "schema": "grm.x1.continuation.v3",
+  "sources": {
+    "artifacts/grm_x1/cpu_mutation_registration.json": "3634eace71e86c2598c5e690cf628a0327a9247dabccd88991f82b6562f1c939",
+    "artifacts/grm_x1/fixture_amendment_01.json": "2bac1548aa8da82fe8a224e94550b96dfb4810da51e3a565d5dd3ebb969721ea",
+    "core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "core/deepseek_v2_lite_tc.py": "96e371754496eb2ca467ad199bebed07c354cf5eae4b0a08daf571c6f04f0d07",
+    "core/gemma4_tc.py": "c9a8cc1d01c30bb2b20e9c2e477d4bedf21072d0b1b6b157f3ba75c78a271d8b",
+    "core/gpt_oss20b_tc.py": "da8ca3bc8c961d731d9e32bf4558702ad1b8b10c8ecc37b18326e7df4ade74a1",
+    "core/graft_arena.py": "e03a44b5e0155fc10a0be5c56e66e117c768a67993fab76df3ecf3aa62cdb20b",
+    "core/graft_quant.py": "ebe40790286a719db38de403210aa20e17e7e4d2699f7b7dae452e014f4fa130",
+    "core/graft_repository.py": "e0a0fc777d3c0f535ec915238390d7c1f1a6d43e927976351b8441a1b1358e89",
+    "core/grm_admission.py": "62510861b5b1a33af375a4120d78351d2f880b2618a5462c1776a073f3f2d00f",
+    "core/grm_cuda_router.py": "8dfd7a6ff5395eb846996c67b1570c9fb0e8b26dd78e84f28059f1b291766ce5",
+    "core/grm_demand.py": "2fd50307650af0c72c19ecb4f7ce6eb11c3bbf9d5b3439905007b87857b195b3",
+    "core/grm_frame.py": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2",
+    "core/grm_native.py": "1f5a69716d751c670f37328cf012544b800f86226ad4549a0781bac654aaf3df",
+    "core/grm_runtime.py": "39f823cbdb98e32528fb5240777cb8c0144f3be77fa86466a67f1f636505c13e",
+    "core/grm_supersession.py": "c8e9baf7c69e41ebdcf05fda84a2895ed7d2b6f7ff67903fdb655924510fdd5e",
+    "core/grm_text_norm.py": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8",
+    "core/grm_three_pass.py": "71e0e4f8503d4e132101fc79cce9d64daf399ffe73892e2f0102c8568d0ec0f3",
+    "core/grm_x1_addresses.py": "90ef90820023621cebf1b3f22eb8d243cd7f149d87a80d8a496eed0941ca3fa7",
+    "core/kv_graft.py": "d8d44d032c5398c4606b1b6f1b547a94baa2415e36225cb04dd6ef313622ef2d",
+    "core/minicpm3_tc.py": "3d19734f51d28eb48dc20a62658f2bfc250fdac4fce2cb906116d034b1371a69",
+    "core/mistral7b_tc.py": "49430e5920508d740a2f8be7b6ba0caadd0442c7798454cf6fa2a808204bf1c4",
+    "core/paging_telemetry.py": "4eb484b1f6b512962b18d08cb714dd61346980a8af550c1fd814bcbad474097c",
+    "core/qwen35_tc.py": "3f84f8e99f5cf8932440e5d6ff29df41cbf3fdaf13d27f3bbe8fb1dc3a7ec41b",
+    "core/qwen35_translation_poc.py": "5a7f364aa7a4ff24bb9299671fc945626037cff44595f0b80364ebe9d1cfa3d1",
+    "core/qwen38_tc.py": "39875f97f09906ccdfcdf6f510c9ed2f7cad01e85007363a8d7ad00869f9d67e",
+    "core/qwen3_1p7b_tc.py": "1a563f502753a86b57abff8710440ae0e1921ed083481dee8232872704093c0f",
+    "core/qwen3_tc.py": "ba0e2d9ab68716922b9f942bc4bb8cd2c4a791abe2a2fabd42a65799212d95aa",
+    "core/qwen_tc.py": "1353e44f727fc24d1638e4e238d160619fea561602c921259b010af5f63478e3",
+    "scripts/grm_e2e_session.py": "74434dbb750e8e7635afa2f55709ae0533a3562f5b63aa54fc1f81d664bfd450",
+    "scripts/grm_probe_ladder.py": "d1ad0ad74ba522b96c39c634c86ba3292b887af39321f7fc105a62f82fa26d0d",
+    "scripts/grm_x1_campaign.py": "7cdd065e82e31f19eb665a5d758b122ea612337b5f5160bb480f9a3043f0274f",
+    "scripts/grm_x1_cpu.py": "6f255f97ba3e8d673ac5a3dbd60075bb55b72eaf6a5d49ff44c5d5a5afec60cd",
+    "scripts/grm_x1_gpu.py": "1831261b5274981cf8383a246c3737c427591b4a098a176ddea899696645405f",
+    "scripts/grm_x1_lead_gpu.sh": "f711ae7852b18e2e477dadee93c88bba2e5f19ad030221c69b3cc35d62450b43",
+    "scripts/grm_x1_register.py": "bedb423411063f15eec06b2c8538799188dc026370471521646fb42ab351f1f1",
+    "scripts/grm_x1_units.py": "b0b01c5348ef7b043dbd3befd8498654ad769ec2c7950ce64c28427e7da1908c",
+    "tests/test_grm_x1_addresses.py": "a3adcceae308d13e1096b6d58c992a1bbf608ed4b68d91ffbc78dc11f2c1eb95",
+    "tests/test_grm_x1_campaign.py": "7a6361605bbd808d353c15307b00bcf0f93da17154856ae70bdf04756e0cc9a6",
+    "tests/test_grm_x1_units.py": "2daf8b7c36e0c6ca6c84c45469003dc57bb423334f24ca452000cc388f6d7523"
+  },
+  "unit_scheme": "One query per unit, original global query ordinal and cell query order. All registered arms and conditions share an in-unit capture; fresh model per lease. 12 per oracle cell, 24 per conditional natural cell; 144 total.",
+  "units": [
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_00"
+      ],
+      "query_ordinal": 0,
+      "unit_id": "oracle_m1_s0__alias_00",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_02"
+      ],
+      "query_ordinal": 2,
+      "unit_id": "oracle_m1_s0__alias_02",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_solace",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_04"
+      ],
+      "query_ordinal": 4,
+      "unit_id": "oracle_m1_s0__alias_04",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_cypher",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_06"
+      ],
+      "query_ordinal": 6,
+      "unit_id": "oracle_m1_s0__alias_06",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_08"
+      ],
+      "query_ordinal": 8,
+      "unit_id": "oracle_m1_s0__alias_08",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_ember",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_10"
+      ],
+      "query_ordinal": 10,
+      "unit_id": "oracle_m1_s0__alias_10",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_00"
+      ],
+      "query_ordinal": 12,
+      "unit_id": "oracle_m1_s0__correction_00",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_02"
+      ],
+      "query_ordinal": 14,
+      "unit_id": "oracle_m1_s0__correction_02",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_04"
+      ],
+      "query_ordinal": 16,
+      "unit_id": "oracle_m1_s0__correction_04",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_orion",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_06"
+      ],
+      "query_ordinal": 18,
+      "unit_id": "oracle_m1_s0__correction_06",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_08"
+      ],
+      "query_ordinal": 20,
+      "unit_id": "oracle_m1_s0__correction_08",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_10"
+      ],
+      "query_ordinal": 22,
+      "unit_id": "oracle_m1_s0__correction_10",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_01"
+      ],
+      "query_ordinal": 1,
+      "unit_id": "oracle_m1_s1__alias_01",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_praxis",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_03"
+      ],
+      "query_ordinal": 3,
+      "unit_id": "oracle_m1_s1__alias_03",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_05"
+      ],
+      "query_ordinal": 5,
+      "unit_id": "oracle_m1_s1__alias_05",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_nova",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_07"
+      ],
+      "query_ordinal": 7,
+      "unit_id": "oracle_m1_s1__alias_07",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_terra",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_09"
+      ],
+      "query_ordinal": 9,
+      "unit_id": "oracle_m1_s1__alias_09",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_atlas",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_11"
+      ],
+      "query_ordinal": 11,
+      "unit_id": "oracle_m1_s1__alias_11",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_01"
+      ],
+      "query_ordinal": 13,
+      "unit_id": "oracle_m1_s1__correction_01",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_03"
+      ],
+      "query_ordinal": 15,
+      "unit_id": "oracle_m1_s1__correction_03",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_05"
+      ],
+      "query_ordinal": 17,
+      "unit_id": "oracle_m1_s1__correction_05",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_orion",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_07"
+      ],
+      "query_ordinal": 19,
+      "unit_id": "oracle_m1_s1__correction_07",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_09"
+      ],
+      "query_ordinal": 21,
+      "unit_id": "oracle_m1_s1__correction_09",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m1_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 1,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_11"
+      ],
+      "query_ordinal": 23,
+      "unit_id": "oracle_m1_s1__correction_11",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_00"
+      ],
+      "query_ordinal": 0,
+      "unit_id": "oracle_m10_s0__alias_00",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_02"
+      ],
+      "query_ordinal": 2,
+      "unit_id": "oracle_m10_s0__alias_02",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_solace",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_04"
+      ],
+      "query_ordinal": 4,
+      "unit_id": "oracle_m10_s0__alias_04",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_cypher",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_06"
+      ],
+      "query_ordinal": 6,
+      "unit_id": "oracle_m10_s0__alias_06",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_08"
+      ],
+      "query_ordinal": 8,
+      "unit_id": "oracle_m10_s0__alias_08",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_ember",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_10"
+      ],
+      "query_ordinal": 10,
+      "unit_id": "oracle_m10_s0__alias_10",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_00"
+      ],
+      "query_ordinal": 12,
+      "unit_id": "oracle_m10_s0__correction_00",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_02"
+      ],
+      "query_ordinal": 14,
+      "unit_id": "oracle_m10_s0__correction_02",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_04"
+      ],
+      "query_ordinal": 16,
+      "unit_id": "oracle_m10_s0__correction_04",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_orion",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_06"
+      ],
+      "query_ordinal": 18,
+      "unit_id": "oracle_m10_s0__correction_06",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_08"
+      ],
+      "query_ordinal": 20,
+      "unit_id": "oracle_m10_s0__correction_08",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_10"
+      ],
+      "query_ordinal": 22,
+      "unit_id": "oracle_m10_s0__correction_10",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_01"
+      ],
+      "query_ordinal": 1,
+      "unit_id": "oracle_m10_s1__alias_01",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_praxis",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_03"
+      ],
+      "query_ordinal": 3,
+      "unit_id": "oracle_m10_s1__alias_03",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_05"
+      ],
+      "query_ordinal": 5,
+      "unit_id": "oracle_m10_s1__alias_05",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_nova",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_07"
+      ],
+      "query_ordinal": 7,
+      "unit_id": "oracle_m10_s1__alias_07",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_terra",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_09"
+      ],
+      "query_ordinal": 9,
+      "unit_id": "oracle_m10_s1__alias_09",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_atlas",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_11"
+      ],
+      "query_ordinal": 11,
+      "unit_id": "oracle_m10_s1__alias_11",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_01"
+      ],
+      "query_ordinal": 13,
+      "unit_id": "oracle_m10_s1__correction_01",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_03"
+      ],
+      "query_ordinal": 15,
+      "unit_id": "oracle_m10_s1__correction_03",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_05"
+      ],
+      "query_ordinal": 17,
+      "unit_id": "oracle_m10_s1__correction_05",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_orion",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_07"
+      ],
+      "query_ordinal": 19,
+      "unit_id": "oracle_m10_s1__correction_07",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_09"
+      ],
+      "query_ordinal": 21,
+      "unit_id": "oracle_m10_s1__correction_09",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m10_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 10,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_11"
+      ],
+      "query_ordinal": 23,
+      "unit_id": "oracle_m10_s1__correction_11",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_00"
+      ],
+      "query_ordinal": 0,
+      "unit_id": "oracle_m100_s0__alias_00",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_02"
+      ],
+      "query_ordinal": 2,
+      "unit_id": "oracle_m100_s0__alias_02",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_solace",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_04"
+      ],
+      "query_ordinal": 4,
+      "unit_id": "oracle_m100_s0__alias_04",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_cypher",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_06"
+      ],
+      "query_ordinal": 6,
+      "unit_id": "oracle_m100_s0__alias_06",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_08"
+      ],
+      "query_ordinal": 8,
+      "unit_id": "oracle_m100_s0__alias_08",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_ember",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_10"
+      ],
+      "query_ordinal": 10,
+      "unit_id": "oracle_m100_s0__alias_10",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_00"
+      ],
+      "query_ordinal": 12,
+      "unit_id": "oracle_m100_s0__correction_00",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_02"
+      ],
+      "query_ordinal": 14,
+      "unit_id": "oracle_m100_s0__correction_02",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_04"
+      ],
+      "query_ordinal": 16,
+      "unit_id": "oracle_m100_s0__correction_04",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_orion",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_06"
+      ],
+      "query_ordinal": 18,
+      "unit_id": "oracle_m100_s0__correction_06",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_08"
+      ],
+      "query_ordinal": 20,
+      "unit_id": "oracle_m100_s0__correction_08",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s0",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_10"
+      ],
+      "query_ordinal": 22,
+      "unit_id": "oracle_m100_s0__correction_10",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_01"
+      ],
+      "query_ordinal": 1,
+      "unit_id": "oracle_m100_s1__alias_01",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_praxis",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_03"
+      ],
+      "query_ordinal": 3,
+      "unit_id": "oracle_m100_s1__alias_03",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_05"
+      ],
+      "query_ordinal": 5,
+      "unit_id": "oracle_m100_s1__alias_05",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_nova",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_07"
+      ],
+      "query_ordinal": 7,
+      "unit_id": "oracle_m100_s1__alias_07",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_terra",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_09"
+      ],
+      "query_ordinal": 9,
+      "unit_id": "oracle_m100_s1__alias_09",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_atlas",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "alias_11"
+      ],
+      "query_ordinal": 11,
+      "unit_id": "oracle_m100_s1__alias_11",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_01"
+      ],
+      "query_ordinal": 13,
+      "unit_id": "oracle_m100_s1__correction_01",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_03"
+      ],
+      "query_ordinal": 15,
+      "unit_id": "oracle_m100_s1__correction_03",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_05"
+      ],
+      "query_ordinal": 17,
+      "unit_id": "oracle_m100_s1__correction_05",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_orion",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_07"
+      ],
+      "query_ordinal": 19,
+      "unit_id": "oracle_m100_s1__correction_07",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_09"
+      ],
+      "query_ordinal": 21,
+      "unit_id": "oracle_m100_s1__correction_09",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "A",
+        "B",
+        "C"
+      ],
+      "cell": "oracle_m100_s1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 100,
+      "phase": "oracle",
+      "query_ids": [
+        "correction_11"
+      ],
+      "query_ordinal": 23,
+      "unit_id": "oracle_m100_s1__correction_11",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_00"
+      ],
+      "query_ordinal": 0,
+      "unit_id": "natural_m1__alias_00",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_01"
+      ],
+      "query_ordinal": 1,
+      "unit_id": "natural_m1__alias_01",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_02"
+      ],
+      "query_ordinal": 2,
+      "unit_id": "natural_m1__alias_02",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_praxis",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_03"
+      ],
+      "query_ordinal": 3,
+      "unit_id": "natural_m1__alias_03",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_solace",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_04"
+      ],
+      "query_ordinal": 4,
+      "unit_id": "natural_m1__alias_04",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_05"
+      ],
+      "query_ordinal": 5,
+      "unit_id": "natural_m1__alias_05",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_cypher",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_06"
+      ],
+      "query_ordinal": 6,
+      "unit_id": "natural_m1__alias_06",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_nova",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_07"
+      ],
+      "query_ordinal": 7,
+      "unit_id": "natural_m1__alias_07",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_08"
+      ],
+      "query_ordinal": 8,
+      "unit_id": "natural_m1__alias_08",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_terra",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_09"
+      ],
+      "query_ordinal": 9,
+      "unit_id": "natural_m1__alias_09",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_ember",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_10"
+      ],
+      "query_ordinal": 10,
+      "unit_id": "natural_m1__alias_10",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_atlas",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "alias_11"
+      ],
+      "query_ordinal": 11,
+      "unit_id": "natural_m1__alias_11",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_00"
+      ],
+      "query_ordinal": 12,
+      "unit_id": "natural_m1__correction_00",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_01"
+      ],
+      "query_ordinal": 13,
+      "unit_id": "natural_m1__correction_01",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_02"
+      ],
+      "query_ordinal": 14,
+      "unit_id": "natural_m1__correction_02",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_03"
+      ],
+      "query_ordinal": 15,
+      "unit_id": "natural_m1__correction_03",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_04"
+      ],
+      "query_ordinal": 16,
+      "unit_id": "natural_m1__correction_04",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_05"
+      ],
+      "query_ordinal": 17,
+      "unit_id": "natural_m1__correction_05",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_orion",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_06"
+      ],
+      "query_ordinal": 18,
+      "unit_id": "natural_m1__correction_06",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_orion",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_07"
+      ],
+      "query_ordinal": 19,
+      "unit_id": "natural_m1__correction_07",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_08"
+      ],
+      "query_ordinal": 20,
+      "unit_id": "natural_m1__correction_08",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_09"
+      ],
+      "query_ordinal": 21,
+      "unit_id": "natural_m1__correction_09",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_10"
+      ],
+      "query_ordinal": 22,
+      "unit_id": "natural_m1__correction_10",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m1",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 1,
+      "phase": "natural",
+      "query_ids": [
+        "correction_11"
+      ],
+      "query_ordinal": 23,
+      "unit_id": "natural_m1__correction_11",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "alias_00"
+      ],
+      "query_ordinal": 0,
+      "unit_id": "natural_m10__alias_00",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "alias_01"
+      ],
+      "query_ordinal": 1,
+      "unit_id": "natural_m10__alias_01",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "alias_02"
+      ],
+      "query_ordinal": 2,
+      "unit_id": "natural_m10__alias_02",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_praxis",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "alias_03"
+      ],
+      "query_ordinal": 3,
+      "unit_id": "natural_m10__alias_03",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_solace",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "alias_04"
+      ],
+      "query_ordinal": 4,
+      "unit_id": "natural_m10__alias_04",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "alias_05"
+      ],
+      "query_ordinal": 5,
+      "unit_id": "natural_m10__alias_05",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_cypher",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "alias_06"
+      ],
+      "query_ordinal": 6,
+      "unit_id": "natural_m10__alias_06",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_nova",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "alias_07"
+      ],
+      "query_ordinal": 7,
+      "unit_id": "natural_m10__alias_07",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "alias_08"
+      ],
+      "query_ordinal": 8,
+      "unit_id": "natural_m10__alias_08",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_terra",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "alias_09"
+      ],
+      "query_ordinal": 9,
+      "unit_id": "natural_m10__alias_09",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_ember",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "alias_10"
+      ],
+      "query_ordinal": 10,
+      "unit_id": "natural_m10__alias_10",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_atlas",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "alias_11"
+      ],
+      "query_ordinal": 11,
+      "unit_id": "natural_m10__alias_11",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "correction_00"
+      ],
+      "query_ordinal": 12,
+      "unit_id": "natural_m10__correction_00",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "correction_01"
+      ],
+      "query_ordinal": 13,
+      "unit_id": "natural_m10__correction_01",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "correction_02"
+      ],
+      "query_ordinal": 14,
+      "unit_id": "natural_m10__correction_02",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "correction_03"
+      ],
+      "query_ordinal": 15,
+      "unit_id": "natural_m10__correction_03",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "correction_04"
+      ],
+      "query_ordinal": 16,
+      "unit_id": "natural_m10__correction_04",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "correction_05"
+      ],
+      "query_ordinal": 17,
+      "unit_id": "natural_m10__correction_05",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_orion",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "correction_06"
+      ],
+      "query_ordinal": 18,
+      "unit_id": "natural_m10__correction_06",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_orion",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "correction_07"
+      ],
+      "query_ordinal": 19,
+      "unit_id": "natural_m10__correction_07",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "correction_08"
+      ],
+      "query_ordinal": 20,
+      "unit_id": "natural_m10__correction_08",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "correction_09"
+      ],
+      "query_ordinal": 21,
+      "unit_id": "natural_m10__correction_09",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "correction_10"
+      ],
+      "query_ordinal": 22,
+      "unit_id": "natural_m10__correction_10",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m10",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 10,
+      "phase": "natural",
+      "query_ids": [
+        "correction_11"
+      ],
+      "query_ordinal": 23,
+      "unit_id": "natural_m10__correction_11",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_00"
+      ],
+      "query_ordinal": 0,
+      "unit_id": "natural_m100__alias_00",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_01"
+      ],
+      "query_ordinal": 1,
+      "unit_id": "natural_m100__alias_01",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_02"
+      ],
+      "query_ordinal": 2,
+      "unit_id": "natural_m100__alias_02",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_praxis",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_03"
+      ],
+      "query_ordinal": 3,
+      "unit_id": "natural_m100__alias_03",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_solace",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_04"
+      ],
+      "query_ordinal": 4,
+      "unit_id": "natural_m100__alias_04",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_05"
+      ],
+      "query_ordinal": 5,
+      "unit_id": "natural_m100__alias_05",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_cypher",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_06"
+      ],
+      "query_ordinal": 6,
+      "unit_id": "natural_m100__alias_06",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_nova",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_07"
+      ],
+      "query_ordinal": 7,
+      "unit_id": "natural_m100__alias_07",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_08"
+      ],
+      "query_ordinal": 8,
+      "unit_id": "natural_m100__alias_08",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_terra",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_09"
+      ],
+      "query_ordinal": 9,
+      "unit_id": "natural_m100__alias_09",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_ember",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_10"
+      ],
+      "query_ordinal": 10,
+      "unit_id": "natural_m100__alias_10",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_atlas",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "alias_11"
+      ],
+      "query_ordinal": 11,
+      "unit_id": "natural_m100__alias_11",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_00"
+      ],
+      "query_ordinal": 12,
+      "unit_id": "natural_m100__correction_00",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_lumen",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_01"
+      ],
+      "query_ordinal": 13,
+      "unit_id": "natural_m100__correction_01",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_02"
+      ],
+      "query_ordinal": 14,
+      "unit_id": "natural_m100__correction_02",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_harbor",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_03"
+      ],
+      "query_ordinal": 15,
+      "unit_id": "natural_m100__correction_03",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_04"
+      ],
+      "query_ordinal": 16,
+      "unit_id": "natural_m100__correction_04",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "sup_orion",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_05"
+      ],
+      "query_ordinal": 17,
+      "unit_id": "natural_m100__correction_05",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_orion",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_06"
+      ],
+      "query_ordinal": 18,
+      "unit_id": "natural_m100__correction_06",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_orion",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_07"
+      ],
+      "query_ordinal": 19,
+      "unit_id": "natural_m100__correction_07",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_08"
+      ],
+      "query_ordinal": 20,
+      "unit_id": "natural_m100__correction_08",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_lyra",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_09"
+      ],
+      "query_ordinal": 21,
+      "unit_id": "natural_m100__correction_09",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_10"
+      ],
+      "query_ordinal": 22,
+      "unit_id": "natural_m100__correction_10",
+      "worker_cap_s": 285
+    },
+    {
+      "arms": [
+        "N"
+      ],
+      "cell": "natural_m100",
+      "conditions": [
+        "present",
+        "absent"
+      ],
+      "family_id": "census_mira",
+      "multiplicity": 100,
+      "phase": "natural",
+      "query_ids": [
+        "correction_11"
+      ],
+      "query_ordinal": 23,
+      "unit_id": "natural_m100__correction_11",
+      "worker_cap_s": 285
+    }
+  ]
+}

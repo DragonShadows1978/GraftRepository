@@ -1,0 +1,71 @@
+{
+  "bindings": {
+    "artifacts/grm_x1/continuation_02_registration.json": "26dc26ddae0e505421c192a0b15ed89ad8d83b7589bc4e518054fcb3a726b293",
+    "artifacts/grm_x1/handoff_manifest.json": "bf923a9ccb4f06a8d2ae643cb2727de5f7c116304febf429f71a2da7e9087121",
+    "artifacts/grm_x1/payload_amendment_01_handoff.json": "e208379019aa2dc59091def442b3cb9eae5923af4e8aeecc20f605cef22cae4b",
+    "artifacts/grm_x1/registration.json": "defb5014f6ee66113139c1ca3fe902f9bdc51fb81d137cbc0a47e5d06f8f3e57",
+    "orders/GRM_X1_AMENDMENT_2.md": "f8d29fba246fbbc6f30495d1b430c86ec2004fb5022bb4b443f8d38e3dc2445c"
+  },
+  "budget": {
+    "authority": "Lead amendment 2 explicitly authorizes overage.",
+    "common_cap_s": 2700,
+    "extra_retry_worker_s": 285,
+    "gpu_hours": 0.7916666666666666,
+    "original_worker_s": 2565,
+    "total_worker_s": 2850
+  },
+  "claim_directory": "artifacts/grm_x1/claims/r2",
+  "evidence_class": "reasoning: lead-authorized registration before CPU gates; no GPU execution",
+  "historical_files": {
+    "artifacts/grm_x1/claims/oracle_m1_s0_bf923a9ccb4f06a8d2ae643cb2727de5f7c116304febf429f71a2da7e9087121.json": "9c9cae3c19950137c6c1ab181a333f84fa3961e1a5f85d46f97ac291583906b5",
+    "artifacts/grm_x1/receipts/gpu_oracle_m1_s0_0c1bf61590059cad2b207f0edef2da421f64639f69c41d4b6282cc7ba3c35bba.json": "0c1bf61590059cad2b207f0edef2da421f64639f69c41d4b6282cc7ba3c35bba"
+  },
+  "r1_fingerprint": "bf923a9ccb4f06a8d2ae643cb2727de5f7c116304febf429f71a2da7e9087121",
+  "receipt_directory": "artifacts/grm_x1/receipts/r2",
+  "receipt_naming": "gpu_{cell}_{receipt_content_sha256}.json; fingerprint = continuation file SHA-256",
+  "retry_cells": [
+    "oracle_m1_s0"
+  ],
+  "retry_limit": 1,
+  "schema": "grm.x1.continuation.v2",
+  "sources": {
+    "artifacts/grm_x1/cpu_mutation_registration.json": "3634eace71e86c2598c5e690cf628a0327a9247dabccd88991f82b6562f1c939",
+    "artifacts/grm_x1/fixture_amendment_01.json": "2bac1548aa8da82fe8a224e94550b96dfb4810da51e3a565d5dd3ebb969721ea",
+    "core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "core/deepseek_v2_lite_tc.py": "96e371754496eb2ca467ad199bebed07c354cf5eae4b0a08daf571c6f04f0d07",
+    "core/gemma4_tc.py": "c9a8cc1d01c30bb2b20e9c2e477d4bedf21072d0b1b6b157f3ba75c78a271d8b",
+    "core/gpt_oss20b_tc.py": "da8ca3bc8c961d731d9e32bf4558702ad1b8b10c8ecc37b18326e7df4ade74a1",
+    "core/graft_arena.py": "e03a44b5e0155fc10a0be5c56e66e117c768a67993fab76df3ecf3aa62cdb20b",
+    "core/graft_quant.py": "ebe40790286a719db38de403210aa20e17e7e4d2699f7b7dae452e014f4fa130",
+    "core/graft_repository.py": "e0a0fc777d3c0f535ec915238390d7c1f1a6d43e927976351b8441a1b1358e89",
+    "core/grm_admission.py": "62510861b5b1a33af375a4120d78351d2f880b2618a5462c1776a073f3f2d00f",
+    "core/grm_cuda_router.py": "8dfd7a6ff5395eb846996c67b1570c9fb0e8b26dd78e84f28059f1b291766ce5",
+    "core/grm_demand.py": "2fd50307650af0c72c19ecb4f7ce6eb11c3bbf9d5b3439905007b87857b195b3",
+    "core/grm_frame.py": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2",
+    "core/grm_native.py": "1f5a69716d751c670f37328cf012544b800f86226ad4549a0781bac654aaf3df",
+    "core/grm_runtime.py": "39f823cbdb98e32528fb5240777cb8c0144f3be77fa86466a67f1f636505c13e",
+    "core/grm_supersession.py": "c8e9baf7c69e41ebdcf05fda84a2895ed7d2b6f7ff67903fdb655924510fdd5e",
+    "core/grm_text_norm.py": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8",
+    "core/grm_three_pass.py": "71e0e4f8503d4e132101fc79cce9d64daf399ffe73892e2f0102c8568d0ec0f3",
+    "core/grm_x1_addresses.py": "90ef90820023621cebf1b3f22eb8d243cd7f149d87a80d8a496eed0941ca3fa7",
+    "core/kv_graft.py": "d8d44d032c5398c4606b1b6f1b547a94baa2415e36225cb04dd6ef313622ef2d",
+    "core/minicpm3_tc.py": "3d19734f51d28eb48dc20a62658f2bfc250fdac4fce2cb906116d034b1371a69",
+    "core/mistral7b_tc.py": "49430e5920508d740a2f8be7b6ba0caadd0442c7798454cf6fa2a808204bf1c4",
+    "core/paging_telemetry.py": "4eb484b1f6b512962b18d08cb714dd61346980a8af550c1fd814bcbad474097c",
+    "core/qwen35_tc.py": "3f84f8e99f5cf8932440e5d6ff29df41cbf3fdaf13d27f3bbe8fb1dc3a7ec41b",
+    "core/qwen35_translation_poc.py": "5a7f364aa7a4ff24bb9299671fc945626037cff44595f0b80364ebe9d1cfa3d1",
+    "core/qwen38_tc.py": "39875f97f09906ccdfcdf6f510c9ed2f7cad01e85007363a8d7ad00869f9d67e",
+    "core/qwen3_1p7b_tc.py": "1a563f502753a86b57abff8710440ae0e1921ed083481dee8232872704093c0f",
+    "core/qwen3_tc.py": "ba0e2d9ab68716922b9f942bc4bb8cd2c4a791abe2a2fabd42a65799212d95aa",
+    "core/qwen_tc.py": "1353e44f727fc24d1638e4e238d160619fea561602c921259b010af5f63478e3",
+    "scripts/grm_e2e_session.py": "74434dbb750e8e7635afa2f55709ae0533a3562f5b63aa54fc1f81d664bfd450",
+    "scripts/grm_probe_ladder.py": "d1ad0ad74ba522b96c39c634c86ba3292b887af39321f7fc105a62f82fa26d0d",
+    "scripts/grm_x1_campaign.py": "047d86a2a79d26c4a4b7ccb8f4726826ed041c07ea9231e7bd2c363801a1e421",
+    "scripts/grm_x1_cpu.py": "365fb231e21ae2bc7c947f0945c6b8ecafbc6ae869ebf9aa7dc4d4c1dd5caf14",
+    "scripts/grm_x1_gpu.py": "ac89f031d51413c394784a87c075ef3b1d07a83932730c6adc2b00ec81529d16",
+    "scripts/grm_x1_lead_gpu.sh": "f711ae7852b18e2e477dadee93c88bba2e5f19ad030221c69b3cc35d62450b43",
+    "scripts/grm_x1_register.py": "bedb423411063f15eec06b2c8538799188dc026370471521646fb42ab351f1f1",
+    "tests/test_grm_x1_addresses.py": "a3adcceae308d13e1096b6d58c992a1bbf608ed4b68d91ffbc78dc11f2c1eb95",
+    "tests/test_grm_x1_campaign.py": "11e97dd8008c5efe041b41140947638daa3f48a860b86c7e8ab74314ad027151"
+  }
+}

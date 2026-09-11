@@ -1,0 +1,16 @@
+{
+  "active_queries_path": "artifacts/grm_x1/fixtures/queries_amendment_01.json",
+  "active_queries_sha256": "abfac7da02c0c1fec32ef98c6bb27694005e5259d2581cc8b476a22c7eea3af6",
+  "changed_query_ids": [
+    "correction_06",
+    "correction_07"
+  ],
+  "evidence_class": "unit test: correction after failed uniqueness baseline",
+  "failure": "ValueError: expected exactly 24 unique held-out wordings",
+  "failure_receipt": "logs/grm_x1_cpu_baseline_01.log",
+  "failure_sha256": "9ea464af108614c8ec2f0dbf6d76e08fa303f83e54e884585f39cd50761a6041",
+  "original_queries_sha256": "49059487a8f75ed983f07e248feba6f3850fe54e6b60cb1c56c6c219950df76a",
+  "reason": "SUP/census Orion correction pairs had identical wording. Preserve originals; change only the two census Orion wordings. IDs, labels, counts, values, cells, thresholds and predictions unchanged.",
+  "registration_sha256": "defb5014f6ee66113139c1ca3fe902f9bdc51fb81d137cbc0a47e5d06f8f3e57",
+  "schema": "grm.x1.fixture-amendment.v1"
+}

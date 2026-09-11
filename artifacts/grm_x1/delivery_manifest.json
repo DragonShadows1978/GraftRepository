@@ -1,0 +1,222 @@
+{
+  "evidence_class": "unit test: final artifact integrity",
+  "file_count": 43,
+  "files": {
+    "artifacts/grm_x1/BLOCKED_REPORT.md": {
+      "bytes": 14714,
+      "lines": 225,
+      "sha256": "84e060fea5dfa51f906d67428da083cc924f357aa370741225796118da35507a"
+    },
+    "artifacts/grm_x1/active_fixture_inventory.json": {
+      "bytes": 1772,
+      "lines": 20,
+      "sha256": "23687e09e7f89511c703745125b42f981274741b1611276bd44114793406ed45"
+    },
+    "artifacts/grm_x1/cpu_mutation_registration.json": {
+      "bytes": 990,
+      "lines": 29,
+      "sha256": "3634eace71e86c2598c5e690cf628a0327a9247dabccd88991f82b6562f1c939"
+    },
+    "artifacts/grm_x1/cpu_token_counts_01.json": {
+      "bytes": 4264,
+      "lines": 221,
+      "sha256": "a1ca633947bf52dc8c9581e65dfdabe5f6a16df0771502e74a94ea5a9c1f19b7"
+    },
+    "artifacts/grm_x1/fixture_amendment_01.json": {
+      "bytes": 986,
+      "lines": 16,
+      "sha256": "2bac1548aa8da82fe8a224e94550b96dfb4810da51e3a565d5dd3ebb969721ea"
+    },
+    "artifacts/grm_x1/fixtures/SHA256SUMS": {
+      "bytes": 1055,
+      "lines": 9,
+      "sha256": "cbca6284ffd48ec22e10dcf5be48b9e7992f4eb26e7553765161837ef9d0d869"
+    },
+    "artifacts/grm_x1/fixtures/aliases.json": {
+      "bytes": 1006,
+      "lines": 78,
+      "sha256": "7fe07f19dec9ca1a579ee8a384e3bcb650f24e33d132ca6eac0369ac08f149d4"
+    },
+    "artifacts/grm_x1/fixtures/cells.json": {
+      "bytes": 5100,
+      "lines": 293,
+      "sha256": "aa8bc47894492743ea24d13c4a4b0b0e372c72e3ff4cebe43c97c83d19166e59"
+    },
+    "artifacts/grm_x1/fixtures/families.json": {
+      "bytes": 27275,
+      "lines": 667,
+      "sha256": "a7078fb17e89c80a28a1f7ff1d464a1633f11ba58250972d44f6a455e4900e41"
+    },
+    "artifacts/grm_x1/fixtures/queries.json": {
+      "bytes": 8107,
+      "lines": 360,
+      "sha256": "49059487a8f75ed983f07e248feba6f3850fe54e6b60cb1c56c6c219950df76a"
+    },
+    "artifacts/grm_x1/fixtures/queries_amendment_01.json": {
+      "bytes": 8105,
+      "lines": 360,
+      "sha256": "abfac7da02c0c1fec32ef98c6bb27694005e5259d2581cc8b476a22c7eea3af6"
+    },
+    "artifacts/grm_x1/fixtures/sources/census_events.json": {
+      "bytes": 9952,
+      "lines": 264,
+      "sha256": "7241151e1953b06cdfbfa3ff2290c03db1377b1f4f26dd245c52b72075dde9dc"
+    },
+    "artifacts/grm_x1/fixtures/sources/correction_then_restatement.json": {
+      "bytes": 2303,
+      "lines": 49,
+      "sha256": "ea97d4007d66357442f0424f76200984e8c2f39311618a4b892e88db9ad90f4b"
+    },
+    "artifacts/grm_x1/fixtures/sources/fresh_fact_controls.json": {
+      "bytes": 2357,
+      "lines": 53,
+      "sha256": "9b75e1e4f70d77524d7d099f1416ae34ea3cafc149e749e26e7a5dd47b298d75"
+    },
+    "artifacts/grm_x1/fixtures/sources/multi_hop_a_b_c.json": {
+      "bytes": 2300,
+      "lines": 49,
+      "sha256": "036f291dc4f91d7e38b23d033f97d45b8d4b1176afa1741624f7728355a13d90"
+    },
+    "artifacts/grm_x1/fixtures/sources/short_correction_long_competitor.json": {
+      "bytes": 2101,
+      "lines": 42,
+      "sha256": "c06decbe127dd228bdf6529b002ccdaaf5f628addda003692e5e49d9e47c1221"
+    },
+    "artifacts/grm_x1/handoff_manifest.json": {
+      "bytes": 6736,
+      "lines": 79,
+      "sha256": "bf923a9ccb4f06a8d2ae643cb2727de5f7c116304febf429f71a2da7e9087121"
+    },
+    "artifacts/grm_x1/lead_commands.txt": {
+      "bytes": 1435,
+      "lines": 26,
+      "sha256": "a9e6e6295dfc363a824df4fd70f981a77c9f648c8f5b5991e3a35cfa81806b8b"
+    },
+    "artifacts/grm_x1/receipts/cpu_baseline_33650dfe7eeb39c929150efe1a705981e5723077376b91d7800f25f19235c8a4.json": {
+      "bytes": 24991,
+      "lines": 721,
+      "sha256": "33650dfe7eeb39c929150efe1a705981e5723077376b91d7800f25f19235c8a4"
+    },
+    "artifacts/grm_x1/receipts/cpu_baseline_6d40d49c1487aabf745aadd1bda77e4e7f83b2cdb834fdcc1380400ea7d474d0.json": {
+      "bytes": 25114,
+      "lines": 722,
+      "sha256": "6d40d49c1487aabf745aadd1bda77e4e7f83b2cdb834fdcc1380400ea7d474d0"
+    },
+    "artifacts/grm_x1/receipts/cpu_baseline_d28bc39096c2a9498530bb8f27a0503364c07f330bca9ea3990571bb07f2a393.json": {
+      "bytes": 25114,
+      "lines": 722,
+      "sha256": "d28bc39096c2a9498530bb8f27a0503364c07f330bca9ea3990571bb07f2a393"
+    },
+    "artifacts/grm_x1/receipts/cpu_mutations_03998a4e42aa129fd0dc58cb12fe6cf94613ba311a6a57ff5948dfff1932e846.json": {
+      "bytes": 16944,
+      "lines": 103,
+      "sha256": "03998a4e42aa129fd0dc58cb12fe6cf94613ba311a6a57ff5948dfff1932e846"
+    },
+    "artifacts/grm_x1/receipts/cpu_mutations_b940a51b38035709415ba52c331f90f51d8fa3626933be2e9b35ea537c952154.json": {
+      "bytes": 16943,
+      "lines": 103,
+      "sha256": "b940a51b38035709415ba52c331f90f51d8fa3626933be2e9b35ea537c952154"
+    },
+    "artifacts/grm_x1/receipts/cpu_mutations_ea64e5341fdffd12fa2079dd4505815b661da1a3aa5f86c1d9c3ab1ec34125bd.json": {
+      "bytes": 16946,
+      "lines": 103,
+      "sha256": "ea64e5341fdffd12fa2079dd4505815b661da1a3aa5f86c1d9c3ab1ec34125bd"
+    },
+    "artifacts/grm_x1/receipts/cpu_pytest_960aa2d5c8e5a2d11473495832549f08ae0cedd5fb258f4a9e3093ddd573614f.json": {
+      "bytes": 4970,
+      "lines": 58,
+      "sha256": "960aa2d5c8e5a2d11473495832549f08ae0cedd5fb258f4a9e3093ddd573614f"
+    },
+    "artifacts/grm_x1/receipts/cpu_pytest_c0783512f6b00c202d591999ef3a8277214fd85054012e1c17f434333e8782f6.json": {
+      "bytes": 4970,
+      "lines": 58,
+      "sha256": "c0783512f6b00c202d591999ef3a8277214fd85054012e1c17f434333e8782f6"
+    },
+    "artifacts/grm_x1/receipts/cpu_pytest_d805cdafaed8b580f1d31384860f015364d7ec0248988dec5c63ca1814ddd74a.json": {
+      "bytes": 4847,
+      "lines": 57,
+      "sha256": "d805cdafaed8b580f1d31384860f015364d7ec0248988dec5c63ca1814ddd74a"
+    },
+    "artifacts/grm_x1/registration.json": {
+      "bytes": 9226,
+      "lines": 131,
+      "sha256": "defb5014f6ee66113139c1ca3fe902f9bdc51fb81d137cbc0a47e5d06f8f3e57"
+    },
+    "artifacts/grm_x1/registration.sha256": {
+      "bytes": 101,
+      "lines": 1,
+      "sha256": "0c1b981cb460ee1ff79918b67bb6a4b1f07d4ec878470c295fd0fcf309f64cb3"
+    },
+    "core/grm_x1_addresses.py": {
+      "bytes": 10646,
+      "lines": 240,
+      "sha256": "90ef90820023621cebf1b3f22eb8d243cd7f149d87a80d8a496eed0941ca3fa7"
+    },
+    "docs/GRM_X1_LEDGER.md": {
+      "bytes": 9039,
+      "lines": 141,
+      "sha256": "eb7ce6fbedf67dd100c0c68522470aaf9a6e2330785d1648dfbb5d3f1346f938"
+    },
+    "logs/grm_x1_cpu_baseline_01.log": {
+      "bytes": 2166,
+      "lines": 38,
+      "sha256": "9ea464af108614c8ec2f0dbf6d76e08fa303f83e54e884585f39cd50761a6041"
+    },
+    "logs/grm_x1_dry_run_01.json": {
+      "bytes": 7281,
+      "lines": 333,
+      "sha256": "82bb3770004625c6776c63cff647a165cbf123c41f68afda74e07c43e460d627"
+    },
+    "logs/grm_x1_preflight_01.json": {
+      "bytes": 3014,
+      "lines": 40,
+      "sha256": "1ba86f029ba9b61cfe061acdcdbf1fb07f2098472e18d9c472c3ef8c9aa4848d"
+    },
+    "logs/grm_x1_r1.log": {
+      "bytes": 2244964,
+      "lines": 41140,
+      "sha256": "b78688b39768ef7cbea35da130f367382669199d37f78685c6a313caeb6e8a4d"
+    },
+    "logs/grm_x1_summary_01.json": {
+      "bytes": 21897,
+      "lines": 942,
+      "sha256": "fc751a7ff3bd6bc195e822b9215067d29f2f2199ef62d5db3f06fbd1cfc65ab6"
+    },
+    "scripts/grm_x1_campaign.py": {
+      "bytes": 22090,
+      "lines": 431,
+      "sha256": "23ed988260ac860aaaa932880e3ef66812f1023f170efa91a961f9cbca42d777"
+    },
+    "scripts/grm_x1_cpu.py": {
+      "bytes": 8185,
+      "lines": 148,
+      "sha256": "365fb231e21ae2bc7c947f0945c6b8ecafbc6ae869ebf9aa7dc4d4c1dd5caf14"
+    },
+    "scripts/grm_x1_gpu.py": {
+      "bytes": 13850,
+      "lines": 241,
+      "sha256": "a435e4bcb1c09547b404eb0e150307cf386181f638a69599f33120a0120c8127"
+    },
+    "scripts/grm_x1_lead_gpu.sh": {
+      "bytes": 507,
+      "lines": 10,
+      "sha256": "f711ae7852b18e2e477dadee93c88bba2e5f19ad030221c69b3cc35d62450b43"
+    },
+    "scripts/grm_x1_register.py": {
+      "bytes": 15262,
+      "lines": 201,
+      "sha256": "bedb423411063f15eec06b2c8538799188dc026370471521646fb42ab351f1f1"
+    },
+    "tests/test_grm_x1_addresses.py": {
+      "bytes": 8610,
+      "lines": 211,
+      "sha256": "a3adcceae308d13e1096b6d58c992a1bbf608ed4b68d91ffbc78dc11f2c1eb95"
+    },
+    "tests/test_grm_x1_campaign.py": {
+      "bytes": 6848,
+      "lines": 145,
+      "sha256": "379275a7973662247412de6ef618b222ccf71f31b91903beb019afa20aa14c3f"
+    }
+  },
+  "handoff_fingerprint": "bf923a9ccb4f06a8d2ae643cb2727de5f7c116304febf429f71a2da7e9087121"
+}

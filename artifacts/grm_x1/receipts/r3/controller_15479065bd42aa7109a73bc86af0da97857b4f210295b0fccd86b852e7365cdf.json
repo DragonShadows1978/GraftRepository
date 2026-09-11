@@ -1,0 +1,31 @@
+{
+  "attempt": 1,
+  "cell": "oracle_m1_s0",
+  "command": [
+    "flock",
+    "--wait",
+    "250",
+    "--no-fork",
+    "/tmp/forge-gpu.lock",
+    "/usr/bin/python3",
+    "/mnt/ForgeRealm/wt/grm-x1/scripts/grm_x1_campaign.py",
+    "_worker",
+    "oracle_m1_s0",
+    "--fingerprint",
+    "e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10",
+    "--unit",
+    "oracle_m1_s0__alias_00",
+    "--attempt",
+    "1"
+  ],
+  "evidence_class": "process receipt",
+  "fingerprint": "e8d854f6a6eabbe27602992ba6a804a9b5d4a102417fe726fc8c746d0bcd5b10",
+  "outer_wall_s": 137.5013123410754,
+  "outer_within_rail": true,
+  "reason": "NON_FIT_BUDGET",
+  "returncode": 0,
+  "status": "NON_FIT",
+  "unit_fit_status": "FIT",
+  "unit_id": "oracle_m1_s0__alias_00",
+  "unit_status": "COMPLETE"
+}
