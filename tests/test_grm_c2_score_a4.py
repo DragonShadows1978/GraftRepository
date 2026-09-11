@@ -37,6 +37,8 @@ def target(rows, side='profile', phase='restart'):
     return next(r for r in rows if r['battery'] == 'sup' and r['side'] == side and r['phase'] == phase)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/a4_staging/ + artifacts/grm_c2/epochs/scout-fix-2/')
 def test_epoch3_sup_original_red_corrected_green():
     _, registry, registration, bindings = a4.context()
     v = a4.evaluate(a4.EPOCH, registration, registry, bindings, 'sup')
@@ -153,6 +155,8 @@ def copied_sup(tmp_path):
     return tmp_path, registration, registry, bindings
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/a4_staging/ + artifacts/grm_c2/epochs/scout-fix-2/')
 def test_worker_digest_and_epoch_binding_checked(copied_sup):
     epoch, registration, registry, bindings = copied_sup
     path = next((epoch / 'cells').glob('*/worker.json'))
@@ -165,6 +169,8 @@ def test_worker_digest_and_epoch_binding_checked(copied_sup):
         a4.evaluate(epoch, registration, registry, dict(bindings, epoch='wrong'), 'sup')
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/a4_staging/ + artifacts/grm_c2/epochs/scout-fix-2/')
 def test_original_red_immutable_and_repeat_score_identical(copied_sup):
     epoch, registration, registry, bindings = copied_sup
     before = (epoch / 'scores/sup.json').read_bytes()
@@ -180,6 +186,8 @@ def test_original_red_immutable_and_repeat_score_identical(copied_sup):
     assert path.read_text() == '{"status": "RED"}\n'
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/a4_staging/ + artifacts/grm_c2/epochs/scout-fix-2/')
 def test_incomplete_all_and_summary_do_not_publish(copied_sup):
     epoch, registration, registry, bindings = copied_sup
     with pytest.raises(ValueError, match='campaign incomplete'):
@@ -190,6 +198,8 @@ def test_incomplete_all_and_summary_do_not_publish(copied_sup):
     assert not (epoch / 'scores_a4/summary_a4.md').exists()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/a4_staging/ + artifacts/grm_c2/epochs/scout-fix-2/')
 def test_install_refuses_incomplete_campaign(copied_sup, monkeypatch):
     epoch, registration, registry, bindings = copied_sup
     (epoch / 'campaign.lock').touch()
@@ -200,6 +210,8 @@ def test_install_refuses_incomplete_campaign(copied_sup, monkeypatch):
     assert not destination.exists()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/a4_staging/ + artifacts/grm_c2/epochs/scout-fix-2/')
 def test_registration_bound_and_original_path_set_unchanged():
     a4.verify_amendment()
     a3 = a4.read(a4.OUT / 'amendment_lead_3.json')
@@ -233,6 +245,8 @@ def test_summary_all_batteries_and_red_exit(tmp_path, monkeypatch):
     assert a4.summary_a4(red_epoch, {}, registry, {}) == 1
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/a4_staging/ + artifacts/grm_c2/epochs/scout-fix-2/')
 def test_install_complete_campaign_is_create_only(copied_sup, monkeypatch):
     epoch, registration, registry, bindings = copied_sup
     (epoch / 'campaign.lock').touch()
@@ -254,6 +268,8 @@ def test_install_complete_campaign_is_create_only(copied_sup, monkeypatch):
     assert destination.read_bytes() == b'existing unrelated source'
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/a4_staging/ + artifacts/grm_c2/epochs/scout-fix-2/')
 def test_install_refuses_active_campaign(copied_sup, monkeypatch):
     epoch, registration, registry, bindings = copied_sup
     path = epoch / 'campaign.lock'

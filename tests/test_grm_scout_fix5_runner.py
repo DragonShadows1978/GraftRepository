@@ -16,6 +16,8 @@ from scripts import grm_scout_fix5 as run
 REG = run.read(run.REG)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_scout_fix5/registration.json + artifacts/grm_c7/r2/cells/*/checkpoint')
 @pytest.mark.parametrize('fold', REG['folds'], ids=lambda f: str(f['turn']))
 def test_bound_source_restore_cpu(fold):
     tok = Tokenizer.from_file(str(Path(REG['model']['path'])/'tokenizer.json'))
@@ -34,10 +36,14 @@ def test_bound_source_restore_cpu(fold):
     assert all(layer['k'].shape[1:] == (8,g['ntok'],64) for g in a.grafts for layer in g['h'])
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_scout_fix5/registration.json + artifacts/grm_c7/r2/cells/*/checkpoint')
 def test_gpu_registration_bindings():
     assert len(run.verify()['folds']) == 13
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_scout_fix5/registration.json + artifacts/grm_c7/r2/cells/*/checkpoint')
 def test_verify_rejects_source_hash_change(monkeypatch):
     original = run.sha
     monkeypatch.setattr(run, 'sha', lambda p:'bad' if Path(p)==run.ROOT/'core/graft_arena.py' else original(p))
@@ -76,6 +82,8 @@ def test_controller_foreground_no_retry_accounting(tmp_path, monkeypatch, fail_a
     assert len(calls) == (fail_at or 13)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_scout_fix5/registration.json + artifacts/grm_c7/r2/cells/*/checkpoint')
 def test_core_delta_scope_and_unchanged_qc_coverage():
     before = ast.parse((run.OUT/'before/core/graft_arena.py').read_text())
     after = ast.parse((run.ROOT/'core/graft_arena.py').read_text())

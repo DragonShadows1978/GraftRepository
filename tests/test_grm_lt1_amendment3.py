@@ -21,6 +21,8 @@ def amended(tmp_path, monkeypatch, mutate, rehash=True):
     monkeypatch.setattr(lt, 'AMEND3', p)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_lt1/amendment3/registration_amendment.json')
 def test_amendment3_preserves_protocol_and_binds_all_core():
     r = lt.verify(); a = lt.read(lt.AMEND3); previous = lt.read(lt.AMEND2)
     assert a['protocol'] == {k:previous[k] for k in PROTOCOL}
@@ -95,6 +97,8 @@ def test_old_checkpoint_binding_refused(tmp_path):
     with pytest.raises(ValueError, match='CHECKPOINT_INTEGRITY'): lt.validate_checkpoint(tmp_path,9,lt.binding('A'))
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_lt1/amendment3/registration_amendment.json')
 def test_preflight_requires_current_receipt_and_fix4(tmp_path, monkeypatch):
     realout=lt.OUT; monkeypatch.setenv('GRM_ADMISSION_RULE','margin_first')
     # Only receipt lookup moves; registration and all source paths stay real.
@@ -110,6 +114,8 @@ def test_preflight_requires_current_receipt_and_fix4(tmp_path, monkeypatch):
     assert lt.preflight()['status']=='READY'
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_lt1/amendment3/registration_amendment.json')
 def test_dry_run_never_enters_worker(monkeypatch, capsys):
     monkeypatch.setattr(lt, 'preflight', lambda:dict(status='READY'))
     monkeypatch.setattr(worker, 'resume', lambda:pytest.fail('GPU worker entered'))

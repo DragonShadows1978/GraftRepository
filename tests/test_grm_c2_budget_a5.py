@@ -33,6 +33,8 @@ def installed(monkeypatch):
     return m.effective_registration()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/a5/ + orders/GRM_C2_AMENDMENT_5.md')
 def test_live42_cap4800_and_original_red_still_ineligible(installed):
     r = installed
     assert r['budget_seconds'] == 4800
@@ -48,6 +50,8 @@ def test_live42_cap4800_and_original_red_still_ineligible(installed):
     assert b.__file__ == str(TARGET)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/a5/ + orders/GRM_C2_AMENDMENT_5.md')
 @pytest.mark.parametrize('field,value', [('budget_seconds',9999),('red_cell','other'),('completed_receipts',{})])
 def test_forgery_recomputed_sidecar_refused(installed,tmp_path,monkeypatch,field,value):
     a = copy.deepcopy(installed['budget_amendment']); a[field] = value
@@ -57,6 +61,8 @@ def test_forgery_recomputed_sidecar_refused(installed,tmp_path,monkeypatch,field
     with pytest.raises(ValueError,match='forged or stale amendment 5'):m.verify_amendment()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/a5/ + orders/GRM_C2_AMENDMENT_5.md')
 @pytest.mark.parametrize('target', ['scripts/grm_c2_epoch3.py','artifacts/grm_c2/lead_commands.txt',
     'artifacts/grm_c2/a5/lead_commands.txt.before',
     'artifacts/grm_c2/epochs/scout-fix-2/cells/profile-longhistory-6/worker.json'])
@@ -88,6 +94,8 @@ def isolated(installed,tmp_path,monkeypatch):
     return r
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/a5/ + orders/GRM_C2_AMENDMENT_5.md')
 def test_one_time_archive_and_crash_before_first_worker(isolated):
     r=isolated; cell=r['budget_amendment']['red_cell']
     p=b.OUT/'cells'/cell/'controller.json'; before=p.read_bytes()
@@ -102,6 +110,8 @@ def test_one_time_archive_and_crash_before_first_worker(isolated):
     assert b.charged_seconds(r)==pytest.approx(3420.8233032692224)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/a5/ + orders/GRM_C2_AMENDMENT_5.md')
 @pytest.mark.parametrize('defect',['reservation','worker','charge','error','worker_sha','status'])
 def test_reservation_only_exception_is_narrow(isolated,defect):
     a=isolated['budget_amendment'];d=b.OUT/'cells'/a['red_cell'];p=d/'controller.json'
@@ -116,12 +126,16 @@ def test_reservation_only_exception_is_narrow(isolated,defect):
     assert p.exists() and not (b.OUT/'reservation_red_a5'/a['red_cell']).exists()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/a5/ + orders/GRM_C2_AMENDMENT_5.md')
 def test_underfunded_exception_preserves_red(isolated):
     isolated['budget_seconds']=3600
     with pytest.raises(ValueError,match='budget rail'):m.reeligible_once(isolated)
     assert (b.OUT/'cells'/isolated['budget_amendment']['red_cell']/'controller.json').exists()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/a5/ + orders/GRM_C2_AMENDMENT_5.md')
 def test_exact_reservation_boundary_retains_historical_charge(isolated,monkeypatch):
     r=isolated;total=b.charged_seconds(r)
     assert total==pytest.approx(3420.8233032692224)
@@ -134,6 +148,8 @@ def test_exact_reservation_boundary_retains_historical_charge(isolated,monkeypat
     assert b.charged_seconds(r)==pytest.approx(total+285)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/a5/ + orders/GRM_C2_AMENDMENT_5.md')
 def test_resume_dispatches_remaining10_once_and_preserves42(isolated,monkeypatch):
     r=isolated;calls=[]
     frozen={p:p.read_bytes() for p in (b.OUT/'cells').glob('*/controller.json')
@@ -160,6 +176,8 @@ def test_resume_dispatches_remaining10_once_and_preserves42(isolated,monkeypatch
     assert b.charged_seconds(r)==pytest.approx(4230.8233032692224)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/a5/ + orders/GRM_C2_AMENDMENT_5.md')
 def test_new_red_stops_and_never_resets(isolated,monkeypatch):
     r=isolated;calls=[]
     def execute(command,**kw):
@@ -175,6 +193,8 @@ def test_new_red_stops_and_never_resets(isolated,monkeypatch):
         b.run_cell(b.old.cell_by_id(r,calls[0]),r)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/a5/ + orders/GRM_C2_AMENDMENT_5.md')
 def test_campaign_mutex_refuses_before_reset(isolated):
     with m._BASE_LOCK():
         with pytest.raises(ValueError,match='another C2 foreground controller'):
@@ -182,6 +202,8 @@ def test_campaign_mutex_refuses_before_reset(isolated):
     assert (b.OUT/'cells'/isolated['budget_amendment']['red_cell']/'controller.json').exists()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/a5/ + orders/GRM_C2_AMENDMENT_5.md')
 def test_a4_reader_still_accepts_frozen_source_and_sup():
     path=ROOT/'artifacts/grm_c2/a4_staging/scripts/grm_c2_score_a4.py'
     spec=importlib.util.spec_from_file_location('a4_compat',path);s=importlib.util.module_from_spec(spec);spec.loader.exec_module(s)
@@ -189,6 +211,8 @@ def test_a4_reader_still_accepts_frozen_source_and_sup():
     assert m.read(s.EPOCH/'scores_a4/sup.json')
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/a5/ + orders/GRM_C2_AMENDMENT_5.md')
 def test_fresh_process_dry_run_and_direct_cell_refusal():
     env=dict(b.os.environ,CUDA_VISIBLE_DEVICES='',PYTHONDONTWRITEBYTECODE='1')
     p=subprocess.run([sys.executable,str(TARGET),'--dry-run'],cwd=ROOT,env=env,capture_output=True,text=True)
@@ -198,6 +222,8 @@ def test_fresh_process_dry_run_and_direct_cell_refusal():
     assert p.returncode==1 and 'direct --cell disabled' in p.stderr
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/a5/ + orders/GRM_C2_AMENDMENT_5.md')
 @pytest.mark.parametrize('later_state', ['COMPLETE', 'RED', 'ORPHAN'])
 def test_second_attempt_is_never_reset(isolated, later_state):
     # Prior art: C2 A3 create-only terminal states (project contributors, 2026).
@@ -214,6 +240,8 @@ def test_second_attempt_is_never_reset(isolated, later_state):
     assert d.exists() and {p.name:p.read_bytes() for p in d.iterdir()} == before
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/a5/ + orders/GRM_C2_AMENDMENT_5.md')
 def test_incomplete_dependency_refuses_reset(isolated):
     cell = b.old.cell_by_id(isolated, isolated['budget_amendment']['red_cell'])
     dep = b.OUT / 'cells' / cell['depends'][0] / 'controller.json'
@@ -223,6 +251,8 @@ def test_incomplete_dependency_refuses_reset(isolated):
     assert (b.OUT / 'cells' / cell['id'] / 'controller.json').exists()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/a5/ + orders/GRM_C2_AMENDMENT_5.md')
 @pytest.mark.parametrize('headroom', [-0.001, 0.0])
 def test_unchanged_controller_reservation_and_worker_entry(isolated, monkeypatch, headroom):
     # Prior art: C2 A1/A3 fake-process boundary tests (project contributors, 2026).

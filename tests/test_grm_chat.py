@@ -76,6 +76,8 @@ def test_profile_strips_ambient_grm_switches():
     assert resolved["env"]["GRM_CAPTURE_PIN"] == "live"
 
 
+@pytest.mark.campaign_receipt(
+    registration='GRM-P1 chat registration (records GRM_ALIAS_FOLD_MERGE as ABSENT)')
 def test_absent_named_flag_is_recorded_not_claimed():
     """GRM_ALIAS_FOLD_MERGE does not exist on this tree; say so."""
     resolved = resolve_profile(selection="eb1_c2",

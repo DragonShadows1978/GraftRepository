@@ -13,6 +13,8 @@ from scripts.grm_c2_profile import read, create, sha
 from tests.test_grm_c2_profile import synthetic_rows
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/registration.json + orders/GRM_C2_AMENDMENT_1.md')
 def test_amended_budget_preserves_all_52_cells_and_registers_defaults96_nonfit():
     r = a.effective_registration(); old = read(a.REGISTRATION)
     assert r['cells'] == old['cells'] and len(r['cells']) == 52
@@ -41,6 +43,8 @@ def test_forged_amendment_refused_even_with_recomputed_sidecar(tmp_path, monkeyp
         a.effective_registration()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/registration.json + orders/GRM_C2_AMENDMENT_1.md')
 @pytest.mark.parametrize('target', ['orders/GRM_C2_AMENDMENT_1.md', 'artifacts/grm_c2/registration.json', 'scripts/grm_c2_cells.py'])
 def test_stale_order_registration_or_worker_binding_refused(monkeypatch, target):
     original = a.sha
@@ -82,6 +86,8 @@ def finished(cell, status='COMPLETE', charge=10):
         finished_at=0, cell=cell, worker_sha256=sha(d / 'worker.json'), **a.receipt_bindings()))
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/registration.json + orders/GRM_C2_AMENDMENT_1.md')
 def test_order_scoring_and_outer_rails_for_all_52_cells(local, monkeypatch):
     r = local; events = []
     def execute(command, **kw):
@@ -105,6 +111,8 @@ def test_order_scoring_and_outer_rails_for_all_52_cells(local, monkeypatch):
     assert a.summary(r) == 0
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/registration.json + orders/GRM_C2_AMENDMENT_1.md')
 def test_stop_on_red_resume_next_unstarted_never_retry(local, monkeypatch):
     r = local; calls = []
     def execute(command, **kw):
@@ -121,6 +129,8 @@ def test_stop_on_red_resume_next_unstarted_never_retry(local, monkeypatch):
     assert len(calls) == 52 and a.summary(r) == 1
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/registration.json + orders/GRM_C2_AMENDMENT_1.md')
 def test_red_and_orphan_cells_never_retried_and_orphan_fully_charged(local):
     r = local; first, second = a.ordered_cells(r)[:2]
     finished(first, status='RED')
@@ -130,6 +140,8 @@ def test_red_and_orphan_cells_never_retried_and_orphan_fully_charged(local):
         with pytest.raises(ValueError, match='never retried'): a.run_cell(cell, r)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/registration.json + orders/GRM_C2_AMENDMENT_1.md')
 def test_red_persist_blocks_restart_without_worker_or_recapture(local, monkeypatch):
     r = local; cell = next(c for c in r['cells'] if c['phase'] == 'restart')
     monkeypatch.setattr(a.subprocess, 'run', lambda *x, **k: pytest.fail('worker launched'))
@@ -138,6 +150,8 @@ def test_red_persist_blocks_restart_without_worker_or_recapture(local, monkeypat
     assert 'BLOCKED_DEPENDENCY' in receipt['error'] and receipt['charged_seconds'] == 0
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/registration.json + orders/GRM_C2_AMENDMENT_1.md')
 def test_amended_cap_used_for_reservation_and_worker_lease(local, monkeypatch):
     r = local; cells = a.ordered_cells(r)
     for c in cells[1:12]: finished(c, charge=280)
@@ -157,6 +171,8 @@ def test_amended_cap_used_for_reservation_and_worker_lease(local, monkeypatch):
     assert 'returncode=42' in value['error']
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/registration.json + orders/GRM_C2_AMENDMENT_1.md')
 def test_budget_reservation_refuses_over_cap_without_worker(local, monkeypatch):
     r = local; cells = a.ordered_cells(r)
     for c in cells[1:13]: finished(c, charge=285)
@@ -166,6 +182,8 @@ def test_budget_reservation_refuses_over_cap_without_worker(local, monkeypatch):
     assert 'budget rail' in read(a.OUT / 'cells' / cells[0]['id'] / 'controller.json')['error']
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/registration.json + orders/GRM_C2_AMENDMENT_1.md')
 def test_cooldown_survives_resume(local, monkeypatch):
     r = local; cell = a.ordered_cells(r)[0]; finished(cell)
     path = a.OUT / 'cells' / cell['id'] / 'controller.json'
@@ -176,6 +194,8 @@ def test_cooldown_survives_resume(local, monkeypatch):
     assert waits == [18]
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/registration.json + orders/GRM_C2_AMENDMENT_1.md')
 def test_summary_reports_denominators_width_seats_rt1_and_missing(local, capsys):
     r = local
     assert a.summary(r) == 1
@@ -191,6 +211,8 @@ def test_summary_reports_denominators_width_seats_rt1_and_missing(local, capsys)
     for k in a.RT1_FIELDS: assert k in output
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/registration.json + orders/GRM_C2_AMENDMENT_1.md')
 @pytest.mark.parametrize('defect', ['rt1', 'token_seats', 'metadata_retained', 'new_process', 'duplicate'])
 def test_cell_evidence_refuses_missing_or_duplicate_fields(local, defect):
     cell = next(c for c in local['cells'] if c['phase'] == 'restart'); finished(cell)
@@ -200,6 +222,8 @@ def test_cell_evidence_refuses_missing_or_duplicate_fields(local, defect):
     with pytest.raises(ValueError): a.evidence_rows(cell, value)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/registration.json + orders/GRM_C2_AMENDMENT_1.md')
 def test_changed_completed_receipt_refused(local):
     cell = local['cells'][0]; finished(cell)
     path = a.OUT / 'cells' / cell['id'] / 'worker.json'; path.write_text(path.read_text() + ' ')

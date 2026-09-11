@@ -23,6 +23,8 @@ from scripts import grm_r1_replay as run
 # registration + cohort
 # --------------------------------------------------------------------------
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/registration.json + orders/GRM_R1_MARGIN_FIRST_REPLAY.md')
 def test_registration_cohort_budget_and_plan_wording():
     r = run.verify()
     assert r['schema'] == 'grm.r1.replay.v1'
@@ -51,6 +53,8 @@ def test_every_registered_cell_input_hash_verifies():
         assert len(c['checkpoint_files']) >= 1
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/registration.json + orders/GRM_R1_MARGIN_FIRST_REPLAY.md')
 def test_batches_partition_the_cohort_in_order_and_by_side():
     r = run.verify()
     ids = [c['id'] for c in run.cells()]
@@ -128,6 +132,8 @@ def test_a_hash_mismatch_never_becomes_a_retry():
 # RED fixture: the arm-OFF parity barrier stops the run
 # --------------------------------------------------------------------------
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/registration.json + orders/GRM_R1_MARGIN_FIRST_REPLAY.md')
 def test_parity_barrier_stops_the_run(tmp_path, monkeypatch):
     """A replayed OFF plan that is not the recorded plan is RED and STOPS."""
     c = copy.deepcopy(run.cells()[0])
@@ -151,6 +157,8 @@ def test_parity_barrier_stops_the_run(tmp_path, monkeypatch):
     assert calls == ['off', 'on']        # both arms ran; only the check failed
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/registration.json + orders/GRM_R1_MARGIN_FIRST_REPLAY.md')
 def test_parity_barrier_passes_on_the_recorded_plan(tmp_path):
     c = run.cells()[0]
     value, _ = run.run_cell(copy.deepcopy(c), tmp_path, None, fake=True)
@@ -160,6 +168,8 @@ def test_parity_barrier_passes_on_the_recorded_plan(tmp_path):
     assert value['on_plan_matches_registered'] is True
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/registration.json + orders/GRM_R1_MARGIN_FIRST_REPLAY.md')
 def test_batch_records_the_red_and_fails_closed(tmp_path, monkeypatch):
     r = run.verify()
     batch_id = r['batch_ids'][0]
@@ -220,6 +230,8 @@ def test_rule_is_pinned_after_environment_strips_grm_vars(monkeypatch):
     monkeypatch.delenv(run.RULE_ENV, raising=False)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/registration.json + orders/GRM_R1_MARGIN_FIRST_REPLAY.md')
 def test_both_arms_share_one_verified_state(tmp_path):
     c = run.cells()[0]
     value, _ = run.run_cell(copy.deepcopy(c), tmp_path, None, fake=True)
@@ -341,6 +353,8 @@ def test_classify_identical_answers_are_unchanged():
 # dry run
 # --------------------------------------------------------------------------
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/registration.json + orders/GRM_R1_MARGIN_FIRST_REPLAY.md')
 def test_dry_run_enumerates_every_cell_with_an_estimate_and_no_gpu():
     value = run.dry_run()
     assert value['status'] == 'READY_FOR_LEAD'
@@ -355,6 +369,8 @@ def test_dry_run_enumerates_every_cell_with_an_estimate_and_no_gpu():
     assert value['estimated_seconds'] <= value['reserved_seconds']
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/registration.json + orders/GRM_R1_MARGIN_FIRST_REPLAY.md')
 def test_dry_run_never_imports_a_gpu_loader():
     import sys
     before = set(sys.modules)
@@ -367,12 +383,16 @@ def test_dry_run_never_imports_a_gpu_loader():
 # summary + verdict rule
 # --------------------------------------------------------------------------
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/registration.json + orders/GRM_R1_MARGIN_FIRST_REPLAY.md')
 def test_summary_is_not_measured_before_any_run(tmp_path):
     value = run.summary(tmp_path)
     assert value['status'] == 'NOT_MEASURED'
     assert value['adopt'] is False and value['prediction_held'] is None
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/registration.json + orders/GRM_R1_MARGIN_FIRST_REPLAY.md')
 def test_summary_refuses_to_adopt_from_a_fake_run(tmp_path):
     r = run.verify()
     for batch_id in r['batch_ids']:
@@ -410,6 +430,8 @@ def _promote(tmp_path, r, cell_id, transition):
     raise AssertionError('cell not found: ' + cell_id)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/registration.json + orders/GRM_R1_MARGIN_FIRST_REPLAY.md')
 def test_verdict_rule_is_applied_verbatim(tmp_path):
     """correct->wrong: 0 on sup and <=1 elsewhere; measured answers required."""
     r = run.verify()
@@ -446,6 +468,8 @@ def test_verdict_rule_is_applied_verbatim(tmp_path):
     assert value['adopt'] is False and value['status'] == 'DO_NOT_ADOPT'
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/registration.json + orders/GRM_R1_MARGIN_FIRST_REPLAY.md')
 def test_prediction_is_recorded_but_is_not_the_adoption_gate(tmp_path):
     r = run.verify()
     for batch_id in r['batch_ids']:
@@ -470,6 +494,8 @@ def test_prediction_is_recorded_but_is_not_the_adoption_gate(tmp_path):
 # resume after interrupt
 # --------------------------------------------------------------------------
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/registration.json + orders/GRM_R1_MARGIN_FIRST_REPLAY.md')
 def test_resume_after_interrupt_skips_complete_and_continues(tmp_path, capsys):
     r = run.verify()
     first, second = r['batch_ids'][0], r['batch_ids'][1]
@@ -490,6 +516,8 @@ def test_resume_after_interrupt_skips_complete_and_continues(tmp_path, capsys):
     assert complete2 == [first, second] and charged2 > charged
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/registration.json + orders/GRM_R1_MARGIN_FIRST_REPLAY.md')
 def test_resume_refuses_to_skip_an_unrun_prior_batch(tmp_path):
     r = run.verify()
     # Raised by the pre-flight guard, BEFORE any reservation is written,
@@ -500,6 +528,8 @@ def test_resume_refuses_to_skip_an_unrun_prior_batch(tmp_path):
     assert not (tmp_path / 'replay.active').exists()   # owner file released
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/registration.json + orders/GRM_R1_MARGIN_FIRST_REPLAY.md')
 def test_interrupted_batch_leaves_an_orphan_reservation_that_fails_closed(tmp_path):
     r = run.verify()
     batch_id = r['batch_ids'][0]
@@ -515,6 +545,8 @@ def test_interrupted_batch_leaves_an_orphan_reservation_that_fails_closed(tmp_pa
     assert not (tmp_path / 'replay.active').exists()   # owner file released
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/registration.json + orders/GRM_R1_MARGIN_FIRST_REPLAY.md')
 def test_single_owner_file_is_never_stolen(tmp_path):
     r = run.verify()
     owner = tmp_path / 'replay.active'
@@ -525,6 +557,8 @@ def test_single_owner_file_is_never_stolen(tmp_path):
     assert owner.read_text() == 'another owner'   # untouched
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/registration.json + orders/GRM_R1_MARGIN_FIRST_REPLAY.md')
 def test_unknown_batch_and_unknown_cell_are_rejected(tmp_path):
     with pytest.raises(ValueError, match='R1_UNKNOWN_BATCH'):
         run.batch('NOPE', fake=True, root=tmp_path)
@@ -532,6 +566,8 @@ def test_unknown_batch_and_unknown_cell_are_rejected(tmp_path):
         run.cell_by_id('not-a-cell')
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/registration.json + orders/GRM_R1_MARGIN_FIRST_REPLAY.md')
 def test_receipts_are_create_only(tmp_path):
     r = run.verify()
     batch_id = r['batch_ids'][0]

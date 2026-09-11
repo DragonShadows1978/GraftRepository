@@ -60,6 +60,8 @@ def test_release_arm_survives_a_repo_that_cannot_close():
     assert sum(g['h'] is not None for g in repo.arena.grafts) == 0
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_1.json')
 def test_release_path_is_exercised_on_the_fake_run(tmp_path):
     """Order item 3: the release path runs on the fake gate, not only on GPU."""
     r = run.verify(tmp_path)
@@ -75,6 +77,8 @@ def test_release_path_is_exercised_on_the_fake_run(tmp_path):
         assert released['pool_emptied'] is True
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_1.json')
 def test_device_probe_is_recorded_and_never_fabricated(tmp_path):
     """A fake run has no device: the probe records None, not a made-up 0."""
     r = run.verify(tmp_path)
@@ -100,6 +104,8 @@ def test_device_memory_mib_returns_int_or_none():
 # the amendment: binding and scope
 # --------------------------------------------------------------------------
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_1.json')
 def test_amendment_is_sha_bound_to_registration_and_order():
     a = run.amendment()
     assert a is not None, 'amendment 1 must exist for this suite'
@@ -154,6 +160,8 @@ def test_rebinding_does_not_weaken_the_other_inputs(monkeypatch):
         run.verify()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_1.json')
 def test_amendment_scope_matches_the_receipts_on_disk():
     r = run.verify()
     scope = run.resume_scope(r, run.OUT)
@@ -167,6 +175,8 @@ def test_amendment_scope_matches_the_receipts_on_disk():
     assert run.amendment()['unchanged_batches'] == ['R2', 'R3', 'R4', 'R5']
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_1.json')
 def test_amendment_budget_stays_under_the_cap():
     a = run.amendment()
     r = run.verify()
@@ -179,6 +189,8 @@ def test_amendment_budget_stays_under_the_cap():
 # retained receipts are never re-run and never rewritten
 # --------------------------------------------------------------------------
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_1.json')
 def test_retained_receipts_must_be_parity_clean_and_bound():
     r = run.verify()
     scope = run.resume_scope(r, run.OUT)
@@ -191,6 +203,8 @@ def test_retained_receipts_must_be_parity_clean_and_bound():
         assert all(a['answer_measured'] for a in row['arms'].values())
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_1.json')
 def test_retain_list_disagreeing_with_disk_is_a_red_stop():
     r = run.verify()
     a = dict(run.amendment())
@@ -201,6 +215,8 @@ def test_retain_list_disagreeing_with_disk_is_a_red_stop():
         run.resume_scope(r, run.OUT, a)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_1.json')
 def test_reissue_list_disagreeing_with_disk_is_a_red_stop():
     r = run.verify()
     a = dict(run.amendment())
@@ -210,6 +226,8 @@ def test_reissue_list_disagreeing_with_disk_is_a_red_stop():
         run.resume_scope(r, run.OUT, a)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_1.json')
 def test_completed_cells_retained_and_missing_reissued_on_the_fake_path(tmp_path):
     """Order item 3: reproduce 'completed retained, one cell re-issued'.
 
@@ -270,6 +288,8 @@ def test_completed_cells_retained_and_missing_reissued_on_the_fake_path(tmp_path
         assert (d / 'cells' / (cell_id + '.json')).exists()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_1.json')
 def test_reissue_refuses_when_nothing_is_missing(tmp_path):
     r = run.verify(tmp_path)
     batch_id = r['batch_ids'][0]
@@ -295,6 +315,8 @@ def test_reissue_refuses_when_nothing_is_missing(tmp_path):
         run.batch(batch_id, fake=True, root=tmp_path)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_1.json')
 def test_an_unamended_failed_batch_still_closes_the_campaign(tmp_path):
     """The amendment un-closes ONLY what it names; nothing else is relaxed."""
     r = run.verify(tmp_path)

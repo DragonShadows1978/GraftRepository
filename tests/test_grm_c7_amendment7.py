@@ -15,6 +15,8 @@ from core.grm_admission import is_identifier_binding, normalized_words
 from core.grm_text_norm import normalize_glyphs
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c7/amendment_7.json + orders/GRM_C7_AMENDMENT_7.md')
 def test_registered_cohort_prompt_budget():
     r=d.verify();qs=d.read(d.OUT/'requests.json')
     assert len(qs)==40 and len({q['probe_id'] for q in qs})==40
@@ -35,6 +37,8 @@ def test_registered_cohort_prompt_budget():
             assert q['historical']['route_info']['abstain_reason']=='identifier_unbound'
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c7/amendment_7.json + orders/GRM_C7_AMENDMENT_7.md')
 def test_actual_identifier_red_and_glyph_counterfactual():
     # Prior art: SC1.1 existing normalizer (2026). Counterfactual INPUT only;
     # never patch or replace the production predicate or mutate a digest.
@@ -104,6 +108,8 @@ def test_pair_isolation_and_mismatch_stop(tmp_path):
     assert not (bad/(q['probe_id']+'_A1.json')).exists()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c7/amendment_7.json + orders/GRM_C7_AMENDMENT_7.md')
 def test_refused_rows_are_not_generated(tmp_path):
     q=next(q for q in d.read(d.OUT/'requests.json') if not q['mounted_ids'])
     run.carry_refusal(q,tmp_path)

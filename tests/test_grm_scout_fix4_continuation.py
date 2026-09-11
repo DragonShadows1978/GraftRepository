@@ -10,6 +10,8 @@ import pytest
 from scripts import grm_c7_common as c, grm_c7_fix4 as f, grm_c7_run as run
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_scout_fix4/registration.json')
 def test_registration_resume_checkpoint_and_historical_charge():
     r = c.verify()
     a = r['fix4']
@@ -32,6 +34,8 @@ def test_registration_resume_checkpoint_and_historical_charge():
     assert run.summary('A')['status'] == 'NOT_MEASURED'
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_scout_fix4/registration.json')
 @pytest.mark.parametrize('attack,error', [('scope','SCOPE'), ('chain','CHAIN'),
     ('budget','PROTOCOL'), ('cells','PROTOCOL'), ('quarantine','PROTOCOL'),
     ('before','BEFORE'), ('history','HISTORY'), ('charge','HISTORICAL_CHARGE')])
@@ -56,6 +60,8 @@ def test_forged_continuation_rejected(tmp_path, attack, error):
         f.verify_fix4(r, inputs, path)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_scout_fix4/registration.json')
 def test_owned_child_retains_fix4_and_budget_counts_old_failures(tmp_path, monkeypatch):
     from scripts import grm_cmc1_gpu_arms as leases
     r = c.read(c.REG)

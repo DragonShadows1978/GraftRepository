@@ -14,6 +14,8 @@ from scripts import grm_c7_common as c
 from scripts import grm_c7_run as run
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c7/registration.json')
 def test_fixture_integrity_and_probe_placement():
     r = c.verify()
     f = c.read(c.FIX)
@@ -63,6 +65,8 @@ def test_oracle_scorer_hand_cases(answer, required, expected, errors):
     assert tuple(got[k] for k in ('exact_answer_error','wrong_value_error','abstention_error','unsupported_answer_error')) == errors
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c7/registration.json')
 def test_cell_schedule_cost_and_defaults():
     r = c.verify()
     for arm in ('A','B'):
@@ -89,6 +93,8 @@ def test_cell_schedule_cost_and_defaults():
         run.reserve_check(r,next(x for x in r['cells'] if x['arm']=='B'),0,0)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c7/registration.json')
 def test_synthetic_cell_boundary_new_process_and_corruption(tmp_path):
     r = c.verify()
     next_turn = r['cells'][0]['stop']+1
@@ -131,6 +137,8 @@ def test_folded_receipt_requires_parent_without_raw_and_correct_lineage():
     assert not c.folded_evidence(nodes,[3],[0,1])
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c7/registration.json')
 def test_missing_rows_are_unknown_and_duplicate_probe_rejected():
     f = c.read(c.FIX)
     tab = c.table([],f['probes'])

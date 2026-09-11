@@ -9,6 +9,8 @@ import pytest
 from scripts import grm_scout_fix8_replay as run
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_scout_fix8/registration.json')
 def test_registration_exact_cohort_and_original_middle():
     r=run.verify();old=run.verify_middle(payloads=False)
     qs=run.read(run.OUT/'requests.json')
@@ -21,6 +23,8 @@ def test_registration_exact_cohort_and_original_middle():
     assert run.summary()['status']=='NOT_MEASURED'
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_scout_fix8/registration.json')
 def test_input_drift_rejected(monkeypatch):
     original=run.sha
     monkeypatch.setattr(run,'sha',lambda p:'bad' if Path(p)==run.ROOT/'core/grm_admission.py' else original(p))
@@ -50,6 +54,8 @@ def test_reader_routes_and_does_not_receive_expected(tmp_path,monkeypatch):
     finally:repo.close()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_scout_fix8/registration.json')
 def test_owner_and_orphan_fail_closed(tmp_path,monkeypatch):
     r=run.verify();monkeypatch.setattr(run,'verify',lambda:r);monkeypatch.setattr(run,'OUT',tmp_path)
     (tmp_path/'replay.active').write_text('another owner')
@@ -61,6 +67,8 @@ def test_owner_and_orphan_fail_closed(tmp_path,monkeypatch):
     assert not (tmp_path/'replay.active').exists()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_scout_fix8/registration.json')
 def test_failed_lease_charged_and_never_retried(tmp_path,monkeypatch):
     r=run.verify()
     run.write(tmp_path/'requests.json',run.read(run.OUT/'requests.json'))
@@ -76,6 +84,8 @@ def test_failed_lease_charged_and_never_retried(tmp_path,monkeypatch):
     with pytest.raises(ValueError,match='FAILED_CAMPAIGN_STOP'):run.batch('F1')
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_scout_fix8/registration.json')
 def test_registered_no_live_core_replacement():
     import json,os,subprocess,sys
     result=subprocess.run([sys.executable,str(Path(run.__file__)),'--middle-check'],

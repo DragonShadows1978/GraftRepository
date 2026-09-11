@@ -21,6 +21,8 @@ def loaded(tmp_path, monkeypatch):
         repo.close()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_lt1/amendment2/run_margin_first/cells/*/checkpoint')
 def test_fed_mount_publishes_and_commits_original_failure(loaded):
     repo, fed, out = loaded
     assert repo.arena.grafts[25].get('native_node_id') is None
@@ -30,6 +32,8 @@ def test_fed_mount_publishes_and_commits_original_failure(loaded):
     assert lt.read(out/'native_publication.jsonl')['graft_id'] == 25
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_lt1/amendment2/run_margin_first/cells/*/checkpoint')
 def test_old_nodes_and_unmounted_fed_nodes_do_not_publish(loaded):
     repo, fed, out = loaded
     repo.arena._commit_native_mount([11], repo.arena.grafts[11]['ntok'])
@@ -39,6 +43,8 @@ def test_old_nodes_and_unmounted_fed_nodes_do_not_publish(loaded):
     assert not (out/'native_publication.jsonl').exists()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_lt1/amendment2/run_margin_first/cells/*/checkpoint')
 @pytest.mark.parametrize('case', ['checkpoint', 'untracked', 'replaced', 'mapped', 'payload', 'split'])
 def test_refuses_unknown_missing_identity(loaded, case):
     repo, fed, out = loaded
@@ -61,6 +67,8 @@ def test_refuses_unknown_missing_identity(loaded, case):
     assert repo.native_store.stats().nodes == 25
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_lt1/amendment2/run_margin_first/cells/*/checkpoint')
 def test_repeated_mount_does_not_duplicate_registration(loaded):
     repo, fed, out = loaded
     for _ in range(2):
@@ -69,6 +77,8 @@ def test_repeated_mount_does_not_duplicate_registration(loaded):
     assert len((out/'native_publication.jsonl').read_text().splitlines()) == 1
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_lt1/amendment2/run_margin_first/cells/*/checkpoint')
 def test_native_unavailable_keeps_original_cpu_path(loaded):
     repo, fed, out = loaded
     store = repo.arena.native_store
@@ -78,6 +88,8 @@ def test_native_unavailable_keeps_original_cpu_path(loaded):
     repo.arena.native_store = store
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_lt1/amendment2/run_margin_first/cells/*/checkpoint')
 def test_replay_retains_checkpoint_ids_and_names_graft25(loaded):
     repo, fed, out = loaded
     assert [g['native_node_id'] for g in repo.arena.grafts[:25]] == list(range(25))
@@ -86,6 +98,8 @@ def test_replay_retains_checkpoint_ids_and_names_graft25(loaded):
     assert all(not g.get('sources') for g in fed.values())
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_lt1/amendment2/run_margin_first/cells/*/checkpoint')
 def test_resume_starts_at_failed_cell_and_keeps_charge():
     from scripts import grm_lt1_amendment4 as a4
     r = lt.verify()
@@ -97,6 +111,8 @@ def test_resume_starts_at_failed_cell_and_keeps_charge():
     assert a4.cell_directory(lt.RUN/'cells','A-025-032').name == 'A-025-032'
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_lt1/amendment2/run_margin_first/cells/*/checkpoint')
 def test_partial_failed_probes_are_not_scored():
     result = lt.summary('A')
     assert result['measured_recalls'] == 7
@@ -138,6 +154,8 @@ def test_unknown_red_and_orphan_still_block(tmp_path):
         worker.accounting(tmp_path)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_lt1/amendment2/run_margin_first/cells/*/checkpoint')
 def test_actual_attempt_clears_original_failure_without_changing_pick(loaded):
     repo, fed, out = loaded
     question = "What did we settle on for Breakwater's map position?"

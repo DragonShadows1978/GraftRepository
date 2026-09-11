@@ -268,6 +268,8 @@ def test_overrun_is_red_and_charged_in_full(campaign, monkeypatch):
         run.batch('F6')
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_scout_fix8/resume_amendment_1/registration.json')
 def test_live_registration_and_old_red_stop():
     r, base = run.verify()
     assert r['historical_charged_seconds'] + sum(s['lease_seconds'] for s in r['batches'].values()) == 1800
@@ -276,6 +278,8 @@ def test_live_registration_and_old_red_stop():
     assert run.summary()['historical_RED_preserved']
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_scout_fix8/resume_amendment_1/registration.json')
 @pytest.mark.parametrize('suffix,match', [
     ('scripts/grm_scout_fix8_resume.py', 'RESUME_INPUT_SHA_MISMATCH'),
     ('gpu/F5/controller.json', 'HISTORICAL_RECEIPT_CHANGED')])

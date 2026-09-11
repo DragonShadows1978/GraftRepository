@@ -138,6 +138,8 @@ def test_registration_records_the_alias_flag_as_absent_not_applied():
     assert reg11.ALIAS_FLAG not in reg['required_env']
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_d1/lt1_1/registration.json (records GRM_ALIAS_FOLD_MERGE as ABSENT)')
 def test_alias_flag_really_is_absent_from_this_tree():
     """Verify the registration's own claim against the source tree.
 

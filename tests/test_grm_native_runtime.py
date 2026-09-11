@@ -3080,6 +3080,17 @@ def _fake_gqa_repo_for_epoch_battery():
     repo._segment_id = 0
     repo.vram_budget = None
     repo.autosave = False
+    # GRM-H1: this fixture builds the repository through __new__, so every
+    # attribute __init__ would set has to be listed here.  The A1 alias-fold
+    # merge added three of them, and correct_memory() below reads
+    # alias_fold_merge -- without these the battery dies with AttributeError
+    # instead of exercising the epoch contract it is here to prove.  Values
+    # are __init__'s defaults with the A1 flag OFF (its permanent default,
+    # core/grm_alias_fold.alias_fold_enabled), so the pre-A1 behaviour and
+    # graft ORDER this battery asserts are unchanged.
+    repo.alias_fold_merge = False
+    repo.alias_fold_history = []
+    repo._alias_exempt_pairs = set()
     repo.runtime = GRMRuntime(repo)
     return repo
 

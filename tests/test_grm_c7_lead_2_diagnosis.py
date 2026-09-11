@@ -8,6 +8,8 @@ this exact set of regression stimuli. No production algorithm is changed.
 import inspect
 import json
 
+import pytest
+
 from core.graft_arena import ArenaCache
 from core.grm_admission import ordered_identifier_tokens, is_identifier_binding
 from scripts import grm_c7_run as c7
@@ -19,6 +21,8 @@ def fixture():
     return json.loads((ROOT / 'artifacts/grm_c7/fixture.json').read_text())
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c7/diagnosis_lead_2/registration.json')
 def test_identifier_unknown_suffix_blocks_real_repository_admission(tmp_path, monkeypatch):
     repo = repository(tmp_path / 'repo', monkeypatch)
     p = fixture()['probes'][0]
@@ -46,6 +50,8 @@ def test_identifier_unknown_suffix_blocks_real_repository_admission(tmp_path, mo
         repo.close()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c7/diagnosis_lead_2/registration.json')
 def test_eb1_wc1_identifier_controls_and_all_c7_binding_pairs(tmp_path, monkeypatch):
     repo = repository(tmp_path / 'repo', monkeypatch)
     rows = []
@@ -73,6 +79,8 @@ def test_eb1_wc1_identifier_controls_and_all_c7_binding_pairs(tmp_path, monkeypa
         repo.close()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c7/diagnosis_lead_2/registration.json')
 def test_oracle_exact_source_reaches_real_attempt_harmony_live_input(tmp_path, monkeypatch):
     repo = repository(tmp_path / 'repo', monkeypatch)
     p = fixture()['probes'][0]
@@ -96,6 +104,8 @@ def test_oracle_exact_source_reaches_real_attempt_harmony_live_input(tmp_path, m
         repo.close()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c7/diagnosis_lead_2/registration.json')
 def test_fold_uses_core_raw_prompts_120_steps_and_ignores_harmony_stop(tmp_path, monkeypatch):
     repo = repository(tmp_path / 'repo', monkeypatch)
     try:
@@ -121,6 +131,8 @@ def test_fold_uses_core_raw_prompts_120_steps_and_ignores_harmony_stop(tmp_path,
         repo.close()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c7/diagnosis_lead_2/registration.json')
 def test_fold_recorded_ellipsis_can_pass_core_qc_but_coverage_rejects():
     paths = sorted((ROOT / 'artifacts/grm_c7/cells').glob('A-*/folds/*/result.json'))
     rows = []
@@ -137,6 +149,8 @@ def test_fold_recorded_ellipsis_can_pass_core_qc_but_coverage_rejects():
     assert all(r['coverage'] < .70 for r in rows)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c7/diagnosis_lead_2/registration.json')
 def test_probe_question_expected_omitted_at_c7_serialization():
     rows = [json.loads(s) for p in sorted((ROOT / 'artifacts/grm_c7/cells').glob('A-*/probes.jsonl'))
             for s in p.read_text().splitlines()]

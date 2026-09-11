@@ -25,6 +25,8 @@ def test_frozen_cpu_arena_70_profiles(monkeypatch):
         assert p['rank_plan'] and adm.identifier_unbound_abstention(p) is None
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_lt1/ (FIX-6 amendment)')
 def test_amendment_and_preflight_enforce_flag(monkeypatch):
     r=lt.verify()
     assert r['effective_admission_rule']=='margin_first'
@@ -37,12 +39,16 @@ def test_amendment_and_preflight_enforce_flag(monkeypatch):
     assert os.access(lt.OUT/'lead_commands.txt',os.X_OK)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_lt1/ (FIX-6 amendment)')
 def test_worker_rejects_unregistered_rule(tmp_path,monkeypatch):
     r=lt.verify();monkeypatch.delenv('GRM_ADMISSION_RULE',raising=False)
     with pytest.raises(ValueError,match='REGISTERED_ADMISSION_RULE_MISMATCH'):
         worker.execute(r['cells'][0],tmp_path,r,lambda *_:pytest.fail('loader must not run'))
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_lt1/ (FIX-6 amendment)')
 @pytest.mark.parametrize('arm',['A','B'])
 def test_200_turn_shared_worker_cpu(tmp_path,arm):
     r=lt.verify();run=tmp_path/'cells';run.mkdir()
