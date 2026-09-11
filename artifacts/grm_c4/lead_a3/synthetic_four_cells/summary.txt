@@ -1,0 +1,11 @@
+CPU synthetic scores for three executable cells; pinned archived WC1 fourth cell. NOT GPU campaign evidence.
+Scores: sup, census, full long-history
+chunk | width 64 | width 96
+--- | --- | ---
+64 | 9/9, 10/10, 14/14 | 9/9, 10/10, 14/14
+96 | 9/9, 10/10, 14/14 | 9/9, 9/10, 13/14
+(96,96): cited WC1 row (full 14-probe long-history).
+(64,64) fixed: 9/9, 10/10, 14/14; historical: 8/9, 10/10, 14/14; delta correct: {'census': 0, 'longhorizon': 0, 'sup': 1}
+(64,64) required probes fixed: {'sup_reserve_juniper_pass': True, 'e2e_t33_polaris_mark': True, 'longhorizon_turn_33': True}; historical: {'sup_reserve_juniper_pass': False, 'e2e_t33_polaris_mark': True, 'longhorizon_turn_33': True}
+Registered prediction: c64_w96 recovers t33, reaches 14/14 long-history, and keeps Juniper
+Prediction met: True; outcome: SUPPORTED_FINITE

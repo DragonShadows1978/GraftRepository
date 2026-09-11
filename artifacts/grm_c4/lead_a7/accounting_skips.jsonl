@@ -1,0 +1,84 @@
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/census_e2e-1.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/census_e2e-2.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/census_e2e-3.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/census_e2e-4.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/longhorizon_c4-lh-01.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/longhorizon_c4-lh-02.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/longhorizon_c4-lh-03.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/longhorizon_c4-lh-04.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/longhorizon_c4-lh-05.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/longhorizon_c4-lh-06.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/runtime_frame.json", "reason": "metadata/non-worker filename; not a worker receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/sup_correction_then_restatement.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/sup_fresh_fact_controls.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/sup_multi_hop_a_b_c.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/sup_short_correction_long_competitor.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-06.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-07.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-08.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-09.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-10.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-11.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-12.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/runtime_frame.json", "reason": "metadata/non-worker filename; not a worker receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c64_w96/longhorizon_c4-lh-12a.json", "reason": "NON_FIT status receipt; no executed work, zero charge"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c64_w96/longhorizon_c4-lh-12b.json", "reason": "NON_FIT status receipt; no executed work, zero charge"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c64_w96/longhorizon_c4-lh-13a.json", "reason": "NON_FIT status receipt; no executed work, zero charge"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c64_w96/longhorizon_c4-lh-13b.json", "reason": "NON_FIT status receipt; no executed work, zero charge"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c64_w96/score.json", "reason": "score summary; not a worker receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/census_e2e-1.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/census_e2e-2.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/census_e2e-3.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/census_e2e-4.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/longhorizon_c4-lh-01.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/longhorizon_c4-lh-02.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/longhorizon_c4-lh-03.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/longhorizon_c4-lh-04.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/longhorizon_c4-lh-05.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/longhorizon_c4-lh-06.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/runtime_frame.json", "reason": "metadata/non-worker filename; not a worker receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/sup_correction_then_restatement.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/sup_fresh_fact_controls.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/sup_multi_hop_a_b_c.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/sup_short_correction_long_competitor.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-06.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-07.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-08.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-09.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-10.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-11.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-12.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/runtime_frame.json", "reason": "metadata/non-worker filename; not a worker receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c64_w96/longhorizon_c4-lh-12a.json", "reason": "NON_FIT status receipt; no executed work, zero charge"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c64_w96/longhorizon_c4-lh-12b.json", "reason": "NON_FIT status receipt; no executed work, zero charge"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c64_w96/longhorizon_c4-lh-13a.json", "reason": "NON_FIT status receipt; no executed work, zero charge"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c64_w96/longhorizon_c4-lh-13b.json", "reason": "NON_FIT status receipt; no executed work, zero charge"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c64_w96/score.json", "reason": "score summary; not a worker receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/census_e2e-1.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/census_e2e-2.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/census_e2e-3.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/census_e2e-4.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/longhorizon_c4-lh-01.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/longhorizon_c4-lh-02.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/longhorizon_c4-lh-03.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/longhorizon_c4-lh-04.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/longhorizon_c4-lh-05.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/longhorizon_c4-lh-06.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/runtime_frame.json", "reason": "metadata/non-worker filename; not a worker receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/sup_correction_then_restatement.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/sup_fresh_fact_controls.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/sup_multi_hop_a_b_c.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/runs/c64_w96/sup_short_correction_long_competitor.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-06.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-07.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-08.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-09.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-10.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-11.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/longhorizon_c4-lh-12.attempt.json", "reason": "attempt marker; not a completed receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/runs/c64_w96/runtime_frame.json", "reason": "metadata/non-worker filename; not a worker receipt"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c64_w96/longhorizon_c4-lh-12a.json", "reason": "NON_FIT status receipt; no executed work, zero charge"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c64_w96/longhorizon_c4-lh-12b.json", "reason": "NON_FIT status receipt; no executed work, zero charge"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c64_w96/longhorizon_c4-lh-13a.json", "reason": "NON_FIT status receipt; no executed work, zero charge"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c64_w96/longhorizon_c4-lh-13b.json", "reason": "NON_FIT status receipt; no executed work, zero charge"}
+{"accounting_skip": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c64_w96/score.json", "reason": "score summary; not a worker receipt"}

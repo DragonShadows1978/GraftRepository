@@ -1,0 +1,12 @@
+{
+  "actual_completed_gpu_seconds": 2157.6785489856265,
+  "before_count": 2738,
+  "unchanged_count": 2736,
+  "legacy_snapshot_drift_paths": {
+    "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5": [],
+    "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a6": [
+      "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_split_a5.py"
+    ]
+  },
+  "resume_selection": "A7 lines 1-7 and 15-end; line15 is the first unstarted worker"
+}

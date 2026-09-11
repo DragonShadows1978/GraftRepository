@@ -1,0 +1,21 @@
+{
+  "amendment": {
+    "bytes": 4826,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/amendment_a10.json",
+    "sha256": "8108af9b123c31508bf1a5b99703b832653efd6176ba5e612ff5a09cb4e42431"
+  },
+  "battery": "census",
+  "budget_amendment": {
+    "bytes": 42570,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a6/amendment_a8.json",
+    "sha256": "4343189f992408e57797dfc0ebd13dc6df2a7e086e28d874823bdaa546f2c78e"
+  },
+  "cell": "c64_w64",
+  "registration": {
+    "bytes": 67067,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/registration.json",
+    "sha256": "7fb561c70dd8c04abc18ef99a7a2a5ec4d37cbc2a22b1de1f89ab2119bd285e8"
+  },
+  "spec": "e2e-2",
+  "started_unix": 1788954312.8004546
+}

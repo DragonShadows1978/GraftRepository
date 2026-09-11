@@ -1,0 +1,2387 @@
+{
+  "amendment": {
+    "bytes": 4826,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/amendment_a10.json",
+    "sha256": "8108af9b123c31508bf1a5b99703b832653efd6176ba5e612ff5a09cb4e42431"
+  },
+  "battery": "census",
+  "budget": {
+    "authorized_by": "Lead, orders/GRM_C4_AMENDMENT_1.md, 2026-09-09",
+    "cooldown_seconds": 30,
+    "estimate_class": "Planning assumption: sup 60s/fixture, census and 8-turn LH segments 80s each including load/save; unvalidated on this sandbox; stop at rail without retry.",
+    "full_fixed_geometry_estimate_seconds": 4800,
+    "full_fixed_geometry_status": "PLANNING_FIT_AT_CAP_UNVALIDATED",
+    "gpu_seconds": 6600,
+    "lock": "/tmp/forge-gpu.lock",
+    "lock_wait_seconds": 0,
+    "new_cells_estimate_seconds": 4800,
+    "outer_seconds": 590,
+    "planning_cooldown_seconds": 1890,
+    "reserve_note": "285s full-worker reservation unchanged. At exactly estimated unit times the final worker needs 5005s cumulative reservation, so a 4800s estimate does not guarantee completion under the 4800s cap; stop NON_FIT if reserve fails. Cooldown is outside GPU budget.",
+    "stop": "One timeout stops its chain; no retry or longer lease. Reserve full 285s before each worker against remaining total.",
+    "worker_seconds": 285
+  },
+  "budget_amendment": {
+    "bytes": 42570,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a6/amendment_a8.json",
+    "sha256": "4343189f992408e57797dfc0ebd13dc6df2a7e086e28d874823bdaa546f2c78e"
+  },
+  "campaign_gpu_seconds_before": 2470.3244810495526,
+  "cell": "c96_w64",
+  "chunk": 96,
+  "events": [
+    {
+      "arena_width": 64,
+      "capture_pin": "live",
+      "ephemeral": true,
+      "event": "geometry",
+      "live_shift": 115,
+      "live_turns": 2,
+      "n_sink": 19,
+      "seat_near_live": true
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 27,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 28,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "arena_width": 64,
+      "event": "turn",
+      "info": {
+        "abstain_deposited_graft": 29,
+        "abstain_identifier_tokens": [
+          "session",
+          "continuity",
+          "filler",
+          "full",
+          "zeta",
+          "acknowledge",
+          "briefly",
+          "change",
+          "stored",
+          "fact",
+          "values"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          1,
+          8,
+          19
+        ],
+        "admission_ranking_before_demotion": [
+          1,
+          8,
+          19,
+          10,
+          16,
+          24
+        ],
+        "admission_route_margin_1_2": 0.7589303396985219,
+        "admission_route_margin_evaluated": true,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          8,
+          16,
+          19,
+          24
+        ],
+        "evicted": 0,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "live_tokens": 0,
+        "mounts": [],
+        "no_mount_fit": false,
+        "recency_mounted_ids": [
+          26,
+          27
+        ],
+        "recency_seats": {
+          "arena_width": 64,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            26,
+            27
+          ],
+          "nominated_ntok": 141
+        },
+        "resident": 0,
+        "route_receipt_record": {
+          "admission": {
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": null,
+            "margin_threshold": 0.1385774091529802,
+            "policy": "A-DEC",
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              1,
+              8,
+              19
+            ],
+            "rare_identifier_tokens": null,
+            "route_margin_1_2": 0.7589303396985219,
+            "route_margin_evaluated": true,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "fit": {
+            "cur_mount_n": 0,
+            "dropped": [],
+            "final_mounts": [],
+            "info_pass_through": {
+              "abstain_deposited_graft": 29,
+              "abstain_identifier_tokens": [
+                "session",
+                "continuity",
+                "filler",
+                "full",
+                "zeta",
+                "acknowledge",
+                "briefly",
+                "change",
+                "stored",
+                "fact",
+                "values"
+              ],
+              "abstain_reason": "identifier_unbound",
+              "abstained": true,
+              "frame_ephemeral": true,
+              "frame_escape_active": false,
+              "live_segments_after_turn": [],
+              "live_segments_carried_into_turn": [],
+              "live_segments_inherited": [],
+              "recency_mounted_ids": [
+                26,
+                27
+              ],
+              "recency_seats": {
+                "arena_width": 64,
+                "budget_after_charge": null,
+                "charge_waived_reason": null,
+                "charged_ntok": null,
+                "nominated_ids": [
+                  26,
+                  27
+                ],
+                "nominated_ntok": 141
+              }
+            },
+            "no_mount_fit": false,
+            "planned": [],
+            "seated": [],
+            "trip_count": 1,
+            "trips": [
+              {
+                "clean_room": false,
+                "grounded": null,
+                "mount_set": [],
+                "ordinal": 0,
+                "planned": [],
+                "shuttle": false
+              }
+            ],
+            "width": 64
+          },
+          "provenance": {
+            "arena_state_sha256_before_serve": "7977ccb32e73672fe411b6b9589e92d353f62e3a2e56aa4b09105bb8df6b2f28",
+            "output_sha256": "38cba7c768ae7f9a8f54de4f4f79d99a7c5f08d61198f9c22dfa3e4d98fd4add",
+            "repository_size_at_probe": 30,
+            "request_sha256": "f6775c17de05b3a89972fac2f7310b1cf1417cf8f9bf8cfa2503ba111db2f638"
+          },
+          "receipt_sha256": "01d6fc4dff7d7d9c9345924ce028c4949f746209631249f4b81d97ebf8237a07",
+          "route": {
+            "arena_route_receipt": null,
+            "backend": "python",
+            "candidate_count": null,
+            "excluded_live_ids": [],
+            "excluded_recency_ids": [],
+            "fallbacks": [],
+            "ranking_ids": [],
+            "ranking_length": 0,
+            "ranking_scores": null,
+            "route_limit": 6
+          },
+          "schema": "grm.route_receipt.v1",
+          "serving_path": "core.grm_runtime.GRMRuntime.chat",
+          "session_id": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository",
+          "turn_id": "0",
+          "turn_kind": "chat"
+        },
+        "route_receipt_sink": {
+          "reason": "no_ledger_location_configured",
+          "sink": "info"
+        },
+        "trip": 0
+      },
+      "live_shift": 115,
+      "live_token_seats": null,
+      "mounted_ids": [],
+      "mounted_token_seats": 0,
+      "physical_cache_token_seats": null,
+      "sink_token_seats": 19
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 29,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 29,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 64,
+      "event": "guard",
+      "idx": 10,
+      "parent_preserved": true,
+      "phase": "explicit_budget_repair",
+      "split": {
+        "action": "width_guard_split",
+        "budget": 64,
+        "children": [
+          30,
+          31
+        ],
+        "parent": 10,
+        "parent_kind": "era",
+        "retired_parent": false
+      }
+    },
+    {
+      "event": "seat",
+      "observed": {
+        "arena_width": 64,
+        "delta_positions": 54,
+        "live_shift": 115,
+        "mount_ntok": 42,
+        "mount_pos0": 73,
+        "mount_pos0_legacy": 19,
+        "n_sink": 19,
+        "plan_head": 30,
+        "plan_head_adjacent_to_live_shift": true,
+        "plan_head_last_position": 114,
+        "plan_head_ntok": 42,
+        "seat_near_live": true,
+        "seat_offset_plan_head": 73,
+        "seat_order": [
+          30
+        ],
+        "seat_order_legacy": [
+          30
+        ],
+        "seat_rule": "GRM_SEAT_NEAR_LIVE: the block is filled from the TOP DOWN \u2014 the plan head (picks[0]) is seated LAST so its final token sits at live_shift - 1, immediately below the first live token; filler and the other mounts sit below it; the sink stays at [0, n_sink)"
+      }
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "arena_width": 64,
+      "event": "attempt_residency",
+      "live_shift": 115,
+      "live_token_seats": 50,
+      "mounted_ids": [
+        30
+      ],
+      "mounted_token_seats": 42,
+      "physical_cache_token_seats": 111,
+      "sink_token_seats": 19
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 30,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 31,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 32,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 33,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "arena_width": 64,
+      "event": "turn",
+      "info": {
+        "abstain_deposited_graft": 34,
+        "abstain_identifier_tokens": [
+          "session",
+          "continuity",
+          "filler",
+          "full",
+          "eta",
+          "acknowledge",
+          "briefly",
+          "change",
+          "stored",
+          "fact",
+          "values"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          1,
+          10,
+          8
+        ],
+        "admission_ranking_before_demotion": [
+          1,
+          10,
+          8,
+          19,
+          30,
+          4
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          4,
+          8,
+          10,
+          19,
+          30
+        ],
+        "evicted": 0,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [
+          {
+            "graft_id": 32,
+            "ntok": 50
+          }
+        ],
+        "live_tokens": 0,
+        "mounts": [],
+        "no_mount_fit": false,
+        "recency_mounted_ids": [
+          32,
+          33
+        ],
+        "recency_seats": {
+          "arena_width": 64,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            32,
+            33
+          ],
+          "nominated_ntok": 129
+        },
+        "resident": 0,
+        "route_receipt_record": {
+          "admission": {
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": null,
+            "margin_threshold": 0.1385774091529802,
+            "policy": "A-DEC",
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              1,
+              10,
+              8
+            ],
+            "rare_identifier_tokens": null,
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": false,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "fit": {
+            "cur_mount_n": 0,
+            "dropped": [],
+            "final_mounts": [],
+            "info_pass_through": {
+              "abstain_deposited_graft": 34,
+              "abstain_identifier_tokens": [
+                "session",
+                "continuity",
+                "filler",
+                "full",
+                "eta",
+                "acknowledge",
+                "briefly",
+                "change",
+                "stored",
+                "fact",
+                "values"
+              ],
+              "abstain_reason": "identifier_unbound",
+              "abstained": true,
+              "frame_ephemeral": true,
+              "frame_escape_active": false,
+              "live_segments_after_turn": [],
+              "live_segments_carried_into_turn": [],
+              "live_segments_inherited": [
+                {
+                  "graft_id": 32,
+                  "ntok": 50
+                }
+              ],
+              "recency_mounted_ids": [
+                32,
+                33
+              ],
+              "recency_seats": {
+                "arena_width": 64,
+                "budget_after_charge": null,
+                "charge_waived_reason": null,
+                "charged_ntok": null,
+                "nominated_ids": [
+                  32,
+                  33
+                ],
+                "nominated_ntok": 129
+              }
+            },
+            "no_mount_fit": false,
+            "planned": [],
+            "seated": [],
+            "trip_count": 1,
+            "trips": [
+              {
+                "clean_room": false,
+                "grounded": null,
+                "mount_set": [],
+                "ordinal": 0,
+                "planned": [],
+                "shuttle": false
+              }
+            ],
+            "width": 64
+          },
+          "provenance": {
+            "arena_state_sha256_before_serve": "0cd52f1266cfe0c11ffa62a3b4c6cc6487e530d45a959e649c2a5b119714a8ca",
+            "output_sha256": "3ddd000ced575a51166a59d24d3a52aeac4f725bb4fee7523b77ee8619ab80bd",
+            "repository_size_at_probe": 35,
+            "request_sha256": "5453729026272288a73581e2f2468c7685726379a9f73d306012621e9b26bb94"
+          },
+          "receipt_sha256": "9eef80800251f4a7b94d8e18e84c0fa0911a03aa7a3d2b9ddaca27ca5b03303b",
+          "route": {
+            "arena_route_receipt": null,
+            "backend": "python",
+            "candidate_count": null,
+            "excluded_live_ids": [],
+            "excluded_recency_ids": [],
+            "fallbacks": [],
+            "ranking_ids": [],
+            "ranking_length": 0,
+            "ranking_scores": null,
+            "route_limit": 6
+          },
+          "schema": "grm.route_receipt.v1",
+          "serving_path": "core.grm_runtime.GRMRuntime.chat",
+          "session_id": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository",
+          "turn_id": "1",
+          "turn_kind": "chat"
+        },
+        "route_receipt_sink": {
+          "reason": "no_ledger_location_configured",
+          "sink": "info"
+        },
+        "trip": 0
+      },
+      "live_shift": 115,
+      "live_token_seats": null,
+      "mounted_ids": [],
+      "mounted_token_seats": 0,
+      "physical_cache_token_seats": null,
+      "sink_token_seats": 19
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 34,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 34,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 64,
+      "event": "guard",
+      "idx": 27,
+      "parent_preserved": true,
+      "phase": "explicit_budget_repair",
+      "split": {
+        "action": "width_guard_split",
+        "budget": 64,
+        "children": [
+          35,
+          36
+        ],
+        "parent": 27,
+        "parent_kind": "era",
+        "retired_parent": false
+      }
+    },
+    {
+      "event": "seat",
+      "observed": {
+        "arena_width": 64,
+        "delta_positions": 45,
+        "live_shift": 115,
+        "mount_ntok": 51,
+        "mount_pos0": 64,
+        "mount_pos0_legacy": 19,
+        "n_sink": 19,
+        "plan_head": 35,
+        "plan_head_adjacent_to_live_shift": true,
+        "plan_head_last_position": 114,
+        "plan_head_ntok": 51,
+        "seat_near_live": true,
+        "seat_offset_plan_head": 64,
+        "seat_order": [
+          35
+        ],
+        "seat_order_legacy": [
+          35
+        ],
+        "seat_rule": "GRM_SEAT_NEAR_LIVE: the block is filled from the TOP DOWN \u2014 the plan head (picks[0]) is seated LAST so its final token sits at live_shift - 1, immediately below the first live token; filler and the other mounts sit below it; the sink stays at [0, n_sink)"
+      }
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "arena_width": 64,
+      "event": "attempt_residency",
+      "live_shift": 115,
+      "live_token_seats": 52,
+      "mounted_ids": [
+        35
+      ],
+      "mounted_token_seats": 51,
+      "physical_cache_token_seats": 122,
+      "sink_token_seats": 19
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 35,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 36,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 37,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "arena_width": 64,
+      "event": "turn",
+      "info": {
+        "abstain_deposited_graft": 38,
+        "abstain_identifier_tokens": [
+          "session",
+          "continuity",
+          "filler",
+          "full",
+          "theta",
+          "acknowledge",
+          "briefly",
+          "change",
+          "stored",
+          "fact",
+          "values"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          1,
+          10,
+          30
+        ],
+        "admission_ranking_before_demotion": [
+          1,
+          10,
+          30,
+          8,
+          19,
+          27
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          8,
+          10,
+          19,
+          27,
+          30
+        ],
+        "evicted": 0,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [
+          {
+            "graft_id": 37,
+            "ntok": 52
+          }
+        ],
+        "live_tokens": 0,
+        "mounts": [],
+        "no_mount_fit": false,
+        "recency_mounted_ids": [
+          34,
+          37
+        ],
+        "recency_seats": {
+          "arena_width": 64,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            34,
+            37
+          ],
+          "nominated_ntok": 130
+        },
+        "resident": 0,
+        "route_receipt_record": {
+          "admission": {
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": null,
+            "margin_threshold": 0.1385774091529802,
+            "policy": "A-DEC",
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              1,
+              10,
+              30
+            ],
+            "rare_identifier_tokens": null,
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": false,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "fit": {
+            "cur_mount_n": 0,
+            "dropped": [],
+            "final_mounts": [],
+            "info_pass_through": {
+              "abstain_deposited_graft": 38,
+              "abstain_identifier_tokens": [
+                "session",
+                "continuity",
+                "filler",
+                "full",
+                "theta",
+                "acknowledge",
+                "briefly",
+                "change",
+                "stored",
+                "fact",
+                "values"
+              ],
+              "abstain_reason": "identifier_unbound",
+              "abstained": true,
+              "frame_ephemeral": true,
+              "frame_escape_active": false,
+              "live_segments_after_turn": [],
+              "live_segments_carried_into_turn": [],
+              "live_segments_inherited": [
+                {
+                  "graft_id": 37,
+                  "ntok": 52
+                }
+              ],
+              "recency_mounted_ids": [
+                34,
+                37
+              ],
+              "recency_seats": {
+                "arena_width": 64,
+                "budget_after_charge": null,
+                "charge_waived_reason": null,
+                "charged_ntok": null,
+                "nominated_ids": [
+                  34,
+                  37
+                ],
+                "nominated_ntok": 130
+              }
+            },
+            "no_mount_fit": false,
+            "planned": [],
+            "seated": [],
+            "trip_count": 1,
+            "trips": [
+              {
+                "clean_room": false,
+                "grounded": null,
+                "mount_set": [],
+                "ordinal": 0,
+                "planned": [],
+                "shuttle": false
+              }
+            ],
+            "width": 64
+          },
+          "provenance": {
+            "arena_state_sha256_before_serve": "daf377a6a19a0edf81f31d260beeae005667bfe53f7e80fc666fac60ea49fd10",
+            "output_sha256": "efab96d459d0cf6436629e2bad18445bdd19b0c88b79820538fa6ee7930408c5",
+            "repository_size_at_probe": 39,
+            "request_sha256": "c6a9ce1ba8aa29b8b9d93b71cec540854cce4f076b72a8e77d20e12e45101580"
+          },
+          "receipt_sha256": "93f4025892e5c818e8bc72a6e3cdeae9ed70c3c4d4ff3b08d76665e8b320a77e",
+          "route": {
+            "arena_route_receipt": null,
+            "backend": "python",
+            "candidate_count": null,
+            "excluded_live_ids": [],
+            "excluded_recency_ids": [],
+            "fallbacks": [],
+            "ranking_ids": [],
+            "ranking_length": 0,
+            "ranking_scores": null,
+            "route_limit": 6
+          },
+          "schema": "grm.route_receipt.v1",
+          "serving_path": "core.grm_runtime.GRMRuntime.chat",
+          "session_id": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository",
+          "turn_id": "2",
+          "turn_kind": "chat"
+        },
+        "route_receipt_sink": {
+          "reason": "no_ledger_location_configured",
+          "sink": "info"
+        },
+        "trip": 0
+      },
+      "live_shift": 115,
+      "live_token_seats": null,
+      "mounted_ids": [],
+      "mounted_token_seats": 0,
+      "physical_cache_token_seats": null,
+      "sink_token_seats": 19
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 38,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 38,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 64,
+      "event": "guard",
+      "idx": 22,
+      "parent_preserved": true,
+      "phase": "explicit_budget_repair",
+      "split": {
+        "action": "width_guard_split",
+        "budget": 64,
+        "children": [
+          39,
+          40
+        ],
+        "parent": 22,
+        "parent_kind": "era",
+        "retired_parent": false
+      }
+    },
+    {
+      "event": "seat",
+      "observed": {
+        "arena_width": 64,
+        "delta_positions": 54,
+        "live_shift": 115,
+        "mount_ntok": 42,
+        "mount_pos0": 73,
+        "mount_pos0_legacy": 19,
+        "n_sink": 19,
+        "plan_head": 39,
+        "plan_head_adjacent_to_live_shift": true,
+        "plan_head_last_position": 114,
+        "plan_head_ntok": 42,
+        "seat_near_live": true,
+        "seat_offset_plan_head": 73,
+        "seat_order": [
+          39
+        ],
+        "seat_order_legacy": [
+          39
+        ],
+        "seat_rule": "GRM_SEAT_NEAR_LIVE: the block is filled from the TOP DOWN \u2014 the plan head (picks[0]) is seated LAST so its final token sits at live_shift - 1, immediately below the first live token; filler and the other mounts sit below it; the sink stays at [0, n_sink)"
+      }
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "arena_width": 64,
+      "event": "attempt_residency",
+      "live_shift": 115,
+      "live_token_seats": 51,
+      "mounted_ids": [
+        39
+      ],
+      "mounted_token_seats": 42,
+      "physical_cache_token_seats": 112,
+      "sink_token_seats": 19
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 39,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 40,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 41,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "ephemeral_split_members": 0,
+      "event": "split_census",
+      "nodes": 42,
+      "split_children": 14,
+      "split_nodes": 21,
+      "split_parents": 7
+    }
+  ],
+  "evidence_class": "GPU E2E worker; lead A5 split and independent cells",
+  "finished_unix": 1788952279.2651649,
+  "geometry_pin": {
+    "capture_pin": "live",
+    "ephemeral": true,
+    "live_shift": "n_sink + 96",
+    "live_turns": 2,
+    "max_live": 4096,
+    "plan_head_last_position": "n_sink + 95",
+    "remaining_flags": {
+      "adm_decisive": true,
+      "admission_mode": "A-DEC",
+      "arena_width": 96,
+      "gqa_cuda_route": true,
+      "graft_storage_bits": 8,
+      "length_debias": false,
+      "live_turns": 2,
+      "max_live": 4096,
+      "max_trips": 1,
+      "ngen": 32,
+      "probe_ladder": true,
+      "route_query_lex": true,
+      "sup_resolve": true,
+      "topk": 3,
+      "turn_pipeline": "single",
+      "vram_budget_mb": null
+    },
+    "seat_near_live": true,
+    "sink": "unchanged tokenizer-derived n_sink"
+  },
+  "gpu_seconds": 90.81310304207727,
+  "prior_receipt": {
+    "bytes": 50964,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census_e2e-2.json",
+    "sha256": "24bbb37131eb57d718b32d68907bbd3ff2aef6a83d0e625ed0c5c33846c693a9"
+  },
+  "registration": {
+    "bytes": 67067,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/registration.json",
+    "sha256": "7fb561c70dd8c04abc18ef99a7a2a5ec4d37cbc2a22b1de1f89ab2119bd285e8"
+  },
+  "result": {
+    "elapsed_seconds": 85.8383776168339,
+    "probe_rows": [
+      {
+        "accepts": [
+          "Auric-4-Alpha"
+        ],
+        "admission": {
+          "admission_identified_candidates": [
+            0
+          ],
+          "admission_identifier_hit_count": 1,
+          "admission_margin_threshold": 0.1385774091529802,
+          "admission_policy": "A-DEC",
+          "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+          "admission_rank_plan": [
+            0
+          ],
+          "admission_route_margin_1_2": 1.0165544102280362,
+          "admission_route_margin_evaluated": true,
+          "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+        },
+        "answer": "Auric-4-Alpha",
+        "contains_expected": true,
+        "contains_stale": false,
+        "eviction_check": {
+          "live_node_ids_before": [],
+          "live_turns": 2,
+          "policy_evicted_before_probe": true,
+          "source_node_id": 0,
+          "source_node_live_before": false,
+          "source_turn": 0
+        },
+        "expected": "Auric-4-Alpha",
+        "fact_id": "orion pin",
+        "frame": {
+          "frame_ephemeral": true,
+          "frame_escape_active": false,
+          "live_segments_after_turn": [
+            {
+              "graft_id": 7,
+              "ntok": 52
+            }
+          ],
+          "live_segments_carried_into_turn": [],
+          "live_segments_inherited": [],
+          "recency_mounted_ids": [
+            3,
+            4
+          ],
+          "recency_seats": {
+            "arena_width": 64,
+            "budget_after_charge": 64,
+            "charge_waived_reason": "identifier_query_point_lookup",
+            "charged_ntok": 0,
+            "nominated_ids": [
+              3,
+              4
+            ],
+            "nominated_ntok": 164
+          }
+        },
+        "mount_plan": [
+          5
+        ],
+        "mounted_ids": [
+          5
+        ],
+        "mounts": [
+          6
+        ],
+        "old_value": null,
+        "pass": true,
+        "resumed": false,
+        "route_backend": "python",
+        "route_ranking": {
+          "live_excluded": [],
+          "mount_dropped_for_width": [],
+          "mount_fitted": [
+            5
+          ],
+          "mount_plan": [
+            5
+          ],
+          "ranking_ids": [
+            0,
+            4,
+            2,
+            1
+          ],
+          "ranking_len": 4,
+          "route_backend": "python",
+          "score_error": null,
+          "source_node_id": 0,
+          "source_rank": 1,
+          "top5": [
+            {
+              "contains_value_hint": true,
+              "node_id": 0,
+              "rank": 1,
+              "score": 0.9487071966369287,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 4,
+              "rank": 2,
+              "score": 0.9999999983770004,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 2,
+              "rank": 3,
+              "score": 0.9330019084906431,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": false,
+              "node_id": 1,
+              "rank": 4,
+              "score": 0.9045479839880245,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session c"
+            }
+          ]
+        },
+        "turn": 5
+      },
+      {
+        "accepts": [
+          "Vortex-3-Sierra"
+        ],
+        "admission": {
+          "admission_identified_candidates": [
+            4
+          ],
+          "admission_identifier_hit_count": 1,
+          "admission_margin_threshold": 0.1385774091529802,
+          "admission_policy": "A-DEC",
+          "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+          "admission_rank_plan": [
+            4
+          ],
+          "admission_route_margin_1_2": 1.0602309975560393,
+          "admission_route_margin_evaluated": true,
+          "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+        },
+        "answer": "Vortex-3-Sierra",
+        "contains_expected": true,
+        "contains_stale": false,
+        "eviction_check": {
+          "live_node_ids_before": [],
+          "live_turns": 2,
+          "policy_evicted_before_probe": true,
+          "source_node_id": 4,
+          "source_node_live_before": false,
+          "source_turn": 4
+        },
+        "expected": "Vortex-3-Sierra",
+        "fact_id": "cypher bridge",
+        "frame": {
+          "frame_ephemeral": true,
+          "frame_escape_active": false,
+          "live_segments_after_turn": [
+            {
+              "graft_id": 14,
+              "ntok": 52
+            }
+          ],
+          "live_segments_carried_into_turn": [],
+          "live_segments_inherited": [],
+          "recency_mounted_ids": [
+            10,
+            11
+          ],
+          "recency_seats": {
+            "arena_width": 64,
+            "budget_after_charge": 64,
+            "charge_waived_reason": "identifier_query_point_lookup",
+            "charged_ntok": 0,
+            "nominated_ids": [
+              10,
+              11
+            ],
+            "nominated_ntok": 157
+          }
+        },
+        "mount_plan": [
+          12
+        ],
+        "mounted_ids": [
+          12
+        ],
+        "mounts": [
+          13
+        ],
+        "old_value": null,
+        "pass": true,
+        "resumed": false,
+        "route_backend": "python",
+        "route_ranking": {
+          "live_excluded": [],
+          "mount_dropped_for_width": [],
+          "mount_fitted": [
+            12
+          ],
+          "mount_plan": [
+            12
+          ],
+          "ranking_ids": [
+            4,
+            10,
+            8,
+            2,
+            1,
+            9
+          ],
+          "ranking_len": 6,
+          "route_backend": "python",
+          "score_error": null,
+          "source_node_id": 4,
+          "source_rank": 1,
+          "top5": [
+            {
+              "contains_value_hint": true,
+              "node_id": 4,
+              "rank": 1,
+              "score": 0.9999999983708072,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 10,
+              "rank": 2,
+              "score": 0.9636492194358562,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 8,
+              "rank": 3,
+              "score": 0.9397690008147679,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 2,
+              "rank": 4,
+              "score": 0.939529020976075,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": false,
+              "node_id": 1,
+              "rank": 5,
+              "score": 0.9056999995045578,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Session c"
+            }
+          ]
+        },
+        "turn": 9
+      },
+      {
+        "accepts": [
+          "Kestrel-9-Tango"
+        ],
+        "admission": {
+          "admission_identified_candidates": [
+            8,
+            9
+          ],
+          "admission_identifier_hit_count": 2,
+          "admission_margin_threshold": 0.1385774091529802,
+          "admission_policy": "A-DEC",
+          "admission_policy_branch": "declared_synthesis_identified_set",
+          "admission_rank_plan": [
+            8,
+            9
+          ],
+          "admission_route_margin_1_2": 0.07978507693809678,
+          "admission_route_margin_evaluated": true,
+          "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+        },
+        "answer": "Kestrel-9-Tango",
+        "contains_expected": true,
+        "contains_stale": false,
+        "eviction_check": {
+          "live_node_ids_before": [],
+          "live_turns": 2,
+          "policy_evicted_before_probe": true,
+          "source_node_id": 9,
+          "source_node_live_before": false,
+          "source_turn": 6
+        },
+        "expected": "Kestrel-9-Tango",
+        "fact_id": "orion pin",
+        "frame": {
+          "frame_ephemeral": true,
+          "frame_escape_active": false,
+          "live_segments_after_turn": [
+            {
+              "graft_id": 21,
+              "ntok": 53
+            }
+          ],
+          "live_segments_carried_into_turn": [],
+          "live_segments_inherited": [],
+          "recency_mounted_ids": [
+            16,
+            18
+          ],
+          "recency_seats": {
+            "arena_width": 64,
+            "budget_after_charge": 64,
+            "charge_waived_reason": "identifier_query_point_lookup",
+            "charged_ntok": 0,
+            "nominated_ids": [
+              16,
+              18
+            ],
+            "nominated_ntok": 164
+          }
+        },
+        "mount_plan": [
+          19
+        ],
+        "mounted_ids": [
+          19
+        ],
+        "mounts": [
+          20
+        ],
+        "old_value": "Auric-4-Alpha",
+        "pass": true,
+        "resumed": true,
+        "route_backend": "python",
+        "route_ranking": {
+          "live_excluded": [],
+          "mount_dropped_for_width": [],
+          "mount_fitted": [
+            19
+          ],
+          "mount_plan": [
+            19
+          ],
+          "ranking_ids": [
+            8,
+            9,
+            4,
+            12,
+            13,
+            15,
+            16,
+            10,
+            1,
+            17
+          ],
+          "ranking_len": 10,
+          "route_backend": "python",
+          "score_error": null,
+          "source_node_id": 9,
+          "source_rank": 2,
+          "top5": [
+            {
+              "contains_value_hint": true,
+              "node_id": 8,
+              "rank": 1,
+              "score": 0.9455695849473437,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 9,
+              "rank": 2,
+              "score": 0.865784508009247,
+              "text_prefix": "The current orion pin value is Kestrel-9-Tango."
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 4,
+              "rank": 3,
+              "score": 0.9999999983770004,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 12,
+              "rank": 4,
+              "score": 0.9999999983770004,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 13,
+              "rank": 5,
+              "score": 0.9999999983770004,
+              "text_prefix": "If asked later for cypher bridge, answer Vortex-3-Sierra only.<|end|><|start|>assistant<|channel|>final<|message|>Unders"
+            }
+          ]
+        },
+        "turn": 13
+      },
+      {
+        "accepts": [
+          "Zenith-2-Echo"
+        ],
+        "admission": {
+          "admission_identified_candidates": [
+            16,
+            17
+          ],
+          "admission_identifier_hit_count": 2,
+          "admission_margin_threshold": 0.1385774091529802,
+          "admission_policy": "A-DEC",
+          "admission_policy_branch": "declared_synthesis_identified_set",
+          "admission_rank_plan": [
+            16,
+            17
+          ],
+          "admission_route_margin_1_2": 0.08457942438960941,
+          "admission_route_margin_evaluated": true,
+          "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+        },
+        "answer": "Zenith-2-Echo",
+        "contains_expected": true,
+        "contains_stale": false,
+        "eviction_check": {
+          "live_node_ids_before": [],
+          "live_turns": 2,
+          "policy_evicted_before_probe": true,
+          "source_node_id": 17,
+          "source_node_live_before": false,
+          "source_turn": 11
+        },
+        "expected": "Zenith-2-Echo",
+        "fact_id": "lyra dock",
+        "frame": {
+          "frame_ephemeral": true,
+          "frame_escape_active": false,
+          "live_segments_after_turn": [
+            {
+              "graft_id": 26,
+              "ntok": 52
+            }
+          ],
+          "live_segments_carried_into_turn": [],
+          "live_segments_inherited": [],
+          "recency_mounted_ids": [
+            22,
+            23
+          ],
+          "recency_seats": {
+            "arena_width": 64,
+            "budget_after_charge": 64,
+            "charge_waived_reason": "identifier_query_point_lookup",
+            "charged_ntok": 0,
+            "nominated_ids": [
+              22,
+              23
+            ],
+            "nominated_ntok": 157
+          }
+        },
+        "mount_plan": [
+          17,
+          24
+        ],
+        "mounted_ids": [
+          17,
+          24
+        ],
+        "mounts": [
+          18,
+          25
+        ],
+        "old_value": "Nadir-1-Delta",
+        "pass": true,
+        "resumed": true,
+        "route_backend": "python",
+        "route_ranking": {
+          "live_excluded": [],
+          "mount_dropped_for_width": [],
+          "mount_fitted": [
+            17,
+            24
+          ],
+          "mount_plan": [
+            17,
+            24
+          ],
+          "ranking_ids": [
+            16,
+            17,
+            4,
+            12,
+            13,
+            15,
+            10,
+            8,
+            19,
+            20,
+            22,
+            1,
+            9
+          ],
+          "ranking_len": 13,
+          "route_backend": "python",
+          "score_error": null,
+          "source_node_id": 17,
+          "source_rank": 2,
+          "top5": [
+            {
+              "contains_value_hint": true,
+              "node_id": 16,
+              "rank": 1,
+              "score": 0.9581544708689997,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 17,
+              "rank": 2,
+              "score": 0.8735750464793903,
+              "text_prefix": "The current lyra dock value is Zenith-2-Echo."
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 4,
+              "rank": 3,
+              "score": 0.9999999983774339,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 12,
+              "rank": 4,
+              "score": 0.9999999983774339,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 13,
+              "rank": 5,
+              "score": 0.9999999983774339,
+              "text_prefix": "If asked later for cypher bridge, answer Vortex-3-Sierra only.<|end|><|start|>assistant<|channel|>final<|message|>Unders"
+            }
+          ]
+        },
+        "turn": 16
+      },
+      {
+        "accepts": [
+          "Quartz-5-Bravo"
+        ],
+        "admission": {
+          "admission_identified_candidates": [
+            10
+          ],
+          "admission_identifier_hit_count": 1,
+          "admission_margin_threshold": 0.1385774091529802,
+          "admission_policy": "A-DEC",
+          "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+          "admission_rank_plan": [
+            10
+          ],
+          "admission_route_margin_1_2": 0.9384493350430744,
+          "admission_route_margin_evaluated": true,
+          "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+        },
+        "answer": "Quartz-5-Bravo",
+        "contains_expected": true,
+        "contains_stale": false,
+        "eviction_check": {
+          "live_node_ids_before": [],
+          "live_turns": 2,
+          "policy_evicted_before_probe": true,
+          "source_node_id": 7,
+          "source_node_live_before": false,
+          "source_turn": 7
+        },
+        "expected": "Quartz-5-Bravo",
+        "fact_id": "nova key",
+        "frame": {
+          "frame_ephemeral": true,
+          "frame_escape_active": false,
+          "live_segments_after_turn": [
+            {
+              "graft_id": 32,
+              "ntok": 50
+            }
+          ],
+          "live_segments_carried_into_turn": [],
+          "live_segments_inherited": [],
+          "recency_mounted_ids": [
+            27,
+            29
+          ],
+          "recency_seats": {
+            "arena_width": 64,
+            "budget_after_charge": 64,
+            "charge_waived_reason": "identifier_query_point_lookup",
+            "charged_ntok": 0,
+            "nominated_ids": [
+              27,
+              29
+            ],
+            "nominated_ntok": 169
+          }
+        },
+        "mount_plan": [
+          30
+        ],
+        "mounted_ids": [
+          30
+        ],
+        "mounts": [
+          31
+        ],
+        "old_value": null,
+        "pass": true,
+        "resumed": true,
+        "route_backend": "python",
+        "route_ranking": {
+          "live_excluded": [],
+          "mount_dropped_for_width": [],
+          "mount_fitted": [
+            30
+          ],
+          "mount_plan": [
+            30
+          ],
+          "ranking_ids": [
+            10,
+            4,
+            12,
+            13,
+            27,
+            16,
+            24,
+            25,
+            8,
+            19,
+            20,
+            22,
+            1,
+            17,
+            28,
+            9
+          ],
+          "ranking_len": 16,
+          "route_backend": "python",
+          "score_error": null,
+          "source_node_id": 7,
+          "source_rank": null,
+          "top5": [
+            {
+              "contains_value_hint": true,
+              "node_id": 10,
+              "rank": 1,
+              "score": 0.9384493333550873,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 4,
+              "rank": 2,
+              "score": 0.999999998312013,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 12,
+              "rank": 3,
+              "score": 0.999999998312013,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 13,
+              "rank": 4,
+              "score": 0.999999998312013,
+              "text_prefix": "If asked later for cypher bridge, answer Vortex-3-Sierra only.<|end|><|start|>assistant<|channel|>final<|message|>Unders"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 27,
+              "rank": 5,
+              "score": 0.9688700976835222,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+            }
+          ]
+        },
+        "turn": 19
+      },
+      {
+        "accepts": [
+          "Gold-7-Foxtrot"
+        ],
+        "admission": {
+          "admission_identified_candidates": [
+            27,
+            28
+          ],
+          "admission_identifier_hit_count": 2,
+          "admission_margin_threshold": 0.1385774091529802,
+          "admission_policy": "A-DEC",
+          "admission_policy_branch": "declared_synthesis_identified_set",
+          "admission_rank_plan": [
+            27,
+            28
+          ],
+          "admission_route_margin_1_2": 0.0,
+          "admission_route_margin_evaluated": false,
+          "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+        },
+        "answer": "Gold-7-Foxtrot",
+        "contains_expected": true,
+        "contains_stale": false,
+        "eviction_check": {
+          "live_node_ids_before": [],
+          "live_turns": 2,
+          "policy_evicted_before_probe": true,
+          "source_node_id": 28,
+          "source_node_live_before": false,
+          "source_turn": 17
+        },
+        "expected": "Gold-7-Foxtrot",
+        "fact_id": "mira seal",
+        "frame": {
+          "frame_ephemeral": true,
+          "frame_escape_active": false,
+          "live_segments_after_turn": [
+            {
+              "graft_id": 37,
+              "ntok": 52
+            }
+          ],
+          "live_segments_carried_into_turn": [],
+          "live_segments_inherited": [],
+          "recency_mounted_ids": [
+            33,
+            34
+          ],
+          "recency_seats": {
+            "arena_width": 64,
+            "budget_after_charge": 64,
+            "charge_waived_reason": "identifier_query_point_lookup",
+            "charged_ntok": 0,
+            "nominated_ids": [
+              33,
+              34
+            ],
+            "nominated_ntok": 157
+          }
+        },
+        "mount_plan": [
+          35
+        ],
+        "mounted_ids": [
+          35
+        ],
+        "mounts": [
+          36
+        ],
+        "old_value": "Silver-6-Charlie",
+        "pass": true,
+        "resumed": true,
+        "route_backend": "python",
+        "route_ranking": {
+          "live_excluded": [],
+          "mount_dropped_for_width": [],
+          "mount_fitted": [
+            35
+          ],
+          "mount_plan": [
+            35
+          ],
+          "ranking_ids": [
+            27,
+            28,
+            4,
+            12,
+            13,
+            10,
+            30,
+            31,
+            33,
+            16,
+            24,
+            25,
+            8,
+            19,
+            20,
+            22,
+            1,
+            17,
+            9
+          ],
+          "ranking_len": 19,
+          "route_backend": "python",
+          "score_error": null,
+          "source_node_id": 28,
+          "source_rank": 2,
+          "top5": [
+            {
+              "contains_value_hint": true,
+              "node_id": 27,
+              "rank": 1,
+              "score": 0.9667935807860829,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 28,
+              "rank": 2,
+              "score": 0.8539578489947298,
+              "text_prefix": "The current mira seal value is Gold-7-Foxtrot."
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 4,
+              "rank": 3,
+              "score": 0.9999999983787913,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 12,
+              "rank": 4,
+              "score": 0.9999999983787913,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 13,
+              "rank": 5,
+              "score": 0.9999999983787913,
+              "text_prefix": "If asked later for cypher bridge, answer Vortex-3-Sierra only.<|end|><|start|>assistant<|channel|>final<|message|>Unders"
+            }
+          ]
+        },
+        "turn": 22
+      },
+      {
+        "accepts": [
+          "Harbor-8-Golf"
+        ],
+        "admission": {
+          "admission_identified_candidates": [
+            22
+          ],
+          "admission_identifier_hit_count": 1,
+          "admission_margin_threshold": 0.1385774091529802,
+          "admission_policy": "A-DEC",
+          "admission_policy_branch": "exactly_one_identifier_decisive_rank1",
+          "admission_rank_plan": [
+            22
+          ],
+          "admission_route_margin_1_2": 0.0,
+          "admission_route_margin_evaluated": false,
+          "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+        },
+        "answer": "Harbor-8-Golf",
+        "contains_expected": true,
+        "contains_stale": false,
+        "eviction_check": {
+          "live_node_ids_before": [],
+          "live_turns": 2,
+          "policy_evicted_before_probe": true,
+          "source_node_id": 21,
+          "source_node_live_before": false,
+          "source_turn": 14
+        },
+        "expected": "Harbor-8-Golf",
+        "fact_id": "terra port",
+        "frame": {
+          "frame_ephemeral": true,
+          "frame_escape_active": false,
+          "live_segments_after_turn": [
+            {
+              "graft_id": 41,
+              "ntok": 51
+            }
+          ],
+          "live_segments_carried_into_turn": [],
+          "live_segments_inherited": [],
+          "recency_mounted_ids": [
+            37,
+            38
+          ],
+          "recency_seats": {
+            "arena_width": 64,
+            "budget_after_charge": 64,
+            "charge_waived_reason": "identifier_query_point_lookup",
+            "charged_ntok": 0,
+            "nominated_ids": [
+              37,
+              38
+            ],
+            "nominated_ntok": 130
+          }
+        },
+        "mount_plan": [
+          39
+        ],
+        "mounted_ids": [
+          39
+        ],
+        "mounts": [
+          40
+        ],
+        "old_value": null,
+        "pass": true,
+        "resumed": true,
+        "route_backend": "python",
+        "route_ranking": {
+          "live_excluded": [],
+          "mount_dropped_for_width": [],
+          "mount_fitted": [
+            39
+          ],
+          "mount_plan": [
+            39
+          ],
+          "ranking_ids": [
+            22,
+            4,
+            12,
+            13,
+            27,
+            35,
+            36,
+            33,
+            16,
+            24,
+            25,
+            10,
+            30,
+            31,
+            8,
+            19,
+            20,
+            1,
+            17,
+            28,
+            9
+          ],
+          "ranking_len": 21,
+          "route_backend": "python",
+          "score_error": null,
+          "source_node_id": 21,
+          "source_rank": null,
+          "top5": [
+            {
+              "contains_value_hint": true,
+              "node_id": 22,
+              "rank": 1,
+              "score": 0.945447348254367,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 4,
+              "rank": 2,
+              "score": 0.999999998342606,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 12,
+              "rank": 3,
+              "score": 0.999999998342606,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Memory pl"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 13,
+              "rank": 4,
+              "score": 0.999999998342606,
+              "text_prefix": "If asked later for cypher bridge, answer Vortex-3-Sierra only.<|end|><|start|>assistant<|channel|>final<|message|>Unders"
+            },
+            {
+              "contains_value_hint": true,
+              "node_id": 27,
+              "rank": 5,
+              "score": 0.9723811227457874,
+              "text_prefix": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authorita"
+            }
+          ]
+        },
+        "turn": 24
+      }
+    ],
+    "resumed": true,
+    "rs3_levers": {
+      "both_off_is_the_legacy_run": false,
+      "capture_pin": "live",
+      "capture_pin_env": "live",
+      "seat_near_live": true,
+      "seat_near_live_env": "1"
+    },
+    "scorecard": {
+      "bytes": 28312,
+      "path": "artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/probe_scorecard.json",
+      "sha256": "4c27f628f184b711e60bd656f58f01f55b832994f5f9493a4826dccd00426e0a"
+    },
+    "session_dir": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session",
+    "spec": "e2e-3",
+    "stop_after_turns": 25
+  },
+  "session_state": [
+    {
+      "bytes": 164341,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/instrumentation.jsonl",
+      "sha256": "3da7f8dbc0c89c4bea3a5329240e71656e3bc8a35f3043fe058542ade41023f5"
+    },
+    {
+      "bytes": 28312,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/probe_scorecard.json",
+      "sha256": "4c27f628f184b711e60bd656f58f01f55b832994f5f9493a4826dccd00426e0a"
+    },
+    {
+      "bytes": 2443327,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/index.npz",
+      "sha256": "7778fd185a89038bf48ee5144bcb05915d6729c48060196717a4d07970af3faf"
+    },
+    {
+      "bytes": 50838,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/manifest.json",
+      "sha256": "710b5949664912651693f641f89a22a27b05f255f957dd40f6075f1c6c3607a7"
+    },
+    {
+      "bytes": 76850891,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/native/grm_store.bin",
+      "sha256": "f4ece5b0c329ca7477e9ada280a743d051ab02d1104b2015a0551aefdea83d6d"
+    },
+    {
+      "bytes": 1975154,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0000.npz",
+      "sha256": "0e2a161a67fd679a5d8f8e55f90c12484408f162e21491dc92284f3875ae3f02"
+    },
+    {
+      "bytes": 1164911,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0001.npz",
+      "sha256": "2d8c633adbde9bfce2b0a7e4b50b6611fa74c19122b99ea09d4340fd5031e3e1"
+    },
+    {
+      "bytes": 1974732,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0002.npz",
+      "sha256": "f809823fbb8e20eafd4d71c1e9e547eb55a07a9c4ec62bb7290f4a794dc8d759"
+    },
+    {
+      "bytes": 1797002,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0003.npz",
+      "sha256": "210da6aee810451e27c4e5570e27f71e56d89540118e446e3f86e71aaa78b543"
+    },
+    {
+      "bytes": 1975430,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0004.npz",
+      "sha256": "0b4e8bbcad7824aab44ae977b4263390e340b19decc35504c8adc5c470776b52"
+    },
+    {
+      "bytes": 1047183,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0005.npz",
+      "sha256": "9447301adc33674c24adf8f3254af9a7cfc78a8ee2f1c77df53e7709f9e0e615"
+    },
+    {
+      "bytes": 951147,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0006.npz",
+      "sha256": "7c78ec3916d77c0f2c68c31771e3d61a160aa474fd9d1b3c1a695ff318d5ec19"
+    },
+    {
+      "bytes": 1210401,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0007.npz",
+      "sha256": "9ecc72c05fdd024dccfc1c6847ea62e6bafa552a3386631257717d46dc4233cf"
+    },
+    {
+      "bytes": 2112622,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0008.npz",
+      "sha256": "49e6ae272f3747b13ad350fd11c9b7410318c3d37070659db4c4cb4465acf76d"
+    },
+    {
+      "bytes": 355909,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0009.npz",
+      "sha256": "64c237489755c8dfdcc9097559d8d03ce931da3d3401df907680ded1d189fd8a"
+    },
+    {
+      "bytes": 1818110,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0010.npz",
+      "sha256": "33ae6463ae086a742fcad9bf4cc7de3b0f0e66ba9d2cfa6723e0730faff05a55"
+    },
+    {
+      "bytes": 1797109,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0011.npz",
+      "sha256": "9a0bb9ea9fb97427cc938a49b8367a04ec693ccabe20b64298b72d66ae57222f"
+    },
+    {
+      "bytes": 1047544,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0012.npz",
+      "sha256": "2826d6423f8d6188be1c06d1e8c61df29f785a68d8444ac3ef264f697400d6eb"
+    },
+    {
+      "bytes": 951981,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0013.npz",
+      "sha256": "f932fe310dea096e97d8fad2e7ca50a1936c3260737d6bca82c087d36781439e"
+    },
+    {
+      "bytes": 1210467,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0014.npz",
+      "sha256": "fb236b9d03acf7d6eac8ae83b4d71292a74e7d7656a6f80e19541a967b12c518"
+    },
+    {
+      "bytes": 1886289,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0015.npz",
+      "sha256": "698d5718a6d3e2711498630a133b9d58720955da7d6267208df67e52ce33e30b"
+    },
+    {
+      "bytes": 1976829,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0016.npz",
+      "sha256": "ef47247c43a587c1fa8f353cdf54689d23dcd74c3e59c0ccc5c233d206ecd2ee"
+    },
+    {
+      "bytes": 308806,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0017.npz",
+      "sha256": "c9fb7b67bfdc6e26034d3e381cf3d4841a747e4ca54eca17bf01aeda414c74cd"
+    },
+    {
+      "bytes": 1797164,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0018.npz",
+      "sha256": "d365273484c83c722a020cfe684d14c1976aa321f6757f3a80a9ac6e5b2c56c8"
+    },
+    {
+      "bytes": 1231167,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0019.npz",
+      "sha256": "1a734151191463fa5d42890b1f20c7bb4921fed135b64f2f11217eecd6a90944"
+    },
+    {
+      "bytes": 907330,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0020.npz",
+      "sha256": "6753656234b5e139191e6c2874da5b9245e465a22a30ad699e84dd143e888842"
+    },
+    {
+      "bytes": 1234242,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0021.npz",
+      "sha256": "e62021c3e0db6be239f6d7f64817f13669684de28475b67bd333466b69ef711d"
+    },
+    {
+      "bytes": 1818127,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0022.npz",
+      "sha256": "b94be7e5a696abe713a28c254cf36f74489c7d0ea7d294d2f1274c9215f39d8d"
+    },
+    {
+      "bytes": 1797163,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0023.npz",
+      "sha256": "5356ee3a14aca59ff2c101b5b92b07b624e4763fc5a5dafc388133acbdef30ca"
+    },
+    {
+      "bytes": 1184113,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0024.npz",
+      "sha256": "6eabf50b4a7da22eb73cd99e3a4d8e098336c5243c5777599ae8561cb912fcce"
+    },
+    {
+      "bytes": 816257,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0025.npz",
+      "sha256": "631163142cdf010243d6abcd1340317ba58b9e5610cd8579f894548e4658dce3"
+    },
+    {
+      "bytes": 1211099,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0026.npz",
+      "sha256": "f9880518b25d60d48cbb6d7bd64bb37dbfbf086ec1be99e14f5c96dff4db3e7b"
+    },
+    {
+      "bytes": 2044749,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0027.npz",
+      "sha256": "428fe2eae932c4ddbcc8f9a6aada07d0cc4b78403ae6ce3a7dc4f8a4f90fd232"
+    },
+    {
+      "bytes": 332490,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0028.npz",
+      "sha256": "12abe002c7f833049d315f88bc8355ba62834bfceec7af12ce248a83b2760881"
+    },
+    {
+      "bytes": 1842582,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0029.npz",
+      "sha256": "da22545266b440e8f289aa0bcec1053bf96ed53123412b03da4793bed6e7a930"
+    },
+    {
+      "bytes": 978709,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0030.npz",
+      "sha256": "93684d1423ea214e79657280ebd4f59e6e4669bef4667c3c67124642a73c5ccf"
+    },
+    {
+      "bytes": 860326,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0031.npz",
+      "sha256": "dddb14c9ccbb586cc7cc1d7d7adcf69332ab6015d754a50a9720d677d74a308c"
+    },
+    {
+      "bytes": 1163897,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0032.npz",
+      "sha256": "707637eb33b192ced196062cfab8fd4c34cf511c8fc692a64ed35917d0aa1676"
+    },
+    {
+      "bytes": 1817762,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0033.npz",
+      "sha256": "129af37b9a9d972a6c7d21b12eef4fb6d03e24ce5dc670b703488eea441b0bb5"
+    },
+    {
+      "bytes": 1797087,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0034.npz",
+      "sha256": "67ccee0ff2dfa895b4b6a401b934ec037e0ed281b3992f0e30fb28f2cccdefda"
+    },
+    {
+      "bytes": 1185115,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0035.npz",
+      "sha256": "82df76698d9b366228aacb9cc653c81b8df4b235a24a12a4def601dbd8ec2a7b"
+    },
+    {
+      "bytes": 884770,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0036.npz",
+      "sha256": "db62d1ce16846d68d19525b2908ed49d84d03cdc9268caa9aa089f6c68f3e4e9"
+    },
+    {
+      "bytes": 1211212,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0037.npz",
+      "sha256": "aa731b791659f5467c30385842ca36327ef28fb66019998e2086703ea01ab032"
+    },
+    {
+      "bytes": 1797160,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0038.npz",
+      "sha256": "f9d1e9e0a1c845831ea13d7eb402af80b972e09b8f2318e9ff3826b9899fa7e0"
+    },
+    {
+      "bytes": 978560,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0039.npz",
+      "sha256": "9134392105820d29a185960808a36b93b210d2e86c48c13c5e75db425748347d"
+    },
+    {
+      "bytes": 860361,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0040.npz",
+      "sha256": "3ddfbad4d1ae025dce134f3e9b0fd4d2ac010050ef514226adfe58a4718f8d55"
+    },
+    {
+      "bytes": 1187028,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/nodes/0041.npz",
+      "sha256": "3519101604047cb2bed8851218af4a468fb9e81495617fab50bc16ae61c6c213"
+    },
+    {
+      "bytes": 71702,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/repository/wal/000001.wal",
+      "sha256": "bdef8318100e2ff1f86d2020ea2333a10094f251d8b0d516a2b5d1f2e6aafa40"
+    },
+    {
+      "bytes": 311,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/restart.json",
+      "sha256": "299bed136492b1dd3a85d8931967ba4be04359168439c0e416a41c36f269264a"
+    },
+    {
+      "bytes": 11731,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/run_config.json",
+      "sha256": "2dc49a0183f45cd5397566c883b1fa133b98be3f5a72fa1501cb9226c7f53314"
+    },
+    {
+      "bytes": 8048,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census/arm1/e2e-3/session/transcript.jsonl",
+      "sha256": "73d36d58fca4ec0e0cdb4811a54f4351a37e6e1bf024e6e18e1646079748b234"
+    }
+  ],
+  "sources": [
+    {
+      "bytes": 19626,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_recovery_a8.py",
+      "sha256": "8fa6ac4ca33863ed8ac63d34087e544b447e725681a0772c6f45d9d124e73d4d"
+    },
+    {
+      "bytes": 11582,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/tests/test_grm_c4_recovery_a8.py",
+      "sha256": "482f24177d3112a610f0420335c7c34da56463e1c5cf3573ef69a73163398caf"
+    }
+  ],
+  "spec": "e2e-3",
+  "status": "PASS",
+  "width": 64
+}

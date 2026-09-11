@@ -1,0 +1,163 @@
+{
+  "a6_old_snapshot_drift_paths": [
+    "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_split_a5.py"
+  ],
+  "a8_real_run_root_exists": false,
+  "abandoned_claims_found": 0,
+  "amendment": {
+    "bytes": 4826,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/amendment_a10.json",
+    "sha256": "8108af9b123c31508bf1a5b99703b832653efd6176ba5e612ff5a09cb4e42431"
+  },
+  "bash_syntax_exit_code": 0,
+  "changed_original_snapshot_files": [],
+  "classified": [
+    {
+      "accounting_reason": "Lead A8: recorded top-level wall only; paired claim is not a second abandoned unit.",
+      "archive": {
+        "bytes": 16384,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/corrupt/28eb9c9dd370c07f00f2e5e10e413f987c1d80bde3d2ab11f67fe96b008b03c6/census_e2e-2.json",
+        "sha256": "28eb9c9dd370c07f00f2e5e10e413f987c1d80bde3d2ab11f67fe96b008b03c6"
+      },
+      "charge_seconds": 0,
+      "claim": {
+        "bytes": 726,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census_e2e-2.attempt.json",
+        "sha256": "ecd7924d1de68f43b734cdf2f28524918fe7cde95e04182d54a35cbb6ed766f8"
+      },
+      "classification": "CORRUPT_DISK_FULL",
+      "parse_error": "JSONDecodeError: Expecting property name enclosed in double quotes: line 545 column 3 (char 16384)",
+      "receipt": {
+        "bytes": 16384,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census_e2e-2.json",
+        "sha256": "28eb9c9dd370c07f00f2e5e10e413f987c1d80bde3d2ab11f67fe96b008b03c6"
+      },
+      "recorded_wall_seconds": null,
+      "reruns_allowed": 1,
+      "unit": [
+        "c96_w64",
+        "census",
+        "e2e-2"
+      ]
+    }
+  ],
+  "commands": {
+    "bytes": 5663,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_resume_a8.txt",
+    "sha256": "1bdf8af12d23430b7c1e66560cc5070caff617833159676307bdb0be8df19d3d"
+  },
+  "evidence_class": "CPU gates and read-only live source/receipt/state checks; no GPU execution",
+  "first_admission_reason": null,
+  "first_incomplete": [
+    "c96_w64",
+    "census",
+    "e2e-2"
+  ],
+  "gpu_executed": false,
+  "intact_completed_receipts": [
+    {
+      "file": {
+        "bytes": 19451,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/sup_correction_then_restatement.json",
+        "sha256": "159d4503b470c9ed9b8aeeeab1700204bc11fb707e5f25d5b8b880b0e0a6be92"
+      },
+      "status": "PASS",
+      "wall_seconds": 47.64083048515022
+    },
+    {
+      "file": {
+        "bytes": 22543,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/sup_fresh_fact_controls.json",
+        "sha256": "961727bd13d55f779f4f85443aa55c745b0beb40fd0bff5c3e2993b55a38c629"
+      },
+      "status": "PASS",
+      "wall_seconds": 46.46300751529634
+    },
+    {
+      "file": {
+        "bytes": 19060,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/sup_multi_hop_a_b_c.json",
+        "sha256": "ecdd9b67bdccd4e5af4f906f73cedbc47c0acb2e05f42071783725c62668efd4"
+      },
+      "status": "PASS",
+      "wall_seconds": 51.76203435799107
+    },
+    {
+      "file": {
+        "bytes": 18616,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/sup_short_correction_long_competitor.json",
+        "sha256": "4ac94124afb58deca13a00ec1fa1b8b12a6134744f2d2af69eb522dcbb3a3eeb"
+      },
+      "status": "PASS",
+      "wall_seconds": 45.94713612413034
+    },
+    {
+      "complete_session_inventory_verified": true,
+      "file": {
+        "bytes": 48363,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census_e2e-1.json",
+        "sha256": "dac40e85c5554cc8da3f60ea3f249996401ffd762c790f208d67bba800921d9e"
+      },
+      "status": "PASS",
+      "wall_seconds": 66.06672716792673
+    }
+  ],
+  "new_gpu_seconds": 0,
+  "original_snapshot_files_verified": 92,
+  "prior_receipt": {
+    "bytes": 48363,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census_e2e-1.json",
+    "sha256": "dac40e85c5554cc8da3f60ea3f249996401ffd762c790f208d67bba800921d9e"
+  },
+  "projection": {
+    "cap_seconds": 6600,
+    "headroom_seconds": 788.4417153638788,
+    "limit": "Planning only; six registered skips and all state dependencies unchanged. Dependency-blocked fitting estimates retained. Long-history NON_FIT; no full score claim.",
+    "peak_reservation_seconds": 6030.558284636121,
+    "recorded_seconds_including_incident_charges": 2415.5582846361212,
+    "remaining_estimate_seconds": 3396.0,
+    "remaining_fitting_units": 37,
+    "remaining_units": 41,
+    "status": "FIT",
+    "total_seconds": 5811.558284636121
+  },
+  "rerun_receipt_path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs/c96_w64/census_e2e-2.json",
+  "tests": [
+    {
+      "exit_code": 0,
+      "failed": 0,
+      "log": {
+        "bytes": 5430,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/cpu_gate_a8.txt",
+        "sha256": "3618db6bf04c7ef110e07b05e26ec8538afd0d007af8b1a4a2b20bb7b6b3a48e"
+      },
+      "passed": 46,
+      "seconds": 10.93,
+      "suite": "A8"
+    },
+    {
+      "exit_code": 0,
+      "failed": 0,
+      "log": {
+        "bytes": 1166,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/cpu_gate_sequence.txt",
+        "sha256": "9f1c8ec1f257001c9c4ed967b2a739de4e60cda3a902a377364d19d9d8d230ad"
+      },
+      "passed": 1,
+      "seconds": 6.79,
+      "suite": "A8 full-sequence supplemental"
+    },
+    {
+      "exit_code": 1,
+      "failed": 5,
+      "log": {
+        "bytes": 40939,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/cpu_gate_legacy.txt",
+        "sha256": "a161464609d7cdbb65247d4334bd6134217dadac737fc07976d81af86a82284b"
+      },
+      "passed": 95,
+      "seconds": 55.25,
+      "suite": "legacy A5/A6/A7"
+    }
+  ]
+}

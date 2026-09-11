@@ -1,0 +1,44 @@
+{
+  "a4_binding": {
+    "bytes": 54409,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a2/amendment_a4.json",
+    "sha256": "014ae519a3b27ff0598d1d5a5ae3e4dcb7c3785ae2a52b7cf966d6c6fd10a16e"
+  },
+  "amendment": {
+    "bytes": 62728,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a3/amendment_a5.json",
+    "sha256": "ffc9a66afe9c27ae9d56b6d5b35ad119666db60d6f9459687dec67f35126cdf1"
+  },
+  "cooldown_seconds": 1290,
+  "cpu_tests": {
+    "bytes": 717,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a3/cpu_gate.txt",
+    "sha256": "8feefc8bc25c9f2118bd6af39c9804bab669fa63b80c26699d688abd661543aa"
+  },
+  "dry_run": {
+    "bytes": 8128,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a3/dry_run.json",
+    "sha256": "71da065e82afb0c1e08f7ef0e67f61f17104d493dd3ba9a8c4f5c5f1efbf4f8f"
+  },
+  "estimate_worker_seconds": 3200,
+  "evidence_class": "CPU author gates and read-only source/receipt validation",
+  "existing_receipts_byte_unchanged": true,
+  "gpu_executed": false,
+  "no_new_real_worker_receipts": true,
+  "original_binding": {
+    "bytes": 66270,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/amendment_a3.json",
+    "sha256": "168acfe429f3b1a288ea74c0bc491ae3359c297a4e363d50fe4eedf7a2677c42"
+  },
+  "prior_json_receipts_and_claims_checked": 29,
+  "process_safety": "No git, subagents, GPU calls, process signals, lock changes or shell background jobs. CPU pytest was a single foreground command; tool yielded once and its foreground session was collected.",
+  "recorded_original_red_seconds": 73.72084314282984,
+  "recorded_original_worker_seconds": 1084.0746343242936,
+  "synthetic_summary": {
+    "bytes": 7322,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a3/synthetic_four_cells/a5/cross_summary.json",
+    "sha256": "8b2883c484c697e474e7114f80282e280eaf031564cd1cf250861458e99ee502"
+  },
+  "tests_passed": 85,
+  "units": 42
+}

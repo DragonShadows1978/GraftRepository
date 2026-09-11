@@ -1,0 +1,1024 @@
+{
+  "cells": [
+    {
+      "chunk": 64,
+      "equal_standing": true,
+      "estimate_seconds": 1600,
+      "id": "c64_w64",
+      "reason": "Lead amendment 1 authorizes fixed geometry replacement; historical row remains a separate comparison.",
+      "status": "NEW",
+      "width": 64
+    },
+    {
+      "chunk": 96,
+      "equal_standing": true,
+      "estimate_seconds": 0,
+      "id": "c96_w96",
+      "status": "CITE_WC1",
+      "width": 96
+    },
+    {
+      "chunk": 64,
+      "equal_standing": true,
+      "estimate_seconds": 1600,
+      "id": "c64_w96",
+      "status": "NEW",
+      "width": 96
+    },
+    {
+      "chunk": 96,
+      "equal_standing": true,
+      "estimate_seconds": 1600,
+      "id": "c96_w64",
+      "status": "NEW",
+      "width": 64
+    }
+  ],
+  "units_per_new_cell": [
+    {
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "correction_then_restatement"
+    },
+    {
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "fresh_fact_controls"
+    },
+    {
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "multi_hop_a_b_c"
+    },
+    {
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "short_correction_long_competitor"
+    },
+    {
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-1"
+    },
+    {
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-2"
+    },
+    {
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-3"
+    },
+    {
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-4"
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": null,
+      "spec": "c4-lh-01",
+      "stop_after_turns": 8
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-01",
+      "spec": "c4-lh-02",
+      "stop_after_turns": 16
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-02",
+      "spec": "c4-lh-03",
+      "stop_after_turns": 24
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-03",
+      "spec": "c4-lh-04",
+      "stop_after_turns": 32
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-04",
+      "spec": "c4-lh-05",
+      "stop_after_turns": 40
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-05",
+      "spec": "c4-lh-06",
+      "stop_after_turns": 48
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-06",
+      "spec": "c4-lh-07",
+      "stop_after_turns": 56
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-07",
+      "spec": "c4-lh-08",
+      "stop_after_turns": 64
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-08",
+      "spec": "c4-lh-09",
+      "stop_after_turns": 72
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-09",
+      "spec": "c4-lh-10",
+      "stop_after_turns": 80
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-10",
+      "spec": "c4-lh-11",
+      "stop_after_turns": 88
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-11",
+      "spec": "c4-lh-12",
+      "stop_after_turns": 96
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-12",
+      "spec": "c4-lh-13",
+      "stop_after_turns": 104
+    }
+  ],
+  "counts": {
+    "census": 10,
+    "longhorizon": 14,
+    "sup": 9
+  },
+  "geometry": {
+    "capture_pin": "live",
+    "ephemeral": true,
+    "live_shift": "n_sink + 96",
+    "live_turns": 2,
+    "max_live": 4096,
+    "plan_head_last_position": "n_sink + 95",
+    "remaining_flags": {
+      "adm_decisive": true,
+      "admission_mode": "A-DEC",
+      "arena_width": 96,
+      "gqa_cuda_route": true,
+      "graft_storage_bits": 8,
+      "length_debias": false,
+      "live_turns": 2,
+      "max_live": 4096,
+      "max_trips": 1,
+      "ngen": 32,
+      "probe_ladder": true,
+      "route_query_lex": true,
+      "sup_resolve": true,
+      "topk": 3,
+      "turn_pipeline": "single",
+      "vram_budget_mb": null
+    },
+    "seat_near_live": true,
+    "sink": "unchanged tokenizer-derived n_sink"
+  },
+  "budget": {
+    "authorized_by": "Lead, orders/GRM_C4_AMENDMENT_1.md, 2026-09-09",
+    "cooldown_seconds": 30,
+    "estimate_class": "Planning assumption: sup 60s/fixture, census and 8-turn LH segments 80s each including load/save; unvalidated on this sandbox; stop at rail without retry.",
+    "full_fixed_geometry_estimate_seconds": 4800,
+    "full_fixed_geometry_status": "PLANNING_FIT_AT_CAP_UNVALIDATED",
+    "gpu_seconds": 4800,
+    "lock": "/tmp/forge-gpu.lock",
+    "lock_wait_seconds": 0,
+    "new_cells_estimate_seconds": 4800,
+    "outer_seconds": 590,
+    "planning_cooldown_seconds": 1890,
+    "reserve_note": "285s full-worker reservation unchanged. At exactly estimated unit times the final worker needs 5005s cumulative reservation, so a 4800s estimate does not guarantee completion under the 4800s cap; stop NON_FIT if reserve fails. Cooldown is outside GPU budget.",
+    "stop": "One timeout stops its chain; no retry or longer lease. Reserve full 285s before each worker against remaining total.",
+    "worker_seconds": 285
+  },
+  "registration": {
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/registration.json",
+    "sha256": "7fb561c70dd8c04abc18ef99a7a2a5ec4d37cbc2a22b1de1f89ab2119bd285e8",
+    "bytes": 67067
+  },
+  "amendment": {
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/amendment_a3.json",
+    "sha256": "168acfe429f3b1a288ea74c0bc491ae3359c297a4e363d50fe4eedf7a2677c42",
+    "bytes": 66270
+  },
+  "execution_order": [
+    "c64_w96",
+    "c96_w64",
+    "c64_w64"
+  ],
+  "scheduled_units": [
+    {
+      "cell": "c64_w96",
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "correction_then_restatement"
+    },
+    {
+      "cell": "c64_w96",
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "fresh_fact_controls"
+    },
+    {
+      "cell": "c64_w96",
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "multi_hop_a_b_c"
+    },
+    {
+      "cell": "c64_w96",
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "short_correction_long_competitor"
+    },
+    {
+      "cell": "c64_w96",
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-1"
+    },
+    {
+      "cell": "c64_w96",
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-2"
+    },
+    {
+      "cell": "c64_w96",
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-3"
+    },
+    {
+      "cell": "c64_w96",
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-4"
+    },
+    {
+      "cell": "c64_w96",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": null,
+      "spec": "c4-lh-01",
+      "stop_after_turns": 8
+    },
+    {
+      "cell": "c64_w96",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-01",
+      "spec": "c4-lh-02",
+      "stop_after_turns": 16
+    },
+    {
+      "cell": "c64_w96",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-02",
+      "spec": "c4-lh-03",
+      "stop_after_turns": 24
+    },
+    {
+      "cell": "c64_w96",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-03",
+      "spec": "c4-lh-04",
+      "stop_after_turns": 32
+    },
+    {
+      "cell": "c64_w96",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-04",
+      "spec": "c4-lh-05",
+      "stop_after_turns": 40
+    },
+    {
+      "cell": "c64_w96",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-05",
+      "spec": "c4-lh-06",
+      "stop_after_turns": 48
+    },
+    {
+      "cell": "c64_w96",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-06",
+      "spec": "c4-lh-07",
+      "stop_after_turns": 56
+    },
+    {
+      "cell": "c64_w96",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-07",
+      "spec": "c4-lh-08",
+      "stop_after_turns": 64
+    },
+    {
+      "cell": "c64_w96",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-08",
+      "spec": "c4-lh-09",
+      "stop_after_turns": 72
+    },
+    {
+      "cell": "c64_w96",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-09",
+      "spec": "c4-lh-10",
+      "stop_after_turns": 80
+    },
+    {
+      "cell": "c64_w96",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-10",
+      "spec": "c4-lh-11",
+      "stop_after_turns": 88
+    },
+    {
+      "cell": "c64_w96",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-11",
+      "spec": "c4-lh-12",
+      "stop_after_turns": 96
+    },
+    {
+      "cell": "c64_w96",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-12",
+      "spec": "c4-lh-13",
+      "stop_after_turns": 104
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "correction_then_restatement"
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "fresh_fact_controls"
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "multi_hop_a_b_c"
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "short_correction_long_competitor"
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-1"
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-2"
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-3"
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-4"
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": null,
+      "spec": "c4-lh-01",
+      "stop_after_turns": 8
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-01",
+      "spec": "c4-lh-02",
+      "stop_after_turns": 16
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-02",
+      "spec": "c4-lh-03",
+      "stop_after_turns": 24
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-03",
+      "spec": "c4-lh-04",
+      "stop_after_turns": 32
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-04",
+      "spec": "c4-lh-05",
+      "stop_after_turns": 40
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-05",
+      "spec": "c4-lh-06",
+      "stop_after_turns": 48
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-06",
+      "spec": "c4-lh-07",
+      "stop_after_turns": 56
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-07",
+      "spec": "c4-lh-08",
+      "stop_after_turns": 64
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-08",
+      "spec": "c4-lh-09",
+      "stop_after_turns": 72
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-09",
+      "spec": "c4-lh-10",
+      "stop_after_turns": 80
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-10",
+      "spec": "c4-lh-11",
+      "stop_after_turns": 88
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-11",
+      "spec": "c4-lh-12",
+      "stop_after_turns": 96
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-12",
+      "spec": "c4-lh-13",
+      "stop_after_turns": 104
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "correction_then_restatement"
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "fresh_fact_controls"
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "multi_hop_a_b_c"
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "short_correction_long_competitor"
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-1"
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-2"
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-3"
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-4"
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": null,
+      "spec": "c4-lh-01",
+      "stop_after_turns": 8
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-01",
+      "spec": "c4-lh-02",
+      "stop_after_turns": 16
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-02",
+      "spec": "c4-lh-03",
+      "stop_after_turns": 24
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-03",
+      "spec": "c4-lh-04",
+      "stop_after_turns": 32
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-04",
+      "spec": "c4-lh-05",
+      "stop_after_turns": 40
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-05",
+      "spec": "c4-lh-06",
+      "stop_after_turns": 48
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-06",
+      "spec": "c4-lh-07",
+      "stop_after_turns": 56
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-07",
+      "spec": "c4-lh-08",
+      "stop_after_turns": 64
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-08",
+      "spec": "c4-lh-09",
+      "stop_after_turns": 72
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-09",
+      "spec": "c4-lh-10",
+      "stop_after_turns": 80
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-10",
+      "spec": "c4-lh-11",
+      "stop_after_turns": 88
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-11",
+      "spec": "c4-lh-12",
+      "stop_after_turns": 96
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-12",
+      "spec": "c4-lh-13",
+      "stop_after_turns": 104
+    }
+  ],
+  "diagonal_ruling": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "cell": "c96_w96",
+    "counts": {
+      "census": 10,
+      "longhorizon": 14,
+      "sup": 9
+    },
+    "decision": "CITE_WC1",
+    "derivation": "WC1 width96 uses unchanged RS3 band: n_sink+96=115; near-live head ends at 114. Deposit budget equals width96. C4 fixed_geometry(96) retains that geometry.",
+    "ephemeral": true,
+    "evidence_class": "archived E2E receipts plus source/registration reasoning",
+    "historical_fingerprints": [
+      {
+        "match": true,
+        "resolved": {
+          "bytes": 33028,
+          "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_det1/run_20260831T160525Z_2/det1_11/census/lived_serving_census_98ef71e88dec17a1.json",
+          "sha256": "98ef71e88dec17a1ef5263e5a6d7ca32017ef092da10d955cd43d0be38cb0021"
+        },
+        "wc1": {
+          "bytes": 33028,
+          "path": "artifacts/grm_det1/run_20260831T160525Z_2/det1_11/census/lived_serving_census_98ef71e88dec17a1.json",
+          "sha256": "98ef71e88dec17a1ef5263e5a6d7ca32017ef092da10d955cd43d0be38cb0021"
+        }
+      },
+      {
+        "match": true,
+        "resolved": {
+          "bytes": 2180,
+          "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_det1/run_20260831T160525Z_2/runtime_frame_28b3196f8fb04a41.json",
+          "sha256": "28b3196f8fb04a4123fcf21b1e61f8bb1b8a0e64fadcfc6643801f3e19c4ac02"
+        },
+        "wc1": {
+          "bytes": 2180,
+          "path": "artifacts/grm_det1/run_20260831T160525Z_2/runtime_frame_28b3196f8fb04a41.json",
+          "sha256": "28b3196f8fb04a4123fcf21b1e61f8bb1b8a0e64fadcfc6643801f3e19c4ac02"
+        }
+      },
+      {
+        "match": true,
+        "resolved": {
+          "bytes": 265082,
+          "path": "/mnt/ForgeRealm/wt/grm-c4/core/graft_arena.py",
+          "sha256": "e03a44b5e0155fc10a0be5c56e66e117c768a67993fab76df3ecf3aa62cdb20b"
+        },
+        "wc1": {
+          "bytes": 265082,
+          "path": "core/graft_arena.py",
+          "sha256": "e03a44b5e0155fc10a0be5c56e66e117c768a67993fab76df3ecf3aa62cdb20b"
+        }
+      },
+      {
+        "match": true,
+        "resolved": {
+          "bytes": 219615,
+          "path": "/mnt/ForgeRealm/wt/grm-c4/core/graft_repository.py",
+          "sha256": "e0a0fc777d3c0f535ec915238390d7c1f1a6d43e927976351b8441a1b1358e89"
+        },
+        "wc1": {
+          "bytes": 219615,
+          "path": "core/graft_repository.py",
+          "sha256": "e0a0fc777d3c0f535ec915238390d7c1f1a6d43e927976351b8441a1b1358e89"
+        }
+      },
+      {
+        "match": true,
+        "resolved": {
+          "bytes": 35998,
+          "path": "/mnt/ForgeRealm/wt/grm-c4/core/grm_admission.py",
+          "sha256": "62510861b5b1a33af375a4120d78351d2f880b2618a5462c1776a073f3f2d00f"
+        },
+        "wc1": {
+          "bytes": 35998,
+          "path": "core/grm_admission.py",
+          "sha256": "62510861b5b1a33af375a4120d78351d2f880b2618a5462c1776a073f3f2d00f"
+        }
+      },
+      {
+        "match": true,
+        "resolved": {
+          "bytes": 50730,
+          "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_det1_2_gpu.py",
+          "sha256": "a0be3e62133aae30cf233c57948e6d8af66b2319d50bae0e3222e86e00cc8e2f"
+        },
+        "wc1": {
+          "bytes": 50730,
+          "path": "scripts/grm_det1_2_gpu.py",
+          "sha256": "a0be3e62133aae30cf233c57948e6d8af66b2319d50bae0e3222e86e00cc8e2f"
+        }
+      },
+      {
+        "match": true,
+        "resolved": {
+          "bytes": 20110,
+          "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_eb1_longhorizon_gpu.py",
+          "sha256": "8814c4502764303aea66ab647711771cebd6373a83193478ea018ea9ec00a3cc"
+        },
+        "wc1": {
+          "bytes": 20110,
+          "path": "scripts/grm_eb1_longhorizon_gpu.py",
+          "sha256": "8814c4502764303aea66ab647711771cebd6373a83193478ea018ea9ec00a3cc"
+        }
+      },
+      {
+        "match": true,
+        "resolved": {
+          "bytes": 9742,
+          "path": "/mnt/ForgeRealm/wt/grm-c4/core/grm_frame.py",
+          "sha256": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2"
+        },
+        "wc1": {
+          "bytes": 9742,
+          "path": "core/grm_frame.py",
+          "sha256": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2"
+        }
+      },
+      {
+        "match": true,
+        "resolved": {
+          "bytes": 14836,
+          "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_wc1_common.py",
+          "sha256": "0666eefc45e483f39e0d3a07301eac60dd8e11a5e57098bca98ca32a4a26695d"
+        },
+        "wc1": {
+          "bytes": 14836,
+          "path": "scripts/grm_wc1_common.py",
+          "sha256": "0666eefc45e483f39e0d3a07301eac60dd8e11a5e57098bca98ca32a4a26695d"
+        }
+      },
+      {
+        "match": true,
+        "resolved": {
+          "bytes": 12259,
+          "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_wc1_registration.py",
+          "sha256": "c54cc33bcbf8e8d2a29bfacdce7e041b0789d94dcf7864d6a641b32c2cec1358"
+        },
+        "wc1": {
+          "bytes": 12259,
+          "path": "scripts/grm_wc1_registration.py",
+          "sha256": "c54cc33bcbf8e8d2a29bfacdce7e041b0789d94dcf7864d6a641b32c2cec1358"
+        }
+      },
+      {
+        "match": true,
+        "resolved": {
+          "bytes": 16900,
+          "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/lsr_p2c_e2e_gpu.py",
+          "sha256": "631d838603168026b29f0b6241417ec6b20446da47978a2b82f21e699243f7c4"
+        },
+        "wc1": {
+          "bytes": 16900,
+          "path": "scripts/lsr_p2c_e2e_gpu.py",
+          "sha256": "631d838603168026b29f0b6241417ec6b20446da47978a2b82f21e699243f7c4"
+        }
+      },
+      {
+        "match": true,
+        "resolved": {
+          "bytes": 27681,
+          "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/lsr_p2c_replay_gpu.py",
+          "sha256": "833d3f520f6ad17925b7371407032a792a60176d86445117627e44fddaa6b617"
+        },
+        "wc1": {
+          "bytes": 27681,
+          "path": "scripts/lsr_p2c_replay_gpu.py",
+          "sha256": "833d3f520f6ad17925b7371407032a792a60176d86445117627e44fddaa6b617"
+        }
+      },
+      {
+        "match": true,
+        "resolved": {
+          "bytes": 455656,
+          "path": "/mnt/ForgeRealm/GraftRepository/cpp/build/libgrm_runtime.so",
+          "sha256": "6e984b0de89339e1ea5c7a0731323f5682aff476e3fabf48af2d173ecea3976d"
+        },
+        "wc1": {
+          "bytes": 455656,
+          "path": "cpp/build/libgrm_runtime.so",
+          "sha256": "6e984b0de89339e1ea5c7a0731323f5682aff476e3fabf48af2d173ecea3976d"
+        }
+      }
+    ],
+    "limits": "Reuse for geometry/quality diagonal only. Historical actual token residency is missing; graft count is not token seats. No new GPU parity claim.",
+    "live_shift": 115,
+    "live_turns": 2,
+    "n_sink": 19,
+    "plan_head_last_position": 114,
+    "rerun_estimate_seconds": 0,
+    "rs3_registration": {
+      "bytes": 41413,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_rs3/registration.json",
+      "sha256": "1f37c0eab788ed88c09012a6de8d539ceb531729f14ab9e3cbce0783ac2f7534"
+    },
+    "scores": {
+      "census": 9,
+      "longhorizon": 13,
+      "sup": 9
+    },
+    "seat_near_live": true,
+    "wc1_derived_frame": {
+      "bytes": 2521,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/frames/runtime_frame_w96_590846a9fbab95c0.json",
+      "sha256": "590846a9fbab95c083a4f5080d05cb5b04e6851713ba53bb6278e78cd6194fb4"
+    },
+    "worker_pins": [
+      {
+        "bytes": 9940,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_e2e-1_349d068f20555358.json",
+        "sha256": "349d068f20555358f55313d73aaf7aa926df00d6bbae79e5b9bed9d1edf05f23"
+      },
+      {
+        "bytes": 18567,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_e2e-2_4432ad0fa2beb0ab.json",
+        "sha256": "4432ad0fa2beb0ab752f973c6275eb4c3296b4532bb0c6fb54f9ca78510f5cb8"
+      },
+      {
+        "bytes": 31589,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_e2e-3_302768c3a43335d7.json",
+        "sha256": "302768c3a43335d769baf0959b511e82c3a58e2442e9d8eb3f2d015625304d00"
+      },
+      {
+        "bytes": 44480,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_e2e-4_9b547acfc4c8d80e.json",
+        "sha256": "9b547acfc4c8d80e8ff58355e8d82352169e32b2a7a1608e54b8f5d97a06e5cf"
+      },
+      {
+        "bytes": 1682,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_lh-1_f37d03a43ec801e1.json",
+        "sha256": "f37d03a43ec801e189643efa744ac303a972a6f32c6ade84aab3f4a15e3f5aaa"
+      },
+      {
+        "bytes": 1680,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_lh-2_f447f5901661a21c.json",
+        "sha256": "f447f5901661a21c4ef25b9e580107a04687c8ee0019c8d8ca82bddfbc96bc2f"
+      },
+      {
+        "bytes": 1681,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_lh-3_49be4ff76e0df50c.json",
+        "sha256": "49be4ff76e0df50c3e87688ffe2ddfe1e94b1e77d1f31e374227e5b66ce48aec"
+      },
+      {
+        "bytes": 1681,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_lh-4_d7bb547bdffb3d4d.json",
+        "sha256": "d7bb547bdffb3d4d424c2ee5f828de2253612eb3251a81080760d1c0a3335606"
+      },
+      {
+        "bytes": 1682,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_lh-5_f299b53624a181f5.json",
+        "sha256": "f299b53624a181f583ef012a21499bd54c10ddf4db7dccabd638b6bfdc263091"
+      },
+      {
+        "bytes": 5604,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_correction_then_restatement_ad61a11154fbabfd.json",
+        "sha256": "ad61a11154fbabfd2394fdcd297d71a3b96e7a38687c6dae09bb5ea4e860b400"
+      },
+      {
+        "bytes": 7652,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_fresh_fact_controls_5ed53221b0012dcc.json",
+        "sha256": "5ed53221b0012dcc80afe5d5092e169f29513d404791d27e62a098cea357c659"
+      },
+      {
+        "bytes": 5574,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_multi_hop_a_b_c_7621d7746e2ca835.json",
+        "sha256": "7621d7746e2ca8358c0b0a9e3a737ad7eccc16e8060eb160045319d65b2ed5cd"
+      },
+      {
+        "bytes": 5590,
+        "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_short_correction_long_competitor_c4a9170fef1de770.json",
+        "sha256": "c4a9170fef1de770894fc381e1a1cbf2b1e0f9e69e3bfc4e8b45c1ed06eba559"
+      }
+    ]
+  },
+  "diagonal_comparison": {
+    "counts": {
+      "census": 10,
+      "longhorizon": 14,
+      "sup": 9
+    },
+    "fixed_cell": "c64_w64",
+    "fixed_geometry": {
+      "capture_pin": "live",
+      "ephemeral": true,
+      "live_shift": "n_sink + 96",
+      "live_turns": 2,
+      "max_live": 4096,
+      "plan_head_last_position": "n_sink + 95",
+      "remaining_flags": {
+        "adm_decisive": true,
+        "admission_mode": "A-DEC",
+        "arena_width": 96,
+        "gqa_cuda_route": true,
+        "graft_storage_bits": 8,
+        "length_debias": false,
+        "live_turns": 2,
+        "max_live": 4096,
+        "max_trips": 1,
+        "ngen": 32,
+        "probe_ladder": true,
+        "route_query_lex": true,
+        "sup_resolve": true,
+        "topk": 3,
+        "turn_pipeline": "single",
+        "vram_budget_mb": null
+      },
+      "seat_near_live": true,
+      "sink": "unchanged tokenizer-derived n_sink"
+    },
+    "historical_cell": "WC1-historical c64_w64",
+    "historical_geometry": {
+      "capture_shift": 83,
+      "live_shift": 83,
+      "n_sink": 19,
+      "plan_head_last_position": 82
+    },
+    "historical_results": {
+      "bytes": 31275,
+      "path": "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/grm_wc1_results.json",
+      "sha256": "087338e42a7d8be5340876b58f172023583732d9b6356836365b82486ff8d09d"
+    },
+    "historical_scores": {
+      "census": 10,
+      "longhorizon": 14,
+      "sup": 8
+    },
+    "interpretation": "Report all three scores, componentwise deltas and t33/Juniper probe identities against 8/9,10/10,14/14. Retaining census10 and LH14 retains those aggregate benefits; failure loses at least part. Juniper remains separately reported. This comparison alone does not support chunking.",
+    "prediction_unchanged": "c64_w96 recovers t33, reaches 14/14 long-history, and keeps Juniper",
+    "question": "Does the historical width64 benefit survive fixed geometry at all?",
+    "rejection_unchanged": "Chunking claim rejected if improvement needs narrower seating; wide chunk64 must recover t33 and retain Juniper. Missing cells/geometry/observations => INCONCLUSIVE, never support."
+  },
+  "gpu_executed": false
+}

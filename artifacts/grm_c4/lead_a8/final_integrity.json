@@ -1,0 +1,21 @@
+{
+  "amendment": {
+    "bytes": 4826,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/amendment_a10.json",
+    "sha256": "8108af9b123c31508bf1a5b99703b832653efd6176ba5e612ff5a09cb4e42431"
+  },
+  "no_real_a8_runs": true,
+  "original_files_unchanged": true,
+  "original_files_verified": 92,
+  "synthesis_after": {
+    "bytes": 6406,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/NARRATIVE_SYNTHESIS.md",
+    "sha256": "f98b38bc76cba43cb9dc6d4ff604296cdda039296c3513e11ad2a9b425a5271b"
+  },
+  "synthesis_before": {
+    "bytes": 5432,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/NARRATIVE_SYNTHESIS.md",
+    "sha256": "b9ccad3ef0b376748ba0b3de35cd98c654c4bac388a6edaf1ad689a1e9c5d62d"
+  },
+  "synthesis_original_prefix_preserved": true
+}

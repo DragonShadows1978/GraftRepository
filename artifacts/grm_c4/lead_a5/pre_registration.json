@@ -1,0 +1,16 @@
+{
+  "immutable": true,
+  "order_sha256": "8eb729c2454a1ee1da1f43ff9a288472c74541720911623455037a4f9646f0e4",
+  "gates": [
+    "synthetic split resume across legacy/new roots; exact turn coverage, inventory and seed copy binding",
+    "forged manifest with recomputed sidecar, stale source, forged receipt, state and prior links refused",
+    "decoupled remaining cells start without earlier scores; partial summary NON_FIT without scores",
+    "full list retained; over-200 units and cap overflow NON_FIT; actual accounting includes both historic REDs, reserve285 and cooldown30",
+    "old CPU suites; all existing run files byte-unchanged; no new real workers; CLI dry-run and bash syntax"
+  ],
+  "planning_finding": "Turn90 alone225.512s makes <200s turn-range split impossible. Register honest NON_FIT; no intra-turn algorithm change authorized. Halves retain all104 turns and unchanged14 probes.",
+  "prior_art": "Local C4/A2/A3/A4, EB1 and DET1 (house,2026), verified source: immutable SHA closure, create-only claims, saved-state copy/resume, original scorers and lease accounting. Added half-range schedule, explicit planning rejection and independent cell dispatch; no novel algorithm claimed. Timing extrapolation: no prior art known to me for this specific heuristic.",
+  "model_id": "GPT-6 (Codex; exact deployment identifier not exposed)",
+  "reasoning_effort": "high (requested)",
+  "scope": "CPU author gates only; no git, subagents, GPU, background jobs/waits, process signals or lock changes."
+}

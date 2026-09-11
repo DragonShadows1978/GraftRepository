@@ -1,0 +1,545 @@
+{
+  "amendment": {
+    "bytes": 42570,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a6/amendment_a8.json",
+    "sha256": "4343189f992408e57797dfc0ebd13dc6df2a7e086e28d874823bdaa546f2c78e"
+  },
+  "battery": "census",
+  "budget": {
+    "authorized_by": "Lead, orders/GRM_C4_AMENDMENT_1.md, 2026-09-09",
+    "cooldown_seconds": 30,
+    "estimate_class": "Planning assumption: sup 60s/fixture, census and 8-turn LH segments 80s each including load/save; unvalidated on this sandbox; stop at rail without retry.",
+    "full_fixed_geometry_estimate_seconds": 4800,
+    "full_fixed_geometry_status": "PLANNING_FIT_AT_CAP_UNVALIDATED",
+    "gpu_seconds": 6600,
+    "lock": "/tmp/forge-gpu.lock",
+    "lock_wait_seconds": 0,
+    "new_cells_estimate_seconds": 4800,
+    "outer_seconds": 590,
+    "planning_cooldown_seconds": 1890,
+    "reserve_note": "285s full-worker reservation unchanged. At exactly estimated unit times the final worker needs 5005s cumulative reservation, so a 4800s estimate does not guarantee completion under the 4800s cap; stop NON_FIT if reserve fails. Cooldown is outside GPU budget.",
+    "stop": "One timeout stops its chain; no retry or longer lease. Reserve full 285s before each worker against remaining total.",
+    "worker_seconds": 285
+  },
+  "budget_amendment": {
+    "bytes": 42570,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a6/amendment_a8.json",
+    "sha256": "4343189f992408e57797dfc0ebd13dc6df2a7e086e28d874823bdaa546f2c78e"
+  },
+  "campaign_gpu_seconds_before": 2415.5582846361212,
+  "cell": "c96_w64",
+  "chunk": 96,
+  "error": "RuntimeError: failed while writing native GRM checkpoint",
+  "events": [
+    {
+      "arena_width": 64,
+      "capture_pin": "live",
+      "ephemeral": true,
+      "event": "geometry",
+      "live_shift": 115,
+      "live_turns": 2,
+      "n_sink": 19,
+      "seat_near_live": true
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 15,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 16,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 17,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "arena_width": 64,
+      "event": "turn",
+      "info": {
+        "abstain_deposited_graft": 18,
+        "abstain_identifier_tokens": [
+          "session",
+          "continuity",
+          "filler",
+          "full",
+          "delta",
+          "acknowledge",
+          "briefly",
+          "change",
+          "stored",
+          "fact",
+          "values"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          1,
+          10,
+          8
+        ],
+        "admission_ranking_before_demotion": [
+          1,
+          10,
+          8,
+          4,
+          12,
+          13
+        ],
+        "admission_route_margin_1_2": 0.7532122686942846,
+        "admission_route_margin_evaluated": true,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          4,
+          12,
+          13
+        ],
+        "evicted": 0,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "live_tokens": 0,
+        "mounts": [],
+        "no_mount_fit": false,
+        "recency_mounted_ids": [
+          15,
+          16
+        ],
+        "recency_seats": {
+          "arena_width": 64,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            15,
+            16
+          ],
+          "nominated_ntok": 168
+        },
+        "resident": 0,
+        "route_receipt_record": {
+          "admission": {
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": null,
+            "margin_threshold": 0.1385774091529802,
+            "policy": "A-DEC",
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              1,
+              10,
+              8
+            ],
+            "rare_identifier_tokens": null,
+            "route_margin_1_2": 0.7532122686942846,
+            "route_margin_evaluated": true,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "fit": {
+            "cur_mount_n": 0,
+            "dropped": [],
+            "final_mounts": [],
+            "info_pass_through": {
+              "abstain_deposited_graft": 18,
+              "abstain_identifier_tokens": [
+                "session",
+                "continuity",
+                "filler",
+                "full",
+                "delta",
+                "acknowledge",
+                "briefly",
+                "change",
+                "stored",
+                "fact",
+                "values"
+              ],
+              "abstain_reason": "identifier_unbound",
+              "abstained": true,
+              "frame_ephemeral": true,
+              "frame_escape_active": false,
+              "live_segments_after_turn": [],
+              "live_segments_carried_into_turn": [],
+              "live_segments_inherited": [],
+              "recency_mounted_ids": [
+                15,
+                16
+              ],
+              "recency_seats": {
+                "arena_width": 64,
+                "budget_after_charge": null,
+                "charge_waived_reason": null,
+                "charged_ntok": null,
+                "nominated_ids": [
+                  15,
+                  16
+                ],
+                "nominated_ntok": 168
+              }
+            },
+            "no_mount_fit": false,
+            "planned": [],
+            "seated": [],
+            "trip_count": 1,
+            "trips": [
+              {
+                "clean_room": false,
+                "grounded": null,
+                "mount_set": [],
+                "ordinal": 0,
+                "planned": [],
+                "shuttle": false
+              }
+            ],
+            "width": 64
+          },
+          "provenance": {
+            "arena_state_sha256_before_serve": "5e03436558f144dd869375c6df5ed94d490491bead49e37e73ced8488cf91143",
+            "output_sha256": "2b6b0f683b34dfe9f01ba19256dfeca19703c3cd313cccd127b64eaebd727e0b",
+            "repository_size_at_probe": 19,
+            "request_sha256": "08e52f28aad3902178ab54765d258c61abb4ded7ff656bfc6dad0e9f44faa2a7"
+          },
+          "receipt_sha256": "28dacf2d92465407026aaee21b6ab3f764168298f946dc51800404408962602c",
+          "route": {
+            "arena_route_receipt": null,
+            "backend": "python",
+            "candidate_count": null,
+            "excluded_live_ids": [],
+            "excluded_recency_ids": [],
+            "fallbacks": [],
+            "ranking_ids": [],
+            "ranking_length": 0,
+            "ranking_scores": null,
+            "route_limit": 6
+          },
+          "schema": "grm.route_receipt.v1",
+          "serving_path": "core.grm_runtime.GRMRuntime.chat",
+          "session_id": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census/arm1/e2e-2/session/repository",
+          "turn_id": "0",
+          "turn_kind": "chat"
+        },
+        "route_receipt_sink": {
+          "reason": "no_ledger_location_configured",
+          "sink": "info"
+        },
+        "trip": 0
+      },
+      "live_shift": 115,
+      "live_token_seats": null,
+      "mounted_ids": [],
+      "mounted_token_seats": 0,
+      "physical_cache_token_seats": null,
+      "sink_token_seats": 19
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 18,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 18,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 64,
+      "event": "guard",
+      "idx": 8,
+      "parent_preserved": true,
+      "phase": "explicit_budget_repair",
+      "split": {
+        "action": "width_guard_split",
+        "budget": 64,
+        "children": [
+          19,
+          20
+        ],
+        "parent": 8,
+        "parent_kind": "era",
+        "retired_parent": false
+      }
+    },
+    {
+      "event": "seat",
+      "observed": {
+        "arena_width": 64,
+        "delta_positions": 43,
+        "live_shift": 115,
+        "mount_ntok": 53,
+        "mount_pos0": 62,
+        "mount_pos0_legacy": 19,
+        "n_sink": 19,
+        "plan_head": 19,
+        "plan_head_adjacent_to_live_shift": true,
+        "plan_head_last_position": 114,
+        "plan_head_ntok": 53,
+        "seat_near_live": true,
+        "seat_offset_plan_head": 62,
+        "seat_order": [
+          19
+        ],
+        "seat_order_legacy": [
+          19
+        ],
+        "seat_rule": "GRM_SEAT_NEAR_LIVE: the block is filled from the TOP DOWN \u2014 the plan head (picks[0]) is seated LAST so its final token sits at live_shift - 1, immediately below the first live token; filler and the other mounts sit below it; the sink stays at [0, n_sink)"
+      }
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "arena_width": 64,
+      "event": "attempt_residency",
+      "live_shift": 115,
+      "live_token_seats": 53,
+      "mounted_ids": [
+        19
+      ],
+      "mounted_token_seats": 53,
+      "physical_cache_token_seats": 125,
+      "sink_token_seats": 19
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 19,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 20,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 21,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "budget": 96,
+      "event": "guard",
+      "idx": 22,
+      "parent_preserved": true,
+      "phase": "deposit",
+      "split": null
+    },
+    {
+      "c4_derivation": "fixed n_sink+96; inherited arena_width derivation label is overridden",
+      "event": "capture",
+      "observed": {
+        "arena_width": 64,
+        "capture_pin": "live",
+        "capture_shift": 115,
+        "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+        "capture_shift_observed": 115,
+        "live_shift": 115,
+        "n_sink": 19
+      }
+    },
+    {
+      "arena_width": 64,
+      "event": "turn",
+      "info": {
+        "abstain_deposited_graft": 23,
+        "abstain_identifier_tokens": [
+          "session",
+          "continuity",
+          "filler",
+          "full",
+          "epsilon",
+          "acknowledge",
+          "briefly",
+          "change",
+          "stored",
+          "fact",
+          "values"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          1,
+          15,
+          10
+        ],
+        "admission_ranking_before_demotion": [
+          1,
+          15,
+          10,
+          8,
+          19,
+          4
+        ],
+        "admission_route_margin_1_2": 0.7538582707482413,
+        "admission_route_margin_evaluated": true,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          4,
+          8,
+          19
+        ],
+        "evicted": 0,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [
+          {
+            "graft_id": 21,
+            "ntok": 53
+          }
+        ],
+        "live_tokens": 0,
+        "mounts": [],
+        "no_mount_fit": false,
+        "recency_mounted_ids": [
+          21,
+          22
+        ],
+        "recency_seats": {
+          "arena_width": 64,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            21,
+            22
+          ],
+          "nominated_ntok": 132
+        },
+        "resident": 0,
+        "route_receipt_record": {
+          "admission": {
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": null,
+            "margin_threshold": 0.1385774091529802,
+            "policy": "A-DEC",
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              1,
+              15,
+              10
+            ],
+            "rare_identifier_tokens": null,
+            "route_margin_1_2": 0.7538582707482413,
+            "route_margin_evaluated": true,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+  

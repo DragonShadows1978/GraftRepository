@@ -1,0 +1,222 @@
+{
+  "cells": [
+    {
+      "chunk": 64,
+      "equal_standing": true,
+      "estimate_seconds": 1600,
+      "id": "c64_w64",
+      "reason": "WC1 captured at n_sink+64. A fixed-geometry replacement is required for a full factorial; full campaign is budget non-fit.",
+      "status": "HISTORICAL_ONLY_GEOMETRY_MISMATCH",
+      "width": 64
+    },
+    {
+      "chunk": 96,
+      "equal_standing": true,
+      "estimate_seconds": 0,
+      "id": "c96_w96",
+      "status": "CITE_WC1",
+      "width": 96
+    },
+    {
+      "chunk": 64,
+      "equal_standing": true,
+      "estimate_seconds": 1600,
+      "id": "c64_w96",
+      "status": "NEW",
+      "width": 96
+    },
+    {
+      "chunk": 96,
+      "equal_standing": true,
+      "estimate_seconds": 1600,
+      "id": "c96_w64",
+      "status": "NEW",
+      "width": 64
+    }
+  ],
+  "units_per_new_cell": [
+    {
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "correction_then_restatement"
+    },
+    {
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "fresh_fact_controls"
+    },
+    {
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "multi_hop_a_b_c"
+    },
+    {
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "short_correction_long_competitor"
+    },
+    {
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-1"
+    },
+    {
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-2"
+    },
+    {
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-3"
+    },
+    {
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-4"
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": null,
+      "spec": "c4-lh-01",
+      "stop_after_turns": 8
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-01",
+      "spec": "c4-lh-02",
+      "stop_after_turns": 16
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-02",
+      "spec": "c4-lh-03",
+      "stop_after_turns": 24
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-03",
+      "spec": "c4-lh-04",
+      "stop_after_turns": 32
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-04",
+      "spec": "c4-lh-05",
+      "stop_after_turns": 40
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-05",
+      "spec": "c4-lh-06",
+      "stop_after_turns": 48
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-06",
+      "spec": "c4-lh-07",
+      "stop_after_turns": 56
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-07",
+      "spec": "c4-lh-08",
+      "stop_after_turns": 64
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-08",
+      "spec": "c4-lh-09",
+      "stop_after_turns": 72
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-09",
+      "spec": "c4-lh-10",
+      "stop_after_turns": 80
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-10",
+      "spec": "c4-lh-11",
+      "stop_after_turns": 88
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-11",
+      "spec": "c4-lh-12",
+      "stop_after_turns": 96
+    },
+    {
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-12",
+      "spec": "c4-lh-13",
+      "stop_after_turns": 104
+    }
+  ],
+  "counts": {
+    "census": 10,
+    "longhorizon": 14,
+    "sup": 9
+  },
+  "geometry": {
+    "capture_pin": "live",
+    "ephemeral": true,
+    "live_shift": "n_sink + 96",
+    "live_turns": 2,
+    "max_live": 4096,
+    "plan_head_last_position": "n_sink + 95",
+    "remaining_flags": {
+      "adm_decisive": true,
+      "admission_mode": "A-DEC",
+      "arena_width": 96,
+      "gqa_cuda_route": true,
+      "graft_storage_bits": 8,
+      "length_debias": false,
+      "live_turns": 2,
+      "max_live": 4096,
+      "max_trips": 1,
+      "ngen": 32,
+      "probe_ladder": true,
+      "route_query_lex": true,
+      "sup_resolve": true,
+      "topk": 3,
+      "turn_pipeline": "single",
+      "vram_budget_mb": null
+    },
+    "seat_near_live": true,
+    "sink": "unchanged tokenizer-derived n_sink"
+  },
+  "budget": {
+    "cooldown_seconds": 30,
+    "estimate_class": "Planning assumption: sup 60s/fixture, census and 8-turn LH segments 80s each including load/save; unvalidated on this sandbox; stop at rail without retry.",
+    "full_fixed_geometry_estimate_seconds": 4800,
+    "full_fixed_geometry_status": "NON_FIT",
+    "gpu_seconds": 3600,
+    "lock": "/tmp/forge-gpu.lock",
+    "lock_wait_seconds": 0,
+    "new_cells_estimate_seconds": 3200,
+    "outer_seconds": 590,
+    "stop": "One timeout stops its chain; no retry or longer lease. Reserve full 285s before each worker against remaining total.",
+    "worker_seconds": 285
+  },
+  "registration": {
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/registration.json",
+    "sha256": "7fb561c70dd8c04abc18ef99a7a2a5ec4d37cbc2a22b1de1f89ab2119bd285e8",
+    "bytes": 67067
+  },
+  "gpu_executed": false
+}

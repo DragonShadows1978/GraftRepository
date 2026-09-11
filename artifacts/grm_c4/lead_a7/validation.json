@@ -1,0 +1,115 @@
+{
+  "a7_tests": {
+    "exit_code": 0,
+    "passed": 34,
+    "seconds": 18.87
+  },
+  "actual_completed_gpu_seconds": 2157.6785489856265,
+  "amendment": {
+    "bytes": 3952,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a7/amendment_a9.json",
+    "sha256": "0d6c656ee51e564f2013f2f5dbaececa33d4e58c216fcacfc410796e8487cbc8"
+  },
+  "before_count": 2738,
+  "budget_unchanged": true,
+  "command_file": {
+    "bytes": 6699,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_commands_a7.txt",
+    "sha256": "70b9935128af97766e6f4d6b86a62b40a44ac147bcfb937d9e891b53667382bb"
+  },
+  "commands_identical_to_a6": true,
+  "evidence_class": "CPU read-only author verification; no lease or GPU execution",
+  "existing_lead_cpu_outputs": [
+    {
+      "bytes": 4086,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c64_w96/longhorizon_c4-lh-12a.json",
+      "sha256": "5544dae7532d655152530e06a88e8727036a692c09c9bc98b276fad4d62a0d24"
+    },
+    {
+      "bytes": 4094,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c64_w96/longhorizon_c4-lh-12b.json",
+      "sha256": "d7adb0551580740a8ac3bdf0fe662ef6455451742f0639156f2ace6c4869529d"
+    },
+    {
+      "bytes": 4094,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c64_w96/longhorizon_c4-lh-13a.json",
+      "sha256": "13327022c9ae9b84f178b828d3b1a7f59229b34c108f8221ee213e6c5f074e64"
+    },
+    {
+      "bytes": 4086,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c64_w96/longhorizon_c4-lh-13b.json",
+      "sha256": "6c20ca84d4d347d529491df9faf2b9883e5825a651044f17a6e521bc32e7b052"
+    },
+    {
+      "bytes": 7902,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c64_w96/score.json",
+      "sha256": "690eb82e0e5a9b56dcfa09620a8b15442f39426e60e8b9718410deb7835abbb6"
+    }
+  ],
+  "first_unstarted_admission": null,
+  "historical_receipts_and_claims_unchanged": true,
+  "legacy_snapshot_drift_paths": {
+    "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5": [],
+    "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a6": [
+      "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_split_a5.py"
+    ]
+  },
+  "legacy_tests": {
+    "exit_code": 1,
+    "failed": 2,
+    "failed_tests": [
+      "test_existing_artifacts_byte_unchanged_and_no_real_attempts",
+      "test_real_existing_bytes_unchanged"
+    ],
+    "passed": 210,
+    "seconds": 54.35
+  },
+  "new_gpu_seconds": 0,
+  "projection": {
+    "accounting": "All recorded walls including REDs + all 44 fitting estimates; six registered planning NON_FIT units charge zero, with no attempt or lease. Dependency-blocked fitting estimates remain included. Actual admission retains reserve285, lease285, cooldown30, outer590.",
+    "cap_seconds": 6600,
+    "headroom_seconds": 597.3214510143735,
+    "limit": "Planning FIT is not execution completion. lh12b and lh13a in each cell require skipped lh12a state; unchanged dependencies refuse them without GPU. Every long-history battery remains NON_FIT.",
+    "overflow_seconds": 0,
+    "peak_reservation_seconds": 6221.678548985627,
+    "recorded_seconds": 2157.6785489856265,
+    "registered_seconds": 3845,
+    "skipped_estimate_seconds": 1896,
+    "status": "FIT",
+    "total_seconds": 6002.678548985627
+  },
+  "projection_unchanged": true,
+  "resume_file": {
+    "bytes": 6201,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_resume_a7.txt",
+    "sha256": "14de9b359ec98ca4f03cf96b966051d5e93d9e17f17f99674eef3655a9e34d92"
+  },
+  "resume_selection": "A7 lines 1-7 and 15-end; line15 is the first unstarted worker",
+  "source_replacements": [
+    {
+      "after": {
+        "bytes": 38791,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_split_a5.py",
+        "sha256": "273e3cf552df18461fdfea342bf481e89f23f48ae6b3fa574e521d9cb72a1476"
+      },
+      "before": {
+        "bytes": 36361,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_split_a5.py",
+        "sha256": "b02c180ece58668c42e4750e34219651ad983684dcd8100ea14b7662d8421e2d"
+      }
+    },
+    {
+      "after": {
+        "bytes": 9203,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_skip_a6.py",
+        "sha256": "1f7bad72c5a8174ffa36f190de02ef33c4755d3e47aa7396ef6fc7297b654060"
+      },
+      "before": {
+        "bytes": 8943,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_skip_a6.py",
+        "sha256": "d8e19ec120da027d067e3e8f00ac40226dcbbc954ed954a5206a01e7aa87943d"
+      }
+    }
+  ],
+  "unchanged_count": 2736
+}

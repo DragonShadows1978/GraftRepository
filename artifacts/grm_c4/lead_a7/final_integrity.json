@@ -1,0 +1,56 @@
+{
+  "a6_plan_equal_to_predecessor": true,
+  "all_captured_run_files_unchanged": true,
+  "before_count": 2738,
+  "byte_unchanged_count": 2735,
+  "captured_run_file_count": 2650,
+  "changed_files": [
+    {
+      "after": {
+        "bytes": 5432,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/NARRATIVE_SYNTHESIS.md",
+        "sha256": "b9ccad3ef0b376748ba0b3de35cd98c654c4bac388a6edaf1ad689a1e9c5d62d"
+      },
+      "before": {
+        "bytes": 3497,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/NARRATIVE_SYNTHESIS.md",
+        "sha256": "f3e83c32ee349ad250a9c954c35f1c0ba45a8f91b8f4c42080acb7fa812c3ec9"
+      }
+    },
+    {
+      "after": {
+        "bytes": 38791,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_split_a5.py",
+        "sha256": "273e3cf552df18461fdfea342bf481e89f23f48ae6b3fa574e521d9cb72a1476"
+      },
+      "before": {
+        "bytes": 36361,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_split_a5.py",
+        "sha256": "b02c180ece58668c42e4750e34219651ad983684dcd8100ea14b7662d8421e2d"
+      }
+    },
+    {
+      "after": {
+        "bytes": 9203,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_skip_a6.py",
+        "sha256": "1f7bad72c5a8174ffa36f190de02ef33c4755d3e47aa7396ef6fc7297b654060"
+      },
+      "before": {
+        "bytes": 8943,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_skip_a6.py",
+        "sha256": "d8e19ec120da027d067e3e8f00ac40226dcbbc954ed954a5206a01e7aa87943d"
+      }
+    }
+  ],
+  "evidence_class": "CPU final integrity audit",
+  "lead_command_shell_syntax": "PASS (earlier bash -n, both files)",
+  "lead_commands_a7_byte_equal_to_a6": true,
+  "narrative_original_prefix_unchanged": true,
+  "new_gpu_seconds": 0,
+  "sealed_a7_binding": "PASS",
+  "source_gate_counts": {
+    "a7_pass": 34,
+    "legacy_fail": 2,
+    "legacy_pass": 210
+  }
+}

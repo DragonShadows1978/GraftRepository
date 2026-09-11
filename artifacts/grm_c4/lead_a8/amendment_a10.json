@@ -1,0 +1,98 @@
+{
+  "artifact_sequence": 10,
+  "before": {
+    "bytes": 19582,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/before.json",
+    "sha256": "676d217f2f4266973afa486ab1eee1ab0bb306e837d2ace904db4a398f89a1bd"
+  },
+  "budget": {
+    "authorized_by": "Lead, orders/GRM_C4_AMENDMENT_1.md, 2026-09-09",
+    "cooldown_seconds": 30,
+    "estimate_class": "Planning assumption: sup 60s/fixture, census and 8-turn LH segments 80s each including load/save; unvalidated on this sandbox; stop at rail without retry.",
+    "full_fixed_geometry_estimate_seconds": 4800,
+    "full_fixed_geometry_status": "PLANNING_FIT_AT_CAP_UNVALIDATED",
+    "gpu_seconds": 6600,
+    "lock": "/tmp/forge-gpu.lock",
+    "lock_wait_seconds": 0,
+    "new_cells_estimate_seconds": 4800,
+    "outer_seconds": 590,
+    "planning_cooldown_seconds": 1890,
+    "reserve_note": "285s full-worker reservation unchanged. At exactly estimated unit times the final worker needs 5005s cumulative reservation, so a 4800s estimate does not guarantee completion under the 4800s cap; stop NON_FIT if reserve fails. Cooldown is outside GPU budget.",
+    "stop": "One timeout stops its chain; no retry or longer lease. Reserve full 285s before each worker against remaining total.",
+    "worker_seconds": 285
+  },
+  "commands": {
+    "bytes": 5663,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_resume_a8.txt",
+    "sha256": "1bdf8af12d23430b7c1e66560cc5070caff617833159676307bdb0be8df19d3d"
+  },
+  "immutable": true,
+  "incidents": [
+    {
+      "accounting_reason": "Lead A8: recorded top-level wall only; paired claim is not a second abandoned unit.",
+      "archive": {
+        "bytes": 16384,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/corrupt/28eb9c9dd370c07f00f2e5e10e413f987c1d80bde3d2ab11f67fe96b008b03c6/census_e2e-2.json",
+        "sha256": "28eb9c9dd370c07f00f2e5e10e413f987c1d80bde3d2ab11f67fe96b008b03c6"
+      },
+      "charge_seconds": 0,
+      "claim": {
+        "bytes": 726,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census_e2e-2.attempt.json",
+        "sha256": "ecd7924d1de68f43b734cdf2f28524918fe7cde95e04182d54a35cbb6ed766f8"
+      },
+      "classification": "CORRUPT_DISK_FULL",
+      "parse_error": "JSONDecodeError: Expecting property name enclosed in double quotes: line 545 column 3 (char 16384)",
+      "receipt": {
+        "bytes": 16384,
+        "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a5/runs/c96_w64/census_e2e-2.json",
+        "sha256": "28eb9c9dd370c07f00f2e5e10e413f987c1d80bde3d2ab11f67fe96b008b03c6"
+      },
+      "recorded_wall_seconds": null,
+      "reruns_allowed": 1,
+      "unit": [
+        "c96_w64",
+        "census",
+        "e2e-2"
+      ]
+    }
+  ],
+  "lead_amendment_number": 8,
+  "minimum_free_bytes": 20000000000,
+  "order": {
+    "bytes": 2075,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/orders/GRM_C4_AMENDMENT_8.md",
+    "sha256": "540441716b8492f3dd491f753f261c7fdb45d98051bc57fe6d2d2a46d51cf66c"
+  },
+  "policy": "Exact incident only; original bytes retained; one create-only successor path. Unknown new incomplete claims block. Corrupt charges recorded top-level wall only; abandoned charges 285. No cap/skip/dependency/scoring/lease changes.",
+  "pre_registration": {
+    "bytes": 1912,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/pre_registration.json",
+    "sha256": "636f222cc9b1606e770044c418922a2560007c3d33c006e37ec9c572748e06a7"
+  },
+  "previous_amendment": {
+    "bytes": 3952,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a7/amendment_a9.json",
+    "sha256": "0d6c656ee51e564f2013f2f5dbaececa33d4e58c216fcacfc410796e8487cbc8"
+  },
+  "prior_art": "Local C4/A2/A5/A6/A7 and DET1 (house, 2026), verified in local source: SHA-bound create-only manifests, receipt selection, claim guards, wall-plus-reservation accounting, ordered continuation and copy-and-verify saved state. A8 adds incident-scoped exceptions and a 20 GB df admission guard; no novel algorithm claimed. Specific threshold/class labels are lead instructions.",
+  "receipt_root": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/runs",
+  "registration_pins": {
+    "bytes": 90,
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a8/registration_pins.json",
+    "sha256": "2dedbcc77d9862c718d5035d0f31ca0eca6d63cf856d199d239fad0de1b220fc"
+  },
+  "schema": "grm.c4.disk-full-recovery.v1",
+  "sources": [
+    {
+      "bytes": 19626,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/scripts/grm_c4_recovery_a8.py",
+      "sha256": "8fa6ac4ca33863ed8ac63d34087e544b447e725681a0772c6f45d9d124e73d4d"
+    },
+    {
+      "bytes": 11582,
+      "path": "/mnt/ForgeRealm/wt/grm-c4/tests/test_grm_c4_recovery_a8.py",
+      "sha256": "482f24177d3112a610f0420335c7c34da56463e1c5cf3573ef69a73163398caf"
+    }
+  ]
+}

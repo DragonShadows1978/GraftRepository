@@ -1,0 +1,333 @@
+{
+  "gpu_executed": false,
+  "amendment": {
+    "path": "/mnt/ForgeRealm/wt/grm-c4/artifacts/grm_c4/lead_a3/amendment_a5.json",
+    "sha256": "ffc9a66afe9c27ae9d56b6d5b35ad119666db60d6f9459687dec67f35126cdf1",
+    "bytes": 62728
+  },
+  "scheduled_units": [
+    {
+      "cell": "c96_w64",
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "correction_then_restatement"
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "fresh_fact_controls"
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "multi_hop_a_b_c"
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "short_correction_long_competitor"
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-1"
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-2"
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-3"
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-4"
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": null,
+      "spec": "c4-lh-01",
+      "stop_after_turns": 8
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-01",
+      "spec": "c4-lh-02",
+      "stop_after_turns": 16
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-02",
+      "spec": "c4-lh-03",
+      "stop_after_turns": 24
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-03",
+      "spec": "c4-lh-04",
+      "stop_after_turns": 32
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-04",
+      "spec": "c4-lh-05",
+      "stop_after_turns": 40
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-05",
+      "spec": "c4-lh-06",
+      "stop_after_turns": 48
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-06",
+      "spec": "c4-lh-07",
+      "stop_after_turns": 56
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-07",
+      "spec": "c4-lh-08",
+      "stop_after_turns": 64
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-08",
+      "spec": "c4-lh-09",
+      "stop_after_turns": 72
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-09",
+      "spec": "c4-lh-10",
+      "stop_after_turns": 80
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-10",
+      "spec": "c4-lh-11",
+      "stop_after_turns": 88
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-11",
+      "spec": "c4-lh-12",
+      "stop_after_turns": 96
+    },
+    {
+      "cell": "c96_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-12",
+      "spec": "c4-lh-13",
+      "stop_after_turns": 104
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "correction_then_restatement"
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "fresh_fact_controls"
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "multi_hop_a_b_c"
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "sup",
+      "estimate_seconds": 60,
+      "spec": "short_correction_long_competitor"
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-1"
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-2"
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-3"
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "census",
+      "estimate_seconds": 80,
+      "spec": "e2e-4"
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": null,
+      "spec": "c4-lh-01",
+      "stop_after_turns": 8
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-01",
+      "spec": "c4-lh-02",
+      "stop_after_turns": 16
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-02",
+      "spec": "c4-lh-03",
+      "stop_after_turns": 24
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-03",
+      "spec": "c4-lh-04",
+      "stop_after_turns": 32
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-04",
+      "spec": "c4-lh-05",
+      "stop_after_turns": 40
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-05",
+      "spec": "c4-lh-06",
+      "stop_after_turns": 48
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-06",
+      "spec": "c4-lh-07",
+      "stop_after_turns": 56
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-07",
+      "spec": "c4-lh-08",
+      "stop_after_turns": 64
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-08",
+      "spec": "c4-lh-09",
+      "stop_after_turns": 72
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-09",
+      "spec": "c4-lh-10",
+      "stop_after_turns": 80
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-10",
+      "spec": "c4-lh-11",
+      "stop_after_turns": 88
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-11",
+      "spec": "c4-lh-12",
+      "stop_after_turns": 96
+    },
+    {
+      "cell": "c64_w64",
+      "battery": "longhorizon",
+      "estimate_seconds": 80,
+      "resume": "c4-lh-12",
+      "spec": "c4-lh-13",
+      "stop_after_turns": 104
+    }
+  ],
+  "unit_count": 42,
+  "estimate_seconds": 3200,
+  "cooldown_seconds": 1290,
+  "budget": {
+    "authorized_by": "Lead, orders/GRM_C4_AMENDMENT_1.md, 2026-09-09",
+    "cooldown_seconds": 30,
+    "estimate_class": "Planning assumption: sup 60s/fixture, census and 8-turn LH segments 80s each including load/save; unvalidated on this sandbox; stop at rail without retry.",
+    "full_fixed_geometry_estimate_seconds": 4800,
+    "full_fixed_geometry_status": "PLANNING_FIT_AT_CAP_UNVALIDATED",
+    "gpu_seconds": 4800,
+    "lock": "/tmp/forge-gpu.lock",
+    "lock_wait_seconds": 0,
+    "new_cells_estimate_seconds": 4800,
+    "outer_seconds": 590,
+    "planning_cooldown_seconds": 1890,
+    "reserve_note": "285s full-worker reservation unchanged. At exactly estimated unit times the final worker needs 5005s cumulative reservation, so a 4800s estimate does not guarantee completion under the 4800s cap; stop NON_FIT if reserve fails. Cooldown is outside GPU budget.",
+    "stop": "One timeout stops its chain; no retry or longer lease. Reserve full 285s before each worker against remaining total.",
+    "worker_seconds": 285
+  }
+}
