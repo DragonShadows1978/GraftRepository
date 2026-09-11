@@ -1,0 +1,209 @@
+{
+ "dialect": "GptOss20B_TC:24x2880:g8x64",
+ "dialect_descriptor": {
+  "model_type": "GptOss20B_TC",
+  "num_layers": 24,
+  "hidden_dim": 2880,
+  "payload_kind": "gqa",
+  "vals_per_tok_layer": 1024,
+  "route_layer": 1,
+  "latent_rank": 0,
+  "rope_dim": 0,
+  "num_kv_heads": 8,
+  "head_dim": 64,
+  "position_law": "rope_full_yarn",
+  "state_kind": "kv",
+  "graftability": "seat_remountable",
+  "remountable": true,
+  "composition": "multi_mount"
+ },
+ "route_layer": 1,
+ "durability_mode": "session_safe",
+ "native_checkpoint": "native/grm_store.bin",
+ "wal_lsn": 1,
+ "review_buffer": [],
+ "nodes": [
+  {
+   "kind": "fact",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current Lumen seal value is Amber-1-Atlas.<|end|><|start|>assistant<|channel|>final<|message|>Recorded: Lumen seal is Amber-1-Atlas.<|end|>",
+   "ntok": 54,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "amber-1-atlas"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {},
+    "superseded_by": [
+     1
+    ]
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 0,
+   "provenance": [],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "fact",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Correction: the current Lumen seal value is Birch-2-Beacon, replacing Amber-1-Atlas.<|end|><|start|>assistant<|channel|>final<|message|>Updated: Lumen seal is Birch-2-Beacon.<|end|>",
+   "ntok": 63,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "amber-1-atlas",
+    "birch-2-beacon"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [
+     0
+    ],
+    "active": true,
+    "importance": {},
+    "superseded_by": [
+     2
+    ]
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 1,
+   "provenance": [],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "fact",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Final correction: the current Lumen seal value is Cobalt-3-Comet, replacing Birch-2-Beacon.<|end|><|start|>assistant<|channel|>final<|message|>Updated: Lumen seal is Cobalt-3-Comet.<|end|>",
+   "ntok": 66,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "birch-2-beacon",
+    "cobalt-3-comet"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [
+     1
+    ],
+    "active": true,
+    "importance": {},
+    "superseded_by": []
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 2,
+   "provenance": [],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "fact",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The Lumen seal appears in this unrelated audit narrative because the indexer cross-linked every seal mentioned during the quarter. The audit team walked through inventory tables, packaging receipts, courier routes, badge assignments, loading windows, spare-part bins, vendor calls, and the contingency calendar before reaching the one value this record actually owns. The current Meridian docket value is Delta-4-Drift. Preserve Delta-4-Drift exactly for the Meridian docket; the surrounding Lumen seal reference is context only and does not revise that seal.<|end|><|start|>assistant<|channel|>final<|message|>Archived Meridian docket as Delta-4-Drift and retained the audit context.<|end|>",
+   "ntok": 151,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "delta-4-drift"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {},
+    "superseded_by": []
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 3,
+   "provenance": [],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  }
+ ]
+}

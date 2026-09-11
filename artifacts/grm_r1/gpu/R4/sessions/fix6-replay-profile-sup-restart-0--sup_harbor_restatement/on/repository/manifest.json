@@ -1,0 +1,208 @@
+{
+ "dialect": "GptOss20B_TC:24x2880:g8x64",
+ "dialect_descriptor": {
+  "model_type": "GptOss20B_TC",
+  "num_layers": 24,
+  "hidden_dim": 2880,
+  "payload_kind": "gqa",
+  "vals_per_tok_layer": 1024,
+  "route_layer": 1,
+  "latent_rank": 0,
+  "rope_dim": 0,
+  "num_kv_heads": 8,
+  "head_dim": 64,
+  "position_law": "rope_full_yarn",
+  "state_kind": "kv",
+  "graftability": "seat_remountable",
+  "remountable": true,
+  "composition": "multi_mount"
+ },
+ "route_layer": 1,
+ "durability_mode": "session_safe",
+ "native_checkpoint": "native/grm_store.bin",
+ "wal_lsn": 1,
+ "review_buffer": [],
+ "nodes": [
+  {
+   "kind": "fact",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current Harbor token value is Morrow-5-Red.<|end|><|start|>assistant<|channel|>final<|message|>Recorded: Harbor token is Morrow-5-Red.<|end|>",
+   "ntok": 54,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "morrow-5-red"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {},
+    "superseded_by": [
+     1
+    ]
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 0,
+   "provenance": [],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "fact",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Correction: the current Harbor token value is Nacre-6-Blue, replacing Morrow-5-Red.<|end|><|start|>assistant<|channel|>final<|message|>Updated: Harbor token is Nacre-6-Blue.<|end|>",
+   "ntok": 64,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "morrow-5-red",
+    "nacre-6-blue"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [
+     0
+    ],
+    "active": true,
+    "importance": {},
+    "superseded_by": [
+     2
+    ]
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 1,
+   "provenance": [],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "fact",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative restatement for the record: the current Harbor token remains Nacre-6-Blue.<|end|><|start|>assistant<|channel|>final<|message|>Confirmed: Harbor token remains Nacre-6-Blue.<|end|>",
+   "ntok": 61,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "nacre-6-blue"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [
+     1
+    ],
+    "active": true,
+    "importance": {},
+    "superseded_by": []
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 2,
+   "provenance": [],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  },
+  {
+   "kind": "fact",
+   "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The Harbor token is named in the preface of this separate shipping memorandum because the warehouse search index groups every token reference together. The memorandum then covers the north entrance inspection, morning dispatch cadence, return-label printer, pallet wrap order, customs call, lunch relief schedule, spare scanner allocation, and a delayed courier handoff. Its sole authoritative value is the current Juniper pass value, Opal-7-Green. Keep Opal-7-Green attached to Juniper pass; this memorandum does not alter the Harbor token.<|end|><|start|>assistant<|channel|>final<|message|>Archived Juniper pass as Opal-7-Green with its shipping context.<|end|>",
+   "ntok": 150,
+   "sources": [],
+   "retired": false,
+   "no_fold": false,
+   "tags": [],
+   "rare": [
+    "opal-7-green"
+   ],
+   "metadata": {
+    "kind": "fact",
+    "durability": "project",
+    "mutability": "stable",
+    "scope": "project",
+    "write_intent": "observed",
+    "confidence": 1.0,
+    "source_turns": [],
+    "source_grafts": [],
+    "supersedes": [],
+    "active": true,
+    "importance": {},
+    "superseded_by": []
+   },
+   "host_present": true,
+   "device_present": true,
+   "dirty": false,
+   "durable": true,
+   "cold_only": false,
+   "payload_pending": false,
+   "native_node_id": 3,
+   "provenance": [],
+   "capture": {
+    "capture_pin": "live",
+    "capture_shift": 115,
+    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+    "n_sink": 19,
+    "arena_width": 96,
+    "live_shift": 115,
+    "capture_shift_observed": 115
+   }
+  }
+ ]
+}

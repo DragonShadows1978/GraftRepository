@@ -1,0 +1,23 @@
+{
+  "amendment": null,
+  "attempt": 1,
+  "cells_retained": [],
+  "cells_run": [
+    "fix6-replay-profile-longhistory-2--lh_t022",
+    "fix6-replay-profile-longhistory-restart-0--lh_t013",
+    "fix6-replay-profile-longhistory-restart-0--lh_t016",
+    "fix6-replay-profile-longhistory-restart-1--lh_t022",
+    "fix6-replay-profile-sup-correction_then_restatement--sup_harbor_restatement",
+    "fix6-replay-profile-sup-multi_hop_a_b_c--sup_lumen_head",
+    "fix6-replay-profile-sup-restart-0--sup_harbor_restatement",
+    "fix6-replay-profile-sup-restart-1--sup_lumen_head"
+  ],
+  "charged_seconds": 238.0,
+  "elapsed_seconds": 13.41548392828554,
+  "error": "RuntimeError: cudaMalloc failed: out of memory",
+  "fake": false,
+  "red": [],
+  "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+  "reservation_seconds": 238,
+  "status": "FAILED"
+}

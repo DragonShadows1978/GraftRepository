@@ -1,0 +1,89 @@
+{
+  "amendment": "amendment_1",
+  "attempt": 2,
+  "cells_retained": [],
+  "cells_run": [
+    "fix6-replay-profile-longhistory-2--lh_t022",
+    "fix6-replay-profile-longhistory-restart-0--lh_t013",
+    "fix6-replay-profile-longhistory-restart-0--lh_t016",
+    "fix6-replay-profile-longhistory-restart-1--lh_t022",
+    "fix6-replay-profile-sup-correction_then_restatement--sup_harbor_restatement",
+    "fix6-replay-profile-sup-multi_hop_a_b_c--sup_lumen_head",
+    "fix6-replay-profile-sup-restart-0--sup_harbor_restatement",
+    "fix6-replay-profile-sup-restart-1--sup_lumen_head"
+  ],
+  "charged_seconds": 158.74478235980496,
+  "elapsed_seconds": 158.74478235980496,
+  "error": null,
+  "fake": false,
+  "idle_check": {
+    "attempts": [
+      {
+        "memory_used_mib": 324,
+        "ok": true,
+        "reason": "IDLE: memory.used=324 MiB <= 1000 MiB",
+        "time_unix": 1789102778.9709566
+      }
+    ],
+    "attempts_allowed": 41,
+    "final": {
+      "compute_list_empty": false,
+      "foreign_holder_suspected": false,
+      "gpu_uuid": "GPU-2f47351d-ae1f-15ab-b5e0-e931e397b0cb",
+      "memory_free_mib": 11958,
+      "memory_total_mib": 12282,
+      "memory_used_mib": 324,
+      "other_process_pids": [
+        1297,
+        1801,
+        363125,
+        1250659,
+        3157302
+      ],
+      "own_memory_mib": 0,
+      "processes": [
+        {
+          "memory.used": 165,
+          "name": "/usr/lib/xorg/Xorg",
+          "pid": 1297,
+          "type": "G"
+        },
+        {
+          "memory.used": 26,
+          "name": "cinnamon",
+          "pid": 1801,
+          "type": "G"
+        },
+        {
+          "memory.used": 8,
+          "name": "/usr/bin/wezterm-gui",
+          "pid": 363125,
+          "type": "G"
+        },
+        {
+          "memory.used": 49,
+          "name": "/app/discord/Discord --type=gpu-process --ozone-platform=x11 --crashpad-handler-pid=40 --enable-crash-reporter=e85f8cd2-a944-4f95-a607-0044f76c6f3c,no_channel --user-data-dir=/home/vader/.var/app/com.discordapp.Discord/config/discord --gpu-preferences=UAAAAAAAAAAgAQAEAAAAAAAAAAAAAGAAAQAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAYAAAAAAAAABgAAAAAAAAAAQAAAAAAAAAIAAAAAAAAAAgAAAAAAAAA --shared-files --field-trial-handle=3,i,17389084477514006622,2612427830592114383,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports --disable-features=AllowAggressiveThrottlingWithWebSocket,DropInputEventsWhilePaintHolding,HardwareMediaKeyHandling,IntensiveWakeUpThrottling,LocalNetworkAccessChecks,MediaSessionService,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation,UseEcoQoSForBackgroundProcess,WaylandWpColorManagerV1,WinRetrieveSuggestionsOnlyOnDemand --variations-seed-version --pseudonymization-salt-handle=7,i,10975824278974777218,1857768323912585422,4 --trace-process-track-uuid=3190708988185955192",
+          "pid": 1250659,
+          "type": "G"
+        },
+        {
+          "memory.used": 20,
+          "name": "/opt/google/chrome/chrome --type=gpu-process --ozone-platform=x11 --crashpad-handler-pid=3157264 --enable-crash-reporter=40647f36-fb67-48ac-906a-c52d5a0c0cbb, --change-stack-guard-on-fork=enable --gpu-preferences=YAAAAAAAAAAgAQAEAAAAAAAAAAAAAGAASAAAAAAAAAABAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAwAAAAAAAAAAEAAAAAAAAACAAAAAAAAAAMAAAAAQAAAAAAAAAAAAAACAAAAAAAAAAIAAAAAAAAAA== --shared-files --metrics-shmem-handle=4,i,2094788480816807438,3098418698103992200,262144 --field-trial-handle=3,i,13150032670063848477,12063824561381820238,262144 --variations-seed-version=20260906-030037.213000-production --pseudonymization-salt-handle=7,i,9361470314928478914,10494407795027364146,4 --trace-process-track-uuid=3190708988185955192",
+          "pid": 3157302,
+          "type": "G"
+        }
+      ],
+      "scope": "point sample, not peak; device total includes unattributed memory such as display-side programs",
+      "status": "OK",
+      "time_unix": 1789102778.9709566,
+      "unit": "MiB"
+    },
+    "reason": "IDLE: memory.used=324 MiB <= 1000 MiB",
+    "waited_for_seconds": 600
+  },
+  "non_fit_cells": [],
+  "red": [],
+  "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+  "reservation_seconds": 238,
+  "status": "COMPLETE"
+}

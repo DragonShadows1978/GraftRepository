@@ -1,0 +1,559 @@
+{
+  "abstain_transition": null,
+  "answer_changed": false,
+  "archived_stale_sessions": null,
+  "arms": {
+    "off": {
+      "admission_rule": "A-DEC",
+      "answer": "The current Lumen seal value is **Cobalt‑3‑Comet**.",
+      "answer_measured": true,
+      "arena_cur_mount_n": 66,
+      "arm": "off",
+      "battery": "sup",
+      "capture_valid": true,
+      "cell": "fix6-replay-profile-sup-restart-1--sup_lumen_head",
+      "checkpoint": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/profile/sup/sup_lumen_head/checkpoint.json",
+      "checkpoint_sha256": "8fc89025f763ad9ad7067c5d6305f6c95e07012de6a607926384e1f81f22f2d9",
+      "correct": true,
+      "evidence_class": "production ladder on a recorded C2 checkpoint; the admission rule is the only difference between the two arms",
+      "expected_values": [
+        "cobalt-3-comet"
+      ],
+      "geometry": {
+        "arena_width": 96,
+        "live_shift": 115,
+        "n_sink": 19
+      },
+      "identified_candidates": [
+        2,
+        1,
+        0
+      ],
+      "mounted_ids": [
+        2
+      ],
+      "policy_branch": "declared_synthesis_identified_set",
+      "question": "What is the current Lumen seal value?",
+      "question_id": "sup_lumen_head",
+      "rank_plan": [
+        2,
+        1,
+        0
+      ],
+      "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+      "rejected_values": [
+        "amber-1-atlas",
+        "birch-2-beacon",
+        "delta-4-drift"
+      ],
+      "route_margin_1_2": 0.0021209207634558247,
+      "route_margin_evaluated": true,
+      "route_receipt": {
+        "admission": {
+          "admission_rule": "all_tokens_bind",
+          "identified_candidates": [
+            2,
+            1,
+            0
+          ],
+          "identifier_hit_count": 3,
+          "identifier_tokens": null,
+          "margin_threshold": 0.1385774091529802,
+          "policy": "A-DEC",
+          "policy_branch": "declared_synthesis_identified_set",
+          "rank_plan": [
+            2,
+            1,
+            0
+          ],
+          "ranking_before_demotion": [
+            2,
+            3,
+            1,
+            0
+          ],
+          "rare_identifier_tokens": null,
+          "route_margin_1_2": 0.0021209207634558247,
+          "route_margin_evaluated": true,
+          "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+          "split_child_demoted": false,
+          "split_demoted_ids": [],
+          "split_family_ids": []
+        },
+        "fit": {
+          "cur_mount_n": 66,
+          "dropped": [
+            1,
+            0
+          ],
+          "final_mounts": [
+            2
+          ],
+          "info_pass_through": {
+            "admission_ranking_before_demotion": [
+              2,
+              3,
+              1,
+              0
+            ],
+            "admission_rule": "all_tokens_bind",
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [],
+            "fit_chunk_trips": [],
+            "fit_descended_head": [],
+            "fit_dropped_filler": [],
+            "fit_dropped_planned": [],
+            "fit_planned": [
+              2,
+              1,
+              0
+            ],
+            "fit_seated": [
+              2
+            ],
+            "fit_shuttle": false,
+            "fit_shuttle_trips": [],
+            "fit_split_children": [],
+            "fit_split_ephemeral": null,
+            "fit_split_parent": null,
+            "fit_unseatable": [],
+            "frame_ephemeral": true,
+            "frame_escape_active": false,
+            "grounding_glyph_rescued": true,
+            "grounding_normalized": true,
+            "live_segments_after_turn": [
+              {
+                "graft_id": null,
+                "ntok": 54
+              }
+            ],
+            "live_segments_carried_into_turn": [],
+            "live_segments_inherited": [],
+            "recency_mounted_ids": [],
+            "recency_seats": {
+              "arena_width": 96,
+              "budget_after_charge": 96,
+              "charge_waived_reason": null,
+              "charged_ntok": 0,
+              "nominated_ids": [],
+              "nominated_ntok": 0
+            },
+            "served_without_plan_head": false
+          },
+          "no_mount_fit": false,
+          "planned": [
+            2,
+            1,
+            0
+          ],
+          "seated": [
+            2
+          ],
+          "trip_count": 1,
+          "trips": [
+            {
+              "clean_room": true,
+              "grounded": null,
+              "mount_set": [
+                2
+              ],
+              "ordinal": 0,
+              "planned": [
+                2,
+                1,
+                0
+              ],
+              "shuttle": false
+            }
+          ],
+          "width": 96
+        },
+        "provenance": {
+          "arena_state_sha256_before_serve": null,
+          "output_sha256": null,
+          "repository_size_at_probe": 4,
+          "request_sha256": null
+        },
+        "receipt_sha256": "a98dc874dd6532deb3175bd4ba10944bf265b8ffdf0acad4ed3babeff3c75ac9",
+        "route": {
+          "arena_route_receipt": null,
+          "backend": "python",
+          "candidate_count": null,
+          "excluded_live_ids": [],
+          "excluded_recency_ids": [],
+          "fallbacks": [],
+          "ranking_ids": [
+            2,
+            3,
+            1,
+            0
+          ],
+          "ranking_length": 4,
+          "ranking_scores": null,
+          "route_limit": null
+        },
+        "schema": "grm.route_receipt.v1",
+        "serving_path": "unknown",
+        "session_id": "fix6-replay-profile-sup-restart-1--sup_lumen_head",
+        "turn_id": "sup_lumen_head",
+        "turn_kind": null
+      },
+      "rt1": {
+        "admission_ranking_before_demotion": [
+          2,
+          3,
+          1,
+          0
+        ],
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": []
+      },
+      "side": "profile",
+      "token_seats": 66,
+      "verdict": {
+        "abstained": false,
+        "answer": "The current Lumen seal value is **Cobalt‑3‑Comet**.",
+        "correct": true,
+        "expected_hits": [
+          "cobalt-3-comet"
+        ],
+        "rejected_hits": []
+      },
+      "wall_seconds": 5.866633098106831
+    },
+    "on": {
+      "admission_rule": "A-DEC",
+      "answer": "The current Lumen seal value is **Cobalt‑3‑Comet**.",
+      "answer_measured": true,
+      "arena_cur_mount_n": 66,
+      "arm": "on",
+      "battery": "sup",
+      "capture_valid": true,
+      "cell": "fix6-replay-profile-sup-restart-1--sup_lumen_head",
+      "checkpoint": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/profile/sup/sup_lumen_head/checkpoint.json",
+      "checkpoint_sha256": "8fc89025f763ad9ad7067c5d6305f6c95e07012de6a607926384e1f81f22f2d9",
+      "correct": true,
+      "evidence_class": "production ladder on a recorded C2 checkpoint; the admission rule is the only difference between the two arms",
+      "expected_values": [
+        "cobalt-3-comet"
+      ],
+      "geometry": {
+        "arena_width": 96,
+        "live_shift": 115,
+        "n_sink": 19
+      },
+      "identified_candidates": [
+        2,
+        3,
+        1,
+        0
+      ],
+      "mounted_ids": [
+        2
+      ],
+      "policy_branch": "margin_insurance_k3_identifier_tiebreak",
+      "question": "What is the current Lumen seal value?",
+      "question_id": "sup_lumen_head",
+      "rank_plan": [
+        2,
+        3,
+        1
+      ],
+      "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+      "rejected_values": [
+        "amber-1-atlas",
+        "birch-2-beacon",
+        "delta-4-drift"
+      ],
+      "route_margin_1_2": 0.0021209207634558247,
+      "route_margin_evaluated": true,
+      "route_receipt": {
+        "admission": {
+          "admission_rule": "margin_first",
+          "identified_candidates": [
+            2,
+            3,
+            1,
+            0
+          ],
+          "identifier_hit_count": 4,
+          "identifier_tokens": null,
+          "margin_threshold": 0.1385774091529802,
+          "policy": "A-DEC",
+          "policy_branch": "margin_insurance_k3_identifier_tiebreak",
+          "rank_plan": [
+            2,
+            3,
+            1
+          ],
+          "ranking_before_demotion": [
+            2,
+            3,
+            1,
+            0
+          ],
+          "rare_identifier_tokens": null,
+          "route_margin_1_2": 0.0021209207634558247,
+          "route_margin_evaluated": true,
+          "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+          "split_child_demoted": false,
+          "split_demoted_ids": [],
+          "split_family_ids": []
+        },
+        "fit": {
+          "cur_mount_n": 66,
+          "dropped": [
+            3,
+            1
+          ],
+          "final_mounts": [
+            2
+          ],
+          "info_pass_through": {
+            "admission_ranking_before_demotion": [
+              2,
+              3,
+              1,
+              0
+            ],
+            "admission_rule": "margin_first",
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [],
+            "fit_chunk_trips": [],
+            "fit_descended_head": [
+              4,
+              5
+            ],
+            "fit_dropped_filler": [
+              3
+            ],
+            "fit_dropped_planned": [],
+            "fit_planned": [
+              2,
+              1
+            ],
+            "fit_seated": [
+              2
+            ],
+            "fit_shuttle": false,
+            "fit_shuttle_trips": [],
+            "fit_split_children": [
+              4,
+              5
+            ],
+            "fit_split_ephemeral": false,
+            "fit_split_parent": 3,
+            "fit_unseatable": [],
+            "frame_ephemeral": true,
+            "frame_escape_active": false,
+            "grounding_glyph_rescued": true,
+            "grounding_normalized": true,
+            "live_segments_after_turn": [
+              {
+                "graft_id": null,
+                "ntok": 54
+              }
+            ],
+            "live_segments_carried_into_turn": [],
+            "live_segments_inherited": [],
+            "recency_mounted_ids": [],
+            "recency_seats": {
+              "arena_width": 96,
+              "budget_after_charge": 96,
+              "charge_waived_reason": null,
+              "charged_ntok": 0,
+              "nominated_ids": [],
+              "nominated_ntok": 0
+            },
+            "served_without_plan_head": false
+          },
+          "no_mount_fit": false,
+          "planned": [
+            2,
+            3,
+            1
+          ],
+          "seated": [
+            2
+          ],
+          "trip_count": 1,
+          "trips": [
+            {
+              "clean_room": true,
+              "grounded": null,
+              "mount_set": [
+                2
+              ],
+              "ordinal": 0,
+              "planned": [
+                2,
+                3,
+                1
+              ],
+              "shuttle": false
+            }
+          ],
+          "width": 96
+        },
+        "provenance": {
+          "arena_state_sha256_before_serve": null,
+          "output_sha256": null,
+          "repository_size_at_probe": 6,
+          "request_sha256": null
+        },
+        "receipt_sha256": "19688eddfedf159503365785f74038eaa1294fb193a6cb35ccb64981f3e70329",
+        "route": {
+          "arena_route_receipt": null,
+          "backend": "python",
+          "candidate_count": null,
+          "excluded_live_ids": [],
+          "excluded_recency_ids": [],
+          "fallbacks": [],
+          "ranking_ids": [
+            2,
+            3,
+            1,
+            0
+          ],
+          "ranking_length": 4,
+          "ranking_scores": null,
+          "route_limit": null
+        },
+        "schema": "grm.route_receipt.v1",
+        "serving_path": "unknown",
+        "session_id": "fix6-replay-profile-sup-restart-1--sup_lumen_head",
+        "turn_id": "sup_lumen_head",
+        "turn_kind": null
+      },
+      "rt1": {
+        "admission_ranking_before_demotion": [
+          2,
+          3,
+          1,
+          0
+        ],
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": []
+      },
+      "side": "profile",
+      "token_seats": 66,
+      "verdict": {
+        "abstained": false,
+        "answer": "The current Lumen seal value is **Cobalt‑3‑Comet**.",
+        "correct": true,
+        "expected_hits": [
+          "cobalt-3-comet"
+        ],
+        "rejected_hits": []
+      },
+      "wall_seconds": 10.849039411637932
+    }
+  },
+  "cell": {
+    "admission_rule": "margin_first",
+    "battery": "sup",
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/profile/sup/sup_lumen_head/checkpoint.json",
+    "checkpoint_files": {
+      "index.npz": "42b2c2510aa031d82b60c62e40463d25fe3cef10df2c71d6bba146928acfbcfa",
+      "manifest.json": "1c217a62b84c87c38094d4f383ff5f7f0925c71fbb367b6aa2aff36dd5ab633e",
+      "native/grm_store.bin": "935f7b5bb8a4cc1f3b2405c40bfb4917e76320c6732e691f3bfbd802cfcf3c6a",
+      "nodes/0000.npz": "fc97b0cb5843b7a6b07417d1fbd8cfe3b7b518f55801a00cab763fe55818d4a4",
+      "nodes/0001.npz": "19edcce818b16801fb72ded473d3cfae80935b1104fe1abf206e88d732a375c7",
+      "nodes/0002.npz": "8e258d75032ba2fce729c0f2cdbd69c4c6461f948f1adf6cf56efde1041ec2c7",
+      "nodes/0003.npz": "1851aed5152ba5e411b920249ce22f60251c4f3b28bc41ba8389e4d4ea70c5a3",
+      "wal/000001.wal": "34ca005f9f2a79ebaacaf7edff3ec3138eece93a69227a47ed09d49e420e523d"
+    },
+    "checkpoint_sha256": "8fc89025f763ad9ad7067c5d6305f6c95e07012de6a607926384e1f81f22f2d9",
+    "cooldown_seconds": 30,
+    "depends": [],
+    "id": "fix6-replay-profile-sup-restart-1--sup_lumen_head",
+    "lease_seconds": 285,
+    "off_plan": [
+      2,
+      1,
+      0
+    ],
+    "on_plan": [
+      2,
+      3,
+      1
+    ],
+    "outer_seconds": 590,
+    "phase": "restart",
+    "policy_state": "artifacts/grm_scout_fix6/c2_states/profile-sup-restart-1--sup_lumen_head.json",
+    "policy_state_sha256": "d77f97e200d24628fc3474bc1717cf5a6d6592682a30be121c6ecbe98902b88c",
+    "probes": [
+      "sup_lumen_head"
+    ],
+    "question": "What is the current Lumen seal value?",
+    "question_id": "sup_lumen_head",
+    "row_ordinal": 1,
+    "side": "profile",
+    "source_execution_id": "profile-sup-restart-1:sup_lumen_head",
+    "source_phase": "restart",
+    "source_worker": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/cells/profile-sup-restart-1/worker.json",
+    "source_worker_sha256": "aaa238f1bdb12236bfb0a6d716e1e99b8f89bb8739ff021cf8b9e9799aa22817",
+    "state_manifest": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/profile/sup/sup_lumen_head/repository/manifest.json",
+    "state_manifest_sha256": "1c217a62b84c87c38094d4f383ff5f7f0925c71fbb367b6aa2aff36dd5ab633e",
+    "worker_seconds": 280
+  },
+  "device_memory": {
+    "after_cell_mib": 10996,
+    "arms": {
+      "off": {
+        "after_mib": 10996,
+        "before_mib": 10996,
+        "released": {
+          "payloads_freed": 4,
+          "pool_emptied": true
+        }
+      },
+      "on": {
+        "after_mib": 10996,
+        "before_mib": 10996,
+        "released": {
+          "payloads_freed": 3,
+          "pool_emptied": true
+        }
+      }
+    },
+    "before_cell_mib": 10996
+  },
+  "fake": false,
+  "off_correct": true,
+  "off_plan_bytes_hex": "5b322c312c305d",
+  "off_plan_parity": true,
+  "on_correct": true,
+  "on_plan_bytes_hex": "5b322c332c315d",
+  "on_plan_matches_registered": true,
+  "process_id": "d729fd47-82cb-4aa4-b940-bbbe0fb7261d",
+  "recorded_c2_answer": "The current Lumen seal value is **Cobalt‑3‑Comet**.",
+  "recorded_c2_correct": true,
+  "recorded_off_plan_bytes_hex": "5b322c312c305d",
+  "recorded_on_plan": [
+    2,
+    3,
+    1
+  ],
+  "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+  "rule_pins": {
+    "off": "all_tokens_bind",
+    "on": "margin_first"
+  },
+  "same_state_proof": {
+    "arms_share_one_checkpoint": true,
+    "checkpoint": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_c2/epochs/scout-fix-2/checkpoints/profile/sup/sup_lumen_head/checkpoint.json",
+    "checkpoint_files_verified": 8,
+    "checkpoint_sha256": "8fc89025f763ad9ad7067c5d6305f6c95e07012de6a607926384e1f81f22f2d9",
+    "differing_environment_keys": [
+      "GRM_ADMISSION_RULE"
+    ],
+    "note": "Both arms copytree the SAME hash-verified recorded repository before any model call; GRM_ADMISSION_RULE is the only environment difference between them.",
+    "per_arm_private_copy": true
+  },
+  "transition": "unchanged_correct"
+}

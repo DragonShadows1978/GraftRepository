@@ -1,0 +1,29 @@
+{
+  "non_fit_cells": [],
+  "non_fit_count": 0,
+  "unmeasured_cells": 0,
+  "status": "ADOPT",
+  "complete": true,
+  "answers_measured": true,
+  "cells_measured": 31,
+  "off_plan_parity": true,
+  "charged_seconds": 1207.8987582041882,
+  "charged_gpu_hours": 0.3355,
+  "answers_changed": 4,
+  "transitions": {
+    "unchanged_correct": 30,
+    "unchanged_wrong": 0,
+    "correct_to_wrong": 0,
+    "wrong_to_correct": 1,
+    "abstain_gained": 0,
+    "abstain_lost": 0
+  },
+  "correct_to_wrong_sup": 0,
+  "correct_to_wrong_other": 0,
+  "prediction": "Registered prediction: <= 2 of 31 executions change their answer; 0 correct->wrong on supersession.",
+  "prediction_held": false,
+  "verdict_rule": "Verdict rule: margin_first is adoptable as the profile default iff correct->wrong = 0 on sup and <= 1 elsewhere.",
+  "adopt": true,
+  "fake_run": false,
+  "scope": "Admission-rule replay on 31 recorded C2 executions over 9 distinct questions. Repeated question ids across arm/phase are retained as separate executions. Not a fresh battery, not a product certification."
+}
