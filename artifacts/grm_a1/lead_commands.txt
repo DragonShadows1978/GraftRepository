@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+# GRM-A1 — LEAD GPU commands for the registered alias fold-merge contrast.
+#
+# The implementation seat did NOT run any of this: the order forbids the seat
+# from touching the GPU or loading GPT-OSS-20B. Every CPU gate it DID run is
+# listed under "CPU receipts (already green)" below and needs no GPU.
+#
+# Registration (written BEFORE any GPU run, sha-pinned):
+#   artifacts/grm_a1/gpu_contrast_registration.json
+#   artifacts/grm_a1/gpu_contrast_registration.sha256
+#   sha256 (see gpu_contrast_registration.sha256 — regenerated with final files)
+#
+# Registered prediction, frozen before the run:
+#   aliases >= 5/8 exact from a SINGLE digest mount; 0 controls broken.
+#
+# Budget ceiling: 0.5 GPU-h (order). Planning proxy 36 calls x 22.680409907679 s
+# = 816.5 s = 0.2268 GPU-h, plus checkpoint load / merge / re-tokenize overhead.
+#
+# GPU CONTENTION: take the flock with --wait. The operator has absolute right of
+# way. NEVER kill or signal a process this script did not start.
+
+set -euo pipefail
+cd /mnt/ForgeRealm/wt/grm-a1
+
+# ---------------------------------------------------------------------------
+# 0. CPU receipts (already green in the seat's run; re-runnable, no GPU)
+# ---------------------------------------------------------------------------
+CUDA_VISIBLE_DEVICES='' python3 -m pytest -q tests/test_grm_a1_alias_fold.py
+CUDA_VISIBLE_DEVICES='' python3 scripts/grm_a1_off_parity.py \
+    /mnt/ForgeRealm/wt/grm-merge --json artifacts/grm_a1/off_parity.json
+CUDA_VISIBLE_DEVICES='' python3 scripts/grm_a1_width_receipts.py \
+    --json artifacts/grm_a1/width_receipts.json
+
+# Verify the pinned inputs have not drifted since registration.
+CUDA_VISIBLE_DEVICES='' python3 - <<'VERIFY'
+import hashlib, json, pathlib, sys
+reg = json.loads(pathlib.Path(
+    'artifacts/grm_a1/gpu_contrast_registration.json').read_text())
+bad = []
+for path, want in reg['pinned_inputs_sha256'].items():
+    p = pathlib.Path(path)
+    got = (hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else None)
+    if got != want:
+        bad.append((path, want, got))
+if bad:
+    for row in bad:
+        print('DRIFT', row, file=sys.stderr)
+    raise SystemExit('A1_INPUT_SHA_MISMATCH')
+print('pinned inputs verified:', len(reg['pinned_inputs_sha256']))
+VERIFY
+
+# ---------------------------------------------------------------------------
+# 1. The GPU contrast (LEAD ONLY)
+# ---------------------------------------------------------------------------
+# Arm BASELINE: the flag unset. This is byte-identical to the parent branch
+# (proven: artifacts/grm_a1/off_parity.json, sha256 equal across two code
+# trees), so the baseline may be taken from the EXISTING RD2 receipts rather
+# than re-run. Re-running it costs 18 calls and changes no prediction.
+#
+# Arm TREATMENT: load each pinned C7 r3 checkpoint, apply the merge to the
+# LOADED state, re-tokenize with the GPT-OSS tokenizer, then read.
+#
+# Checkpoints (sha-pinned in the registration, all 15 verified present):
+#   d005 -> cells/A-009-016 and cells/A-017-023
+#   d030 -> cells/A-032-039 and cells/A-040-047
+#   d060 -> cells/A-063-070 and cells/A-071-077
+#   d120 -> cells/A-125-132 and cells/A-133-140
+#   d250 -> cells/A-257-264 and cells/A-265-272
+# all under /mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/
+
+flock --wait 7200 /mnt/ForgeRealm/.gpu.lock \
+  timeout --signal=INT 2400 env GRM_ALIAS_FOLD_MERGE=1 \
+  python3 scripts/grm_a1_gpu_contrast.py \
+      --registration artifacts/grm_a1/gpu_contrast_registration.json \
+      --out artifacts/grm_a1/gpu \
+      --resume
+
+# NOTE: scripts/grm_a1_gpu_contrast.py is NOT written by this seat. Writing a
+# GPU worker the seat cannot execute would be unverifiable code shipped as if
+# it were tested. The contract it must satisfy is fully specified in the
+# registration's "procedure" list and "worker_contract" block: resumable,
+# leased, create-only receipts, and a width receipt taken BEFORE any
+# single-mount claim.
+
+# ---------------------------------------------------------------------------
+# 2. Summary
+# ---------------------------------------------------------------------------
+CUDA_VISIBLE_DEVICES='' python3 - <<'SUMMARY'
+import json, pathlib
+rows = [json.loads(l) for l in
+        (pathlib.Path('artifacts/grm_a1/gpu/probes.jsonl')
+         .read_text().splitlines()) if l.strip()]
+alias = [r for r in rows if r.get('class') == 'alias' and r.get('answerable')]
+ctl = [r for r in rows if r.get('class') != 'alias' or not r.get('answerable')]
+hit = sum(bool(r.get('exact_correct')) for r in alias)
+broke = sum(bool(r.get('control_broken')) for r in ctl)
+print(f'aliases exact {hit}/{len(alias)}  controls broken {broke}/{len(ctl)}')
+print('PREDICTION MET' if hit >= 5 and broke == 0 else 'PREDICTION NOT MET (RED)')
+SUMMARY

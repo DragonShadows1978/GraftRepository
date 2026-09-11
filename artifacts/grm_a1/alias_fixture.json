@@ -1,0 +1,505 @@
+{
+ "c7_r3": {
+  "question_form": "EFFECTIVE served question from effective_questions.json (the A2 form, with \"; if unspecified, reply UNKNOWN.\" removed) — the form RD2 receipts record. The registered form is retained per row for audit.",
+  "rows": [
+   {
+    "answerable": true,
+    "distance": 5,
+    "entity": "C7-AliasBase-0",
+    "expected": "Jasper-711",
+    "oracle_source_texts": [
+     "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+     "C7-Signal-0 is an alias for C7-AliasBase-0."
+    ],
+    "probe_id": "c7_alias_0_d005",
+    "question": "What is the current value for C7-Signal-0? Reply only with the answer.",
+    "registered_question": "What is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply UNKNOWN.",
+    "turn": 14
+   },
+   {
+    "answerable": true,
+    "distance": 5,
+    "entity": "C7-AliasBase-1",
+    "expected": "Jasper-712",
+    "oracle_source_texts": [
+     "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+     "C7-Signal-1 is an alias for C7-AliasBase-1."
+    ],
+    "probe_id": "c7_alias_1_d005",
+    "question": "What is the current value for C7-Signal-1? Reply only with the answer.",
+    "registered_question": "What is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply UNKNOWN.",
+    "turn": 15
+   },
+   {
+    "answerable": false,
+    "distance": 5,
+    "entity": "C7-AliasBase-2",
+    "expected": "UNKNOWN",
+    "oracle_source_texts": [
+     "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+     "C7-Signal-2 is an alias for C7-AliasBase-2."
+    ],
+    "probe_id": "c7_alias_2_d005",
+    "question": "What is the inspection password for C7-AliasBase-2? Reply only with the answer.",
+    "registered_question": "What is the inspection password for C7-AliasBase-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+    "turn": 21
+   },
+   {
+    "answerable": true,
+    "distance": 30,
+    "entity": "C7-AliasBase-0",
+    "expected": "Jasper-711",
+    "oracle_source_texts": [
+     "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+     "C7-Signal-0 is an alias for C7-AliasBase-0."
+    ],
+    "probe_id": "c7_alias_0_d030",
+    "question": "What is the current value for C7-Signal-0? Reply only with the answer.",
+    "registered_question": "What is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply UNKNOWN.",
+    "turn": 39
+   },
+   {
+    "answerable": true,
+    "distance": 30,
+    "entity": "C7-AliasBase-1",
+    "expected": "Jasper-712",
+    "oracle_source_texts": [
+     "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+     "C7-Signal-1 is an alias for C7-AliasBase-1."
+    ],
+    "probe_id": "c7_alias_1_d030",
+    "question": "What is the current value for C7-Signal-1? Reply only with the answer.",
+    "registered_question": "What is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply UNKNOWN.",
+    "turn": 40
+   },
+   {
+    "answerable": false,
+    "distance": 30,
+    "entity": "C7-AliasBase-2",
+    "expected": "UNKNOWN",
+    "oracle_source_texts": [
+     "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+     "C7-Signal-2 is an alias for C7-AliasBase-2."
+    ],
+    "probe_id": "c7_alias_2_d030",
+    "question": "What is the inspection password for C7-AliasBase-2? Reply only with the answer.",
+    "registered_question": "What is the inspection password for C7-AliasBase-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+    "turn": 46
+   },
+   {
+    "answerable": true,
+    "distance": 60,
+    "entity": "C7-AliasBase-0",
+    "expected": "Jasper-711",
+    "oracle_source_texts": [
+     "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+     "C7-Signal-0 is an alias for C7-AliasBase-0."
+    ],
+    "probe_id": "c7_alias_0_d060",
+    "question": "What is the current value for C7-Signal-0? Reply only with the answer.",
+    "registered_question": "What is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply UNKNOWN.",
+    "turn": 69
+   },
+   {
+    "answerable": true,
+    "distance": 60,
+    "entity": "C7-AliasBase-1",
+    "expected": "Jasper-712",
+    "oracle_source_texts": [
+     "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+     "C7-Signal-1 is an alias for C7-AliasBase-1."
+    ],
+    "probe_id": "c7_alias_1_d060",
+    "question": "What is the current value for C7-Signal-1? Reply only with the answer.",
+    "registered_question": "What is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply UNKNOWN.",
+    "turn": 70
+   },
+   {
+    "answerable": false,
+    "distance": 60,
+    "entity": "C7-AliasBase-2",
+    "expected": "UNKNOWN",
+    "oracle_source_texts": [
+     "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+     "C7-Signal-2 is an alias for C7-AliasBase-2."
+    ],
+    "probe_id": "c7_alias_2_d060",
+    "question": "What is the inspection password for C7-AliasBase-2? Reply only with the answer.",
+    "registered_question": "What is the inspection password for C7-AliasBase-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+    "turn": 76
+   },
+   {
+    "answerable": true,
+    "distance": 120,
+    "entity": "C7-AliasBase-0",
+    "expected": "Jasper-711",
+    "oracle_source_texts": [
+     "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+     "C7-Signal-0 is an alias for C7-AliasBase-0."
+    ],
+    "probe_id": "c7_alias_0_d120",
+    "question": "What is the current value for C7-Signal-0? Reply only with the answer.",
+    "registered_question": "What is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply UNKNOWN.",
+    "turn": 129
+   },
+   {
+    "answerable": true,
+    "distance": 120,
+    "entity": "C7-AliasBase-1",
+    "expected": "Jasper-712",
+    "oracle_source_texts": [
+     "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+     "C7-Signal-1 is an alias for C7-AliasBase-1."
+    ],
+    "probe_id": "c7_alias_1_d120",
+    "question": "What is the current value for C7-Signal-1? Reply only with the answer.",
+    "registered_question": "What is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply UNKNOWN.",
+    "turn": 130
+   },
+   {
+    "answerable": false,
+    "distance": 120,
+    "entity": "C7-AliasBase-2",
+    "expected": "UNKNOWN",
+    "oracle_source_texts": [
+     "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+     "C7-Signal-2 is an alias for C7-AliasBase-2."
+    ],
+    "probe_id": "c7_alias_2_d120",
+    "question": "What is the inspection password for C7-AliasBase-2? Reply only with the answer.",
+    "registered_question": "What is the inspection password for C7-AliasBase-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+    "turn": 136
+   },
+   {
+    "answerable": true,
+    "distance": 250,
+    "entity": "C7-AliasBase-0",
+    "expected": "Jasper-711",
+    "oracle_source_texts": [
+     "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+     "C7-Signal-0 is an alias for C7-AliasBase-0."
+    ],
+    "probe_id": "c7_alias_0_d250",
+    "question": "What is the current value for C7-Signal-0? Reply only with the answer.",
+    "registered_question": "What is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply UNKNOWN.",
+    "turn": 259
+   },
+   {
+    "answerable": true,
+    "distance": 250,
+    "entity": "C7-AliasBase-1",
+    "expected": "Jasper-712",
+    "oracle_source_texts": [
+     "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+     "C7-Signal-1 is an alias for C7-AliasBase-1."
+    ],
+    "probe_id": "c7_alias_1_d250",
+    "question": "What is the current value for C7-Signal-1? Reply only with the answer.",
+    "registered_question": "What is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply UNKNOWN.",
+    "turn": 260
+   },
+   {
+    "answerable": false,
+    "distance": 250,
+    "entity": "C7-AliasBase-2",
+    "expected": "UNKNOWN",
+    "oracle_source_texts": [
+     "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+     "C7-Signal-2 is an alias for C7-AliasBase-2."
+    ],
+    "probe_id": "c7_alias_2_d250",
+    "question": "What is the inspection password for C7-AliasBase-2? Reply only with the answer.",
+    "registered_question": "What is the inspection password for C7-AliasBase-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+    "turn": 266
+   }
+  ]
+ },
+ "inputs": {
+  "/mnt/ForgeRealm/wt/grm-a1/fixtures/lt1/dialogue.json": "ad61c9488f722ae7ce248aee34cda688c13a5f0d3ec47b62954da2a3c146855c",
+  "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/effective_questions.json": "355f5c6a2f1948c46f3a172ce0bd5576863b18b32f199f5d497834b187125b5b",
+  "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/fixture.json": "b648ebb71072d1c357146f6cedb22f6d93dd259a69cb50d912e1e9b564624c17",
+  "/mnt/ForgeRealm/wt/grm-rd1/artifacts/grm_rd2/rows.json": "26d72f3545743ab0f4104826a758feb23d7c171daceec0de402c4d5a026a3971"
+ },
+ "lt1": {
+  "rows": [
+   {
+    "distance": 10,
+    "expected": "37 crates",
+    "probe_id": "recall_6_10",
+    "question": "What did we settle on for the Hauler's cargo allowance?",
+    "source_texts": [
+     "Kestrel's cargo allowance will be 37 crates.",
+     "Let's call Kestrel 'the Hauler' from now on; it sounds more like a place our crew would use."
+    ],
+    "source_turns": [
+     5,
+     17
+    ],
+    "turn": 27
+   },
+   {
+    "distance": 10,
+    "expected": "18 October 2196",
+    "probe_id": "recall_7_10",
+    "question": "What did we settle on for the Beacon's launch date?",
+    "source_texts": [
+     "Lantern's launch date will be 18 October 2196.",
+     "Let's call Lantern 'the Beacon' from now on; it sounds more like a place our crew would use."
+    ],
+    "source_turns": [
+     6,
+     18
+    ],
+    "turn": 28
+   },
+   {
+    "distance": 25,
+    "expected": "37 crates",
+    "probe_id": "recall_6_25",
+    "question": "What did we settle on for the Hauler's cargo allowance?",
+    "source_texts": [
+     "Kestrel's cargo allowance will be 37 crates.",
+     "Let's call Kestrel 'the Hauler' from now on; it sounds more like a place our crew would use."
+    ],
+    "source_turns": [
+     5,
+     17
+    ],
+    "turn": 42
+   },
+   {
+    "distance": 25,
+    "expected": "18 October 2196",
+    "probe_id": "recall_7_25",
+    "question": "What did we settle on for the Beacon's launch date?",
+    "source_texts": [
+     "Lantern's launch date will be 18 October 2196.",
+     "Let's call Lantern 'the Beacon' from now on; it sounds more like a place our crew would use."
+    ],
+    "source_turns": [
+     6,
+     18
+    ],
+    "turn": 43
+   },
+   {
+    "distance": 50,
+    "expected": "37 crates",
+    "probe_id": "recall_6_50",
+    "question": "What did we settle on for the Hauler's cargo allowance?",
+    "source_texts": [
+     "Kestrel's cargo allowance will be 37 crates.",
+     "Let's call Kestrel 'the Hauler' from now on; it sounds more like a place our crew would use."
+    ],
+    "source_turns": [
+     5,
+     17
+    ],
+    "turn": 67
+   },
+   {
+    "distance": 50,
+    "expected": "18 October 2196",
+    "probe_id": "recall_7_50",
+    "question": "What did we settle on for the Beacon's launch date?",
+    "source_texts": [
+     "Lantern's launch date will be 18 October 2196.",
+     "Let's call Lantern 'the Beacon' from now on; it sounds more like a place our crew would use."
+    ],
+    "source_turns": [
+     6,
+     18
+    ],
+    "turn": 68
+   },
+   {
+    "distance": 100,
+    "expected": "37 crates",
+    "probe_id": "recall_6_100",
+    "question": "What did we settle on for the Hauler's cargo allowance?",
+    "source_texts": [
+     "Kestrel's cargo allowance will be 37 crates.",
+     "Let's call Kestrel 'the Hauler' from now on; it sounds more like a place our crew would use."
+    ],
+    "source_turns": [
+     5,
+     17
+    ],
+    "turn": 117
+   },
+   {
+    "distance": 100,
+    "expected": "18 October 2196",
+    "probe_id": "recall_7_100",
+    "question": "What did we settle on for the Beacon's launch date?",
+    "source_texts": [
+     "Lantern's launch date will be 18 October 2196.",
+     "Let's call Lantern 'the Beacon' from now on; it sounds more like a place our crew would use."
+    ],
+    "source_turns": [
+     6,
+     18
+    ],
+    "turn": 118
+   },
+   {
+    "distance": 150,
+    "expected": "37 crates",
+    "probe_id": "recall_6_150",
+    "question": "What did we settle on for the Hauler's cargo allowance?",
+    "source_texts": [
+     "Kestrel's cargo allowance will be 37 crates.",
+     "Let's call Kestrel 'the Hauler' from now on; it sounds more like a place our crew would use."
+    ],
+    "source_turns": [
+     5,
+     17
+    ],
+    "turn": 167
+   },
+   {
+    "distance": 150,
+    "expected": "18 October 2196",
+    "probe_id": "recall_7_150",
+    "question": "What did we settle on for the Beacon's launch date?",
+    "source_texts": [
+     "Lantern's launch date will be 18 October 2196.",
+     "Let's call Lantern 'the Beacon' from now on; it sounds more like a place our crew would use."
+    ],
+    "source_turns": [
+     6,
+     18
+    ],
+    "turn": 168
+   }
+  ]
+ },
+ "note": "Recorded texts/ids copied VERBATIM from the registered sources below; no text is authored here. Production token widths are the RD2 receipts (GPT-OSS geometry); the CPU codec used by the gates has its own, smaller, token lengths and is never a geometry claim.",
+ "production_widths": {
+  "alias_base_ntok": 61,
+  "alias_edge_ntok": 49,
+  "arena_width": 96,
+  "edge_plus_base": 110,
+  "over_width_by": 14
+ },
+ "rd2": {
+  "base_id": 4,
+  "base_ntok_production": 61,
+  "base_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+  "rows": [
+   {
+    "distance": 30,
+    "edge_id": 8,
+    "edge_ntok_production": 49,
+    "edge_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-0 is an alias for C7-AliasBase-0.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+    "expected": "Jasper-711",
+    "probe_id": "c7_alias_0_d030",
+    "question": "What is the current value for C7-Signal-0? Reply only with the answer.",
+    "recorded_mounted_ids": [
+     8
+    ],
+    "recorded_served": "I’m sorry, but I can’t provide that.",
+    "turn": 39
+   },
+   {
+    "distance": 30,
+    "edge_id": 9,
+    "edge_ntok_production": 49,
+    "edge_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-1 is an alias for C7-AliasBase-1.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+    "expected": "Jasper-712",
+    "probe_id": "c7_alias_1_d030",
+    "question": "What is the current value for C7-Signal-1? Reply only with the answer.",
+    "recorded_mounted_ids": [
+     9
+    ],
+    "recorded_served": "I’m sorry, but I can’t provide that.",
+    "turn": 40
+   },
+   {
+    "distance": 60,
+    "edge_id": 8,
+    "edge_ntok_production": 49,
+    "edge_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-0 is an alias for C7-AliasBase-0.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+    "expected": "Jasper-711",
+    "probe_id": "c7_alias_0_d060",
+    "question": "What is the current value for C7-Signal-0? Reply only with the answer.",
+    "recorded_mounted_ids": [
+     8
+    ],
+    "recorded_served": "I’m sorry, but I can’t provide that.",
+    "turn": 69
+   },
+   {
+    "distance": 60,
+    "edge_id": 9,
+    "edge_ntok_production": 49,
+    "edge_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-1 is an alias for C7-AliasBase-1.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+    "expected": "Jasper-712",
+    "probe_id": "c7_alias_1_d060",
+    "question": "What is the current value for C7-Signal-1? Reply only with the answer.",
+    "recorded_mounted_ids": [
+     9
+    ],
+    "recorded_served": "I’m sorry, but I can’t provide that.",
+    "turn": 70
+   },
+   {
+    "distance": 120,
+    "edge_id": 8,
+    "edge_ntok_production": 49,
+    "edge_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-0 is an alias for C7-AliasBase-0.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+    "expected": "Jasper-711",
+    "probe_id": "c7_alias_0_d120",
+    "question": "What is the current value for C7-Signal-0? Reply only with the answer.",
+    "recorded_mounted_ids": [
+     8
+    ],
+    "recorded_served": "I’m sorry, but I can’t provide that.",
+    "turn": 129
+   },
+   {
+    "distance": 120,
+    "edge_id": 9,
+    "edge_ntok_production": 49,
+    "edge_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-1 is an alias for C7-AliasBase-1.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+    "expected": "Jasper-712",
+    "probe_id": "c7_alias_1_d120",
+    "question": "What is the current value for C7-Signal-1? Reply only with the answer.",
+    "recorded_mounted_ids": [
+     9
+    ],
+    "recorded_served": "I’m sorry, but I can’t provide that.",
+    "turn": 130
+   },
+   {
+    "distance": 250,
+    "edge_id": 8,
+    "edge_ntok_production": 49,
+    "edge_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-0 is an alias for C7-AliasBase-0.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+    "expected": "Jasper-711",
+    "probe_id": "c7_alias_0_d250",
+    "question": "What is the current value for C7-Signal-0? Reply only with the answer.",
+    "recorded_mounted_ids": [
+     8
+    ],
+    "recorded_served": "I’m sorry, but I can’t provide that.",
+    "turn": 259
+   },
+   {
+    "distance": 250,
+    "edge_id": 9,
+    "edge_ntok_production": 49,
+    "edge_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-1 is an alias for C7-AliasBase-1.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>",
+    "expected": "Jasper-712",
+    "probe_id": "c7_alias_1_d250",
+    "question": "What is the current value for C7-Signal-1? Reply only with the answer.",
+    "recorded_mounted_ids": [
+     9
+    ],
+    "recorded_served": "I’m sorry, but I can’t provide that.",
+    "turn": 260
+   }
+  ]
+ },
+ "schema": "grm.a1.alias_fixture.v1"
+}

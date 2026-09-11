@@ -49,6 +49,8 @@ from core.graft_quant import (
     is_packed_payload, pack_kv_arrays, unpack_kv_arrays,
 )
 from core.grm_admission import mountable_budget
+from core import grm_alias_fold as _alias_fold
+from core.grm_alias_fold import alias_fold_enabled
 from core.grm_runtime import GRMRuntime
 from core.mistral7b_tc import tc
 from core import kv_graft
@@ -254,6 +256,7 @@ class GraftRepository:
                  s2_salience_enabled=False, s2_salience_ngen=24,
                  rubric="v1",
                  spill_policy="lru", fold_order="age",
+                 alias_fold_merge=None,
                  **arena_kw):
         self.path = path
         self.autosave = autosave
@@ -298,6 +301,23 @@ class GraftRepository:
         # already eligible librarian window; it never alters eligibility or
         # the native threshold plan.
         self.fold_order = self._normalize_fold_order(fold_order)
+        # GRM-A1: alias resolution by fold-merge. DEFAULT OFF. Resolved ONCE
+        # here (explicit constructor value > GRM_ALIAS_FOLD_MERGE > OFF) so a
+        # mid-session environment change cannot alter a repository's lineage
+        # semantics halfway through a conversation — the same freeze L2 and
+        # A-DEC take through their `--sup-resolve` / `--adm-decisive` argv.
+        self.alias_fold_merge = alias_fold_enabled(alias_fold_merge)
+        #: Append-only receipt of every alias-fold DECISION, merged or not.
+        #: Never consulted by a serving path; it exists so the gate can name
+        #: a reason and a width for each of the registered fixture rows.
+        self.alias_fold_history = []
+        #: Pairs a merge attempt already ABORTED on fidelity grounds.  The
+        #: same exemption `_fold_once` writes as ``no_fold`` for a window
+        #: fold, but pair-scoped: `no_fold` on either node would also exempt
+        #: it from every OTHER alias pairing it might legitimately join, and
+        #: from the ordinary librarian window. Without this the sweep retries
+        #: the identical failing pair until `max_jobs` runs out.
+        self._alias_exempt_pairs = set()
         # "inline": folds run inside chat/add_turn when thresholds trip
         # (simple; a fold stalls that turn ~3s). "deferred": the hot path
         # NEVER folds — due work is computed statelessly and executed by
@@ -1971,6 +1991,24 @@ class GraftRepository:
             meta = g.setdefault("metadata", self._default_metadata(g))
             if meta.get("active", True):
                 active_targets.append(int(i))
+        # GRM-A1 revision maintenance. A merged alias digest is a
+        # MATERIALIZED JOIN of an edge and a base value; when the base value
+        # is corrected, the digest holds a STALE copy of it and must not be
+        # served. `_native_active_text_matches` matches the query against
+        # stored text, and the digest is PROSE ("… is an alias for …, whose
+        # current value is Jasper-711") while the query is the original
+        # record's wording — so lexical matching alone does not reliably
+        # reach the digest. This adds the entity-scoped rule: any active
+        # alias digest whose BASE identifiers the query names is invalidated
+        # with it. Prior art: Gupta & Mumick (1995) materialized-view
+        # maintenance for the framing (UNVERIFIED — lead to check); the
+        # mechanism is this repository's own explicit supersession, not a
+        # delta-propagation algorithm. Flag-gated: with A1 OFF no digest
+        # carries `alias_merge`, so the set is empty and `active_targets`
+        # keeps its pre-A1 contents and ORDER.
+        if self.alias_fold_merge:
+            active_targets = self._alias_extend_correction_targets(
+                q, active_targets)
         mutation_plan = self._native_memory_mutation_plan(
             "correct", has_query=bool(q), target_count=len(active_targets),
             has_replacement=replacement is not None)
@@ -3219,6 +3257,659 @@ class GraftRepository:
         return [idx for age, idx in sorted(
             enumerate(sources),
             key=lambda item: self._s4_fold_order_key(item[1], item[0]))]
+
+    # ------------------------------------------------------------ GRM-A1
+    # Alias resolution by FOLD-MERGE.  Everything below is reached ONLY when
+    # ``self.alias_fold_merge`` is True (default OFF, see grm_alias_fold).
+    # With the flag OFF, `_alias_fold_jobs` returns () from its first line
+    # and no other method here is ever called, so the fold plan, the fold
+    # loop and every deposit path keep their pre-A1 bytes.
+    #
+    # Prior art (full annotation in core/grm_alias_fold.py): RAPTOR (Sarthi
+    # et al. 2024) for "combine sources into one retrievable summary";
+    # materialized-view maintenance (Gupta & Mumick 1995, UNVERIFIED — lead
+    # to check) for "a write-time join owes an invalidation rule"; local GRM
+    # FIX-5 / FIX-8 / M5-L2 / LSR-P2C verbs, all reused unchanged.  Ours: the
+    # edge/current-base pairing rule, the coverage-gated retirement decision,
+    # and the pre-mount width receipt.
+    # ------------------------------------------------------------------
+
+    #: Node kinds an alias edge or its base may legitimately be.  Documents
+    #: are reference material and are never folded (the existing law in
+    #: ``_librarian_jobs``); ``recall`` nodes are retrieval-only.
+    ALIAS_FOLDABLE_KINDS = ("turn", "fact", "digest")
+
+    def _alias_active_nodes(self):
+        """Indices eligible to take part in an alias merge, in id order.
+
+        Applies exactly the rails ``_foldable`` applies, MINUS ``no_fold``.
+        ``no_fold`` is a FIDELITY-ABORT exemption ("this window failed to
+        fold, do not retry it") and, per RD2 §Alias, every C7 alias edge and
+        base carries ``no_fold=True`` from the harness.  Honouring it here
+        would make the treatment unreachable on the very rows it was
+        registered against.  A targeted two-node pair job is not the windowed
+        retry ``no_fold`` was minted to stop, and the coverage gate below is
+        strictly stronger than the one that set the flag.  Retirement,
+        activity, liveness and M11 payload-resolvability are all still
+        enforced — a node this returns really is mountable.
+        """
+        live = {int(gi) for gi, _ in self.arena.live_segs if gi is not None}
+        out = []
+        for i, g in enumerate(self.arena.grafts):
+            if g.get("retired") or i in live:
+                continue
+            if g.get("kind", "turn") not in self.ALIAS_FOLDABLE_KINDS:
+                continue
+            meta = g.get("metadata") or {}
+            if not meta.get("active", True):
+                continue
+            if not self._has_resolvable_payload(i, g):
+                continue
+            out.append(i)
+        return out
+
+    def _is_alias_digest(self, idx):
+        """Is this node a digest THIS treatment already produced?
+
+        A merged digest restates the alias relation verbatim ("… is an alias
+        for …"), so a naive text scan classifies it as a raw alias EDGE.  It
+        is not one: it already carries the base's value, it is the RESULT of
+        a merge rather than an input to one, and treating it as an edge makes
+        every merge immediately eligible to be re-merged with itself.  The
+        `alias_merge` metadata this treatment stamps is the authoritative
+        witness — a text heuristic is not.
+        """
+        meta = (self.arena.grafts[int(idx)].get("metadata") or {})
+        return isinstance(meta.get("alias_merge"), dict)
+
+    def _alias_edges(self, candidates=None):
+        """``{node_index: (alias_surface, base_surface)}`` for alias edges.
+
+        Digests this treatment produced are excluded — see
+        ``_is_alias_digest``.  They are value-bearing nodes for the purposes
+        of ``_alias_current_base`` instead, which is what makes an
+        alias-of-alias chain resolve after its inner link has been merged.
+        """
+        pool = self._alias_active_nodes() if candidates is None else list(
+            candidates)
+        edges = {}
+        for i in pool:
+            if self._is_alias_digest(i):
+                continue
+            pair = _alias_fold.parse_alias_edge(
+                str(self.arena.grafts[i].get("text", "") or ""))
+            if pair is not None:
+                edges[int(i)] = pair
+        return edges
+
+    def _alias_current_base(self, name, *, exclude=(), allow_edges=False):
+        """CURRENT node naming ``name``, resolving supersession.
+
+        "Current" is the mission's word and it means two things, applied in
+        this order:
+          1. only ACTIVE, non-retired nodes are considered at all — a node
+             ``correct_memory`` retired is invisible here, so a corrected
+             base never supplies its stale value; and
+          2. among the survivors, the HIGHEST node index wins.  Node indices
+             are append-only in this repository, so the highest index naming
+             an entity is its most recently deposited record.  This is the
+             same "later record wins" order ``_revision_mount_heads`` walks
+             explicit ``supersedes`` to reach; it is used here because an
+             alias base in the registered fixtures carries no explicit
+             lineage edge at all (RD2: empty ``supersedes``), so there is no
+             chain to walk and recency is the only available witness.
+
+        A candidate must contain the name's identifier tokens.  By default a
+        pure alias EDGE is rejected: an edge names an entity but carries no
+        value, so merging an edge with an edge answers nothing.  With
+        ``allow_edges`` the edge IS returned — that is the alias-of-alias
+        hop, and ``resolve_terminal_base`` follows it to the terminal
+        value-bearing node (or refuses on a cycle).
+
+        A node is a candidate for ``name`` only when it names the entity in a
+        VALUE-BEARING position, not merely anywhere in its text.  Without
+        that, an edge's own alias surface would make the edge a candidate for
+        its own alias name and every chain would resolve to itself.
+        """
+        exclude = {int(v) for v in exclude}
+        want = _alias_fold.identifier_set(name)
+        if not want:
+            return None
+        best = None
+        for i in self._alias_active_nodes():
+            if i in exclude:
+                continue
+            text = str(self.arena.grafts[i].get("text", "") or "")
+            scan = _alias_fold.alias_scan_text(text)
+            if not (want <= _alias_fold.identifier_set(scan)):
+                continue
+            if self._is_alias_digest(i):
+                # A merged digest belongs to the alias it was built FOR. It
+                # may serve as the base of a LONGER CHAIN through that same
+                # alias (the alias-of-alias case, where `name` IS its alias),
+                # but it must never become the base for an unrelated alias:
+                # doing so folds a digest into a digest and produces one
+                # nested node standing for several aliases at once, with the
+                # inner digest retired. Measured on the RD2 compound base:
+                # the Signal-1 merge selected the Signal-0 digest and the
+                # Signal-0 answer then depended on a chained node.
+                merged = (self.arena.grafts[i].get("metadata") or {})[
+                    "alias_merge"]
+                if _alias_fold.identifier_set(
+                        str(merged.get("alias", ""))) != want:
+                    continue
+                best = i if best is None else max(best, i)
+                continue
+            pair = _alias_fold.parse_alias_edge(text)
+            if pair is not None:
+                if not allow_edges:
+                    continue
+                # An edge is a hop for ``name`` only when ``name`` is the
+                # edge's ALIAS side; naming it on the BASE side means this
+                # node points AWAY from ``name``, not at it.
+                if _alias_fold.identifier_set(pair[0]) != want:
+                    continue
+            best = i if best is None else max(best, i)
+        return best
+
+    def _alias_pair_for(self, edge_idx, edges=None):
+        """Resolve one edge to ``(base_index, reason, chain)``.
+
+        Handles the mission's three malformed cases before it handles the
+        ordinary one: alias-of-alias resolves through
+        ``resolve_terminal_base`` to the terminal value-bearing node; a cycle
+        REFUSES (``alias_cycle``) rather than picking a member; a base with no
+        active record REFUSES (``alias_base_missing``) and the edge is left
+        exactly as it was.
+        """
+        edge_idx = int(edge_idx)
+        edges = self._alias_edges() if edges is None else dict(edges)
+        pair = edges.get(edge_idx)
+        if pair is None:
+            return None, _alias_fold.REASON_NOT_ALIAS, []
+        alias_name, base_name = pair
+        if _alias_fold.identifier_set(alias_name) == _alias_fold.identifier_set(
+                base_name):
+            return None, _alias_fold.REASON_SELF, [base_name]
+        lookup = lambda name: self._alias_current_base(
+            name, exclude=(edge_idx,), allow_edges=True)
+        return _alias_fold.resolve_terminal_base(
+            base_name, edges, lookup, origin_alias=alias_name)
+
+    def _alias_already_merged(self, edge_idx, base_idx):
+        """Is there already an ACTIVE digest that merged this exact pair?
+
+        Idempotence rail, the same shape as the width guard's
+        ``width_guard_parent`` check: without it, a merged pair whose base was
+        NOT retired (the coverage rule below permits that) would be re-merged
+        on every librarian pass, growing a chain of equivalent digests that
+        all compete in the routing surface.
+        """
+        want = (int(edge_idx), int(base_idx))
+        for i, g in enumerate(self.arena.grafts):
+            if g.get("retired"):
+                continue
+            meta = g.get("metadata") or {}
+            if not meta.get("active", True):
+                continue
+            merged = meta.get("alias_merge")
+            if isinstance(merged, dict) and (
+                    int(merged.get("edge", -1)),
+                    int(merged.get("base", -1))) == want:
+                return int(i)
+        return None
+
+    def _alias_fold_jobs(self):
+        """``[("alias", [edge_idx, base_idx]), …]`` — the merge plan.
+
+        Stateless like ``_librarian_jobs``: recomputed from current node
+        state every call, never a queue that must drain.  Returns at most one
+        job per call so a single ``_fold_once`` step does one merge, matching
+        the existing one-job-per-step contract.
+        """
+        if not self.alias_fold_merge:
+            return ()
+        edges = self._alias_edges()
+        if not edges:
+            return ()
+        for edge_idx in sorted(edges):
+            base_idx, reason, chain = self._alias_pair_for(edge_idx, edges)
+            if base_idx is None:
+                self._record_alias_decision(edge_idx, None, reason,
+                                            chain=chain)
+                continue
+            if self._alias_already_merged(edge_idx, base_idx) is not None:
+                continue
+            if (int(edge_idx), int(base_idx)) in self._alias_exempt_pairs:
+                continue
+            return (("alias", [int(edge_idx), int(base_idx)]),)
+        return ()
+
+    def _record_alias_decision(self, edge_idx, base_idx, reason, **fields):
+        """Append one alias decision to ``alias_fold_history`` (dedup'd).
+
+        Refusal reasons repeat every librarian pass (a missing base stays
+        missing), so an identical consecutive record is collapsed rather than
+        letting a 200-turn conversation write 200 copies of the same refusal.
+        """
+        record = {"edge": None if edge_idx is None else int(edge_idx),
+                  "base": None if base_idx is None else int(base_idx),
+                  "reason": str(reason)}
+        record.update(fields)
+        if self.alias_fold_history and self.alias_fold_history[-1] == record:
+            return record
+        self.alias_fold_history.append(record)
+        return record
+
+    def _alias_consolidate(self, edge_idx, base_idx, relation_span):
+        """``arena.consolidate([edge, base])`` with the relation made explicit.
+
+        ``consolidate`` reads its source TEXTS from ``grafts[i]["text"]`` and
+        uses them for exactly two things: the ``need`` fact set and the
+        FIX-5 ``[source N]`` enumeration.  To guarantee the alias relation
+        reaches both, the edge's text is temporarily augmented with the
+        canonical relation sentence for the duration of the call, then
+        RESTORED — the stored node text, its payload, its ``ntok`` and its
+        centroid are all untouched, so no capture, route key or persisted
+        byte changes.  ``try/finally`` restores even if the fold raises.
+
+        This is the same shape as ``ArenaCache._glyph_norm``: a scoped
+        override for one enclosed block, with the previous value put back on
+        every exit path.
+        """
+        arena = self.arena
+        if not relation_span:
+            return arena.consolidate([edge_idx, base_idx])
+        edge = arena.grafts[int(edge_idx)]
+        if self._alias_span_enumerable(edge.get("text", ""),
+                                       [edge_idx, base_idx]):
+            # The edge's own text already asserts the relation in a span
+            # FIX-5 WILL enumerate (the C7 case: "C7-Signal-0", digit-bearing,
+            # is a `_fact_set` fact). Change nothing.
+            return arena.consolidate([edge_idx, base_idx])
+        # The relation is attached to the BASE's span, not the edge's: a span
+        # reaches the enumeration only when its own `_fact_set` intersects the
+        # fold's `need`, and the base's span is the one that HAS a need fact
+        # ("37"). Carrying the relation alongside it is what puts alias, base
+        # and value in one enumerated line. Nothing is invented — the
+        # sentence restates the edge's own parsed assertion verbatim.
+        base = arena.grafts[int(base_idx)]
+        original = base.get("text", "")
+        try:
+            base["text"] = self._alias_augment_text(original, relation_span)
+            return arena.consolidate([edge_idx, base_idx])
+        finally:
+            base["text"] = original
+
+    def _alias_span_enumerable(self, text, idxs):
+        """Would FIX-5 enumerate a span of ``text`` that names the relation?
+
+        Mirrors ``_consolidation_prompts``' own filter exactly: split on the
+        transport markers, and ask whether any resulting span both (a) states
+        the alias relation and (b) has a ``_fact_set`` intersecting the
+        fold's ``need``.  Asking the question the same way the consumer asks
+        it is the only way this stays true if FIX-5's filter ever moves.
+        """
+        arena = self.arena
+        need = arena._fact_set([str(arena.grafts[int(i)].get("text", ""))
+                                for i in idxs])
+        if not need:
+            return False
+        for span in re.split(r"<\|[^|]+\|>", str(text or "")):
+            span = re.sub(r"(?m)^(?:User|Assistant):\s*", "", span).strip()
+            if not span or _alias_fold.parse_alias_edge(span) is None:
+                continue
+            if arena._fact_set([span]) & need:
+                return True
+        return False
+
+    @staticmethod
+    def _alias_augment_text(text, relation_span):
+        """Append ``relation_span`` INSIDE the node's user message.
+
+        A Harmony-framed node's spans are delimited by ``<|…|>`` markers, and
+        FIX-5 splits on exactly those, so appending after the final marker
+        would create a span with no fact token and the relation would be
+        dropped again.  The sentence therefore joins the LAST user message,
+        which is the span that carries the base's facts.
+        """
+        raw = str(text or "")
+        marker = "<|end|><|start|>assistant"
+        if marker in raw:
+            head, _, tail = raw.rpartition(marker)
+            return f"{head} {relation_span}{marker}{tail}"
+        return f"{raw} {relation_span}"
+
+    def _alias_fold_once(self, idxs):
+        """Execute ONE alias merge job.  Returns the decision record.
+
+        Sequence, and why it is this sequence:
+          1. ``arena.consolidate([edge, base])`` — the EXISTING FIX-5 fold.
+             Its source enumeration lists every fact of the base plus the
+             alias relation, and its own coverage gate (``MIN_FOLD_KEEP``)
+             can still abort; an abort leaves both nodes untouched and
+             active, which is the honest outcome (recall > compression).
+          2. The digest's FIX-8 identifier set must contain BOTH names.  A
+             digest that dropped the alias answers the base question the
+             repository could already answer and does nothing for the Signal
+             probe; a digest that dropped the base's value answers nothing.
+             Failing this is treated exactly like a fidelity abort.
+          3. The WIDTH receipt, taken BEFORE any single-mount claim.  Over
+             width is NOT a failure: the digest goes through the existing
+             LSR-P2C ``_guard_deposit_width`` split path and the receipt says
+             ``fits: false`` with the measured token count.
+          4. LINEAGE.  The digest always supersedes the EDGE.  The base is
+             retired ONLY if every one of its identifiers survived into the
+             digest (``coverage_proves_base_survives``); otherwise the base
+             stays ACTIVE and only the edge is superseded.  Which of the two
+             happened is recorded as ``lineage``.
+        """
+        edge_idx, base_idx = int(idxs[0]), int(idxs[1])
+        arena = self.arena
+        edge_text = str(arena.grafts[edge_idx].get("text", "") or "")
+        base_text = str(arena.grafts[base_idx].get("text", "") or "")
+        pair = _alias_fold.parse_alias_edge(edge_text)
+        alias_name, base_name = pair if pair else ("", "")
+
+        # (1) the existing FIX-5 fold, sources in (edge, base) order so the
+        # enumeration states the RELATION before the values it binds.
+        #
+        # MEASURED GAP this works around, and why it is worked around HERE.
+        # FIX-5's enumeration keeps a source span only when
+        # ``ArenaCache._fact_set([span])`` intersects the fold's ``need`` set,
+        # and ``_fact_set`` counts only digit/ALLCAPS identifiers and
+        # MULTI-word capitalized entities. C7's alias edge survives that
+        # filter ("C7-Signal-0", "C7-AliasBase-0" are digit-bearing), but
+        # LT1's natural declaration does not: "Let's call Kestrel 'the
+        # Hauler' from now on" has ``_fact_set == set()``, so the alias
+        # RELATION is dropped from the enumeration and the digest states only
+        # the base's value — measured, and the reason the LT1 group aborted
+        # before this branch existed.
+        #
+        # Loosening ``_fact_set`` itself was REJECTED: it is the fidelity
+        # bar every existing fold is measured against, and the 2026-06-11
+        # receipt records that counting single incidental capitals made
+        # chatty turns look fact-dense and over-aborted 28/34 windows. The
+        # alias merge, unlike the window fold, KNOWS the two names that must
+        # survive, so it states the relation to the fold explicitly as an
+        # extra CANONICAL source span. The span is derived entirely from the
+        # edge's own parsed text — it introduces no fact the edge did not
+        # already assert — and it is passed to ``consolidate`` as a source
+        # TEXT override, never deposited as a node.
+        # A base that OTHER active alias edges still point at is a SHARED
+        # dependency and must never be retired, however complete this digest
+        # is.  Computed BEFORE the fold, because `consolidate` retires its
+        # sources and the sibling edges would already be invisible after it.
+        #
+        # Measured (RD2 fixture, and the reason this branch exists): the C7
+        # base is ONE COMPOUND record naming both C7-AliasBase-0 and
+        # C7-AliasBase-1.  Retiring it on the Signal-0 merge left the
+        # Signal-1 edge with no value-bearing base except the Signal-0
+        # DIGEST, so the second merge folded a digest into a digest and
+        # produced one nested node standing for both aliases.  That is the
+        # compound-node targeting hazard RD2 §Correction names, arriving
+        # through a different door: "updating one entity retires a node that
+        # contains another entity."  The shared base stays active and only
+        # the edge is superseded.
+        shared_with = sorted(
+            i for i in self._alias_edges()
+            if i != edge_idx and self._alias_pair_for(i)[0] == base_idx)
+
+        relation_span = None
+        if alias_name and base_name:
+            relation_span = (f"{alias_name} is an alias for {base_name}.")
+        didx, digest_text = self._alias_consolidate(
+            edge_idx, base_idx, relation_span)
+        result = dict(getattr(arena, "last_consolidation_result", {}) or {})
+        if didx is None:
+            # Fidelity abort. Mirror `_fold_once`'s contract exactly: exempt
+            # the sources so the planner does not loop on them.
+            self.folds_aborted = getattr(self, "folds_aborted", 0) + 1
+            for i in (edge_idx, base_idx):
+                arena.grafts[i]["no_fold"] = True
+            self._alias_exempt_pairs.add((edge_idx, base_idx))
+            return self._record_alias_decision(
+                edge_idx, base_idx, _alias_fold.REASON_FOLD_ABORTED,
+                alias=alias_name, base_name=base_name,
+                consolidation=result)
+
+        # (2) both names present under the FIX-8 projection.
+        if not _alias_fold.names_present(digest_text, alias_name, base_name):
+            # Undo the fold's retirement of the sources: a digest that lost a
+            # name is worse than no digest, and the sources must stay clean
+            # readers. `_deposit_consolidation` retired them; reverse that and
+            # retire the useless digest instead.
+            for i in (edge_idx, base_idx):
+                arena.grafts[i]["retired"] = False
+                meta = arena.grafts[i].setdefault(
+                    "metadata", self._default_metadata(arena.grafts[i]))
+                meta["active"] = True
+                arena.grafts[i]["no_fold"] = True
+                self._mark_dirty(i, payload=False, metadata=True)
+            arena.grafts[didx]["retired"] = True
+            dmeta = arena.grafts[didx].setdefault(
+                "metadata", self._default_metadata(arena.grafts[didx]))
+            dmeta["active"] = False
+            self._mark_dirty(didx, payload=False, metadata=True)
+            arena._bump_cuda_gqa_epoch()
+            self.folds_aborted = getattr(self, "folds_aborted", 0) + 1
+            self._alias_exempt_pairs.add((edge_idx, base_idx))
+            return self._record_alias_decision(
+                edge_idx, base_idx, _alias_fold.REASON_FOLD_ABORTED,
+                alias=alias_name, base_name=base_name,
+                names_present=False, digest_text=digest_text,
+                consolidation=result)
+
+        # (3) width receipt BEFORE any single-mount claim.
+        width = _alias_fold.width_receipt(
+            arena.encode, arena.grafts[didx].get("text", ""),
+            self._mountable_budget())
+
+        # (4) lineage.
+        proved, missing = _alias_fold.coverage_proves_base_survives(
+            digest_text, _alias_fold.alias_scan_text(base_text))
+        if shared_with:
+            proved = False
+        dmeta = arena.grafts[didx].setdefault(
+            "metadata", self._default_metadata(arena.grafts[didx]))
+        emeta = arena.grafts[edge_idx].setdefault(
+            "metadata", self._default_metadata(arena.grafts[edge_idx]))
+        bmeta = arena.grafts[base_idx].setdefault(
+            "metadata", self._default_metadata(arena.grafts[base_idx]))
+
+        # The edge is ALWAYS superseded: its whole content is inside the
+        # digest by check (2), and leaving it active reproduces the RD2
+        # defect (a bare edge that wins admission and answers nothing).
+        supersedes = [edge_idx]
+        arena.grafts[edge_idx]["retired"] = True
+        emeta["active"] = False
+        emeta["superseded_by"] = [int(didx)]
+        if proved:
+            lineage = _alias_fold.LINEAGE_EDGE_AND_BASE
+            supersedes.append(base_idx)
+            arena.grafts[base_idx]["retired"] = True
+            bmeta["active"] = False
+            bmeta["superseded_by"] = [int(didx)]
+        else:
+            lineage = _alias_fold.LINEAGE_EDGE_ONLY
+            # `_deposit_consolidation` retired BOTH sources. The base did not
+            # earn retirement, so put it back: it remains the only complete
+            # record of the facts the digest dropped.
+            arena.grafts[base_idx]["retired"] = False
+            bmeta["active"] = True
+            bmeta["superseded_by"] = None
+            arena.grafts[base_idx]["no_fold"] = True
+        dmeta["supersedes"] = list(supersedes)
+        dmeta["alias_merge"] = {
+            "edge": edge_idx, "base": base_idx,
+            "alias": alias_name, "base_name": base_name,
+            "lineage": lineage,
+        }
+        arena.grafts[didx]["sources"] = list(supersedes)
+        for i in (edge_idx, base_idx, didx):
+            self._mark_dirty(i, payload=False, metadata=True)
+        self._native_apply_revision(didx, supersedes)
+        self._append_wal("ALIAS_MERGE", node_id=int(didx),
+                         edge=edge_idx, base=base_idx,
+                         supersedes=list(supersedes), lineage=lineage)
+        arena._bump_cuda_gqa_epoch()
+        self._free_retired()
+        record = self._record_alias_decision(
+            edge_idx, base_idx,
+            _alias_fold.REASON_MERGED if width["fits"]
+            else _alias_fold.REASON_DIGEST_OVER_WIDTH,
+            alias=alias_name, base_name=base_name, digest=int(didx),
+            digest_text=digest_text, lineage=lineage,
+            base_identifiers_missing=missing,
+            base_shared_with_edges=shared_with,
+            width=width, consolidation=result)
+        # Alias REASSIGNMENT: a newer edge binding the same alias surface to a
+        # different base retires every older digest for that alias, so the
+        # superseded binding can never be served.
+        record["reassignment_retired"] = self._alias_retire_reassigned(
+            alias_name, keep=(didx,))
+        # Over-width digests go through the EXISTING width guard/split path.
+        # The receipt above already recorded the measured token count, so a
+        # reader sees the over-width fact even though the split repairs it.
+        if not width["fits"]:
+            split = self._guard_deposit_width(int(didx))
+            record["width_guard_split"] = (
+                None if split is None else [int(v) for v in split["children"]])
+        return record
+
+    def _alias_merged_digests(self):
+        """``[(index, alias_merge_metadata), …]`` for ACTIVE merged digests."""
+        out = []
+        for i, g in enumerate(self.arena.grafts):
+            if g.get("retired"):
+                continue
+            meta = g.get("metadata") or {}
+            if not meta.get("active", True):
+                continue
+            merged = meta.get("alias_merge")
+            if isinstance(merged, dict):
+                out.append((int(i), merged))
+        return out
+
+    def _alias_extend_correction_targets(self, query, active_targets):
+        """Add stale merged digests to a correction's supersession targets.
+
+        A digest joins in the correction when the query names the BASE the
+        digest merged — that is precisely the condition under which the
+        digest's copy of the value has just become stale. Naming only the
+        ALIAS is deliberately NOT enough on its own here: an alias-only
+        correction is a REASSIGNMENT, handled by
+        ``_alias_retire_reassigned`` below, which has a different lineage.
+
+        Order is preserved and additions are appended, so an OFF-flag caller
+        (empty digest set) gets byte-identical `supersedes` lists.
+        """
+        want = _alias_fold.identifier_set(query)
+        if not want:
+            return active_targets
+        out = list(active_targets)
+        seen = set(out)
+        for idx, merged in self._alias_merged_digests():
+            if idx in seen:
+                continue
+            base = _alias_fold.identifier_set(str(merged.get("base_name", "")))
+            if base and base <= want:
+                out.append(idx)
+                seen.add(idx)
+        return out
+
+    def _alias_retire_reassigned(self, alias_name, keep=()):
+        """Retire merged digests whose ALIAS was reassigned to a new base.
+
+        Mission item 2, "alias reassignment retires the old digest". Called
+        after a NEW edge for the same alias surface has been merged: the old
+        digest still says the alias means the OLD base, and serving it would
+        answer a Signal question with the superseded binding. ``keep`` is the
+        freshly created digest, which must survive its own sweep.
+        """
+        if not self.alias_fold_merge:
+            return []
+        want = _alias_fold.identifier_set(alias_name)
+        if not want:
+            return []
+        keep = {int(v) for v in keep}
+        retired = []
+        for idx, merged in self._alias_merged_digests():
+            if idx in keep:
+                continue
+            if _alias_fold.identifier_set(str(merged.get("alias", ""))) != want:
+                continue
+            g = self.arena.grafts[idx]
+            meta = g.setdefault("metadata", self._default_metadata(g))
+            g["retired"] = True
+            meta["active"] = False
+            meta["superseded_by"] = sorted(keep) or None
+            meta["alias_reassigned"] = True
+            self._mark_dirty(idx, payload=False, metadata=True)
+            retired.append(idx)
+        if retired:
+            for new_idx in sorted(keep):
+                self._native_apply_revision(new_idx, retired)
+            self._append_wal("ALIAS_REASSIGN", alias=str(alias_name),
+                             retired=retired, replacement=sorted(keep))
+            self.arena._bump_cuda_gqa_epoch()
+            self._free_retired()
+        return retired
+
+    def alias_fold_pending(self):
+        """Number of alias merges the current node state would execute."""
+        return len(self._alias_fold_jobs())
+
+    def alias_fold_pass(self, max_jobs=64):
+        """Librarian fold pass for ALREADY-STORED aliases (mission item 1).
+
+        Deposit-time merging only ever sees the alias that was just written.
+        A repository loaded from disk, or one whose base arrived AFTER its
+        edge, needs this sweep.  Bounded by ``max_jobs`` so a pathological
+        state cannot spin: each executed job either merges a pair (which the
+        idempotence rail then skips) or exempts it.
+        """
+        if not self.alias_fold_merge:
+            return []
+        out = []
+        before = self._snapshot_state()
+        for _ in range(int(max_jobs)):
+            jobs = self._alias_fold_jobs()
+            if not jobs:
+                break
+            out.append(self._alias_fold_once(jobs[0][1]))
+        if out:
+            self._mark_mutations(before)
+            self._page()
+        return out
+
+    def _alias_fold_deposits(self, before_count):
+        """Merge any alias edge among the nodes appended since ``before_count``.
+
+        Called from the runtime's deposit funnel, immediately AFTER the width
+        guard, so an over-width alias edge has already been split into
+        mountable children before this looks at it.
+        """
+        if not self.alias_fold_merge:
+            return []
+        new = set(range(int(before_count), len(self.arena.grafts)))
+        if not new:
+            return []
+        edges = self._alias_edges()
+        out = []
+        for edge_idx in sorted(i for i in edges if i in new):
+            base_idx, reason, chain = self._alias_pair_for(edge_idx, edges)
+            if base_idx is None:
+                out.append(self._record_alias_decision(
+                    edge_idx, None, reason, chain=chain))
+                continue
+            if self._alias_already_merged(edge_idx, base_idx) is not None:
+                continue
+            if (int(edge_idx), int(base_idx)) in self._alias_exempt_pairs:
+                continue
+            out.append(self._alias_fold_once([edge_idx, base_idx]))
+            edges = self._alias_edges()
+        return out
 
     def _librarian_jobs(self, *, deferred_backpressure=False):
         """Stateless fold plan. Documents are never folded — they are
