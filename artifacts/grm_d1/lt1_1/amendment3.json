@@ -1,0 +1,157 @@
+{
+  "amendment": 3,
+  "arms": {
+    "A": {
+      "alias_fold_merge": false,
+      "arm": "A",
+      "budget_gpu_hours": 2.06,
+      "budget_gpu_seconds": 7410,
+      "env_after_environment_flags": {
+        "GRM_ADMISSION_RULE": "margin_first"
+      },
+      "invocation": {
+        "dry_run": "python3 scripts/grm_lt1_1.py --arm A --dry-run",
+        "preflight": "python3 scripts/grm_lt1_1.py --arm A --preflight",
+        "resume": "python3 scripts/grm_lt1_1.py --arm A --resume",
+        "summary": "python3 scripts/grm_lt1_1.py --arm A --summary"
+      },
+      "out_dir": "artifacts/grm_d1/lt1_1/run_A",
+      "predictions": {
+        "aliases": "0/5 wrong rows fixed (recall_7_* stay wrong)",
+        "corrections": "5/5",
+        "fresh": "6/7",
+        "recap": "unpredicted memory-side; oracle 5/5 gated on CPU"
+      },
+      "superseded_budget_gpu_seconds": 6120
+    },
+    "A+": {
+      "alias_fold_merge": true,
+      "arm": "A+",
+      "budget_gpu_hours": 2.06,
+      "budget_gpu_seconds": 7410,
+      "env_after_environment_flags": {
+        "GRM_ADMISSION_RULE": "margin_first",
+        "GRM_ALIAS_FOLD_MERGE": "1"
+      },
+      "invocation": {
+        "dry_run": "python3 scripts/grm_lt1_1.py --arm A+ --dry-run",
+        "preflight": "python3 scripts/grm_lt1_1.py --arm A+ --preflight",
+        "resume": "python3 scripts/grm_lt1_1.py --arm A+ --resume",
+        "summary": "python3 scripts/grm_lt1_1.py --arm A+ --summary"
+      },
+      "out_dir": "artifacts/grm_d1/lt1_1/run_Aplus",
+      "predictions": {
+        "aliases": "4/5 of the wrong rows fixed; the lead proposed >= 3/5 and that bar is also met",
+        "corrections": "5/5",
+        "fresh": "6/7",
+        "prediction_note": "The lead proposed aliases >= 3/5. I register 4/5 and state why: the D1 CPU check (artifacts/grm_d1/alias_cpu_aplus.json) shows the fold firing, the digest naming BOTH names, being ADMITTED and MOUNTED, and serving the right value for 10/10 alias probes at every distance, with a 78-token digest inside the 96 width. The one reservation that keeps me off 5/5 is that the CPU reader is a regex double: the GPU reader must still choose the digest value over the surrounding prose, and LT1 already showed one long-distance ladder drop (recall_3_150) that no lineage change addresses. 4/5 prices exactly one such drop.",
+        "recap": ">= 3/5 memory-side"
+      },
+      "superseded_budget_gpu_seconds": 6120
+    }
+  },
+  "budget_gpu_hours_total": 4.12,
+  "budget_gpu_seconds_per_arm": 7410,
+  "budget_gpu_seconds_total": 14820,
+  "defect": {
+    "causes": [
+      {
+        "fix": "`binding(label)` keeps the LT1 signature and reads the arm from pinned runner state (`current_arm`)",
+        "id": "D3-C1",
+        "kind": "signature drift",
+        "what": "the redirected `binding` took an ARM; LT1 callers pass a BACKEND LABEL ('CPU') as well as an arm, and LT1's own `binding` is label-agnostic"
+      },
+      {
+        "fix": "redirect `worker.bind` only; `lt.binding` stays LT1",
+        "id": "D3-C2",
+        "kind": "seam too wide",
+        "what": "`lt.binding` was redirected, but LT1 uses it to validate ITS OWN chain (`apply4` compares a recorded `protocol_binding` against it); receipts are stamped through `worker.bind`"
+      },
+      {
+        "fix": "`host_preflight()` runs before any seam moves",
+        "id": "D3-C3",
+        "kind": "ordering",
+        "what": "LT1's host preflight ran INSIDE the redirected window, so `lt.binding` hashed the LT1.1 fixture and failed AMENDMENT4_PROTOCOL_MISMATCH"
+      }
+    ],
+    "receipt": "artifacts/grm_d1/lt1_1/lead_Ap_resume.log",
+    "symptom": "KeyError: 'CPU' at grm_lt1_amendment4.py:77 during `--arm A+ --resume`, before any GPU lease was taken",
+    "why_the_gates_missed_it": "Neither `--dry-run` nor the fake path traverses `grm_lt1_amendment4.apply`; only the resume route does. 115 passing tests covered everything except the one path the lead actually ran."
+  },
+  "follow_up_instruction": "Lead follow-up 3 to GRM-D1 (2026-09-11): `--arm A+ --resume` died at grm_lt1_amendment4.apply -> lt.binding('CPU') -> KeyError: 'CPU'. Fix the seam so `binding` keeps the LT1 signature (backend label) and takes the arm from runner state; audit every other redirected seam for the same drift; add a gate that traverses the REAL --resume route on CPU up to the lease boundary for both arms, RED-before/GREEN-after; amendment 3 chained to amendment 2 with the runner rebound.",
+  "gate": {
+    "evidence_class": "CPU route traversal (control flow and bindings; NOT a language-model quality measurement)",
+    "green_after": "test_resume_route_reaches_the_lease_boundary[A] and [A+] traverse the real route and stop at the lease",
+    "red_before": "test_the_shipped_seam_reproduces_the_leads_keyerror reconstructs the shipped seam and asserts KeyError: 'CPU' surfaces through grm_lt1_amendment4.apply",
+    "seam_audit_test": "test_only_the_documented_seams_move asserts lt.binding / lt.RUN / lt.REG never move and that every moved seam is restored",
+    "tests": "tests/test_grm_lt1_1_resume_route.py"
+  },
+  "host_blocker": {
+    "cause": "this worktree forks grm-merge, whose core has drifted past the SHAs the LT1 registration pins; `lt.preflight()` fails identically with or without the LT1.1 redirection",
+    "consequence": "the GPU campaign cannot start on this tree until the lead decides how the LT1 core pins are rebound for the host preflight. The LT1.1 route itself is proven green up to the lease boundary.",
+    "evidence": "artifacts/grm_d1/red_before_lt1.log, artifacts/grm_d1/core_drift_graft_arena.diff",
+    "lead_decision_required": true,
+    "status": "OPEN \u2014 pre-existing, not introduced by this work",
+    "symptom": "`--arm A+ --resume` (without --dry-lease) now reaches LT1's host preflight and stops at INPUT_SHA_MISMATCH: core/graft_arena.py"
+  },
+  "order": "orders/GRM_D1_LT1_RESIDUAL_DIAGNOSIS.md",
+  "order_sha256": "6ae0f52af0059f0a93b66ae37dd442761a32409b5f3f17b027c4b8fa2c0efb46",
+  "previous_amendment": "artifacts/grm_d1/lt1_1/amendment2.json",
+  "previous_amendment_sha256": "3bf21605058c86b15d3cb91784ea39409844838f20130b262dbadf1948417380",
+  "prior_art": [
+    "SHA-chained amendment contract: scripts/grm_lt1.py:verify and C7 r3 (GRM contributors, 2026)",
+    "The seam distinction (worker.bind stamps receipts, lt.binding validates LT1 own chain): a reading of grm_lt1_worker.py, grm_lt1.py and grm_lt1_amendment4.py (GRM contributors, 2026)",
+    "Pin-after-strip-then-read-back: R1 pin_rule, scripts/grm_r1_replay.py:242 (GRM contributors, 2026)",
+    "Lease-boundary route gate and pinned-arm state for a label-signature binding: no prior art known to me"
+  ],
+  "process_safety": {
+    "arms": "A and A+ never run concurrently on the same GPU",
+    "git": "lead commits; the seat never runs git",
+    "gpu": "only `--resume` without `--dry-lease` takes the shared lease, through LT1's own run_cell (flock + nvidia-smi idle check + no-kill child wait). --preflight / --dry-run / --summary / --fake / --resume --dry-lease never do."
+  },
+  "purpose": "Rebind the LT1.1 runner after the seam fix, and register the resume-route gate that now covers the path which failed.",
+  "registration": "artifacts/grm_d1/lt1_1/registration.json",
+  "registration_sha256": "02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8",
+  "runner": {
+    "entry_points": [
+      "--preflight",
+      "--dry-run",
+      "--resume",
+      "--resume --dry-lease",
+      "--summary",
+      "--fake",
+      "--worker",
+      "--fake-cell"
+    ],
+    "new_entry_point": {
+      "flag": "--resume --dry-lease [--no-host-gate]",
+      "what": "walks the production resume route -- amendment load, apply4-bearing preflight, seam redirection, arm pin, campaign owner file, `worker.pending` cell selection -- and stops at `worker.run_cell`, the lease boundary. Nothing before that point is stubbed.",
+      "why": "a registration is not runnable until a worker executes it, and a route is not covered until a gate traverses it"
+    },
+    "path": "scripts/grm_lt1_1.py",
+    "sha256": "17f1577006e0449465a3ee0c19ce39a38ccdfbf6c6483f63fd42ec30ae1b1778",
+    "superseded_sha256": "78fd7699acda6e0bd90daba512bbc6c1e68c05d7b57ca6066cd3ede34c3da3d5",
+    "tests": [
+      "tests/test_grm_lt1_1_runner.py",
+      "tests/test_grm_lt1_1_resume_route.py"
+    ],
+    "tests_sha256": {
+      "tests/test_grm_lt1_1_resume_route.py": "9b86b2ad4f7c3346c51187f8b3d3619e994b86091c08560bf23becbf28adfa9d",
+      "tests/test_grm_lt1_1_runner.py": "60c0eaf9849f11079d75ea9b558bd3f52f1af301d8bbc10e3e250d0244868ae3"
+    }
+  },
+  "schema": "grm.lt1_1.amendment3.v1",
+  "seam_audit": {
+    "deliberately_not_redirected": {
+      "lt.REG": "LT1's own registration; `verify` must validate it.",
+      "lt.RUN": "LT1's own campaign root; the runner has its own `summary` and never calls `lt.summary`.",
+      "lt.binding": "LT1's self-validation (verify/preflight/apply4). Redirecting it breaks the amendment-4 chain."
+    },
+    "method": "Every redirected name was checked for arity and argument meaning against every call site in grm_lt1.py, grm_lt1_worker.py, grm_lt1_amendment3.py and grm_lt1_amendment4.py. The two Path constants carry no signature; the one callable now matches LT1 exactly.",
+    "redirected": {
+      "lt.FIX": "PosixPath constant; same type, no signature. Read by `execute` for turns/probes/decisions AND by `lt.binding` for its fixture sha -- which is why the LT1 host preflight must run outside the window.",
+      "worker.RUN": "PosixPath constant; per-arm campaign root.",
+      "worker.bind": "callable(label) -> dict. Keeps the LT1 signature; stamps LT1.1 receipts."
+    }
+  }
+}

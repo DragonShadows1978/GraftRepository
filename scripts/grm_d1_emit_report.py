@@ -640,6 +640,93 @@ def report():
         add('arguments", so the gate is proven to have teeth.')
         add('')
 
+    # ------------------------------------------- follow-up 3: the seam fix
+    amend3_path = OUT / 'lt1_1/amendment3.json'
+    if amend3_path.exists():
+        a3 = json.loads(amend3_path.read_text())
+        a3_sha = (OUT / 'lt1_1/amendment3.sha256').read_text().split()[0]
+        add('## 5d. Follow-up 3: the resume route (the seam had drifted)')
+        add('')
+        add('**The defect.** `--arm A+ --resume` died on the card before taking')
+        add('any lease:')
+        add('')
+        add('```')
+        add("grm_lt1_amendment4.apply -> lt.binding('CPU') -> ARM_ALIAS['CPU']")
+        add("KeyError: 'CPU'")
+        add('```')
+        add('')
+        add('Two stacked mistakes, both mine:')
+        add('')
+        for cause in a3['defect']['causes']:
+            add('- **%s (%s).** %s' % (cause['id'], cause['kind'], cause['what']))
+            add('  *Fix:* %s' % cause['fix'])
+        add('')
+        add('**Why 115 passing tests said nothing.** %s'
+            % a3['defect']['why_the_gates_missed_it'])
+        add('')
+        add('**The seam audit.** Every redirected name was checked for arity and')
+        add('argument meaning against every call site:')
+        add('')
+        add('| name | moved? | why |')
+        add('|---|---|---|')
+        for name, why in sorted(a3['seam_audit']['redirected'].items()):
+            add('| `%s` | **yes** | %s |' % (name, why))
+        for name, why in sorted(
+                a3['seam_audit']['deliberately_not_redirected'].items()):
+            add('| `%s` | no | %s |' % (name, why))
+        add('')
+        add('The two Path constants carry no signature. The one callable now')
+        add('matches LT1 exactly: `binding(label)` echoes its argument the way')
+        add("LT1's does, and reads the ARM from pinned runner state, which is")
+        add('where the arm actually lives.')
+        add('')
+        add('**The gate.** `--resume --dry-lease` walks the production route --')
+        add('amendment load, apply4-bearing preflight, seam redirection, arm')
+        add('pin, campaign owner file, `worker.pending` cell selection -- and')
+        add('stops at `worker.run_cell`, the lease boundary. Nothing before that')
+        add('point is stubbed.')
+        add('')
+        for name, arm in (('A', 'A'), ('Aplus', 'A+')):
+            path = OUT / ('lt1_1/proof/resume_dry_lease_%s.json' % name)
+            if path.exists():
+                v = json.loads(path.read_text())
+                add('- `--arm %s --resume --dry-lease` -> rc 0, status %s, next '
+                    '`%s`, stopped at %s, alias pin %s, receipt '
+                    '`campaign_arm=%s alias_fold_merge=%s`'
+                    % (arm, v['status'], v['next_cell'], v['stopped_at'],
+                       v['pinned']['alias_fold_merge'],
+                       v['receipt_binding']['campaign_arm'],
+                       v['receipt_binding']['alias_fold_merge']))
+        add('')
+        add('RED-before / GREEN-after are both gated:')
+        add('`%s` reconstructs the shipped seam and asserts the exact'
+            % a3['gate']['red_before'].split(' ')[0])
+        add("`KeyError: 'CPU'` surfaces through `grm_lt1_amendment4.apply`;")
+        add('`test_resume_route_reaches_the_lease_boundary[A]` and `[A+]` prove')
+        add('the fixed route. `test_only_the_documented_seams_move` cross-checks')
+        add('the audit table against live behaviour.')
+        add('')
+        add('**Amendment 3** — `artifacts/grm_d1/lt1_1/amendment3.json`, sha256')
+        add('`%s`, chained to amendment 2' % a3_sha)
+        add('`%s…`. Runner rebound: `%s…`'
+            % (a3['previous_amendment_sha256'][:16], a3['runner']['sha256'][:16]))
+        add('supersedes `%s…`.' % a3['runner']['superseded_sha256'][:16])
+        add('')
+        blocker = a3['host_blocker']
+        add('**OPEN BLOCKER — needs your decision.** With the seam fixed, the')
+        add('real `--resume` now reaches the genuine host check and stops there:')
+        add('')
+        add('```')
+        add('ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py')
+        add('```')
+        add('')
+        add('%s.' % blocker['cause'][0].upper() + blocker['cause'][1:])
+        add('`lt.preflight()` fails **identically with or without** the')
+        add('LT1.1 redirection, so this is not something the runner introduced —')
+        add('it is the same pre-existing core drift this report records in its')
+        add('RED items. Consequence: %s' % blocker['consequence'])
+        add('')
+
     add('## 6. Deviations, RED items, process safety')
     add('')
     add('**Deviations from the order**')

@@ -181,6 +181,7 @@ finding.
 | `tests/test_grm_d1_alias_cpu.py` | 14 tests |
 | `tests/test_grm_d1_amendment1.py` | 17 tests |
 | `tests/test_grm_d1_amendment2.py` | 18 tests |
+| `tests/test_grm_d1_amendment3.py` | 17 tests |
 | `tests/test_grm_d1_cause_table.py` | 12 tests |
 | `tests/test_grm_d1_recap.py` | 10 tests |
 | `tests/test_grm_d1_registration.py` | 18 tests |
@@ -507,6 +508,78 @@ requires exit 0. A companion test
 (`test_the_old_broken_invocation_would_have_been_caught`) runs the
 exact shape I shipped and asserts it fails with "unrecognized
 arguments", so the gate is proven to have teeth.
+
+## 5d. Follow-up 3: the resume route (the seam had drifted)
+
+**The defect.** `--arm A+ --resume` died on the card before taking
+any lease:
+
+```
+grm_lt1_amendment4.apply -> lt.binding('CPU') -> ARM_ALIAS['CPU']
+KeyError: 'CPU'
+```
+
+Two stacked mistakes, both mine:
+
+- **D3-C1 (signature drift).** the redirected `binding` took an ARM; LT1 callers pass a BACKEND LABEL ('CPU') as well as an arm, and LT1's own `binding` is label-agnostic
+  *Fix:* `binding(label)` keeps the LT1 signature and reads the arm from pinned runner state (`current_arm`)
+- **D3-C2 (seam too wide).** `lt.binding` was redirected, but LT1 uses it to validate ITS OWN chain (`apply4` compares a recorded `protocol_binding` against it); receipts are stamped through `worker.bind`
+  *Fix:* redirect `worker.bind` only; `lt.binding` stays LT1
+- **D3-C3 (ordering).** LT1's host preflight ran INSIDE the redirected window, so `lt.binding` hashed the LT1.1 fixture and failed AMENDMENT4_PROTOCOL_MISMATCH
+  *Fix:* `host_preflight()` runs before any seam moves
+
+**Why 115 passing tests said nothing.** Neither `--dry-run` nor the fake path traverses `grm_lt1_amendment4.apply`; only the resume route does. 115 passing tests covered everything except the one path the lead actually ran.
+
+**The seam audit.** Every redirected name was checked for arity and
+argument meaning against every call site:
+
+| name | moved? | why |
+|---|---|---|
+| `lt.FIX` | **yes** | PosixPath constant; same type, no signature. Read by `execute` for turns/probes/decisions AND by `lt.binding` for its fixture sha -- which is why the LT1 host preflight must run outside the window. |
+| `worker.RUN` | **yes** | PosixPath constant; per-arm campaign root. |
+| `worker.bind` | **yes** | callable(label) -> dict. Keeps the LT1 signature; stamps LT1.1 receipts. |
+| `lt.REG` | no | LT1's own registration; `verify` must validate it. |
+| `lt.RUN` | no | LT1's own campaign root; the runner has its own `summary` and never calls `lt.summary`. |
+| `lt.binding` | no | LT1's self-validation (verify/preflight/apply4). Redirecting it breaks the amendment-4 chain. |
+
+The two Path constants carry no signature. The one callable now
+matches LT1 exactly: `binding(label)` echoes its argument the way
+LT1's does, and reads the ARM from pinned runner state, which is
+where the arm actually lives.
+
+**The gate.** `--resume --dry-lease` walks the production route --
+amendment load, apply4-bearing preflight, seam redirection, arm
+pin, campaign owner file, `worker.pending` cell selection -- and
+stops at `worker.run_cell`, the lease boundary. Nothing before that
+point is stubbed.
+
+- `--arm A --resume --dry-lease` -> rc 0, status PASS, next `A-001-008`, stopped at worker.run_cell (lease boundary), alias pin False, receipt `campaign_arm=A alias_fold_merge=False`
+- `--arm A+ --resume --dry-lease` -> rc 0, status PASS, next `A-001-008`, stopped at worker.run_cell (lease boundary), alias pin True, receipt `campaign_arm=A+ alias_fold_merge=True`
+
+RED-before / GREEN-after are both gated:
+`test_the_shipped_seam_reproduces_the_leads_keyerror` reconstructs the shipped seam and asserts the exact
+`KeyError: 'CPU'` surfaces through `grm_lt1_amendment4.apply`;
+`test_resume_route_reaches_the_lease_boundary[A]` and `[A+]` prove
+the fixed route. `test_only_the_documented_seams_move` cross-checks
+the audit table against live behaviour.
+
+**Amendment 3** — `artifacts/grm_d1/lt1_1/amendment3.json`, sha256
+`09680a0567d2d74f0a9a491823cc627c1a8d609451fdf165b36384dc97e89a08`, chained to amendment 2
+`3bf21605058c86b1…`. Runner rebound: `17f1577006e04494…`
+supersedes `78fd7699acda6e0b…`.
+
+**OPEN BLOCKER — needs your decision.** With the seam fixed, the
+real `--resume` now reaches the genuine host check and stops there:
+
+```
+ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+```
+
+T.his worktree forks grm-merge, whose core has drifted past the SHAs the LT1 registration pins; `lt.preflight()` fails identically with or without the LT1.1 redirection
+`lt.preflight()` fails **identically with or without** the
+LT1.1 redirection, so this is not something the runner introduced —
+it is the same pre-existing core drift this report records in its
+RED items. Consequence: the GPU campaign cannot start on this tree until the lead decides how the LT1 core pins are rebound for the host preflight. The LT1.1 route itself is proven green up to the lease boundary.
 
 ## 6. Deviations, RED items, process safety
 

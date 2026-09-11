@@ -1,6 +1,6 @@
 {
   "status": "PASS",
-  "mode": "CPU_DRY_RUN",
+  "mode": "RESUME_DRY_LEASE",
   "gpu_executed": false,
   "arm": "A",
   "pinned": {
@@ -8,44 +8,12 @@
     "admission_rule": "margin_first",
     "alias_fold_merge": false
   },
-  "cells": 26,
-  "completed_cells": 0,
-  "estimate_seconds": 4507.871,
-  "lease_seconds": 7410,
-  "budget_gpu_seconds": 7410,
-  "budget_source": "artifacts/grm_d1/lt1_1/amendment2.json",
-  "within_budget": true,
-  "out_dir": "/mnt/ForgeRealm/wt/grm-d1/artifacts/grm_d1/lt1_1/run_A",
+  "host_preflight": "SKIPPED",
   "next_cell": "A-001-008",
-  "cell_ids": [
-    "A-001-008",
-    "A-009-016",
-    "A-017-024",
-    "A-025-032",
-    "A-033-040",
-    "A-041-048",
-    "A-049-056",
-    "A-057-064",
-    "A-065-070",
-    "A-071-078",
-    "A-079-086",
-    "A-087-094",
-    "A-095-102",
-    "A-103-110",
-    "A-111-118",
-    "A-119-126",
-    "A-127-134",
-    "A-135-140",
-    "A-141-148",
-    "A-149-156",
-    "A-157-164",
-    "A-165-172",
-    "A-173-180",
-    "A-181-188",
-    "A-189-196",
-    "A-197-200"
+  "selected": [
+    "A-001-008"
   ],
-  "binding": {
+  "receipt_binding": {
     "label": "A",
     "arm": "A",
     "campaign_arm": "A",
@@ -62,5 +30,7 @@
       "core/grm_text_norm.py": "e968d68791950adb3a59bc83f43d75a75e31879a2f77c379b44bf711ccecc30a",
       "core/grm_alias_fold.py": "147ea9687112e9ccd61aaaf63c16404c5175a08d6733da2df22d4e591f1203e7"
     }
-  }
+  },
+  "out_dir": "artifacts/grm_d1/lt1_1/proof/dry_lease/A",
+  "stopped_at": "worker.run_cell (lease boundary)"
 }

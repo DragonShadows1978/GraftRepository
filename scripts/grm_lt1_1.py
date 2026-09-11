@@ -63,6 +63,7 @@ import contextlib
 import json
 import os
 from pathlib import Path
+import shutil
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -98,21 +99,89 @@ def sha(path):
     return lt.sha(Path(path))
 
 
+# --------------------------------------------------------------- arm state
+
+#: The arm this process is running. Set by `pinned_arm` / `lt1_1_seams` and
+#: read by `binding`, because LT1's callers pass a BACKEND LABEL, not an arm,
+#: and the seam must not change their signature. `GRM_LT1_1_ARM` carries it
+#: across the `--worker` / `--fake-cell` subprocess boundary the same way
+#: `GRM_LT1_LEASE_PARENT` carries the lease-parent contract.
+ARM_ENV = 'GRM_LT1_1_ARM'
+_ARM = None
+
+
+def current_arm(fallback=None):
+    """The pinned arm: explicit state, then the environment, then a refusal.
+
+    Never guesses. A binding computed under the wrong arm would stamp the
+    wrong `alias_fold_merge` into a receipt, which is exactly the kind of
+    silent mislabelling the arm split exists to prevent.
+    """
+    if _ARM is not None:
+        return _ARM
+    from_env = os.environ.get(ARM_ENV)
+    if from_env in ARMS:
+        return from_env
+    if fallback in ARMS:
+        # A caller that named an arm outright (`binding('A+')`) has said which
+        # campaign it means. LT1's own callers pass 'CPU'/'GPU', which are not
+        # arms and so never reach this branch.
+        return fallback
+    raise ValueError('LT11_ARM_NOT_PINNED: binding() needs a pinned arm; '
+                     'call inside pinned_arm()/lt1_1_seams() or set %s'
+                     % ARM_ENV)
+
+
+@contextlib.contextmanager
+def _arm_state(arm):
+    """Hold the pinned arm for this process and its children."""
+    global _ARM
+    previous, previous_env = _ARM, os.environ.get(ARM_ENV)
+    try:
+        _ARM = arm
+        os.environ[ARM_ENV] = arm
+        yield arm
+    finally:
+        _ARM = previous
+        if previous_env is None:
+            os.environ.pop(ARM_ENV, None)
+        else:
+            os.environ[ARM_ENV] = previous_env
+
+
 # ------------------------------------------------------------------ binding
 
-def binding(arm):
+def binding(label):
     """The SHA binding stamped into every LT1.1 receipt.
 
-    Same role as `lt.binding` but bound to LT1.1's documents and to the core
-    inputs amendment 1 rebound. The arm name is IN the binding, so a receipt
-    written under one arm can never validate under the other.
+    SIGNATURE CONTRACT. This replaces `lt.binding` while the seams are
+    redirected, so it MUST accept everything LT1's callers pass and treat it
+    the way LT1 does. LT1's `binding(arm)` is label-agnostic: it echoes its
+    argument into `arm=` and never interprets it. Its callers pass TWO
+    different kinds of token:
+
+        worker.bind(cell['arm'])     -> an ARM name   ('A')
+        apply4 / preflight / summary -> a BACKEND label ('CPU')
+
+    An earlier version of this function indexed `ARM_ALIAS[arm]`, which only
+    accepts arm names, so `lt.binding('CPU')` from
+    `grm_lt1_amendment4.apply` raised `KeyError: 'CPU'` and killed
+    `--resume` before it reached the lease. The fake and dry-run paths never
+    traversed `apply4`, so nothing caught it.
+
+    The fix: the parameter keeps LT1's meaning (an opaque label, echoed), and
+    the ARM -- the thing that actually selects the alias-fold variant -- is
+    read from the runner's pinned state, which is where it truly lives.
     """
     amendment = json.loads(AMENDMENT1.read_text())
     core = {n: c['after_sha256']
             for n, c in amendment['core_rebind']['changed'].items()}
     core.update({n: e['sha256']
                  for n, e in amendment['core_rebind']['new_inputs'].items()})
-    return dict(arm=arm,
+    arm = current_arm(label)
+    return dict(label=label,
+                arm=label if label in ARMS else arm,
+                campaign_arm=arm,
                 registration_sha256=sha(REGISTRATION),
                 amendment1_sha256=sha(AMENDMENT1),
                 fixture_sha256=sha(FIXTURE),
@@ -189,8 +258,11 @@ def pinned_arm(arm):
         if observed_alias is not (ARM_ALIAS[arm] is not None):
             raise ValueError('LT11_ALIAS_PIN_FAILED: arm=%s observed=%s'
                              % (arm, observed_alias))
-        yield dict(arm=arm, admission_rule=observed_rule,
-                   alias_fold_merge=observed_alias)
+        # Hold the arm for `binding()`, which cannot take it as a parameter
+        # without breaking LT1's signature.
+        with _arm_state(arm):
+            yield dict(arm=arm, admission_rule=observed_rule,
+                       alias_fold_merge=observed_alias)
     finally:
         for key, value in previous.items():
             if value is None:
@@ -206,14 +278,31 @@ def lt1_1_seams(arm):
     Everything else in `grm_lt1_worker` -- cells, leases, checkpoints,
     accounting, resume -- is used unchanged through these.
     """
-    saved = (lt.FIX, lt.binding, worker.RUN)
+    saved = (lt.FIX, worker.bind, worker.RUN)
     try:
         lt.FIX = FIXTURE
-        lt.binding = binding
+        # Redirect `worker.bind`, NOT `lt.binding`.
+        #
+        # These look interchangeable (`worker.bind` is a one-line delegate to
+        # `lt.binding`) and they are not. They serve opposite masters:
+        #
+        #   worker.bind(cell['arm'])  stamps LT1.1 RECEIPTS  -> must be ours
+        #   lt.binding('CPU')         is how LT1 VALIDATES ITS OWN chain, in
+        #                             verify/preflight/apply4 -> must stay LT1's
+        #
+        # Replacing `lt.binding` made `grm_lt1_amendment4.apply` compare its
+        # recorded `protocol_binding` against an LT1.1-shaped dict, so
+        # `--resume` died on AMENDMENT4_PROTOCOL_MISMATCH (and, before the
+        # signature fix, on KeyError: 'CPU'). The narrower seam leaves LT1's
+        # self-validation untouched and still stamps every receipt ours.
+        worker.bind = binding
         worker.RUN = out_dir(arm)
-        yield
+        # The arm must be resolvable for the whole window: `binding` cannot
+        # take it as a parameter without breaking LT1's signature.
+        with _arm_state(arm):
+            yield
     finally:
-        lt.FIX, lt.binding, worker.RUN = saved
+        lt.FIX, worker.bind, worker.RUN = saved
 
 
 # ------------------------------------------------------------------- loaders
@@ -348,9 +437,10 @@ def fake_cell(arm, cell_id, root):
     directory = root / 'cells' / cell['id']
     with pytest.MonkeyPatch.context() as patch:
         loader = fake_loader(patch)
-        saved = (lt.FIX, lt.binding, worker.RUN)
+        # Same narrow seam as `lt1_1_seams`: `worker.bind`, never `lt.binding`.
+        saved = (lt.FIX, worker.bind, worker.RUN)
         try:
-            lt.FIX, lt.binding, worker.RUN = FIXTURE, binding, root
+            lt.FIX, worker.bind, worker.RUN = FIXTURE, binding, root
             with pinned_arm(arm):
                 directory.mkdir(parents=True)
                 lt.create(directory / 'reservation.json',
@@ -366,7 +456,7 @@ def fake_cell(arm, cell_id, root):
                                binding=binding(arm), fake=True,
                                admission_rule='margin_first'))
         finally:
-            lt.FIX, lt.binding, worker.RUN = saved
+            lt.FIX, worker.bind, worker.RUN = saved
     return str(directory)
 
 
@@ -410,28 +500,239 @@ def run_fake(arm, *, root=None, limit=None):
                                'language-model quality measurement)')
 
 
-def resume(arm):
-    """Registered GPU campaign for one arm. Reuses LT1's controller loop."""
+#: The ruling this preflight implements, recorded verbatim so the code and the
+#: amendment cannot drift apart. Lead, 2026-09-11.
+RULING = (
+    "LT1's original registration is a frozen receipt of its day; it is NOT "
+    're-validated against today\'s core. LT1.1\'s host preflight must validate '
+    "LT1.1's own chain — registration 02b44d02 + amendments 1–3, whose core "
+    'pins were rebound to this tree with attribution — using the same '
+    'verification functions (`grm_lt1.verify`-class checks: sha-bound inputs, '
+    'fixture sha, cell schedule, budget) but pointed at LT1.1\'s '
+    "registration/amendment set. LT1's registration sha and its recorded core "
+    'pins are carried as `parent` lineage in the LT1.1 receipt (recorded, with '
+    'the drift table you already attributed), not as a gate.')
+
+
+def parent_lineage():
+    """LT1's recorded identity, carried as lineage. Never gated.
+
+    Every value here is READ from LT1's frozen documents and reported. Nothing
+    in this function compares anything to today's core: that comparison is
+    exactly what the ruling removes.
+    """
+    lt1_registration = ROOT / 'artifacts/grm_lt1/registration.json'
+    lt1_binding = ROOT / 'artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+    amendment1 = json.loads(AMENDMENT1.read_text())
+    recorded = {n: c['after_sha256']
+                for n, c in json.loads(lt1_binding.read_text())['core_shas'].items()}
+    drift = []
+    for name, change in sorted(amendment1['core_rebind']['changed'].items()):
+        drift.append(dict(input=name,
+                          lt1_recorded=change['before_sha256'],
+                          lt1_1_rebound=change['after_sha256'],
+                          on_tree_now=sha(ROOT / name),
+                          attribution=change['attribution']))
+    for name, entry in sorted(amendment1['core_rebind']['new_inputs'].items()):
+        drift.append(dict(input=name, lt1_recorded=None,
+                          lt1_1_rebound=entry['sha256'],
+                          on_tree_now=sha(ROOT / name),
+                          attribution=entry['attribution']))
+    return dict(
+        lt1_registration='artifacts/grm_lt1/registration.json',
+        lt1_registration_sha256=sha(lt1_registration),
+        lt1_core_binding='artifacts/grm_lt1/amendment3/registration_amendment_r3.json',
+        lt1_core_binding_sha256=sha(lt1_binding),
+        lt1_recorded_core_pins=len(recorded),
+        lt1_amendment4_protocol_binding=json.loads(
+            (ROOT / 'artifacts/grm_lt1/amendment4/resume_registration.json')
+            .read_text())['protocol_binding'],
+        drift_table=drift,
+        status='RECORDED as parent lineage, not gated (see RULING)')
+
+
+def lt1_1_preflight(arm='A'):
+    """LT1.1's own chain preflight — the same verify-class checks, our chain.
+
+    Per the lead's ruling (see RULING), this validates LT1.1's registration +
+    amendments 1-3 against THIS tree, and carries LT1's identity as lineage.
+    It performs the same classes of check `grm_lt1.verify` / `grm_lt1.preflight`
+    perform, pointed at our documents:
+
+      * sha-bound documents      registration/amendment1/2/3 vs their sidecars
+      * chain continuity         each amendment names its parent's sha
+      * sha-bound inputs         every core pin amendment 1 rebound, plus the
+                                 runner amendment 3 bound, vs the file on disk
+      * fixture sha              dialogue.json vs the registered digest
+      * cell schedule            26 arm-A cells, matching the amendment
+      * budget                   reservation sum within the registered ceiling
+      * host readiness           free space and the pinned admission rule
+
+    What it does NOT do is re-validate LT1's day-of core pins. That is the
+    ruling: those are a frozen receipt, reported in `parent_lineage`.
+
+    This is the check that replaced `lt.preflight()`. `lt.preflight` failed on
+    this tree with `INPUT_SHA_MISMATCH: core/graft_arena.py` -- not because
+    anything about LT1.1 was wrong, but because it re-hashes core against SHAs
+    recorded before `grm-merge` moved. NOTE for the record: `apply4`'s
+    protocol-binding check (`a['protocol_binding'] != lt.binding('CPU')`)
+    PASSES on this tree unchanged, because `lt.binding` reports AMEND3's
+    RECORDED core shas rather than live ones. The amendment-4 chain was never
+    the problem; only that final input loop was.
+    """
+    reasons = []
+    documents = {
+        'registration.json': (REGISTRATION, OUT / 'registration.sha256'),
+        'amendment1.json': (AMENDMENT1, OUT / 'amendment1.sha256'),
+        'amendment2.json': (OUT / 'amendment2.json', OUT / 'amendment2.sha256'),
+        'amendment3.json': (OUT / 'amendment3.json', OUT / 'amendment3.sha256'),
+    }
+    shas = {}
+    for name, (path, sidecar) in documents.items():
+        if not path.exists():
+            reasons.append('MISSING_DOCUMENT: ' + name)
+            continue
+        shas[name] = sha(path)
+        if not sidecar.exists():
+            reasons.append('MISSING_SIDECAR: ' + name)
+        elif sidecar.read_text().split()[0] != shas[name]:
+            reasons.append('DOCUMENT_SHA_MISMATCH: ' + name)
+    if reasons:
+        return dict(status='BLOCKED', reasons=reasons, arm=arm,
+                    gpu_executed=False, ruling=RULING)
+
+    a1 = json.loads(AMENDMENT1.read_text())
+    a2 = json.loads((OUT / 'amendment2.json').read_text())
+    a3 = json.loads((OUT / 'amendment3.json').read_text())
+
+    # chain continuity
+    if a1['registration_sha256'] != shas['registration.json']:
+        reasons.append('AMENDMENT1_CHAIN_MISMATCH')
+    if a2['previous_amendment_sha256'] != shas['amendment1.json']:
+        reasons.append('AMENDMENT2_CHAIN_MISMATCH')
+    if a3['previous_amendment_sha256'] != shas['amendment2.json']:
+        reasons.append('AMENDMENT3_CHAIN_MISMATCH')
+
+    # sha-bound inputs: LT1.1's OWN rebound core pins, checked against the tree
+    checked_inputs = 0
+    for name, change in sorted(a1['core_rebind']['changed'].items()):
+        checked_inputs += 1
+        if sha(ROOT / name) != change['after_sha256']:
+            reasons.append('INPUT_SHA_MISMATCH: ' + name)
+    for name, entry in sorted(a1['core_rebind']['new_inputs'].items()):
+        checked_inputs += 1
+        if sha(ROOT / name) != entry['sha256']:
+            reasons.append('INPUT_SHA_MISMATCH: ' + name)
+    # ... and the runner amendment 3 bound.
+    runner = a3['runner']
+    checked_inputs += 1
+    if sha(ROOT / runner['path']) != runner['sha256']:
+        reasons.append('RUNNER_SHA_MISMATCH: ' + runner['path'])
+
+    # fixture sha
+    if not FIXTURE.exists():
+        reasons.append('MISSING_FIXTURE')
+    elif sha(FIXTURE) != a1['fixture']['sha256']:
+        reasons.append('FIXTURE_SHA_MISMATCH')
+
+    # cell schedule + budget
+    cells = a1['arms'][arm]['cells'] if arm in a1['arms'] else []
+    if len(cells) != 26:
+        reasons.append('CELL_SCHEDULE_MISMATCH: %d' % len(cells))
+    lease = sum(c['lease_seconds'] for c in cells)
+    ceiling = a2['arms'][arm]['budget_gpu_seconds'] if arm in a2['arms'] else 0
+    if lease > ceiling:
+        reasons.append('BUDGET_BELOW_RESERVATION: %d > %d' % (lease, ceiling))
+
+    # host readiness (the parts of LT1's preflight that are about the machine)
+    free = shutil.disk_usage(ROOT).free
+    if free < 20_000_000_000:
+        reasons.append('FREE_SPACE_BELOW_20_GB')
+    if os.environ.get(RULE_ENV) != 'margin_first':
+        reasons.append('REGISTERED_ADMISSION_RULE_MISMATCH')
+
+    return dict(status='BLOCKED' if reasons else 'READY', reasons=reasons,
+                arm=arm, gpu_executed=False,
+                document_sha256=shas,
+                inputs_checked=checked_inputs,
+                fixture_sha256=sha(FIXTURE) if FIXTURE.exists() else None,
+                cells=len(cells),
+                reservation_seconds=lease, budget_gpu_seconds=ceiling,
+                free_bytes=free, minimum_free_bytes=20_000_000_000,
+                ruling=RULING,
+                parent=parent_lineage())
+
+
+def host_preflight(arm='A'):
+    """Back-compatible name for `lt1_1_preflight` (the ruling renamed it)."""
+    return lt1_1_preflight(arm)
+
+
+def resume(arm, *, root=None, dry_lease=False, host_gate=True):
+    """Registered GPU campaign for one arm. Reuses LT1's controller loop.
+
+    `dry_lease=True` walks THE SAME code path -- amendment loading, `apply4`,
+    binding, preflight, seam redirection, arm pin, campaign-owner file, cell
+    selection via `worker.pending` -- and stops at the lease boundary instead
+    of calling `worker.run_cell`. That is the only substitution: nothing about
+    the route before it is mocked, which is what makes it a gate rather than a
+    rehearsal. It is how `--resume --dry-lease` reproduces on CPU the failure
+    the lead hit on the card.
+
+    `host_gate=False` skips LT1's host preflight only. It exists because that
+    gate answers a question about the HOST tree (green CPU receipt, idle GPU,
+    LT1's own SHA chain), and on a tree whose core has drifted past LT1's
+    pinned SHAs it fails for reasons that have nothing to do with the LT1.1
+    route under test. The GPU path always runs it.
+    """
     reg = registration(arm)
-    root = out_dir(arm)
+    root = Path(root) if root else out_dir(arm)
+    # LT1's host preflight runs OUTSIDE the seams (see host_preflight), and
+    # LT1.1's document chain was already checked by `registration(arm)`.
+    gate = (lt1_1_preflight(arm) if host_gate
+            else dict(status='SKIPPED', reasons=['host_gate=False']))
+    if host_gate and gate['status'] != 'READY':
+        raise ValueError(json.dumps(gate))
     with lt1_1_seams(arm), pinned_arm(arm) as pin:
-        gate = lt.preflight()
-        if gate['status'] != 'READY':
-            raise ValueError(json.dumps(gate))
         root.mkdir(parents=True, exist_ok=True)
         owner = root / 'campaign.active'
         fd = os.open(owner, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
         os.write(fd, str(os.getpid()).encode())
         os.close(fd)
-        print('LT1.1 arm %s pinned %s' % (arm, json.dumps(pin)), flush=True)
+        # Progress goes to stderr so stdout stays a single parseable JSON
+        # document for --dry-lease; the GPU path's operator log is unchanged.
+        print('LT1.1 arm %s pinned %s' % (arm, json.dumps(pin)),
+              file=sys.stderr, flush=True)
+        selected = []
         try:
             while True:
                 cell = worker.pending(reg, run=root)
                 if cell is None:
-                    return 0
-                print('LT1.1 %s cell %s' % (arm, cell['id']), flush=True)
+                    break
+                print('LT1.1 %s cell %s' % (arm, cell['id']),
+                      file=sys.stderr, flush=True)
+                if dry_lease:
+                    # The lease boundary. Everything above this line is the
+                    # production route; `run_cell` is where the GPU lease,
+                    # the flock and the model would be taken.
+                    selected.append(cell['id'])
+                    return dict(status='PASS', mode='RESUME_DRY_LEASE',
+                                gpu_executed=False, arm=arm, pinned=pin,
+                                host_preflight=gate['status'],
+                                next_cell=cell['id'],
+                                selected=selected,
+                                receipt_binding=worker.bind(cell['arm']),
+                                out_dir=str(root),
+                                stopped_at='worker.run_cell (lease boundary)')
                 if not worker.run_cell(cell, reg):
                     return 2
+            if dry_lease:
+                return dict(status='PASS', mode='RESUME_DRY_LEASE',
+                            gpu_executed=False, arm=arm, pinned=pin,
+                            host_preflight=gate['status'], next_cell=None,
+                            selected=selected, out_dir=str(root),
+                            stopped_at='campaign complete')
+            return 0
         finally:
             owner.unlink()
 
@@ -461,12 +762,16 @@ def summary(arm, *, root=None):
                                   probes[r['probe_id']]['expected'])['exact_correct'])
         table[cls] = dict(expected_n=len(want), n=len(got), correct=correct,
                           exact_rate=(correct / len(got)) if got else None)
+    # `binding` reads the pinned arm rather than taking one, so that LT1's
+    # callers can keep passing a backend label. Hold it for this call.
+    with _arm_state(arm):
+        stamp = binding(arm)
     return dict(arm=arm, out_dir=str(root), complete_cells=len(complete),
                 total_cells=len(reg['cells']),
                 complete=len(complete) == len(reg['cells']),
                 completed_cell_ids=complete,
                 measured_recalls=len(rows), by_class=table,
-                binding=binding(arm),
+                binding=stamp,
                 evidence_class=('partial raw rows' if rows else 'no rows'))
 
 
@@ -491,6 +796,14 @@ def parse_args(argv=None):
     mode.add_argument('--fake-cell', help='one-cell CPU child (internal)')
     p.add_argument('--out', help='override the campaign root (dry-run/fake/summary)')
     p.add_argument('--limit', type=int, help='fake mode: run only the first N cells')
+    p.add_argument('--dry-lease', action='store_true',
+                   help='with --resume: walk the real resume route (amendment '
+                        'load, apply4, binding, preflight, cell selection) and '
+                        'stop at the lease boundary; no GPU, no flock')
+    p.add_argument('--no-host-gate', action='store_true',
+                   help="with --resume --dry-lease: skip LT1's host preflight, "
+                        'which validates the HOST tree rather than the LT1.1 '
+                        'route (use when core has drifted past LT1 SHAs)')
     return p.parse_args(argv)
 
 
@@ -524,6 +837,10 @@ def main(argv=None):
     if args.fake:
         print(json.dumps(run_fake(args.arm, root=args.out, limit=args.limit),
                          indent=2))
+        return 0
+    if args.dry_lease:
+        print(json.dumps(resume(args.arm, root=args.out, dry_lease=True,
+                                host_gate=not args.no_host_gate), indent=2))
         return 0
     return resume(args.arm)
 

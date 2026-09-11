@@ -1,14 +1,19 @@
-# LT1.1 — arm A and arm A+ (amendment 2)
+# LT1.1 — arm A and arm A+ (amendment 3)
 # registration sha256: 02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8
-# amendment 1  sha256: 0a5754cd3e5bc91c4c5428228ed4164534c5d281d2aa0c7410e8c7f8b145ce0e
 # amendment 2  sha256: 3bf21605058c86b15d3cb91784ea39409844838f20130b262dbadf1948417380
-# runner            : scripts/grm_lt1_1.py (sha256 78fd7699acda6e0bd90daba512bbc6c1e68c05d7b57ca6066cd3ede34c3da3d5)
+# amendment 3  sha256: 09680a0567d2d74f0a9a491823cc627c1a8d609451fdf165b36384dc97e89a08
+# runner            : scripts/grm_lt1_1.py (sha256 17f1577006e0449465a3ee0c19ce39a38ccdfbf6c6483f63fd42ec30ae1b1778)
 #
 # 26 cells per arm. Reservation ceiling 7410 s (2.06 GPU-h) PER ARM;
 # projected spend 1.25 GPU-h per arm. Both arms: 4.12 GPU-h ceiling.
-# NOTE amendment 2 RAISED the per-arm ceiling from 1.70 to 2.06 GPU-h;
-# the old figure was below the reservation sum and would have railed.
 # The arms are separately resumable: run either alone.
+#
+# OPEN BLOCKER (pre-existing, needs a lead decision): the real
+# --resume stops at INPUT_SHA_MISMATCH: core/graft_arena.py. This
+# worktree's core has drifted past the SHAs the LT1 registration
+# pins, and the LT1 host preflight fails identically with or without
+# LT1.1. The LT1.1 route itself is green to the lease boundary
+# (see --dry-lease below).
 #
 # ---- CPU gates (no GPU, no lease) ----
 cd /mnt/ForgeRealm/wt/grm-d1
@@ -19,14 +24,22 @@ python3 scripts/grm_d1_alias_cpu.py      # A+ alias fold/admit/mount
 # ---- arm A (alias fold OFF) ----
 python3 scripts/grm_lt1_1.py --arm A --preflight
 python3 scripts/grm_lt1_1.py --arm A --dry-run
-# GPU campaign (takes the shared lease; resumable -- run again to continue):
+# Route check on CPU: walks the REAL resume path (apply4,
+# binding, preflight, cell selection) and stops at the lease.
+python3 scripts/grm_lt1_1.py --arm A --resume --dry-lease --no-host-gate
+# GPU campaign (takes the shared lease; resumable -- run again
+# to continue). BLOCKED until the host core pins are resolved:
 python3 scripts/grm_lt1_1.py --arm A --resume
 python3 scripts/grm_lt1_1.py --arm A --summary
 
 # ---- arm A+ (GRM_ALIAS_FOLD_MERGE=1 pinned) ----
 python3 scripts/grm_lt1_1.py --arm A+ --preflight
 python3 scripts/grm_lt1_1.py --arm A+ --dry-run
-# GPU campaign (takes the shared lease; resumable -- run again to continue):
+# Route check on CPU: walks the REAL resume path (apply4,
+# binding, preflight, cell selection) and stops at the lease.
+python3 scripts/grm_lt1_1.py --arm A+ --resume --dry-lease --no-host-gate
+# GPU campaign (takes the shared lease; resumable -- run again
+# to continue). BLOCKED until the host core pins are resolved:
 python3 scripts/grm_lt1_1.py --arm A+ --resume
 python3 scripts/grm_lt1_1.py --arm A+ --summary
 

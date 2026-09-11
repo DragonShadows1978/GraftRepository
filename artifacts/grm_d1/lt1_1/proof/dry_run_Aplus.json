@@ -46,7 +46,9 @@
     "A-197-200"
   ],
   "binding": {
+    "label": "A+",
     "arm": "A+",
+    "campaign_arm": "A+",
     "registration_sha256": "02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8",
     "amendment1_sha256": "0a5754cd3e5bc91c4c5428228ed4164534c5d281d2aa0c7410e8c7f8b145ce0e",
     "fixture_sha256": "470da44b3a570684bd24c9f3b96f434468d7914094222ed5867c1382fbc94d26",
