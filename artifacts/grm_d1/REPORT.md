@@ -648,6 +648,140 @@ Amendment 3 stays as written; amendment 4 records the resolution.
 `0b5da2387791e871759cf1d11c5ad27c4e4559642d81200a01bb2d9e7c85659d`, chained to amendment 3
 `09680a0567d2d74f…`. Runner rebound `29c916601d4a3775…`.
 
+## 5f. Follow-up 5: the leased CHILD runs our chain
+
+**A green parent produced a RED cell.** `--arm A+ --resume`
+pinned the arm, started A-001-008, and the child died:
+
+```
+scripts/grm_lt1_worker.py:289  __main__ -> lt.verify()
+ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+```
+
+run_cell hard-coded the child argv as `-m scripts.grm_lt1_worker --worker <cell>`; that module __main__ resolves its cell with lt.verify(), which is LT1 own chain and the gate the ruling removed from the parent
+
+**Why the gates missed it — the third time, so stated plainly:**
+
+- --dry-lease stops AT the lease boundary, before run_cell spawns anything
+- the --fake 2-cell proof used --fake-cell, a path that never enters run_cell, so it exercised a different child
+- the follow-up-2 docstring ASSERTED the child came back through the LT1.1 module; it did not, and that unverified claim is corrected here
+
+The third is the one that matters: I wrote a docstring asserting
+the child came back through the LT1.1 module and never checked.
+`test_run_cell_spawns_the_lt1_1_child` now reads the argv
+`run_cell` actually builds.
+
+**The fix: five seams, not three.**
+
+- worker.worker -> lt1_1_worker (covers lt.verify at grm_lt1_worker.py:188)
+- worker.spawn_argv -> spawn_argv (covers grm_lt1_worker __main__ at :289 by never reaching it)
+
+`scripts/grm_lt1_worker.py:run_cell` gained a `spawn_argv` /
+`spawn_env` seam whose **default is byte-identical** to the line
+it replaced, so LT1's own campaign is unaffected
+(`test_the_default_argv_is_unchanged_for_lt1`). The child is now
+`python3 -m scripts.grm_lt1_1 --arm <arm> --worker <cell>`,
+which runs lt1_1_preflight (LT1.1 chain) -> lt1_1_seams -> worker.execute with registration(arm).
+
+**Audit — every `lt.verify()` reach point in the worker module:**
+
+| line | function | disposition |
+|---|---|---|
+| 188 | `worker` | covered: `worker.worker` is redirected to `lt1_1_worker`, which uses `registration(arm)` instead |
+| 285 | `resume` | not reachable: the runner never calls `worker.resume`; it runs its own `resume` loop over `worker.pending` / `worker.run_cell` |
+| 301 | `__main__` | not reachable: `spawn_argv` routes the child to `scripts/grm_lt1_1.py --worker`, so this entry point is never executed by an LT1.1 campaign |
+
+**The gate: a real `run_cell` spawn, both arms, cells 1-2.**
+Stubbed: lease stubbed to a no-op flock on a temp file and the model stubbed to the CPU double; both arms, cells 1-2. Unstubbed: reservation accounting, directory creation, argv construction, Popen + foreground wait, charge, checkpoint validation, controller receipt.
+
+| arm | cell | run_cell | status | child pid | new process | arm in receipt | INPUT_SHA_MISMATCH |
+|---|---|---|---|---|---|---|---|
+| A | `A-001-008` | True | COMPLETE | 3347931 | True | A (alias False) | **False** |
+| A | `A-009-016` | True | COMPLETE | 3347966 | True | A (alias False) | **False** |
+| A+ | `A-001-008` | True | COMPLETE | 3348012 | True | A+ (alias True) | **False** |
+| A+ | `A-009-016` | True | COMPLETE | 3348069 | True | A+ (alias True) | **False** |
+
+RED-before: `test_the_old_argv_reproduces_the_leads_worker_exit_1`
+spawns the ORIGINAL argv and requires the child to die with
+`INPUT_SHA_MISMATCH: core/graft_arena.py` — the lead-run failure,
+reproduced on demand. The `--dry-lease` gate is kept alongside.
+
+**The RED cell is archived, not deleted.** `A-001-008` -> `artifacts/grm_d1/lt1_1/archive/Aplus_A-001-008_RED`; create-only: the RED attempt is copied, never deleted or overwritten, and the live cell directory is removed so arm A+ re-arms from cell 1
+`test_the_archived_red_cell_is_preserved` asserts the archived log
+still contains `INPUT_SHA_MISMATCH` (the evidence was not
+sanitised) and that the live cell is gone so arm A+ re-arms.
+
+**Amendment 5** — `artifacts/grm_d1/lt1_1/amendment5.json`, sha256
+`c823e9e02b326c78434f589e4c996beb797450d65f19c246555cd7e26d0bbd0d`, chained to amendment 4
+`0b5da2387791e871…`. Runner rebound `72fa0a79c174e313…`.
+
+## 5g. Follow-up 6: a busy card is not a cell failure
+
+**What happened.** The queue launched `--arm A --resume` while
+the A1 contrast was still leaving the card. The single-probe idle
+check refused and wrote `run_A/cells/A-001-008` RED with
+`GPU_NOT_IDLE: 3336818` — controller and reservation only, no
+`worker.log`, because no child was ever spawned. That leftover
+then made `--arm A --resume --dry-lease` fail with
+`PRIOR_CELL_RED`. Both effects were lead-caused; the second was a
+real defect in the policy and is fixed here.
+
+**The seam-restore question, answered: NO — state-caused.**
+the assertion tested that the seam CHANGED the module global. When an earlier test had already left `worker.RUN` equal to the target, nothing changed and a correct seam read as broken. Restoration was verified separately by an identity check and was always correct.
+The fix: the assertion now tests the invariant that matters -- the seam HOLDS the LT1.1 value inside the window -- plus an identity check on restore
+I also checked the relaxed assertion still has teeth — with a
+deliberately broken seam it reports `(False, False, False)` and
+fails, so this is a sharper test, not a weaker one.
+
+**The policy change.**
+
+| | before | after |
+|---|---|---|
+| busy card | `one nvidia-smi compute-app probe` | `bounded wait for the card to fall below a framebuffer limit, then proceed` |
+| keys on | compute-process list | TOTAL framebuffer used, never the compute-process list (FIX-8: never infer an idle card from an empty compute list) |
+| bound | none (single probe) | 61 probes at 15 s, 900 s total |
+| limit | any process at all | <= 512 MiB framebuffer used |
+| on expiry | — | RED **with the memory snapshot** |
+
+A busy card is a resource another process holds, not a fault in our cell. It NEVER signals, kills or waits on another process; it declines and it waits, nothing else
+The bound is structural: attempts_allowed caps the probe count up front, so there is no unbounded loop and nothing re-runs a cell.
+
+Installed as a sixth seam, `worker.await_idle`, with the same
+byte-identical-default discipline used for `spawn_argv`:
+`test_the_lt1_default_branch_is_byte_identical` pins LT1's own
+single-probe refusal verbatim.
+
+**Fixtures** (`tests/test_grm_lt1_1_idle_wait.py`, 12 tests):
+
+- busy -> wait -> idle: the cell runs
+- busy past the bound: RED with the memory snapshot
+- probe failure: declines, with the reason
+- the wait is bounded and counted, never unbounded
+- nothing is ever signalled
+
+The two the lead named: `test_busy_then_idle_waits_and_then_proceeds`
+feeds 4096 MiB -> 3144 MiB -> 96 MiB and requires the wait to
+proceed on the third probe; `test_busy_past_the_bound_declines_with_a_snapshot`
+holds the card busy and requires a decline carrying
+`memory.used=4096 MiB` and the holder pid.
+`test_run_cell_raises_only_after_the_bound` drives the same
+through the real `run_cell` and asserts the controller error
+carries the snapshot, not the bare pid the lead run recorded.
+
+**The spurious RED is archived, not deleted.** `A-001-008` -> `artifacts/grm_d1/lt1_1/archive/A_A-001-008_GPU_NOT_IDLE`; create-only: the attempt is copied, never deleted or overwritten, and the live cell directory is removed so arm A re-arms from cell 1
+The archived controller still reads RED with `GPU_NOT_IDLE`, and
+the absence of `worker.log` is itself the tell that the card
+refused before any work began.
+
+**Gate lines, both arms:**
+
+- `--arm A --resume --dry-lease` -> rc 0, host_preflight **READY**, status PASS, **next=A-001-008**, stopped at worker.run_cell (lease boundary)
+- `--arm A+ --resume --dry-lease` -> rc 0, host_preflight **READY**, status PASS, **next=A-001-008**, stopped at worker.run_cell (lease boundary)
+
+**Amendment 6** — `artifacts/grm_d1/lt1_1/amendment6.json`, sha256
+`89d26556ade25ea05de2101929c22ac0d7374c8eb59c6f057119b776d393a0ba`, chained to amendment 5
+`c823e9e02b326c78…`. Runner rebound `664ad608468c8703…`.
+
 ## 6. Deviations, RED items, process safety
 
 **Deviations from the order**

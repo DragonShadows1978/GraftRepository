@@ -1,18 +1,21 @@
-# LT1.1 — arm A and arm A+ (amendment 4)
+# LT1.1 — arm A and arm A+ (amendment 6)
 # registration sha256: 02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8
-# amendment 3  sha256: 09680a0567d2d74f0a9a491823cc627c1a8d609451fdf165b36384dc97e89a08
-# amendment 4  sha256: 0b5da2387791e871759cf1d11c5ad27c4e4559642d81200a01bb2d9e7c85659d
-# runner            : scripts/grm_lt1_1.py (sha256 29c916601d4a3775d761742a453eccf71e9e7a67aab1cf7c6d8afee9f6610ad1)
+# amendment 5  sha256: c823e9e02b326c78434f589e4c996beb797450d65f19c246555cd7e26d0bbd0d
+# amendment 6  sha256: 89d26556ade25ea05de2101929c22ac0d7374c8eb59c6f057119b776d393a0ba
+# runner            : scripts/grm_lt1_1.py (sha256 664ad608468c8703b59eb2be3176e04e90aceb9171d1676715c9f0e82d9f525a)
 #
 # 26 cells per arm. Reservation ceiling 7410 s (2.06 GPU-h) PER ARM;
 # both arms: 4.12 GPU-h ceiling. Separately resumable.
 #
-# RULING (lead, 2026-09-11): LT1 original registration is a frozen
-# receipt of its day and is NOT re-validated against today core.
-# LT1.1 preflight validates LT1.1 OWN chain (registration + amendments
-# 1-4, core pins rebound to this tree with attribution). LT1 identity
-# is carried as parent lineage in the receipt, not as a gate.
-# The amendment-3 blocker (INPUT_SHA_MISMATCH) is RESOLVED by this.
+# A BUSY CARD IS NOT A CELL FAILURE (amendment 6). The runner now
+# waits up to 900 s (polling every 15 s, 61 probes) for framebuffer
+# use to fall to <= 512 MiB, then proceeds. Only after the bound is
+# it a RED, and then with the memory snapshot attached. It reads the
+# card and declines; it never signals anything. The operator has
+# absolute right of way.
+# The earlier spurious RED (GPU_NOT_IDLE on arm A) is archived at
+#   artifacts/grm_d1/lt1_1/archive/A_A-001-008_GPU_NOT_IDLE
+# and arm A re-arms from cell 1.
 #
 # ---- CPU gates (no GPU, no lease) ----
 cd /mnt/ForgeRealm/wt/grm-d1
@@ -23,30 +26,33 @@ python3 scripts/grm_d1_alias_cpu.py      # A+ alias fold/admit/mount
 # ---- arm A (alias fold OFF) ----
 python3 scripts/grm_lt1_1.py --arm A --preflight
 python3 scripts/grm_lt1_1.py --arm A --dry-run
-# Route check on CPU: walks the REAL resume path (chain preflight,
-# apply4, binding, cell selection) and stops at the lease.
+# Route check on CPU: walks the REAL resume path and stops at
+# the lease boundary.
 python3 scripts/grm_lt1_1.py --arm A --resume --dry-lease
 # GPU campaign (takes the shared lease; resumable -- run again
-# to continue):
+# to continue). A busy card makes it WAIT, not fail:
 python3 scripts/grm_lt1_1.py --arm A --resume
 python3 scripts/grm_lt1_1.py --arm A --summary
 
 # ---- arm A+ (GRM_ALIAS_FOLD_MERGE=1 pinned) ----
 python3 scripts/grm_lt1_1.py --arm A+ --preflight
 python3 scripts/grm_lt1_1.py --arm A+ --dry-run
-# Route check on CPU: walks the REAL resume path (chain preflight,
-# apply4, binding, cell selection) and stops at the lease.
+# Route check on CPU: walks the REAL resume path and stops at
+# the lease boundary.
 python3 scripts/grm_lt1_1.py --arm A+ --resume --dry-lease
 # GPU campaign (takes the shared lease; resumable -- run again
-# to continue):
+# to continue). A busy card makes it WAIT, not fail:
 python3 scripts/grm_lt1_1.py --arm A+ --resume
 python3 scripts/grm_lt1_1.py --arm A+ --summary
 
 # The runner pins the arm itself, AFTER environment(flags) strips
-# every ambient GRM_*, and reads it back before any cell runs:
+# every ambient GRM_*, and carries it into the leased child in
+# GRM_LT1_1_ARM. The child verifies the LT1.1 chain before any work:
 #   arm A   -> admission_rule=margin_first, alias_fold_merge=False
 #   arm A+  -> admission_rule=margin_first, alias_fold_merge=True
 # A pin that does not take is LT11_ALIAS_PIN_FAILED, never silent.
+# A drifted LT1.1 document stops the CHILD too:
+#   LT11_CHILD_PREFLIGHT_BLOCKED.
 
 # Registered predictions (before any run):
 #   A   {"aliases": "0/5 wrong rows fixed (recall_7_* stay wrong)", "corrections": "5/5", "fresh": "6/7", "recap": "unpredicted memory-side; oracle 5/5 gated on CPU"}
