@@ -425,3 +425,258 @@ def test_over_width_digest_takes_the_existing_split_path(tmp_path):
     finally:
         repo.close()
         mp.undo()
+
+
+# =====================================================================
+# AMENDMENT 2 — the three defects the 2026-09-11 lead GPU runs found.
+#
+# All three reached the card because the fake arm diverged from the GPU arm
+# AT THE LOADER. Each test below fails on the PRE-amendment-2 worker.
+# =====================================================================
+
+# ------------------------------------------------- defect 1: lease shape
+
+def test_lease_default_is_under_the_house_cap():
+    """The first worker defaulted to 2400s; gpu_lease refuses anything >590."""
+    from scripts.grm_cmc1_gpu_arms import MAX_LEASE_SECONDS
+
+    assert MAX_LEASE_SECONDS == 590
+    assert W.LEASE_SECONDS <= MAX_LEASE_SECONDS
+    assert W.LEASE_SECONDS == 560, 'the value C7/LT1 use, ~30s of headroom'
+
+
+def test_over_cap_lease_is_rejected_at_argparse():
+    """--lease-seconds 2400 must die at PARSE time, before any flock."""
+    import argparse as _argparse
+
+    with pytest.raises(_argparse.ArgumentTypeError, match='house cap'):
+        W._lease_seconds('2400')
+    with pytest.raises(_argparse.ArgumentTypeError):
+        W._lease_seconds('591')
+    with pytest.raises(_argparse.ArgumentTypeError):
+        W._lease_seconds('0')
+    assert W._lease_seconds('590') == 590
+    assert W._lease_seconds('560') == 560
+
+
+def test_main_rejects_an_over_cap_lease_before_doing_anything(tmp_path,
+                                                              capsys):
+    """SystemExit(2) from argparse — not a mid-run LiveError on the card."""
+    with pytest.raises(SystemExit) as excinfo:
+        W.main(['--registration', str(REGISTRATION),
+                '--out', str(tmp_path / 'o'), '--fake',
+                '--lease-seconds', '2400'])
+    assert excinfo.value.code == 2
+    assert 'house cap' in capsys.readouterr().err
+
+
+def test_amendment_2_registers_the_lease_shape():
+    _, amendments = W.load_amendments(REGISTRATION)
+    lease = amendments[-1]['amendment']['lease']
+    assert lease['house_cap_seconds'] == 590
+    assert lease['per_invocation_seconds'] == W.LEASE_SECONDS
+    assert '--resume' in lease['shape']
+    # The BUDGET is unchanged; only the lease shape moved.
+    unchanged = amendments[-1]['amendment']['unchanged']
+    assert unchanged['budget_gpu_hours_max'] == 0.5
+    assert unchanged['rows'].startswith('23 unchanged')
+    assert '5/8' in unchanged['registered_prediction']
+
+
+# --------------------------------- defect 2: undeclared frame / runtime
+
+def test_runtime_frame_and_flags_source_are_declared_and_pinned():
+    reg = W.read(REGISTRATION)
+    _, amendments = W.load_amendments(REGISTRATION)
+    effective = W.effective_registration(reg, amendments)
+    # The registration ALONE never declared these — that is the defect.
+    assert 'runtime_frame' not in reg
+    assert 'c7_r3_registration' not in reg
+    assert 'preconditions' not in reg
+    for block in ('runtime_frame', 'c7_r3_registration'):
+        declared = effective[block]
+        assert Path(declared['path']).is_file()
+        assert declared['sha256'] == W.sha(declared['path'])
+    assert set(effective['preconditions']) == {'native_runtime',
+                                               'model_snapshot'}
+
+
+def test_dry_run_reports_ok_and_takes_no_lease(tmp_path, monkeypatch):
+    """--dry-run checks everything and never reaches a lease or a row."""
+    taken = []
+    monkeypatch.setattr(W, 'plan_rows',
+                        lambda *a: taken.append('planned') or [])
+    assert W.main(['--registration', str(REGISTRATION),
+                   '--out', str(tmp_path / 'o'), '--dry-run']) == 0
+    assert taken == [], 'dry-run must not plan or execute rows'
+
+
+def test_dry_run_is_red_on_a_missing_frame(tmp_path):
+    """The exact stop the lead hit, now caught on CPU with no lease."""
+    reg = W.read(REGISTRATION)
+    _, amendments = W.load_amendments(REGISTRATION)
+    effective = W.effective_registration(reg, amendments)
+    effective['runtime_frame'] = {
+        'path': str(tmp_path / 'absent_frame.json'), 'sha256': 'a' * 64}
+    result = W.check_preconditions(effective)
+    assert result['ok'] is False
+    names = {row['name'] for row in result['missing']}
+    assert 'runtime_frame' in names
+    # ... and loading it raises the NAMED error, not a bare FileNotFoundError.
+    with pytest.raises(W.ContrastError, match='A1_RUNTIME_FRAME_MISSING'):
+        W.load_runtime_frame(effective)
+
+
+def test_dry_run_is_red_on_a_missing_native_runtime(tmp_path):
+    """The OSError the lead hit AFTER the lease, now a pre-lease RED."""
+    reg = W.read(REGISTRATION)
+    _, amendments = W.load_amendments(REGISTRATION)
+    effective = W.effective_registration(reg, amendments)
+    effective['preconditions'] = dict(effective['preconditions'])
+    effective['preconditions']['native_runtime'] = {
+        'path': str(tmp_path / 'libgrm_runtime.so'), 'gpu_only': True}
+    result = W.check_preconditions(effective)
+    assert result['ok'] is False
+    assert {row['name'] for row in result['missing']} == {'native_runtime'}
+    # On --fake the GPU-only precondition is skipped, and says so.
+    fake = W.check_preconditions(effective, fake=True)
+    assert fake['ok'] is True
+    skipped = [r for r in fake['checks'] if r['name'] == 'native_runtime']
+    assert skipped[0]['detail'] == 'skipped on --fake'
+
+
+def test_run_refuses_to_take_a_lease_when_a_precondition_is_missing(
+        tmp_path, monkeypatch):
+    """A1_PRECONDITION_MISSING fires BEFORE gpu_lease is ever imported."""
+    leased = []
+    monkeypatch.setattr(W, 'check_preconditions',
+                        lambda *a, **k: {'checks': [], 'ok': False,
+                                         'missing': [{'name': 'native_runtime',
+                                                      'path': '/nope'}]})
+    monkeypatch.setattr(W, 'plan_rows',
+                        lambda *a: leased.append('planned') or [])
+    with pytest.raises(W.ContrastError, match='A1_PRECONDITION_MISSING'):
+        W.main(['--registration', str(REGISTRATION),
+                '--out', str(tmp_path / 'o'), '--fake'])
+    assert leased == []
+
+
+def test_frame_sha_drift_is_named(tmp_path):
+    reg = W.read(REGISTRATION)
+    _, amendments = W.load_amendments(REGISTRATION)
+    effective = W.effective_registration(reg, amendments)
+    frame = tmp_path / 'frame.json'
+    frame.write_text(json.dumps({'schema': 'x', 'resolved_flags': {}}) + '\n')
+    effective['runtime_frame'] = {'path': str(frame), 'sha256': 'b' * 64}
+    with pytest.raises(W.ContrastError, match='A1_RUNTIME_FRAME_SHA_MISMATCH'):
+        W.load_runtime_frame(effective)
+
+
+# ------------------------------ defect 3: flags shape / environment(flags)
+
+def test_flags_come_from_the_c7_r3_registration_not_the_rs1_frame():
+    """The RS1 frame carries NO C2 frame keys — that was the KeyError."""
+    reg = W.read(REGISTRATION)
+    _, amendments = W.load_amendments(REGISTRATION)
+    effective = W.effective_registration(reg, amendments)
+
+    flags = W.resolve_flags(effective)
+    assert W.ENVIRONMENT_FLAG_KEYS <= set(flags)
+    assert flags['ephemeral'] is True
+    assert flags['arena_width'] == 96
+
+    # The flags are READ from the C7 r3 registration's arm, verbatim.
+    c7 = W.read(effective['c7_r3_registration']['path'])
+    assert flags == c7['arms'][effective['c7_r3_registration']['arm']]['flags']
+
+    # The RS1 frame's own resolved_flags would have raised KeyError.
+    rs1_flags = W.load_runtime_frame(effective)['resolved_flags']
+    assert not W.ENVIRONMENT_FLAG_KEYS <= set(rs1_flags)
+    assert 'ephemeral' not in rs1_flags
+    with pytest.raises(KeyError, match='ephemeral'):
+        W.build_environment(rs1_flags)
+
+
+def test_environment_is_built_from_those_flags_without_raising():
+    reg = W.read(REGISTRATION)
+    _, amendments = W.load_amendments(REGISTRATION)
+    effective = W.effective_registration(reg, amendments)
+    env = W.build_environment(W.resolve_flags(effective))
+    assert env['GRM_PERSISTENT_BOAT'] == '0'   # ephemeral True -> not -> 0
+    assert env['GRM_CAPTURE_PIN'] == 'live'
+    # Still carries NEITHER A1 switch, so the post-pin contract holds.
+    assert W.FLAG_ENV not in env and W.RULE_ENV not in env
+
+
+def test_incomplete_flags_are_a_named_error_not_a_keyerror(tmp_path):
+    """A missing frame key fails HERE, by name, not deep inside a GPU load."""
+    reg = W.read(REGISTRATION)
+    _, amendments = W.load_amendments(REGISTRATION)
+    effective = W.effective_registration(reg, amendments)
+    c7 = W.read(effective['c7_r3_registration']['path'])
+    del c7['arms']['A']['flags']['ephemeral']
+    path = tmp_path / 'c7.json'
+    path.write_text(json.dumps(c7) + '\n')
+    effective['c7_r3_registration'] = {'path': str(path), 'sha256': W.sha(path),
+                                       'arm': 'A'}
+    with pytest.raises(W.ContrastError, match='A1_FLAGS_INCOMPLETE'):
+        W.resolve_flags(effective)
+
+
+def test_fake_arm_uses_the_same_flags_and_environment_as_the_gpu_arm(
+        tmp_path, monkeypatch):
+    """THE regression guard: the fake loader must call the SAME helpers.
+
+    Both defects 2 and 3 survived the first gate because ``_load_fake``
+    returned a hand-made flags dict and ``dict(os.environ)``. If it ever does
+    that again, the spies below see zero calls and this fails.
+    """
+    reg = W.read(REGISTRATION)
+    _, amendments = W.load_amendments(REGISTRATION)
+    effective = W.effective_registration(reg, amendments)
+
+    seen = {'flags': [], 'env': [], 'frame': []}
+    real_flags, real_env, real_frame = (
+        W.resolve_flags, W.build_environment, W.load_runtime_frame)
+    monkeypatch.setattr(W, 'resolve_flags',
+                        lambda r: seen['flags'].append(r) or real_flags(r))
+    monkeypatch.setattr(W, 'build_environment',
+                        lambda f: seen['env'].append(f) or real_env(f))
+    monkeypatch.setattr(W, 'load_runtime_frame',
+                        lambda r: seen['frame'].append(r) or real_frame(r))
+
+    loaded = W._load_fake(None, effective)
+    try:
+        assert len(seen['flags']) == 1 and len(seen['env']) == 1
+        assert len(seen['frame']) == 1, 'the fake arm must READ the frame'
+        # The env handed downstream is environment()'s, not os.environ.
+        assert loaded['environment'] is not os.environ
+        assert loaded['environment']['GRM_CAPTURE_PIN'] == 'live'
+        assert W.ENVIRONMENT_FLAG_KEYS <= set(loaded['flags'])
+    finally:
+        loaded['repo'].close()
+        loaded['monkeypatch'].undo()
+
+
+def test_fake_rows_record_the_real_frame_and_pins(tmp_path):
+    """End to end on --fake: the receipt proves the frame was really read."""
+    out = tmp_path / 'frames'
+    assert W.main(['--registration', str(REGISTRATION), '--out', str(out),
+                   '--fake', '--limit', '2']) == 0
+    rows = [W.read(p) for p in sorted((out / 'rows').glob('*.json'))]
+    assert rows
+    for row in rows:
+        assert row['model']['frame_schema'] == 'grm.det1.runtime_frame.v1'
+        assert row['pins'][W.FLAG_ENV] == '1'
+
+
+# ------------------------------------------------- resumable lease loop
+
+def test_summary_reports_pending_and_lease_state(tmp_path):
+    out = tmp_path / 'pending'
+    rc = W.main(['--registration', str(REGISTRATION), '--out', str(out),
+                 '--fake', '--limit', '3'])
+    assert rc == 0
+    summary = W.read(out / 'summary.json')
+    assert summary['pending'] == 0 and summary['complete'] is True
+    assert summary['lease_expired'] is False

@@ -83,11 +83,32 @@ DEFAULT_OUT = ROOT / 'artifacts/grm_a1/gpu'
 FLAG_ENV = 'GRM_ALIAS_FOLD_MERGE'
 RULE_ENV = 'GRM_ADMISSION_RULE'
 
-#: Lease cap. The registration budgets 0.5 GPU-h for the whole run; a single
-#: row is bounded well under this and the cap exists so a wedged row releases
-#: the card instead of holding it.
-LEASE_SECONDS = 2400
+#: HOUSE LEASE CAP. ``grm_cmc1_gpu_arms.MAX_LEASE_SECONDS`` is 590 and
+#: ``gpu_lease`` REFUSES anything above it. The first version of this worker
+#: defaulted to 2400 and the lead's first GPU attempt died on
+#: ``LiveError: lease must be in 1..590s, got 2400`` before a single row ran.
+#: 560 is the value the C7/LT1 workers use, leaving ~30 s of headroom under
+#: the cap. The rows are resumable and create-only, so a short lease costs
+#: nothing: the operator re-runs the same line until pending=0.
+LEASE_SECONDS = 560
 LOCK_WAIT_SECONDS = 7200
+
+
+def _lease_seconds(value):
+    """argparse type: reject an over-cap lease AT PARSE TIME.
+
+    Failing here rather than inside ``gpu_lease`` means an impossible lease
+    is refused before the flock is even attempted, and the message names the
+    cap instead of surfacing as a mid-run LiveError.
+    """
+    from scripts.grm_cmc1_gpu_arms import MAX_LEASE_SECONDS
+
+    seconds = int(value)
+    if not 1 <= seconds <= MAX_LEASE_SECONDS:
+        raise argparse.ArgumentTypeError(
+            f'lease must be in 1..{MAX_LEASE_SECONDS}s (house cap), '
+            f'got {seconds}')
+    return seconds
 
 
 class ContrastError(RuntimeError):
@@ -152,6 +173,30 @@ def effective_pinned_inputs(registration, amendments):
         pinned.update(entry['amendment'].get('pinned_inputs_sha256', {}))
     pinned.pop(str(SELF_PATH), None)
     return pinned
+
+
+#: Declaration blocks an amendment may ADD to the registration. Amendment 2
+#: introduced all three: the registration originally declared no runtime
+#: frame, no flags source and no preconditions, which is why the lead's runs
+#: discovered them one lease at a time.
+AMENDABLE_BLOCKS = ('runtime_frame', 'c7_r3_registration', 'preconditions')
+
+
+def effective_registration(registration, amendments):
+    """The registration as the LAST amendment leaves it.
+
+    Later amendments override earlier ones block by block; the registration
+    is the base. Everything the worker reads (frame, flags source,
+    preconditions) goes through here, so a declaration added by amendment is
+    indistinguishable from one that was in the registration all along.
+    """
+    effective = dict(registration)
+    for entry in amendments:
+        amendment = entry['amendment']
+        for block in AMENDABLE_BLOCKS:
+            if block in amendment:
+                effective[block] = amendment[block]
+    return effective
 
 
 def verify_self(amendments):
@@ -230,7 +275,140 @@ def plan_rows(registration):
     return rows
 
 
-# ------------------------------------------------------- 3. repository load
+# ------------------------------------- 3. flags, frame and preconditions
+#
+# ALL THREE of the 2026-09-11 lead-run stops live in this section, and they
+# share one cause: the fake arm diverged from the GPU arm AT THE LOADER, so
+# the frame read, the native-runtime dependency and `environment(flags)` were
+# never exercised on CPU. The fix is not three patches — it is making both
+# arms call the SAME `resolve_flags` / `build_environment` /
+# `load_runtime_frame`, so a shape error fails on the CPU gate.
+
+def resolve_flags(registration):
+    """The frame flags for the pinned C7 r3 checkpoints. READ, never typed.
+
+    Source of truth: the C7 r3 registration's own ``arms.A.flags`` — the
+    exact frame those checkpoints were produced under.  Hand-assembling a
+    flags dict here (or borrowing the RS1 battery's ``resolved_flags``, which
+    is what the first version did) silently measures a DIFFERENT arena than
+    the checkpoint lived in.  Measured consequence of getting this wrong:
+    ``KeyError: 'ephemeral'`` inside ``grm_c2_cells.environment``, because the
+    RS1 frame carries no C2 frame keys at all.
+
+    This one dict satisfies BOTH consumers — ``environment()`` (which needs
+    ephemeral / capture_pin / seat_near_live / lsr_fixes / rt1_rule /
+    demand_ngh / gqa_cuda_route / graft_storage_bits / route_query_lex /
+    probe_ladder / sup_resolve / adm_decisive) and
+    ``rs1._load_lived_repo`` (arena_width / topk / live_turns / max_live /
+    graft_storage_bits / sup_resolve / adm_decisive) — which is why one
+    shared accessor is enough and a second one would be a bug waiting.
+    """
+    path = Path(registration['c7_r3_registration']['path'])
+    if not path.is_file():
+        raise ContrastError(f'A1_C7_REGISTRATION_MISSING: {path}')
+    want = registration['c7_r3_registration'].get('sha256')
+    got = sha(path)
+    if want and want != got:
+        raise ContrastError(
+            f'A1_C7_REGISTRATION_SHA_MISMATCH: {path} want={want} got={got}')
+    arm = registration['c7_r3_registration'].get('arm', 'A')
+    flags = read(path)['arms'][arm]['flags']
+    missing = sorted(ENVIRONMENT_FLAG_KEYS - set(flags))
+    if missing:
+        raise ContrastError(
+            f'A1_FLAGS_INCOMPLETE: {path} arm {arm} lacks {missing}')
+    return dict(flags)
+
+
+#: Exactly the keys ``grm_c2_cells.environment`` indexes. Checked up front so
+#: a missing one is a NAMED error here instead of a raw KeyError deep inside
+#: a GPU load, after the lease is already held.
+ENVIRONMENT_FLAG_KEYS = frozenset((
+    'ephemeral', 'capture_pin', 'seat_near_live', 'lsr_fixes', 'rt1_rule',
+    'demand_ngh', 'gqa_cuda_route', 'graft_storage_bits', 'route_query_lex',
+    'probe_ladder', 'sup_resolve', 'adm_decisive',
+))
+
+
+def build_environment(flags):
+    """``grm_c2_cells.environment(flags)`` — called identically by both arms.
+
+    Imported, never reimplemented. The fake arm calls THIS, with the SAME
+    flags object the GPU arm uses, so a shape error fails on CPU.
+    """
+    from scripts.grm_c2_cells import environment
+
+    return environment(flags)
+
+
+def load_runtime_frame(registration):
+    """The frozen runtime frame, sha-pinned by the registration."""
+    declared = registration.get('runtime_frame') or {}
+    path = Path(declared.get('path') or '')
+    if not path.is_file():
+        raise ContrastError(f'A1_RUNTIME_FRAME_MISSING: {path}')
+    want = declared.get('sha256')
+    got = sha(path)
+    if want and want != got:
+        raise ContrastError(
+            f'A1_RUNTIME_FRAME_SHA_MISMATCH: {path} want={want} got={got}')
+    return json.loads(path.read_text(encoding='utf-8'))
+
+
+def check_preconditions(registration, *, fake=False):
+    """Every declared input and PRECONDITION, checked BEFORE any lease.
+
+    A precondition is a path the run needs that is NOT sha-pinned because it
+    is not evidence — the native runtime and the model snapshot.  They were
+    undeclared in the first registration and the run reached the card twice
+    before failing on them (``OSError: cpp/build/libgrm_runtime.so``).  This
+    reports EVERY missing one at once rather than one per GPU attempt.
+
+    ``fake=True`` skips the GPU-only preconditions, because the CPU doubles
+    load neither the native runtime nor the model.
+    """
+    rows = []
+
+    def note(kind, name, path, *, ok, detail=''):
+        rows.append({'kind': kind, 'name': name, 'path': str(path),
+                     'ok': bool(ok), 'detail': detail})
+
+    frame = (registration.get('runtime_frame') or {})
+    frame_path = Path(frame.get('path') or '')
+    frame_ok = frame_path.is_file()
+    detail = ''
+    if frame_ok and frame.get('sha256') and sha(frame_path) != frame['sha256']:
+        frame_ok, detail = False, 'sha mismatch'
+    note('input', 'runtime_frame', frame_path, ok=frame_ok, detail=detail)
+
+    c7 = (registration.get('c7_r3_registration') or {})
+    c7_path = Path(c7.get('path') or '')
+    c7_ok = c7_path.is_file()
+    detail = ''
+    if c7_ok and c7.get('sha256') and sha(c7_path) != c7['sha256']:
+        c7_ok, detail = False, 'sha mismatch'
+    note('input', 'c7_r3_registration', c7_path, ok=c7_ok, detail=detail)
+
+    for name, spec in sorted(
+            (registration.get('preconditions') or {}).items()):
+        if spec.get('gpu_only') and fake:
+            note('precondition', name, spec.get('path', ''), ok=True,
+                 detail='skipped on --fake')
+            continue
+        path = Path(spec.get('path') or '')
+        note('precondition', name, path,
+             ok=(path.is_dir() if spec.get('directory') else path.is_file()),
+             detail=spec.get('note', ''))
+
+    for row in registration['c7_r3_rows']:
+        path = Path(row['checkpoint_dir'])
+        if not path.is_dir():
+            note('checkpoint', row['probe_id'], path, ok=False)
+    missing = [r for r in rows if not r['ok']]
+    return {'checks': rows, 'missing': missing, 'ok': not missing}
+
+
+# ------------------------------------------------------- 4. repository load
 
 def _load_gpu(checkpoint_dir, registration):
     """The lived GPU build over a COPY of the pinned checkpoint.
@@ -239,29 +417,28 @@ def _load_gpu(checkpoint_dir, registration):
     checkpoints are immutable evidence for another order and this worker must
     not write through to them, even though it only intends to read.
     """
-    from scripts import grm_c2_cells as c2
     from scripts import grm_rs1_read_strength_gpu as rs1
-    from scripts import grm_det1_2_gpu as det1_2
 
     scratch = Path(tempfile.mkdtemp(prefix='grm_a1_'))
     shutil.copytree(Path(checkpoint_dir) / 'repository',
                     scratch / 'repository')
-    # The FROZEN runtime frame, read the way rs1 reads it (its module-level
-    # RUNTIME_FRAME constant). Not retyped here: divergence from the lived
-    # build would silently change the arena the contrast is measured on.
-    frame_path = Path(registration.get('runtime_frame')
-                      or rs1.RUNTIME_FRAME)
-    if not frame_path.is_file():
-        raise ContrastError(f'A1_RUNTIME_FRAME_MISSING: {frame_path}')
-    frame = json.loads(frame_path.read_text(encoding='utf-8'))
+    # THE SAME flags object and THE SAME environment() call the fake arm
+    # makes — see resolve_flags(). Divergence here is what let three
+    # load-path defects reach the card (lead run, 2026-09-11).
+    flags = resolve_flags(registration)
+    env = build_environment(flags)
+    # _load_lived_repo reads frame["resolved_flags"], so it is handed the
+    # SAME flags dict rather than the RS1 frame's own — the RS1 frame was
+    # resolved for a different battery and its resolved_flags lacks the C2
+    # frame keys (measured: KeyError 'ephemeral').
+    frame = dict(load_runtime_frame(registration))
+    frame['resolved_flags'] = flags
     e2e, model, tokenizer, repo, model_info = rs1._load_lived_repo(
         scratch, frame)
-    del det1_2  # imported only to fail fast if the GPU stack is absent
     encode = (lambda text: tokenizer.encode(text, add_special_tokens=False))
     return {
         'repo': repo, 'e2e': e2e, 'encode': encode, 'scratch': scratch,
-        'model_info': model_info, 'flags': frame['resolved_flags'],
-        'environment': c2.environment(frame['resolved_flags']),
+        'model_info': model_info, 'flags': flags, 'environment': env,
     }
 
 
@@ -321,13 +498,21 @@ def _load_fake(checkpoint_dir, registration):
         repo.arena.grafts[idx]['no_fold'] = True
     repo._sync_lifecycle()
     repo.arena.m.fold_output = None
+    # THE SAME flags object and THE SAME environment() call the GPU arm
+    # makes. This is the whole point of the 2026-09-11 repair: a shape error
+    # in either now fails HERE, on CPU, instead of on the card.
+    flags = resolve_flags(registration)
+    env = build_environment(flags)
+    # The frozen frame is READ on the fake path too, so a missing or drifted
+    # frame is a CPU failure. Only the model and tokenizer are stubbed.
+    frame = load_runtime_frame(registration)
     return {
         'repo': repo, 'e2e': e2e, 'encode': repo.arena.encode,
         'scratch': scratch, 'monkeypatch': mp,
         'model_info': {'id': 'CPU_DOUBLE_scripts.grm_c7_diagnose',
-                       'note': 'NOT a model-quality measurement'},
-        'flags': {'arena_width': int(repo.arena.width)},
-        'environment': dict(os.environ),
+                       'note': 'NOT a model-quality measurement',
+                       'frame_schema': frame.get('schema')},
+        'flags': flags, 'environment': env,
     }
 
 
@@ -585,7 +770,14 @@ def main(argv=None):
     ap.add_argument('--rule', default=None,
                     help='pin GRM_ADMISSION_RULE after environment(flags)')
     ap.add_argument('--limit', type=int, default=None)
-    ap.add_argument('--lease-seconds', type=int, default=LEASE_SECONDS)
+    ap.add_argument('--dry-run', action='store_true',
+                    help='check every declared input and precondition, '
+                         'report the missing ones, and exit. Takes NO lease '
+                         'and loads nothing.')
+    ap.add_argument('--lease-seconds', type=_lease_seconds,
+                    default=LEASE_SECONDS,
+                    help=f'GPU lease per invocation (default '
+                         f'{LEASE_SECONDS}s; house cap 590s)')
     ap.add_argument('--lock-wait-seconds', type=int,
                     default=LOCK_WAIT_SECONDS)
     args = ap.parse_args(argv)
@@ -597,6 +789,10 @@ def main(argv=None):
     # (1) DRIFT FIRST — before any load, any lease, any card. The amendment
     # chain is walked first so the input set under test is the CURRENT one.
     base_sha, amendments = load_amendments(args.registration)
+    # Declarations an amendment ADDED (frame, flags source, preconditions)
+    # must be visible to everything downstream, or the worker would keep
+    # reading the registration's original, incomplete view.
+    registration = effective_registration(registration, amendments)
     pinned = effective_pinned_inputs(registration, amendments)
     count = verify_pinned_inputs(pinned)
     provenance = verify_self(amendments)
@@ -608,12 +804,33 @@ def main(argv=None):
     print(f'worker sha256={provenance["sha256"]} '
           f'matches_amendment={provenance["matches_amendment"]}', flush=True)
 
+    # (2) PRECONDITIONS — every declared input and dependency, BEFORE any
+    # lease. The first three lead GPU attempts each burned a lease slot
+    # discovering one missing dependency at a time; this reports them all at
+    # once and never touches the card.
+    pre = check_preconditions(registration, fake=bool(args.fake))
+    for check in pre['checks']:
+        mark = 'ok ' if check['ok'] else 'MISSING'
+        print(f"  {mark} {check['kind']:13s} {check['name']:22s} "
+              f"{check['path']}"
+              + (f"  [{check['detail']}]" if check['detail'] else ''),
+              flush=True)
+    if args.dry_run:
+        print(json.dumps({'preconditions_ok': pre['ok'],
+                          'missing': pre['missing']},
+                         indent=1, sort_keys=True), flush=True)
+        return 0 if pre['ok'] else 2
+    if not pre['ok']:
+        raise ContrastError(
+            'A1_PRECONDITION_MISSING: '
+            + json.dumps(pre['missing'], sort_keys=True))
+
     rows = plan_rows(registration)
     if args.limit:
         rows = rows[:args.limit]
     pending = [r for r in rows if not receipt_path(out_dir, r).exists()]
     print(f'rows total={len(rows)} pending={len(pending)} '
-          f'fake={bool(args.fake)}', flush=True)
+          f'fake={bool(args.fake)} lease_s={args.lease_seconds}', flush=True)
 
     def execute():
         for row in rows:
@@ -623,17 +840,30 @@ def main(argv=None):
                 'EXACT' if result.get('exact_correct') else 'MISS')
             print(f"  {row['row_id']:34s} {status}", flush=True)
 
+    lease_expired = False
     if args.fake:
         # No card, so no lease: taking the GPU flock on the CPU gate would
         # block the operator for nothing.
         execute()
     else:
         from scripts.grm_cmc1_gpu_arms import gpu_lease
-        with gpu_lease(int(args.lease_seconds),
-                       int(args.lock_wait_seconds)):
-            execute()
+        try:
+            with gpu_lease(int(args.lease_seconds),
+                           int(args.lock_wait_seconds)):
+                execute()
+        except TimeoutError:
+            # EXPECTED under a <=590s house lease: the rows are create-only
+            # and resumable, so an expired lease is a pause, not a failure.
+            # The operator re-runs the same --resume line until pending=0.
+            lease_expired = True
+            print('lease expired; finished rows are durable, re-run '
+                  '--resume to continue', flush=True)
 
     summary = summarize(out_dir)
+    remaining = [r for r in rows if not receipt_path(out_dir, r).exists()]
+    summary['pending'] = len(remaining)
+    summary['lease_expired'] = bool(lease_expired)
+    summary['complete'] = not remaining
     # The summary is a DERIVED view and is rewritten on each invocation; the
     # per-row receipts underneath it stay create-only.
     (out_dir / 'summary.json').write_text(
@@ -648,6 +878,11 @@ def main(argv=None):
         structural_ok = (summary['controls_broken'] == 0
                          and summary['rows'] > 0)
         return 0 if structural_ok else 1
+    if remaining:
+        # Rows still pending: NOT a verdict. Exit 4 so the operator's loop
+        # can tell "re-run me" apart from "the prediction failed" (1).
+        print(f'pending={len(remaining)} — re-run with --resume', flush=True)
+        return 4
     return 0 if summary['prediction_met'] else 1
 
 
