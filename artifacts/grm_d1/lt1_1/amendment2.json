@@ -1,0 +1,115 @@
+{
+  "amendment": 2,
+  "arms": {
+    "A": {
+      "alias_fold_merge": false,
+      "arm": "A",
+      "budget_gpu_hours": 2.06,
+      "budget_gpu_seconds": 7410,
+      "env_after_environment_flags": {
+        "GRM_ADMISSION_RULE": "margin_first"
+      },
+      "invocation": {
+        "dry_run": "python3 scripts/grm_lt1_1.py --arm A --dry-run",
+        "preflight": "python3 scripts/grm_lt1_1.py --arm A --preflight",
+        "resume": "python3 scripts/grm_lt1_1.py --arm A --resume",
+        "summary": "python3 scripts/grm_lt1_1.py --arm A --summary"
+      },
+      "out_dir": "artifacts/grm_d1/lt1_1/run_A",
+      "predictions": {
+        "aliases": "0/5 wrong rows fixed (recall_7_* stay wrong)",
+        "corrections": "5/5",
+        "fresh": "6/7",
+        "recap": "unpredicted memory-side; oracle 5/5 gated on CPU"
+      },
+      "superseded_budget_gpu_seconds": 6120
+    },
+    "A+": {
+      "alias_fold_merge": true,
+      "arm": "A+",
+      "budget_gpu_hours": 2.06,
+      "budget_gpu_seconds": 7410,
+      "env_after_environment_flags": {
+        "GRM_ADMISSION_RULE": "margin_first",
+        "GRM_ALIAS_FOLD_MERGE": "1"
+      },
+      "invocation": {
+        "dry_run": "python3 scripts/grm_lt1_1.py --arm A+ --dry-run",
+        "preflight": "python3 scripts/grm_lt1_1.py --arm A+ --preflight",
+        "resume": "python3 scripts/grm_lt1_1.py --arm A+ --resume",
+        "summary": "python3 scripts/grm_lt1_1.py --arm A+ --summary"
+      },
+      "out_dir": "artifacts/grm_d1/lt1_1/run_Aplus",
+      "predictions": {
+        "aliases": "4/5 of the wrong rows fixed; the lead proposed >= 3/5 and that bar is also met",
+        "corrections": "5/5",
+        "fresh": "6/7",
+        "prediction_note": "The lead proposed aliases >= 3/5. I register 4/5 and state why: the D1 CPU check (artifacts/grm_d1/alias_cpu_aplus.json) shows the fold firing, the digest naming BOTH names, being ADMITTED and MOUNTED, and serving the right value for 10/10 alias probes at every distance, with a 78-token digest inside the 96 width. The one reservation that keeps me off 5/5 is that the CPU reader is a regex double: the GPU reader must still choose the digest value over the surrounding prose, and LT1 already showed one long-distance ladder drop (recall_3_150) that no lineage change addresses. 4/5 prices exactly one such drop.",
+        "recap": ">= 3/5 memory-side"
+      },
+      "superseded_budget_gpu_seconds": 6120
+    }
+  },
+  "budget_correction": {
+    "basis": "run_cell charges cell[\"lease_seconds\"], not the estimate, and rails on accounting()+lease. The ceiling is therefore the reservation sum; the estimate is what the run is expected to actually spend.",
+    "corrected_gpu_hours_per_arm": 2.06,
+    "corrected_gpu_seconds_per_arm": 7410,
+    "discovered_by": "python3 scripts/grm_lt1_1.py --arm A --dry-run (within_budget: false)",
+    "projected_gpu_hours": 1.25,
+    "projected_seconds": 4507.871,
+    "reservation_gpu_hours": 2.06,
+    "reservation_seconds": 7410,
+    "superseded_gpu_hours_per_arm": 1.7,
+    "superseded_gpu_seconds_per_arm": 6120,
+    "why": "Amendment 1 registered 1.70 GPU-h per arm. `--dry-run` against the real cell list showed the 26 cells reserve 7410 s (2.06 GPU-h) and `run_cell` charges the lease, so the old ceiling would have tripped COMBINED_GPU_BUDGET_RAIL mid-campaign. Expected spend is unchanged at 1.25 GPU-h per arm; only the ceiling moves. LEAD DECISION: this is a budget increase to 2.06 GPU-h per arm, 4.12 for both."
+  },
+  "budget_gpu_hours_total": 4.12,
+  "budget_gpu_seconds_per_arm": 7410,
+  "budget_gpu_seconds_total": 14820,
+  "follow_up_instruction": "Lead follow-up to GRM-D1 (2026-09-11): the emitted lead_commands did not run -- they described `grm_lt1.py --run --arm ...`, an interface that does not exist. Build scripts/grm_lt1_1.py driving the EXISTING LT1 worker machinery (leased cells, lease-parent contract, create-only receipts, preflight/dry-run/resume/summary), one arm per invocation, distinct out dirs, the flag pinned after environment(flags) and read back; prove it with a dry-run, a fake 2-cell execution per arm and a resume; bind the runner in amendment 2; regenerate lead_commands from the ACTUAL argparse with a test that runs each emitted command.",
+  "order": "orders/GRM_D1_LT1_RESIDUAL_DIAGNOSIS.md",
+  "order_sha256": "6ae0f52af0059f0a93b66ae37dd442761a32409b5f3f17b027c4b8fa2c0efb46",
+  "previous_amendment": "artifacts/grm_d1/lt1_1/amendment1.json",
+  "previous_amendment_sha256": "0a5754cd3e5bc91c4c5428228ed4164534c5d281d2aa0c7410e8c7f8b145ce0e",
+  "prior_art": [
+    "LT1 worker machinery reused by redirection: scripts/grm_lt1_worker.py execute/run_cell/pending and scripts/grm_lt1.py (GRM contributors, 2026)",
+    "One-subprocess-per-cell fake loop: tests/test_grm_lt1_fix6.py and scripts/grm_lt1_worker_cpu.py (GRM contributors, 2026)",
+    "Pin-after-strip-then-read-back: R1 pin_rule, scripts/grm_r1_replay.py:242 (GRM contributors, 2026)",
+    "Reservation-vs-estimate accounting: scripts/grm_lt1_worker.py run_cell budget rail (GRM contributors, 2026)",
+    "Binding an executable entry point as a registered input, and deriving the ceiling from the cell list: no prior art known to me"
+  ],
+  "process_safety": {
+    "arms": "A and A+ never run concurrently on the same GPU",
+    "git": "lead commits; the seat never runs git",
+    "gpu": "only --resume takes the shared lease, through LT1's own run_cell (flock + nvidia-smi idle check + no-kill child wait); --preflight/--dry-run/--summary/--fake never do"
+  },
+  "proof": {
+    "command_gate": "tests/test_grm_lt1_1_runner.py::test_every_emitted_command_actually_runs executes every emitted command with --dry-run and requires exit 0",
+    "dry_run": "26 cells enumerated per arm with estimates and the reservation sum; both arms exit 0",
+    "evidence_class": "CPU fake worker (receipt plumbing; NOT a language-model quality measurement)",
+    "fake_execution": "2 cells per arm executed on the CPU double, one subprocess per cell, writing controller.json / worker.json / reservation.json / checkpoint",
+    "resume": "a third invocation skips the COMPLETE cells and runs only the next one",
+    "summary": "--summary reads those receipts and scores them with LT1's own value-span scorer"
+  },
+  "purpose": "Bind the LT1.1 runner as a registered input and correct the per-arm budget to the reservation sum the machinery actually charges.",
+  "registration": "artifacts/grm_d1/lt1_1/registration.json",
+  "registration_sha256": "02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8",
+  "runner": {
+    "arm_pin": "R1 pin_rule idiom: the alias flag is pinned AFTER `environment(flags)` strips every ambient GRM_*, read back through `alias_fold_enabled()`, asserted, and restored on context exit.",
+    "entry_points": [
+      "--preflight",
+      "--dry-run",
+      "--resume",
+      "--summary",
+      "--fake",
+      "--worker",
+      "--fake-cell"
+    ],
+    "path": "scripts/grm_lt1_1.py",
+    "reuse": "Parameterized, NOT forked. `grm_lt1_worker.execute` is already argument-driven (cell, directory, registration, loader, run, fake); the runner redirects the only three module-level seams it reads -- `lt.FIX`, `lt.binding`, `worker.RUN` -- and reuses execute / run_cell / pending unchanged. No cell, lease, checkpoint, accounting or scoring logic is reimplemented.",
+    "sha256": "78fd7699acda6e0bd90daba512bbc6c1e68c05d7b57ca6066cd3ede34c3da3d5",
+    "tests": "tests/test_grm_lt1_1_runner.py",
+    "tests_sha256": "60c0eaf9849f11079d75ea9b558bd3f52f1af301d8bbc10e3e250d0244868ae3"
+  },
+  "schema": "grm.lt1_1.amendment2.v1"
+}

@@ -180,6 +180,7 @@ finding.
 | `scripts/grm_d1_emit_report.py` | this report and the ledger |
 | `tests/test_grm_d1_alias_cpu.py` | 14 tests |
 | `tests/test_grm_d1_amendment1.py` | 17 tests |
+| `tests/test_grm_d1_amendment2.py` | 18 tests |
 | `tests/test_grm_d1_cause_table.py` | 12 tests |
 | `tests/test_grm_d1_recap.py` | 10 tests |
 | `tests/test_grm_d1_registration.py` | 18 tests |
@@ -434,6 +435,78 @@ uses, routing admits it, the ladder mounts it, and it fits the
 width. It does **not** show language-model recall: the reader is a
 regex stub. The GPU A+ arm is the test of sufficiency, and it is
 registered, not run.
+
+## 5c. Follow-up 2: the runner (the registration was not runnable)
+
+**The defect.** The `lead_commands.txt` this report previously
+described did not run. It named
+`scripts/grm_lt1.py --run --arm A --registration … --out …`; that
+script's CLI is `[--preflight] [--summary] [--cell] [--resume]
+[--dry-run]` and it reads its registration from a fixed path. I
+emitted an interface that does not exist and never executed it;
+the only test on those commands compared a sha string. A
+registration is not runnable until a worker executes it.
+
+**The runner.** `scripts/grm_lt1_1.py`, sha256
+`78fd7699acda6e0bd90daba512bbc6c1e68c05d7b57ca6066cd3ede34c3da3d5`,
+one arm per invocation, bound as a registered input by amendment 2.
+
+*Parameterized, not forked.* `grm_lt1_worker.execute` is already
+argument-driven (cell, directory, registration, loader, run, fake)
+-- `scripts/grm_lt1_worker_cpu.py` already reuses it that way.
+Only three things in that module are bound to LT1 module state:
+`lt.FIX`, `lt.binding` and `RUN`. The runner redirects exactly
+those three and calls `execute` / `run_cell` / `pending`
+unchanged. `test_the_reuse_claim_is_stated_and_true` greps the
+runner for `def execute(` / `def run_cell(` / `def pending(` and
+fails if any reappears, so "not forked" is checked, not asserted.
+
+*Proof it runs* (`artifacts/grm_d1/lt1_1/proof/`):
+
+- `--arm A --dry-run` -> exit 0, 26 cells, next `A-001-008`, estimate 4508 s, reservation 7410 s, budget 7410 s, within_budget True, alias pin False
+- `--arm A+ --dry-run` -> exit 0, 26 cells, next `A-001-008`, estimate 4508 s, reservation 7410 s, budget 7410 s, within_budget True, alias pin True
+- `--arm A --fake --limit 2` and `--arm A+ --fake --limit 2` -> 2
+  cells each, one subprocess per cell, writing real
+  `controller.json` / `worker.json` / `reservation.json` /
+  `checkpoint/` under `proof/fake/{A,Aplus}/cells/`.
+- `--summary` reads those receipts: 2/26 complete per arm, arm
+  bindings differ (`alias_fold_merge` False vs True).
+- resume: a third `--fake --limit 3` skipped `A-001-008`,
+  `A-009-016` and ran only `A-017-024`; `--summary` then reports
+  3/26 complete, 3 measured recalls, `partial raw rows`.
+
+**Amendment 2** — `artifacts/grm_d1/lt1_1/amendment2.json`, sha256
+`3bf21605058c86b15d3cb91784ea39409844838f20130b262dbadf1948417380`, chained to amendment 1
+`0a5754cd3e5bc91c…`. It binds the runner and
+corrects the budget.
+
+**A second defect the dry-run caught — a budget that would have
+railed.** Amendment 1 registered 6120 s (1.70 GPU-h) per arm. The
+26 cells reserve `sum(lease_seconds) = 7410 s` (2.06 GPU-h), and
+`run_cell` charges the LEASE, not the estimate, railing on
+`accounting()+lease`. The old ceiling sat below the reservation
+sum and would have tripped `COMBINED_GPU_BUDGET_RAIL` partway
+through a campaign that was going to finish. Amendment 2 raises
+the ceiling to the reservation sum.
+
+| | per arm | both arms |
+|---|---|---|
+| amendment 1 ceiling (superseded) | 1.70 GPU-h | 3.40 GPU-h |
+| amendment 2 ceiling (reservation) | **2.06 GPU-h** | **4.12 GPU-h** |
+| projected actual spend | 1.25 GPU-h | 2.50 GPU-h |
+
+**This is a budget INCREASE and needs the lead's eye.** Expected
+spend is unchanged at 1.25 GPU-h per arm; only the ceiling moves,
+to a number the machinery can honour. Registered before any run.
+
+**The gate that would have caught the original mistake.**
+`tests/test_grm_lt1_1_runner.py::test_every_emitted_command_
+actually_runs` parses every `python3 scripts/…` line out of
+`lead_commands.txt`, appends `--dry-run`, executes it, and
+requires exit 0. A companion test
+(`test_the_old_broken_invocation_would_have_been_caught`) runs the
+exact shape I shipped and asserts it fails with "unrecognized
+arguments", so the gate is proven to have teeth.
 
 ## 6. Deviations, RED items, process safety
 

@@ -542,6 +542,104 @@ def report():
         add('registered, not run.')
         add('')
 
+    # -------------------------------------------------- follow-up 2: runner
+    amend2_path = OUT / 'lt1_1/amendment2.json'
+    if amend2_path.exists():
+        a2 = json.loads(amend2_path.read_text())
+        a2_sha = (OUT / 'lt1_1/amendment2.sha256').read_text().split()[0]
+        correction = a2['budget_correction']
+        add('## 5c. Follow-up 2: the runner (the registration was not runnable)')
+        add('')
+        add('**The defect.** The `lead_commands.txt` this report previously')
+        add('described did not run. It named')
+        add('`scripts/grm_lt1.py --run --arm A --registration … --out …`; that')
+        add("script's CLI is `[--preflight] [--summary] [--cell] [--resume]")
+        add('[--dry-run]` and it reads its registration from a fixed path. I')
+        add('emitted an interface that does not exist and never executed it;')
+        add('the only test on those commands compared a sha string. A')
+        add('registration is not runnable until a worker executes it.')
+        add('')
+        add('**The runner.** `scripts/grm_lt1_1.py`, sha256')
+        add('`%s`,' % a2['runner']['sha256'])
+        add('one arm per invocation, bound as a registered input by amendment 2.')
+        add('')
+        add('*Parameterized, not forked.* `grm_lt1_worker.execute` is already')
+        add('argument-driven (cell, directory, registration, loader, run, fake)')
+        add('-- `scripts/grm_lt1_worker_cpu.py` already reuses it that way.')
+        add('Only three things in that module are bound to LT1 module state:')
+        add('`lt.FIX`, `lt.binding` and `RUN`. The runner redirects exactly')
+        add('those three and calls `execute` / `run_cell` / `pending`')
+        add('unchanged. `test_the_reuse_claim_is_stated_and_true` greps the')
+        add('runner for `def execute(` / `def run_cell(` / `def pending(` and')
+        add('fails if any reappears, so "not forked" is checked, not asserted.')
+        add('')
+        add('*Proof it runs* (`artifacts/grm_d1/lt1_1/proof/`):')
+        add('')
+        for name, arm in (('A', 'A'), ('Aplus', 'A+')):
+            path = OUT / ('lt1_1/proof/dry_run_%s.json' % name)
+            if path.exists():
+                d = json.loads(path.read_text())
+                add('- `--arm %s --dry-run` -> exit 0, %d cells, next `%s`, '
+                    'estimate %.0f s, reservation %d s, budget %d s, '
+                    'within_budget %s, alias pin %s'
+                    % (arm, d['cells'], d['next_cell'], d['estimate_seconds'],
+                       d['lease_seconds'], d['budget_gpu_seconds'],
+                       d['within_budget'], d['pinned']['alias_fold_merge']))
+        add('- `--arm A --fake --limit 2` and `--arm A+ --fake --limit 2` -> 2')
+        add('  cells each, one subprocess per cell, writing real')
+        add('  `controller.json` / `worker.json` / `reservation.json` /')
+        add('  `checkpoint/` under `proof/fake/{A,Aplus}/cells/`.')
+        add('- `--summary` reads those receipts: 2/26 complete per arm, arm')
+        add('  bindings differ (`alias_fold_merge` False vs True).')
+        add('- resume: a third `--fake --limit 3` skipped `A-001-008`,')
+        add('  `A-009-016` and ran only `A-017-024`; `--summary` then reports')
+        add('  3/26 complete, 3 measured recalls, `partial raw rows`.')
+        add('')
+        add('**Amendment 2** — `artifacts/grm_d1/lt1_1/amendment2.json`, sha256')
+        add('`%s`, chained to amendment 1' % a2_sha)
+        add('`%s…`. It binds the runner and' % a2['previous_amendment_sha256'][:16])
+        add('corrects the budget.')
+        add('')
+        add('**A second defect the dry-run caught — a budget that would have')
+        add('railed.** Amendment 1 registered %d s (%.2f GPU-h) per arm. The'
+            % (correction['superseded_gpu_seconds_per_arm'],
+               correction['superseded_gpu_hours_per_arm']))
+        add('26 cells reserve `sum(lease_seconds) = %d s` (%.2f GPU-h), and'
+            % (correction['reservation_seconds'],
+               correction['reservation_gpu_hours']))
+        add('`run_cell` charges the LEASE, not the estimate, railing on')
+        add('`accounting()+lease`. The old ceiling sat below the reservation')
+        add('sum and would have tripped `COMBINED_GPU_BUDGET_RAIL` partway')
+        add('through a campaign that was going to finish. Amendment 2 raises')
+        add('the ceiling to the reservation sum.')
+        add('')
+        add('| | per arm | both arms |')
+        add('|---|---|---|')
+        add('| amendment 1 ceiling (superseded) | %.2f GPU-h | %.2f GPU-h |'
+            % (correction['superseded_gpu_hours_per_arm'],
+               2 * correction['superseded_gpu_hours_per_arm']))
+        add('| amendment 2 ceiling (reservation) | **%.2f GPU-h** | **%.2f GPU-h** |'
+            % (correction['corrected_gpu_hours_per_arm'],
+               a2['budget_gpu_hours_total']))
+        add('| projected actual spend | %.2f GPU-h | %.2f GPU-h |'
+            % (correction['projected_gpu_hours'],
+               2 * correction['projected_gpu_hours']))
+        add('')
+        add('**This is a budget INCREASE and needs the lead\'s eye.** Expected')
+        add('spend is unchanged at %.2f GPU-h per arm; only the ceiling moves,'
+            % correction['projected_gpu_hours'])
+        add('to a number the machinery can honour. Registered before any run.')
+        add('')
+        add('**The gate that would have caught the original mistake.**')
+        add('`tests/test_grm_lt1_1_runner.py::test_every_emitted_command_')
+        add('actually_runs` parses every `python3 scripts/…` line out of')
+        add('`lead_commands.txt`, appends `--dry-run`, executes it, and')
+        add('requires exit 0. A companion test')
+        add('(`test_the_old_broken_invocation_would_have_been_caught`) runs the')
+        add('exact shape I shipped and asserts it fails with "unrecognized')
+        add('arguments", so the gate is proven to have teeth.')
+        add('')
+
     add('## 6. Deviations, RED items, process safety')
     add('')
     add('**Deviations from the order**')

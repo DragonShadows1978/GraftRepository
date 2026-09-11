@@ -1,0 +1,12 @@
+{
+  "arm": "A",
+  "mode": "CPU_FAKE",
+  "gpu_executed": false,
+  "cells_written": [
+    "artifacts/grm_d1/lt1_1/proof/fake/A/cells/A-001-008",
+    "artifacts/grm_d1/lt1_1/proof/fake/A/cells/A-009-016"
+  ],
+  "cells_skipped": [],
+  "out_dir": "artifacts/grm_d1/lt1_1/proof/fake/A",
+  "evidence_class": "CPU fake worker (receipt plumbing; NOT a language-model quality measurement)"
+}
