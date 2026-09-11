@@ -1,0 +1,29 @@
+{
+  "accepted": true,
+  "attempts": [
+    {
+      "coverage": 1.0,
+      "hit_count": 12,
+      "need_count": 12,
+      "prompt_index": 0,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "For the archive: the  current C7-Outpost-08 value is Slate-1208, and C7-Handle-08 is an alias for C7-Outpost-08. The current C7-Outpost-09 value is Slate-1209, and C7-Handle-09 is an alias for C7-Outpost-09. The current C7-Outpost-10 value is Slate-1210, and C7-Handle-10 is an alias for C7-Outpost-10. The current C7-Outpost-11 value is Slate-1211, and C7-Handle-11 is an alias for C7-Outpost-11."
+    }
+  ],
+  "digest_text": "For the archive: the  current C7-Outpost-08 value is Slate-1208, and C7-Handle-08 is an alias for C7-Outpost-08. The current C7-Outpost-09 value is Slate-1209, and C7-Handle-09 is an alias for C7-Outpost-09. The current C7-Outpost-10 value is Slate-1210, and C7-Handle-10 is an alias for C7-Outpost-10. The current C7-Outpost-11 value is Slate-1211, and C7-Handle-11 is an alias for C7-Outpost-11.",
+  "error": null,
+  "result": {
+    "accepted": true,
+    "best_cov": 1.0,
+    "hit_count": 12,
+    "need_count": 12
+  },
+  "source_payload_sha256": {
+    "0070.npz": "ecffd30855022adc6698559110eccc56fbb8a908b84fe667295bf35c1d5f2551",
+    "0071.npz": "e390a11dfd007b7a125e3a1007c8634510b4ca957eb56d91cfd14152b7be9d4d",
+    "0072.npz": "4dda4b7669fac699414ebc60bff1161e2f28807870852cb17876f9280aa00009",
+    "0073.npz": "47f5d81ae9cbc66c75c9f3288f5b250d6d9d6ebe1a146c5f2f4827147f1f436b"
+  },
+  "turn": 92
+}

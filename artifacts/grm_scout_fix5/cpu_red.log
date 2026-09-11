@@ -1,0 +1,761 @@
+FFFFFFFFFFFFFFFFFFFFFFFFFF...FF...............................           [100%]
+=================================== FAILURES ===================================
+____________________ test_r2_enumerated_facts_fold_cpu[008] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_enumerated_facts_fold_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921df8dd0>
+path = 'artifacts/grm_c7/r2/cells/A-001-008/folds/008-533d6c5a5b0c4e568b5d9f7410ce2587/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_enumerated_facts_fold_cpu(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            a.m = EnumeratedModel(a.m.codec)
+            start, ids = seed(a, path)
+            result = a.consolidate(ids)
+            need = a._fact_set([s['text'] for s in start['sources']])
+            receipt = {'turn': start['turn'], 'result': a.last_consolidation_result,
+                       'attempts': a.last_consolidation_attempts, 'digest_text': result[1],
+                       'prompts': [c['input'] for c in a.m.calls if c['initial']],
+                       'budget': max(120, 24*len(need))}
+            if os.environ.get('GRM_FIX5_RECEIPTS'):
+                target = Path(os.environ['GRM_FIX5_RECEIPTS'])
+                target.mkdir(parents=True, exist_ok=True)
+                with (target/f'{start["turn"]:03d}.json').open('x') as f:
+                    json.dump(receipt, f, indent=2, sort_keys=True)
+>           assert result[0] is not None, receipt
+E           AssertionError: {'attempts': [{'coverage': 0.0, 'hit_count': 0, 'need_count': 10, 'prompt_index': 0, ...}, {'coverage': 0.0, 'hit_coun...ime, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:'], ...}
+E           assert None is not None
+
+tests/test_grm_scout_fix5.py:65: AssertionError
+____________________ test_r2_enumerated_facts_fold_cpu[017] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_enumerated_facts_fold_1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921df9640>
+path = 'artifacts/grm_c7/r2/cells/A-017-023/folds/017-ac4a09b2490441678f6a5e9289942d5d/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_enumerated_facts_fold_cpu(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            a.m = EnumeratedModel(a.m.codec)
+            start, ids = seed(a, path)
+            result = a.consolidate(ids)
+            need = a._fact_set([s['text'] for s in start['sources']])
+            receipt = {'turn': start['turn'], 'result': a.last_consolidation_result,
+                       'attempts': a.last_consolidation_attempts, 'digest_text': result[1],
+                       'prompts': [c['input'] for c in a.m.calls if c['initial']],
+                       'budget': max(120, 24*len(need))}
+            if os.environ.get('GRM_FIX5_RECEIPTS'):
+                target = Path(os.environ['GRM_FIX5_RECEIPTS'])
+                target.mkdir(parents=True, exist_ok=True)
+                with (target/f'{start["turn"]:03d}.json').open('x') as f:
+                    json.dump(receipt, f, indent=2, sort_keys=True)
+>           assert result[0] is not None, receipt
+E           AssertionError: {'attempts': [{'coverage': 0.0, 'hit_count': 0, 'need_count': 10, 'prompt_index': 0, ...}, {'coverage': 0.0, 'hit_coun...ime, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:'], ...}
+E           assert None is not None
+
+tests/test_grm_scout_fix5.py:65: AssertionError
+____________________ test_r2_enumerated_facts_fold_cpu[026] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_enumerated_facts_fold_2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921e17f20>
+path = 'artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/folds/026-681f4264c9fa4c2c9a7096d30106a8a0/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_enumerated_facts_fold_cpu(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            a.m = EnumeratedModel(a.m.codec)
+            start, ids = seed(a, path)
+            result = a.consolidate(ids)
+            need = a._fact_set([s['text'] for s in start['sources']])
+            receipt = {'turn': start['turn'], 'result': a.last_consolidation_result,
+                       'attempts': a.last_consolidation_attempts, 'digest_text': result[1],
+                       'prompts': [c['input'] for c in a.m.calls if c['initial']],
+                       'budget': max(120, 24*len(need))}
+            if os.environ.get('GRM_FIX5_RECEIPTS'):
+                target = Path(os.environ['GRM_FIX5_RECEIPTS'])
+                target.mkdir(parents=True, exist_ok=True)
+                with (target/f'{start["turn"]:03d}.json').open('x') as f:
+                    json.dump(receipt, f, indent=2, sort_keys=True)
+>           assert result[0] is not None, receipt
+E           AssertionError: {'attempts': [{'coverage': 0.0, 'hit_count': 0, 'need_count': 8, 'prompt_index': 0, ...}, {'coverage': 0.0, 'hit_count...ime, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:'], ...}
+E           assert None is not None
+
+tests/test_grm_scout_fix5.py:65: AssertionError
+____________________ test_r2_enumerated_facts_fold_cpu[055] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_enumerated_facts_fold_3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921c5bb30>
+path = 'artifacts/grm_c7/r2/fix4_attempt_1/cells/A-048-055/folds/055-1b44742dab454a6685c75b4e4a614895/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_enumerated_facts_fold_cpu(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            a.m = EnumeratedModel(a.m.codec)
+            start, ids = seed(a, path)
+            result = a.consolidate(ids)
+            need = a._fact_set([s['text'] for s in start['sources']])
+            receipt = {'turn': start['turn'], 'result': a.last_consolidation_result,
+                       'attempts': a.last_consolidation_attempts, 'digest_text': result[1],
+                       'prompts': [c['input'] for c in a.m.calls if c['initial']],
+                       'budget': max(120, 24*len(need))}
+            if os.environ.get('GRM_FIX5_RECEIPTS'):
+                target = Path(os.environ['GRM_FIX5_RECEIPTS'])
+                target.mkdir(parents=True, exist_ok=True)
+                with (target/f'{start["turn"]:03d}.json').open('x') as f:
+                    json.dump(receipt, f, indent=2, sort_keys=True)
+>           assert result[0] is not None, receipt
+E           AssertionError: {'attempts': [{'coverage': 0.0, 'hit_count': 0, 'need_count': 8, 'prompt_index': 0, ...}, {'coverage': 0.0, 'hit_count...ime, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:'], ...}
+E           assert None is not None
+
+tests/test_grm_scout_fix5.py:65: AssertionError
+____________________ test_r2_enumerated_facts_fold_cpu[074] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_enumerated_facts_fold_4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921c5a120>
+path = 'artifacts/grm_c7/r2/fix4_attempt_1/cells/A-071-077/folds/074-542293a8731d432da4e42a6af5120f3c/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_enumerated_facts_fold_cpu(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            a.m = EnumeratedModel(a.m.codec)
+            start, ids = seed(a, path)
+            result = a.consolidate(ids)
+            need = a._fact_set([s['text'] for s in start['sources']])
+            receipt = {'turn': start['turn'], 'result': a.last_consolidation_result,
+                       'attempts': a.last_consolidation_attempts, 'digest_text': result[1],
+                       'prompts': [c['input'] for c in a.m.calls if c['initial']],
+                       'budget': max(120, 24*len(need))}
+            if os.environ.get('GRM_FIX5_RECEIPTS'):
+                target = Path(os.environ['GRM_FIX5_RECEIPTS'])
+                target.mkdir(parents=True, exist_ok=True)
+                with (target/f'{start["turn"]:03d}.json').open('x') as f:
+                    json.dump(receipt, f, indent=2, sort_keys=True)
+>           assert result[0] is not None, receipt
+E           AssertionError: {'attempts': [{'coverage': 0.0, 'hit_count': 0, 'need_count': 8, 'prompt_index': 0, ...}, {'coverage': 0.0, 'hit_count...ime, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:'], ...}
+E           assert None is not None
+
+tests/test_grm_scout_fix5.py:65: AssertionError
+____________________ test_r2_enumerated_facts_fold_cpu[085] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_enumerated_facts_fold_5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921e16ae0>
+path = 'artifacts/grm_c7/r2/fix4_attempt_1/cells/A-078-085/folds/085-d15b5a88d2d94e56a2915cde4a8b0dfa/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_enumerated_facts_fold_cpu(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            a.m = EnumeratedModel(a.m.codec)
+            start, ids = seed(a, path)
+            result = a.consolidate(ids)
+            need = a._fact_set([s['text'] for s in start['sources']])
+            receipt = {'turn': start['turn'], 'result': a.last_consolidation_result,
+                       'attempts': a.last_consolidation_attempts, 'digest_text': result[1],
+                       'prompts': [c['input'] for c in a.m.calls if c['initial']],
+                       'budget': max(120, 24*len(need))}
+            if os.environ.get('GRM_FIX5_RECEIPTS'):
+                target = Path(os.environ['GRM_FIX5_RECEIPTS'])
+                target.mkdir(parents=True, exist_ok=True)
+                with (target/f'{start["turn"]:03d}.json').open('x') as f:
+                    json.dump(receipt, f, indent=2, sort_keys=True)
+>           assert result[0] is not None, receipt
+E           AssertionError: {'attempts': [{'coverage': 0.0, 'hit_count': 0, 'need_count': 9, 'prompt_index': 0, ...}, {'coverage': 0.0, 'hit_count...ime, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:'], ...}
+E           assert None is not None
+
+tests/test_grm_scout_fix5.py:65: AssertionError
+____________________ test_r2_enumerated_facts_fold_cpu[091] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_enumerated_facts_fold_6')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921c5aab0>
+path = 'artifacts/grm_c7/r2/fix4_attempt_1/cells/A-086-093/folds/091-b0a742d7fa0f498ea4ab9d653be59f4c/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_enumerated_facts_fold_cpu(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            a.m = EnumeratedModel(a.m.codec)
+            start, ids = seed(a, path)
+            result = a.consolidate(ids)
+            need = a._fact_set([s['text'] for s in start['sources']])
+            receipt = {'turn': start['turn'], 'result': a.last_consolidation_result,
+                       'attempts': a.last_consolidation_attempts, 'digest_text': result[1],
+                       'prompts': [c['input'] for c in a.m.calls if c['initial']],
+                       'budget': max(120, 24*len(need))}
+            if os.environ.get('GRM_FIX5_RECEIPTS'):
+                target = Path(os.environ['GRM_FIX5_RECEIPTS'])
+                target.mkdir(parents=True, exist_ok=True)
+                with (target/f'{start["turn"]:03d}.json').open('x') as f:
+                    json.dump(receipt, f, indent=2, sort_keys=True)
+>           assert result[0] is not None, receipt
+E           AssertionError: {'attempts': [{'coverage': 0.0, 'hit_count': 0, 'need_count': 12, 'prompt_index': 0, ...}, {'coverage': 0.0, 'hit_coun...ime, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:'], ...}
+E           assert None is not None
+
+tests/test_grm_scout_fix5.py:65: AssertionError
+____________________ test_r2_enumerated_facts_fold_cpu[095] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_enumerated_facts_fold_7')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921c5bfe0>
+path = 'artifacts/grm_c7/r2/fix4_attempt_1/cells/A-094-100/folds/095-3df9be1aee50442c8a0fe437490940c1/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_enumerated_facts_fold_cpu(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            a.m = EnumeratedModel(a.m.codec)
+            start, ids = seed(a, path)
+            result = a.consolidate(ids)
+            need = a._fact_set([s['text'] for s in start['sources']])
+            receipt = {'turn': start['turn'], 'result': a.last_consolidation_result,
+                       'attempts': a.last_consolidation_attempts, 'digest_text': result[1],
+                       'prompts': [c['input'] for c in a.m.calls if c['initial']],
+                       'budget': max(120, 24*len(need))}
+            if os.environ.get('GRM_FIX5_RECEIPTS'):
+                target = Path(os.environ['GRM_FIX5_RECEIPTS'])
+                target.mkdir(parents=True, exist_ok=True)
+                with (target/f'{start["turn"]:03d}.json').open('x') as f:
+                    json.dump(receipt, f, indent=2, sort_keys=True)
+>           assert result[0] is not None, receipt
+E           AssertionError: {'attempts': [{'coverage': 0.0, 'hit_count': 0, 'need_count': 9, 'prompt_index': 0, ...}, {'coverage': 0.0, 'hit_count...ime, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:'], ...}
+E           assert None is not None
+
+tests/test_grm_scout_fix5.py:65: AssertionError
+____________________ test_r2_enumerated_facts_fold_cpu[099] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_enumerated_facts_fold_8')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921df92b0>
+path = 'artifacts/grm_c7/r2/fix4_attempt_1/cells/A-094-100/folds/099-71a7a9d8b7324a65934f918d78828724/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_enumerated_facts_fold_cpu(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            a.m = EnumeratedModel(a.m.codec)
+            start, ids = seed(a, path)
+            result = a.consolidate(ids)
+            need = a._fact_set([s['text'] for s in start['sources']])
+            receipt = {'turn': start['turn'], 'result': a.last_consolidation_result,
+                       'attempts': a.last_consolidation_attempts, 'digest_text': result[1],
+                       'prompts': [c['input'] for c in a.m.calls if c['initial']],
+                       'budget': max(120, 24*len(need))}
+            if os.environ.get('GRM_FIX5_RECEIPTS'):
+                target = Path(os.environ['GRM_FIX5_RECEIPTS'])
+                target.mkdir(parents=True, exist_ok=True)
+                with (target/f'{start["turn"]:03d}.json').open('x') as f:
+                    json.dump(receipt, f, indent=2, sort_keys=True)
+>           assert result[0] is not None, receipt
+E           AssertionError: {'attempts': [{'coverage': 0.0, 'hit_count': 0, 'need_count': 8, 'prompt_index': 0, ...}, {'coverage': 0.0, 'hit_count...ime, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:'], ...}
+E           assert None is not None
+
+tests/test_grm_scout_fix5.py:65: AssertionError
+____________________ test_r2_enumerated_facts_fold_cpu[103] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_enumerated_facts_fold_9')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921cdea50>
+path = 'artifacts/grm_c7/r2/fix4_attempt_1/cells/A-101-108/folds/103-2d04027c210443289c63a9655b90470e/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_enumerated_facts_fold_cpu(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            a.m = EnumeratedModel(a.m.codec)
+            start, ids = seed(a, path)
+            result = a.consolidate(ids)
+            need = a._fact_set([s['text'] for s in start['sources']])
+            receipt = {'turn': start['turn'], 'result': a.last_consolidation_result,
+                       'attempts': a.last_consolidation_attempts, 'digest_text': result[1],
+                       'prompts': [c['input'] for c in a.m.calls if c['initial']],
+                       'budget': max(120, 24*len(need))}
+            if os.environ.get('GRM_FIX5_RECEIPTS'):
+                target = Path(os.environ['GRM_FIX5_RECEIPTS'])
+                target.mkdir(parents=True, exist_ok=True)
+                with (target/f'{start["turn"]:03d}.json').open('x') as f:
+                    json.dump(receipt, f, indent=2, sort_keys=True)
+>           assert result[0] is not None, receipt
+E           AssertionError: {'attempts': [{'coverage': 0.0, 'hit_count': 0, 'need_count': 8, 'prompt_index': 0, ...}, {'coverage': 0.0, 'hit_count...ime, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:'], ...}
+E           assert None is not None
+
+tests/test_grm_scout_fix5.py:65: AssertionError
+____________________ test_r2_enumerated_facts_fold_cpu[107] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_enumerated_facts_fold_10')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921c82180>
+path = 'artifacts/grm_c7/r2/fix4_attempt_1/cells/A-101-108/folds/107-037ea1021147420cae7505b99d7bc897/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_enumerated_facts_fold_cpu(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            a.m = EnumeratedModel(a.m.codec)
+            start, ids = seed(a, path)
+            result = a.consolidate(ids)
+            need = a._fact_set([s['text'] for s in start['sources']])
+            receipt = {'turn': start['turn'], 'result': a.last_consolidation_result,
+                       'attempts': a.last_consolidation_attempts, 'digest_text': result[1],
+                       'prompts': [c['input'] for c in a.m.calls if c['initial']],
+                       'budget': max(120, 24*len(need))}
+            if os.environ.get('GRM_FIX5_RECEIPTS'):
+                target = Path(os.environ['GRM_FIX5_RECEIPTS'])
+                target.mkdir(parents=True, exist_ok=True)
+                with (target/f'{start["turn"]:03d}.json').open('x') as f:
+                    json.dump(receipt, f, indent=2, sort_keys=True)
+>           assert result[0] is not None, receipt
+E           AssertionError: {'attempts': [{'coverage': 0.0, 'hit_count': 0, 'need_count': 8, 'prompt_index': 0, ...}, {'coverage': 0.0, 'hit_count...ime, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:'], ...}
+E           assert None is not None
+
+tests/test_grm_scout_fix5.py:65: AssertionError
+____________________ test_r2_enumerated_facts_fold_cpu[111] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_enumerated_facts_fold_11')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921c83d40>
+path = 'artifacts/grm_c7/r2/fix4_attempt_1/cells/A-109-116/folds/111-3ea748aa13dd40cfb399e9c3b3b7ce82/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_enumerated_facts_fold_cpu(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            a.m = EnumeratedModel(a.m.codec)
+            start, ids = seed(a, path)
+            result = a.consolidate(ids)
+            need = a._fact_set([s['text'] for s in start['sources']])
+            receipt = {'turn': start['turn'], 'result': a.last_consolidation_result,
+                       'attempts': a.last_consolidation_attempts, 'digest_text': result[1],
+                       'prompts': [c['input'] for c in a.m.calls if c['initial']],
+                       'budget': max(120, 24*len(need))}
+            if os.environ.get('GRM_FIX5_RECEIPTS'):
+                target = Path(os.environ['GRM_FIX5_RECEIPTS'])
+                target.mkdir(parents=True, exist_ok=True)
+                with (target/f'{start["turn"]:03d}.json').open('x') as f:
+                    json.dump(receipt, f, indent=2, sort_keys=True)
+>           assert result[0] is not None, receipt
+E           AssertionError: {'attempts': [{'coverage': 0.0, 'hit_count': 0, 'need_count': 8, 'prompt_index': 0, ...}, {'coverage': 0.0, 'hit_count...ime, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:'], ...}
+E           assert None is not None
+
+tests/test_grm_scout_fix5.py:65: AssertionError
+____________________ test_r2_enumerated_facts_fold_cpu[115] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_enumerated_facts_fold_12')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921c826c0>
+path = 'artifacts/grm_c7/r2/fix4_attempt_1/cells/A-109-116/folds/115-636a4f13086f4af6bdbd6dbf0b5d1614/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_enumerated_facts_fold_cpu(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            a.m = EnumeratedModel(a.m.codec)
+            start, ids = seed(a, path)
+            result = a.consolidate(ids)
+            need = a._fact_set([s['text'] for s in start['sources']])
+            receipt = {'turn': start['turn'], 'result': a.last_consolidation_result,
+                       'attempts': a.last_consolidation_attempts, 'digest_text': result[1],
+                       'prompts': [c['input'] for c in a.m.calls if c['initial']],
+                       'budget': max(120, 24*len(need))}
+            if os.environ.get('GRM_FIX5_RECEIPTS'):
+                target = Path(os.environ['GRM_FIX5_RECEIPTS'])
+                target.mkdir(parents=True, exist_ok=True)
+                with (target/f'{start["turn"]:03d}.json').open('x') as f:
+                    json.dump(receipt, f, indent=2, sort_keys=True)
+>           assert result[0] is not None, receipt
+E           AssertionError: {'attempts': [{'coverage': 0.0, 'hit_count': 0, 'need_count': 8, 'prompt_index': 0, ...}, {'coverage': 0.0, 'hit_count...ime, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:'], ...}
+E           assert None is not None
+
+tests/test_grm_scout_fix5.py:65: AssertionError
+____________________ test_r2_default_budget_exhaustion[008] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_default_budget_exhaust0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921cde0f0>
+path = 'artifacts/grm_c7/r2/cells/A-001-008/folds/008-533d6c5a5b0c4e568b5d9f7410ce2587/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_default_budget_exhaustion(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            start, ids = seed(a, path)
+            a.m.fold_output = 'ordinary ' * 1000  # deliberate no-stop exhaustion
+            a.consolidate(ids)
+            n = len(a._fact_set([s['text'] for s in start['sources']]))
+>           assert len(a.m.calls) == 3 * max(120, 24*n)
+E           AssertionError: assert 360 == (3 * 240)
+E            +  where 360 = len([{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...])
+E            +    where [{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...] = <scripts.grm_c7_diagnose.Model object at 0x779921cdee70>.calls
+E            +      where <scripts.grm_c7_diagnose.Model object at 0x779921cdee70> = <scripts.grm_c7_diagnose.CPUArena object at 0x779921cde420>.m
+E            +  and   240 = max(120, (24 * 10))
+
+tests/test_grm_scout_fix5.py:90: AssertionError
+____________________ test_r2_default_budget_exhaustion[017] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_default_budget_exhaust1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921cdf200>
+path = 'artifacts/grm_c7/r2/cells/A-017-023/folds/017-ac4a09b2490441678f6a5e9289942d5d/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_default_budget_exhaustion(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            start, ids = seed(a, path)
+            a.m.fold_output = 'ordinary ' * 1000  # deliberate no-stop exhaustion
+            a.consolidate(ids)
+            n = len(a._fact_set([s['text'] for s in start['sources']]))
+>           assert len(a.m.calls) == 3 * max(120, 24*n)
+E           AssertionError: assert 360 == (3 * 240)
+E            +  where 360 = len([{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...])
+E            +    where [{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...] = <scripts.grm_c7_diagnose.Model object at 0x779921cdf440>.calls
+E            +      where <scripts.grm_c7_diagnose.Model object at 0x779921cdf440> = <scripts.grm_c7_diagnose.CPUArena object at 0x779921cdf7d0>.m
+E            +  and   240 = max(120, (24 * 10))
+
+tests/test_grm_scout_fix5.py:90: AssertionError
+____________________ test_r2_default_budget_exhaustion[026] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_default_budget_exhaust2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921b56f00>
+path = 'artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/folds/026-681f4264c9fa4c2c9a7096d30106a8a0/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_default_budget_exhaustion(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            start, ids = seed(a, path)
+            a.m.fold_output = 'ordinary ' * 1000  # deliberate no-stop exhaustion
+            a.consolidate(ids)
+            n = len(a._fact_set([s['text'] for s in start['sources']]))
+>           assert len(a.m.calls) == 3 * max(120, 24*n)
+E           AssertionError: assert 360 == (3 * 192)
+E            +  where 360 = len([{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...])
+E            +    where [{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...] = <scripts.grm_c7_diagnose.Model object at 0x779921b576e0>.calls
+E            +      where <scripts.grm_c7_diagnose.Model object at 0x779921b576e0> = <scripts.grm_c7_diagnose.CPUArena object at 0x779921b54e30>.m
+E            +  and   192 = max(120, (24 * 8))
+
+tests/test_grm_scout_fix5.py:90: AssertionError
+____________________ test_r2_default_budget_exhaustion[055] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_default_budget_exhaust3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921b561b0>
+path = 'artifacts/grm_c7/r2/fix4_attempt_1/cells/A-048-055/folds/055-1b44742dab454a6685c75b4e4a614895/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_default_budget_exhaustion(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            start, ids = seed(a, path)
+            a.m.fold_output = 'ordinary ' * 1000  # deliberate no-stop exhaustion
+            a.consolidate(ids)
+            n = len(a._fact_set([s['text'] for s in start['sources']]))
+>           assert len(a.m.calls) == 3 * max(120, 24*n)
+E           AssertionError: assert 360 == (3 * 192)
+E            +  where 360 = len([{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...])
+E            +    where [{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...] = <scripts.grm_c7_diagnose.Model object at 0x779921b562d0>.calls
+E            +      where <scripts.grm_c7_diagnose.Model object at 0x779921b562d0> = <scripts.grm_c7_diagnose.CPUArena object at 0x779921b563f0>.m
+E            +  and   192 = max(120, (24 * 8))
+
+tests/test_grm_scout_fix5.py:90: AssertionError
+____________________ test_r2_default_budget_exhaustion[074] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_default_budget_exhaust4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921c83860>
+path = 'artifacts/grm_c7/r2/fix4_attempt_1/cells/A-071-077/folds/074-542293a8731d432da4e42a6af5120f3c/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_default_budget_exhaustion(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            start, ids = seed(a, path)
+            a.m.fold_output = 'ordinary ' * 1000  # deliberate no-stop exhaustion
+            a.consolidate(ids)
+            n = len(a._fact_set([s['text'] for s in start['sources']]))
+>           assert len(a.m.calls) == 3 * max(120, 24*n)
+E           AssertionError: assert 360 == (3 * 192)
+E            +  where 360 = len([{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...])
+E            +    where [{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...] = <scripts.grm_c7_diagnose.Model object at 0x779921c836e0>.calls
+E            +      where <scripts.grm_c7_diagnose.Model object at 0x779921c836e0> = <scripts.grm_c7_diagnose.CPUArena object at 0x779921c835c0>.m
+E            +  and   192 = max(120, (24 * 8))
+
+tests/test_grm_scout_fix5.py:90: AssertionError
+____________________ test_r2_default_budget_exhaustion[085] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_default_budget_exhaust5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921c814c0>
+path = 'artifacts/grm_c7/r2/fix4_attempt_1/cells/A-078-085/folds/085-d15b5a88d2d94e56a2915cde4a8b0dfa/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_default_budget_exhaustion(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            start, ids = seed(a, path)
+            a.m.fold_output = 'ordinary ' * 1000  # deliberate no-stop exhaustion
+            a.consolidate(ids)
+            n = len(a._fact_set([s['text'] for s in start['sources']]))
+>           assert len(a.m.calls) == 3 * max(120, 24*n)
+E           AssertionError: assert 360 == (3 * 216)
+E            +  where 360 = len([{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...])
+E            +    where [{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...] = <scripts.grm_c7_diagnose.Model object at 0x779921c81a30>.calls
+E            +      where <scripts.grm_c7_diagnose.Model object at 0x779921c81a30> = <scripts.grm_c7_diagnose.CPUArena object at 0x779921c82c00>.m
+E            +  and   216 = max(120, (24 * 9))
+
+tests/test_grm_scout_fix5.py:90: AssertionError
+____________________ test_r2_default_budget_exhaustion[091] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_default_budget_exhaust6')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921c80770>
+path = 'artifacts/grm_c7/r2/fix4_attempt_1/cells/A-086-093/folds/091-b0a742d7fa0f498ea4ab9d653be59f4c/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_default_budget_exhaustion(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            start, ids = seed(a, path)
+            a.m.fold_output = 'ordinary ' * 1000  # deliberate no-stop exhaustion
+            a.consolidate(ids)
+            n = len(a._fact_set([s['text'] for s in start['sources']]))
+>           assert len(a.m.calls) == 3 * max(120, 24*n)
+E           AssertionError: assert 360 == (3 * 288)
+E            +  where 360 = len([{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...])
+E            +    where [{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...] = <scripts.grm_c7_diagnose.Model object at 0x779921c83020>.calls
+E            +      where <scripts.grm_c7_diagnose.Model object at 0x779921c83020> = <scripts.grm_c7_diagnose.CPUArena object at 0x779921c81970>.m
+E            +  and   288 = max(120, (24 * 12))
+
+tests/test_grm_scout_fix5.py:90: AssertionError
+____________________ test_r2_default_budget_exhaustion[095] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_default_budget_exhaust7')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921cdd2b0>
+path = 'artifacts/grm_c7/r2/fix4_attempt_1/cells/A-094-100/folds/095-3df9be1aee50442c8a0fe437490940c1/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_default_budget_exhaustion(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            start, ids = seed(a, path)
+            a.m.fold_output = 'ordinary ' * 1000  # deliberate no-stop exhaustion
+            a.consolidate(ids)
+            n = len(a._fact_set([s['text'] for s in start['sources']]))
+>           assert len(a.m.calls) == 3 * max(120, 24*n)
+E           AssertionError: assert 360 == (3 * 216)
+E            +  where 360 = len([{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...])
+E            +    where [{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...] = <scripts.grm_c7_diagnose.Model object at 0x779921cdd3d0>.calls
+E            +      where <scripts.grm_c7_diagnose.Model object at 0x779921cdd3d0> = <scripts.grm_c7_diagnose.CPUArena object at 0x779921cde150>.m
+E            +  and   216 = max(120, (24 * 9))
+
+tests/test_grm_scout_fix5.py:90: AssertionError
+____________________ test_r2_default_budget_exhaustion[099] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_default_budget_exhaust8')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921cde810>
+path = 'artifacts/grm_c7/r2/fix4_attempt_1/cells/A-094-100/folds/099-71a7a9d8b7324a65934f918d78828724/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_default_budget_exhaustion(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            start, ids = seed(a, path)
+            a.m.fold_output = 'ordinary ' * 1000  # deliberate no-stop exhaustion
+            a.consolidate(ids)
+            n = len(a._fact_set([s['text'] for s in start['sources']]))
+>           assert len(a.m.calls) == 3 * max(120, 24*n)
+E           AssertionError: assert 360 == (3 * 192)
+E            +  where 360 = len([{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...])
+E            +    where [{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...] = <scripts.grm_c7_diagnose.Model object at 0x779921cdea80>.calls
+E            +      where <scripts.grm_c7_diagnose.Model object at 0x779921cdea80> = <scripts.grm_c7_diagnose.CPUArena object at 0x779921cdcb00>.m
+E            +  and   192 = max(120, (24 * 8))
+
+tests/test_grm_scout_fix5.py:90: AssertionError
+____________________ test_r2_default_budget_exhaustion[103] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_default_budget_exhaust9')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921dbfef0>
+path = 'artifacts/grm_c7/r2/fix4_attempt_1/cells/A-101-108/folds/103-2d04027c210443289c63a9655b90470e/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_default_budget_exhaustion(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            start, ids = seed(a, path)
+            a.m.fold_output = 'ordinary ' * 1000  # deliberate no-stop exhaustion
+            a.consolidate(ids)
+            n = len(a._fact_set([s['text'] for s in start['sources']]))
+>           assert len(a.m.calls) == 3 * max(120, 24*n)
+E           AssertionError: assert 360 == (3 * 192)
+E            +  where 360 = len([{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...])
+E            +    where [{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...] = <scripts.grm_c7_diagnose.Model object at 0x779921dbe510>.calls
+E            +      where <scripts.grm_c7_diagnose.Model object at 0x779921dbe510> = <scripts.grm_c7_diagnose.CPUArena object at 0x779921df8440>.m
+E            +  and   192 = max(120, (24 * 8))
+
+tests/test_grm_scout_fix5.py:90: AssertionError
+____________________ test_r2_default_budget_exhaustion[107] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_default_budget_exhaust10')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921c58fb0>
+path = 'artifacts/grm_c7/r2/fix4_attempt_1/cells/A-101-108/folds/107-037ea1021147420cae7505b99d7bc897/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_default_budget_exhaustion(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            start, ids = seed(a, path)
+            a.m.fold_output = 'ordinary ' * 1000  # deliberate no-stop exhaustion
+            a.consolidate(ids)
+            n = len(a._fact_set([s['text'] for s in start['sources']]))
+>           assert len(a.m.calls) == 3 * max(120, 24*n)
+E           AssertionError: assert 360 == (3 * 192)
+E            +  where 360 = len([{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...])
+E            +    where [{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...] = <scripts.grm_c7_diagnose.Model object at 0x779921c5a330>.calls
+E            +      where <scripts.grm_c7_diagnose.Model object at 0x779921c5a330> = <scripts.grm_c7_diagnose.CPUArena object at 0x779921c5a990>.m
+E            +  and   192 = max(120, (24 * 8))
+
+tests/test_grm_scout_fix5.py:90: AssertionError
+____________________ test_r2_default_budget_exhaustion[111] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_default_budget_exhaust11')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921c5aff0>
+path = 'artifacts/grm_c7/r2/fix4_attempt_1/cells/A-109-116/folds/111-3ea748aa13dd40cfb399e9c3b3b7ce82/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_default_budget_exhaustion(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            start, ids = seed(a, path)
+            a.m.fold_output = 'ordinary ' * 1000  # deliberate no-stop exhaustion
+            a.consolidate(ids)
+            n = len(a._fact_set([s['text'] for s in start['sources']]))
+>           assert len(a.m.calls) == 3 * max(120, 24*n)
+E           AssertionError: assert 360 == (3 * 192)
+E            +  where 360 = len([{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...])
+E            +    where [{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...] = <scripts.grm_c7_diagnose.Model object at 0x779921c580e0>.calls
+E            +      where <scripts.grm_c7_diagnose.Model object at 0x779921c580e0> = <scripts.grm_c7_diagnose.CPUArena object at 0x779921c5acc0>.m
+E            +  and   192 = max(120, (24 * 8))
+
+tests/test_grm_scout_fix5.py:90: AssertionError
+____________________ test_r2_default_budget_exhaustion[115] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_r2_default_budget_exhaust12')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921e17f80>
+path = 'artifacts/grm_c7/r2/fix4_attempt_1/cells/A-109-116/folds/115-636a4f13086f4af6bdbd6dbf0b5d1614/start.json'
+
+    @pytest.mark.parametrize('path', CASES, ids=lambda p: Path(p).parent.name[:3])
+    def test_r2_default_budget_exhaustion(tmp_path, monkeypatch, path):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            start, ids = seed(a, path)
+            a.m.fold_output = 'ordinary ' * 1000  # deliberate no-stop exhaustion
+            a.consolidate(ids)
+            n = len(a._fact_set([s['text'] for s in start['sources']]))
+>           assert len(a.m.calls) == 3 * max(120, 24*n)
+E           AssertionError: assert 360 == (3 * 192)
+E            +  where 360 = len([{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...])
+E            +    where [{'initial': True, 'injected': '<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|...nd|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>', 'input': 'ordinary', 'live_shift': None, ...}, ...] = <scripts.grm_c7_diagnose.Model object at 0x779921e177d0>.calls
+E            +      where <scripts.grm_c7_diagnose.Model object at 0x779921e177d0> = <scripts.grm_c7_diagnose.CPUArena object at 0x779921b55700>.m
+E            +  and   192 = max(120, (24 * 8))
+
+tests/test_grm_scout_fix5.py:90: AssertionError
+__________ test_default_budget_boundary_and_explicit_override[None-6] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_default_budget_boundary_a3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921b54860>, n = 6
+explicit = None
+
+    @pytest.mark.parametrize('n', [0, 1, 5, 6, 10])
+    @pytest.mark.parametrize('explicit', [None, 19])
+    def test_default_budget_boundary_and_explicit_override(tmp_path, monkeypatch, n, explicit):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            idx = a.deposit('values ' + ' '.join(f'X-{i}' for i in range(n)))
+            a.m.fold_output = 'ordinary ' * 1000
+            a.consolidate([idx], ngen=explicit)
+>           assert len(a.m.calls) == 3 * (explicit if explicit is not None else max(120, 24*n))
+E           AssertionError: assert 360 == (3 * 144)
+E            +  where 360 = len([{'initial': True, 'injected': 'values X-0 X-1 X-2 X-3 X-4 X-5', 'input': '<|start|>system<|message|>You are ChatGPT. ...}, {'initial': False, 'injected': 'values X-0 X-1 X-2 X-3 X-4 X-5', 'input': 'ordinary', 'live_shift': None, ...}, ...])
+E            +    where [{'initial': True, 'injected': 'values X-0 X-1 X-2 X-3 X-4 X-5', 'input': '<|start|>system<|message|>You are ChatGPT. ...}, {'initial': False, 'injected': 'values X-0 X-1 X-2 X-3 X-4 X-5', 'input': 'ordinary', 'live_shift': None, ...}, ...] = <scripts.grm_c7_diagnose.Model object at 0x779921b56f00>.calls
+E            +      where <scripts.grm_c7_diagnose.Model object at 0x779921b56f00> = <scripts.grm_c7_diagnose.CPUArena object at 0x779921c2c8c0>.m
+
+tests/test_grm_scout_fix5.py:105: AssertionError
+_________ test_default_budget_boundary_and_explicit_override[None-10] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-954/test_default_budget_boundary_a4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x779921c5bb30>, n = 10
+explicit = None
+
+    @pytest.mark.parametrize('n', [0, 1, 5, 6, 10])
+    @pytest.mark.parametrize('explicit', [None, 19])
+    def test_default_budget_boundary_and_explicit_override(tmp_path, monkeypatch, n, explicit):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        try:
+            a = repo.arena
+            idx = a.deposit('values ' + ' '.join(f'X-{i}' for i in range(n)))
+            a.m.fold_output = 'ordinary ' * 1000
+            a.consolidate([idx], ngen=explicit)
+>           assert len(a.m.calls) == 3 * (explicit if explicit is not None else max(120, 24*n))
+E           AssertionError: assert 360 == (3 * 240)
+E            +  where 360 = len([{'initial': True, 'injected': 'values X-0 X-1 X-2 X-3 X-4 X-5 X-6 X-7 X-8 X-9', 'input': '<|start|>system<|message|>Y...alse, 'injected': 'values X-0 X-1 X-2 X-3 X-4 X-5 X-6 X-7 X-8 X-9', 'input': 'ordinary', 'live_shift': None, ...}, ...])
+E            +    where [{'initial': True, 'injected': 'values X-0 X-1 X-2 X-3 X-4 X-5 X-6 X-7 X-8 X-9', 'input': '<|start|>system<|message|>Y...alse, 'injected': 'values X-0 X-1 X-2 X-3 X-4 X-5 X-6 X-7 X-8 X-9', 'input': 'ordinary', 'live_shift': None, ...}, ...] = <scripts.grm_c7_diagnose.Model object at 0x779921c58380>.calls
+E            +      where <scripts.grm_c7_diagnose.Model object at 0x779921c58380> = <scripts.grm_c7_diagnose.CPUArena object at 0x779921c5adb0>.m
+
+tests/test_grm_scout_fix5.py:105: AssertionError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_grm_scout_fix5.py::test_r2_enumerated_facts_fold_cpu[008]
+FAILED tests/test_grm_scout_fix5.py::test_r2_enumerated_facts_fold_cpu[017]
+FAILED tests/test_grm_scout_fix5.py::test_r2_enumerated_facts_fold_cpu[026]
+FAILED tests/test_grm_scout_fix5.py::test_r2_enumerated_facts_fold_cpu[055]
+FAILED tests/test_grm_scout_fix5.py::test_r2_enumerated_facts_fold_cpu[074]
+FAILED tests/test_grm_scout_fix5.py::test_r2_enumerated_facts_fold_cpu[085]
+FAILED tests/test_grm_scout_fix5.py::test_r2_enumerated_facts_fold_cpu[091]
+FAILED tests/test_grm_scout_fix5.py::test_r2_enumerated_facts_fold_cpu[095]
+FAILED tests/test_grm_scout_fix5.py::test_r2_enumerated_facts_fold_cpu[099]
+FAILED tests/test_grm_scout_fix5.py::test_r2_enumerated_facts_fold_cpu[103]
+FAILED tests/test_grm_scout_fix5.py::test_r2_enumerated_facts_fold_cpu[107]
+FAILED tests/test_grm_scout_fix5.py::test_r2_enumerated_facts_fold_cpu[111]
+FAILED tests/test_grm_scout_fix5.py::test_r2_enumerated_facts_fold_cpu[115]
+FAILED tests/test_grm_scout_fix5.py::test_r2_default_budget_exhaustion[008]
+FAILED tests/test_grm_scout_fix5.py::test_r2_default_budget_exhaustion[017]
+FAILED tests/test_grm_scout_fix5.py::test_r2_default_budget_exhaustion[026]
+FAILED tests/test_grm_scout_fix5.py::test_r2_default_budget_exhaustion[055]
+FAILED tests/test_grm_scout_fix5.py::test_r2_default_budget_exhaustion[074]
+FAILED tests/test_grm_scout_fix5.py::test_r2_default_budget_exhaustion[085]
+FAILED tests/test_grm_scout_fix5.py::test_r2_default_budget_exhaustion[091]
+FAILED tests/test_grm_scout_fix5.py::test_r2_default_budget_exhaustion[095]
+FAILED tests/test_grm_scout_fix5.py::test_r2_default_budget_exhaustion[099]
+FAILED tests/test_grm_scout_fix5.py::test_r2_default_budget_exhaustion[103]
+FAILED tests/test_grm_scout_fix5.py::test_r2_default_budget_exhaustion[107]
+FAILED tests/test_grm_scout_fix5.py::test_r2_default_budget_exhaustion[111]
+FAILED tests/test_grm_scout_fix5.py::test_r2_default_budget_exhaustion[115]
+FAILED tests/test_grm_scout_fix5.py::test_default_budget_boundary_and_explicit_override[None-6]
+FAILED tests/test_grm_scout_fix5.py::test_default_budget_boundary_and_explicit_override[None-10]
+28 failed, 34 passed, 2 warnings in 5.70s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

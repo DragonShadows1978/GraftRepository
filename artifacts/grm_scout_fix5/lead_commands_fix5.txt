@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /mnt/ForgeRealm/wt/grm-c7
+# Prior art: C7 fail-closed foreground launcher (GRM contributors, 2026).
+export PYTHONDONTWRITEBYTECODE=1
+python -m scripts.grm_scout_fix5 --check
+if [[ "${1:-}" == "--check" ]]; then exit 0; fi
+if [[ $# -ne 0 ]]; then echo 'Unexpected argument' >&2; exit 2; fi
+python -m scripts.grm_scout_fix5 --run

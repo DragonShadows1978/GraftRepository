@@ -1,0 +1,27 @@
+{
+  "status": "REGISTERED_NOT_RUN",
+  "gpu_executed": false,
+  "registration_sha256": "f42b61df6d413551431c84042d6ceca11dfa5e3d89b600a7669f5cc76fa4283b",
+  "rows": 24,
+  "reserved_seconds": 1680,
+  "cap_seconds": 1800,
+  "middle_registration_sha256": "f4f1aa27f4db79e1fd95c995d4e72e8b70ea0f29140effaa56462bcc31a294f1"
+}
+{
+  "status": "VERIFIED_EXISTING_A7",
+  "origins": {
+    "core.grm_text_norm": {
+      "path": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_scout_fix8/before/core/grm_text_norm.py",
+      "sha256": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8"
+    },
+    "core.grm_admission": {
+      "path": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_scout_fix8/before/core/grm_admission.py",
+      "sha256": "2deb9d91ac5c723e67de06d3c71def9a3d06ba30b72fe1bbeb5eb18710c4cc46"
+    },
+    "core.graft_arena": {
+      "path": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_scout_fix8/before/core/graft_arena.py",
+      "sha256": "67f00ba365dee64b5efc414d2a48c711062658bbfe6dc8c9f30efd1c3b7dc37e"
+    }
+  },
+  "gpu_executed": false
+}

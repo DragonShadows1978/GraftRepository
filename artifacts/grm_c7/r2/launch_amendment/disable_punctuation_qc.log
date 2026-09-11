@@ -1,0 +1,90 @@
+..............FFFF....F..                                                [100%]
+=================================== FAILURES ===================================
+_______ test_digest_qc_rejects_punctuation_collapse[\u2026\u2026\u2026] ________
+
+run = '………'
+
+    @pytest.mark.parametrize('run', ['………', '......', '!!!!!!', '?!' * 4, '. ' * 8])
+    def test_digest_qc_rejects_punctuation_collapse(run):
+>       assert not ArenaCache._digest_qc(SOURCE + ' ' + run)
+E       AssertionError: assert not True
+E        +  where True = <function ArenaCache._digest_qc at 0x77d175df3420>((('The current C7-Fresh-0 value is Basalt-811.' + ' ') + '………'))
+E        +    where <function ArenaCache._digest_qc at 0x77d175df3420> = ArenaCache._digest_qc
+
+tests/test_grm_scout_fix3.py:62: AssertionError
+_____________ test_digest_qc_rejects_punctuation_collapse[......] ______________
+
+run = '......'
+
+    @pytest.mark.parametrize('run', ['………', '......', '!!!!!!', '?!' * 4, '. ' * 8])
+    def test_digest_qc_rejects_punctuation_collapse(run):
+>       assert not ArenaCache._digest_qc(SOURCE + ' ' + run)
+E       AssertionError: assert not True
+E        +  where True = <function ArenaCache._digest_qc at 0x77d175df3420>((('The current C7-Fresh-0 value is Basalt-811.' + ' ') + '......'))
+E        +    where <function ArenaCache._digest_qc at 0x77d175df3420> = ArenaCache._digest_qc
+
+tests/test_grm_scout_fix3.py:62: AssertionError
+_____________ test_digest_qc_rejects_punctuation_collapse[!!!!!!] ______________
+
+run = '!!!!!!'
+
+    @pytest.mark.parametrize('run', ['………', '......', '!!!!!!', '?!' * 4, '. ' * 8])
+    def test_digest_qc_rejects_punctuation_collapse(run):
+>       assert not ArenaCache._digest_qc(SOURCE + ' ' + run)
+E       AssertionError: assert not True
+E        +  where True = <function ArenaCache._digest_qc at 0x77d175df3420>((('The current C7-Fresh-0 value is Basalt-811.' + ' ') + '!!!!!!'))
+E        +    where <function ArenaCache._digest_qc at 0x77d175df3420> = ArenaCache._digest_qc
+
+tests/test_grm_scout_fix3.py:62: AssertionError
+____________ test_digest_qc_rejects_punctuation_collapse[?!?!?!?!] _____________
+
+run = '?!?!?!?!'
+
+    @pytest.mark.parametrize('run', ['………', '......', '!!!!!!', '?!' * 4, '. ' * 8])
+    def test_digest_qc_rejects_punctuation_collapse(run):
+>       assert not ArenaCache._digest_qc(SOURCE + ' ' + run)
+E       AssertionError: assert not True
+E        +  where True = <function ArenaCache._digest_qc at 0x77d175df3420>((('The current C7-Fresh-0 value is Basalt-811.' + ' ') + '?!?!?!?!'))
+E        +    where <function ArenaCache._digest_qc at 0x77d175df3420> = ArenaCache._digest_qc
+
+tests/test_grm_scout_fix3.py:62: AssertionError
+________ test_degenerate_qc_precedes_coverage_even_with_list_relaxation ________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-908/test_degenerate_qc_precedes_co0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x77d05c3c2b70>
+
+    def test_degenerate_qc_precedes_coverage_even_with_list_relaxation(tmp_path, monkeypatch):
+        repo = repository(tmp_path / 'repo', monkeypatch)
+        try:
+            a = repo.arena
+            idx = repo.add_document(SOURCE)
+            a.m.fold_output = SOURCE + ' ……………<|end|>'
+            a.ALLOW_HIGH_COVERAGE_LIST_DIGESTS = True
+            def no_coverage(*args):
+                pytest.fail('degenerate digest reached coverage')
+            monkeypatch.setattr(a, '_coverage', no_coverage)
+>           assert a.consolidate([idx]) == (None, None)
+                   ^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_scout_fix3.py:81: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/grm-c7-r2-mutant-nkrai5as/mutant.py:2250: in consolidate
+    cov = self._coverage(t, need) if qc else 0.0
+          ^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = ('CHRONICLE — In this period, The current C7-Fresh-0 value is Basalt-811. ……………', {'basalt-811', 'c7-fresh-0'})
+
+    def no_coverage(*args):
+>       pytest.fail('degenerate digest reached coverage')
+E       Failed: degenerate digest reached coverage
+
+tests/test_grm_scout_fix3.py:79: Failed
+=========================== short test summary info ============================
+FAILED tests/test_grm_scout_fix3.py::test_digest_qc_rejects_punctuation_collapse[\u2026\u2026\u2026]
+FAILED tests/test_grm_scout_fix3.py::test_digest_qc_rejects_punctuation_collapse[......]
+FAILED tests/test_grm_scout_fix3.py::test_digest_qc_rejects_punctuation_collapse[!!!!!!]
+FAILED tests/test_grm_scout_fix3.py::test_digest_qc_rejects_punctuation_collapse[?!?!?!?!]
+FAILED tests/test_grm_scout_fix3.py::test_degenerate_qc_precedes_coverage_even_with_list_relaxation
+5 failed, 20 passed in 4.35s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

@@ -52,7 +52,7 @@ from core.grm_admission import (
     chunk_trip_cap,
     decisive_admission_profile,
     fit_info_fields,
-    identifier_unbound_abstention,
+    identifier_serving_decision,
     is_identifier_binding,
     mountable_budget,
     ordered_identifier_tokens,
@@ -1387,8 +1387,11 @@ class ArenaCache:
         """Lowercase content words from a route query (stopword-filtered).
         Keeps label nouns that _rare_tokens drops (no digit / not ALL-CAPS)."""
         out = set()
+        # Prior art: SC1.1/DET1.4 (GRM contributors, 2026), shared projection;
+        # FIX-8 closes the same glyph boundary in query and own-text scans.
+        text = cls._norm_text(text)
         for w in re.findall(r"[A-Za-z0-9][\w:.,\-]*", text):
-            tok = w.rstrip(".,:;").lower()
+            tok = w.rstrip(".,:;").casefold()
             if len(tok) < 2 or tok in cls._QUERY_LEX_STOP:
                 continue
             out.add(tok)
@@ -1404,8 +1407,9 @@ class ArenaCache:
         """Lowercase word tokens from node text for query-side content match.
         Not stored; computed on demand. Node rare keys / indexes untouched."""
         out = set()
-        for w in re.findall(r"[A-Za-z0-9][\w:.,\-]*", text or ""):
-            tok = w.rstrip(".,:;").lower()
+        # Prior art: shared SC1.1 projection, extended by FIX-8 (2026).
+        for w in re.findall(r"[A-Za-z0-9][\w:.,\-]*", ArenaCache._norm_text(text or "")):
+            tok = w.rstrip(".,:;").casefold()
             if tok:
                 out.add(tok)
         return out
@@ -1928,6 +1932,31 @@ class ArenaCache:
 
     def _consolidation_prompts(self, deep, source_texts):
         prompts = self.ERA_PROMPTS if deep else self.DIGEST_PROMPTS
+        # Prior art: GRM source scaffold / fact-set fidelity (contributors,
+        # 2026), reused below. FIX-5 makes source facts explicit without
+        # truncating their relations. No prior art known to me for this
+        # exact prompt and 24-tokens-per-fact default budget combination.
+        need = self._fact_set(source_texts)
+        if need:
+            lines = []
+            for source in source_texts:
+                # Strip transport markers, retaining fact-bearing source
+                # spans verbatim (including corrections and alias edges).
+                for span in re.split(r"<\|[^|]+\|>", source):
+                    span = re.sub(r"(?m)^(?:User|Assistant):\s*", "", span).strip()
+                    if self._fact_set([span]) & need:
+                        lines.append(f"[source {len(lines) + 1}] {span}")
+            instruction = (
+                f"\n\nKeep every one of these {len(need)} facts (fact tokens "
+                "across the source spans below), with their relationships "
+                "and corrections intact:\n" + "\n".join(lines) +
+                "\n\nWrite a single prose archive block in complete sentences. "
+                "Do not copy the sources or their list format; combine their "
+                "facts, preserving identifiers verbatim. Do not invent times "
+                "or other unstated details.\n")
+            prompts = tuple(head + instruction + "\nAssistant:" + tail
+                            for head, tail in
+                            (p.rsplit("\nAssistant:", 1) for p in prompts))
         if not self.TEXT_SCAFFOLD_CONSOLIDATION:
             return prompts
         source_block = self._source_scaffold(source_texts)
@@ -1994,10 +2023,10 @@ class ArenaCache:
 
     @staticmethod
     def _norm_text(text):
-        """SC1.1: project the two REGISTERED glyph classes, switch-gated.
+        """SC1.1/FIX-8 shared NFKC/dash/emphasis projection, switch-gated.
 
-        ON (``GRM_LSR_FIXES`` default) applies ``normalize_glyphs`` — U+2010/
-        U+2011 collapse to "-" and paired Markdown emphasis is stripped —
+        ON (``GRM_LSR_FIXES`` default) applies ``normalize_glyphs`` — NFKC,
+        Unicode Dash to "-" and paired Markdown emphasis stripping —
         so the lexical channels obey the same principle the DET1 value
         comparator does: *value comparison is semantics, not glyphs*.
         Measured cause: the model emits "Quartz‑8‑Jade" (U+2011) and the
@@ -2031,7 +2060,7 @@ class ArenaCache:
         for w in re.findall(r"[A-Za-z0-9][\w:.,\-]*", text):
             w = w.rstrip(".,:;")
             if any(ch.isdigit() for ch in w) or (w.isupper() and len(w) >= 3):
-                out.add(w.lower())
+                out.add(w.casefold())
         return out
 
     @staticmethod
@@ -2042,6 +2071,12 @@ class ArenaCache:
         rule: keep >= min_keep of the sources' code/number-shaped tokens.
         forbid_lists (depth>=1 folds): bullet/numbered enumerations strip
         the relations probes traverse — require prose."""
+        # Prior art: local GRM digest repetition QC (GRM contributors, 2026).
+        # Extend word-level QC to character runs seen in C7. No prior art
+        # known to me for this exact rule: >=3 ellipses or >=6 punctuation
+        # characters, allowing whitespace. Ordinary "..." remains valid.
+        if re.search(r"(?:…\s*){3,}|(?:[^\w\s]\s*){6,}", text):
+            return False
         toks = text.split()
         if len(toks) < 6:
             return False
@@ -2135,8 +2170,6 @@ class ArenaCache:
         standalone (clean key + payload), RETIRE the sources from routing.
         The digest node carries its children's centroids for hierarchical
         descent. Returns (digest_idx, digest_text)."""
-        if ngen is None:
-            ngen = int(self.CONSOLIDATE_NGEN)
         # Even extractive era folds retire their sources. Validate that every
         # source has a recoverable payload before either folding path can
         # alter cache state or make that lifecycle change.
@@ -2148,6 +2181,11 @@ class ArenaCache:
         srcs = [self.grafts[i]["text"] for i in idxs]
         deep = any(self.grafts[i].get("kind", "turn") != "turn" for i in idxs)
         need = self._fact_set(srcs)
+        # FIX-5 default allowance scales with the existing fidelity fact set;
+        # explicit caller budgets and the zero-fact path retain their values.
+        if ngen is None:
+            ngen = (max(int(self.CONSOLIDATE_NGEN), 24 * len(need))
+                    if need else int(self.CONSOLIDATE_NGEN))
         self.last_consolidation_attempts = []
         self.last_consolidation_result = {"accepted": False,
                                           "best_cov": -1.0,
@@ -2193,6 +2231,21 @@ class ArenaCache:
             for prompt_idx, prompt in enumerate(prompts):
                 ids = out = lg = caches = None
                 primer = prompt.rsplit("Assistant:", 1)[1]
+                # Prior art: EB1 harmony_turn + Arena._attempt stop contract
+                # (GRM contributors, 2026), reused via configured template.
+                # New: apply that same contract to standalone folds. No
+                # duplicate Harmony formatter or model-name detection.
+                # Dispatch on the configured wrapper's final-channel suffix;
+                # other model templates keep legacy prompt/decode bytes.
+                formatted = None
+                if self.prompt_template is not None:
+                    user_text = prompt.removeprefix("User: ").rsplit("\nAssistant:", 1)[0]
+                    formatted = self._format_step_prompt(user_text)
+                harmony = formatted is not None and formatted.endswith(
+                    "<|start|>assistant<|channel|>final<|message|>")
+                stops = self.stop_sequences if harmony else ()
+                if harmony:
+                    prompt = formatted + primer
                 try:
                     ids = self.encode(prompt)
                     with tc.no_grad():
@@ -2201,6 +2254,8 @@ class ArenaCache:
                     pos = len(ids)
                     out = [int(lg.numpy()[0, -1].argmax())]
                     for _ in range(ngen - 1):
+                        if any(s in self.decode(out) for s in stops):
+                            break
                         with tc.no_grad():
                             lg, caches = self.m(
                                 np.array([[out[-1]]], dtype=np.int64),
@@ -2208,19 +2263,25 @@ class ArenaCache:
                                 last_token_only=True)
                         pos += 1
                         out.append(int(lg.numpy()[0, -1].argmax()))
-                    t = (primer + " " + self.decode(out)).strip()
+                    decoded = self.decode(out)
+                    for stop in stops:
+                        decoded = decoded.split(stop, 1)[0]
+                    t = (primer + " " + decoded).strip()
                     for stop in ("\nUser:", "User:"):
                         if stop in t:
                             t = t.split(stop)[0]
                     t = t.strip()
-                    cov = self._coverage(t, need)
                     qc = self._digest_qc(t, None, forbid_lists=True)
                     relaxed_list = False
-                    if (not qc and self.ALLOW_HIGH_COVERAGE_LIST_DIGESTS
-                            and cov >= self.MIN_FOLD_KEEP):
-                        relaxed_list = self._digest_qc(
+                    if not qc and self.ALLOW_HIGH_COVERAGE_LIST_DIGESTS:
+                        qc = self._digest_qc(
                             t, None, forbid_lists=False)
-                        qc = relaxed_list
+                        relaxed_list = qc
+                    # Shape QC runs before coverage; a punctuation collapse
+                    # cannot be rescued by fact tokens or list relaxation.
+                    cov = self._coverage(t, need) if qc else 0.0
+                    if relaxed_list and cov < self.MIN_FOLD_KEEP:
+                        relaxed_list = qc = False
                     self.last_consolidation_attempts.append({
                         "prompt_index": prompt_idx,
                         "qc": bool(qc),
@@ -3314,6 +3375,30 @@ class ArenaCache:
         out = descended or children
         return (out, False) if with_binding_flag else out
 
+    def _serve_live_binding(self, user_text, decision, rec, *, ngen,
+                            deposit, defer_memory, stops):
+        """Read the binding live source without an admission mount.
+
+        Prior art: GRM contributors (2026), EB1 nomination/assembly and
+        ArenaCache._attempt cache reuse. Materialize only binding recency
+        nominees, once; persistent live segments stay in their existing cache.
+        No prior art known to me for this exact FIX-4 composition.
+        """
+        ids = decision["served_from_node_ids"]
+        rec_ids = sorted(set(ids) & set(rec))
+        picks = sorted(set(self.cur_mounts) | set(rec_ids))
+        self._eb1_recency_seats_charged = sum(
+            int(self.grafts[i]["ntok"]) for i in rec_ids)
+        self._eb1_recency_charge_waived_reason = None
+        for layer in self.m.layers:
+            layer.self_attn.live_shift = self.live_shift
+        txt, info = self._attempt(user_text, picks, ngen, deposit, stops,
+                                  defer_memory=defer_memory)
+        info.update(decision)
+        info["trip"] = 0
+        self._grounding_receipt(txt, picks, user_text, info)
+        return txt, info
+
     def step(self, user_text, ngen=48, deposit=True,
              stops=None, max_trips=0, defer_memory=False, demand_ngh=None,
              demand_early_abort=None):
@@ -3380,7 +3465,23 @@ class ArenaCache:
         # must not be answered from the topical nearest neighbour; that is
         # the confabulation-under-retrieval-failure path Phase 0 measured
         # (H-LSR-3, ABSENT x4).  Structural trigger, no threshold.
-        abstain = identifier_unbound_abstention(admission_profile)
+        abstain = identifier_serving_decision(
+            self, user_text, admission_profile, exclude=live_idx)
+        if abstain is not None and abstain.get("served_from"):
+            txt, info = self._serve_live_binding(
+                user_text, abstain, rec, ngen=ngen, deposit=deposit,
+                defer_memory=defer_memory, stops=stops)
+            _, contributors = self._grounding_attribution(
+                txt, self.cur_mounts, user_text)
+            if defer_memory:
+                info["_deferred_memory"]["importance_bookkeeping"] = {
+                    "routed": [int(i) for i in ranking],
+                    "mounted": list(self.cur_mounts),
+                    "grounded_mounts": list(contributors), "turn": int(s4_turn)}
+            else:
+                self._commit_s4_attempt(
+                    ranking, self.cur_mounts, contributors, turn=s4_turn)
+            return txt, attach_route_receipt(info)
         if abstain is not None:
             txt, info = self._serve_abstention(
                 user_text, abstain, deposit=deposit,

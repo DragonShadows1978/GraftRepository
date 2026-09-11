@@ -1,0 +1,286 @@
+{
+  "admission_profile": {
+    "admission_ranking_before_demotion": [
+      10,
+      26,
+      48,
+      27,
+      22,
+      16
+    ],
+    "admission_split_child_demoted": false,
+    "admission_split_demoted_ids": [],
+    "admission_split_family_ids": [
+      10,
+      26,
+      27
+    ],
+    "identified_candidates": [
+      10,
+      26,
+      48
+    ],
+    "identifier_hit_count": 3,
+    "identifier_tokens": [
+      "c7-archive-0"
+    ],
+    "margin_threshold": 0.1385774091529802,
+    "policy_branch": "declared_synthesis_identified_set",
+    "rank_plan": [
+      10,
+      26,
+      48
+    ],
+    "ranking": [
+      10,
+      26,
+      48,
+      27,
+      22,
+      16
+    ],
+    "rare_identifier_tokens": [
+      "c7-archive-0"
+    ],
+    "route_backend": "python",
+    "route_margin_1_2": 0.0,
+    "route_margin_evaluated": false,
+    "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+  },
+  "admitted": true,
+  "answer": "Reed‑611|Reed‑612",
+  "checkpoint": "artifacts/grm_c7/r3/cells/A-078-085/checkpoint",
+  "checkpoint_sha256": "75b5a5f86fc32d233f959a4390328358188beba16436755b9dd35e764d3907cf",
+  "evidence_class": "production checkpoint mount decision + fit + reader, cell-end state; no preceding-turn replay",
+  "historical_answer": "Not in memory: no stored record matches c7-archive-0.",
+  "historical_score": {
+    "abstained": true,
+    "abstention_error": 1,
+    "answer": "Not in memory: no stored record matches c7-archive-0.",
+    "exact_answer_error": 1,
+    "exact_correct": false,
+    "unsupported_answer_error": 0,
+    "wrong_value_error": 0
+  },
+  "identifier_unbound": false,
+  "mounted_ids": [
+    26
+  ],
+  "mounted_texts": {
+    "26": "ARCHIVE NOTE. ARCHIVE NOTE — The conversation established that the  current C7‑Vesper‑0 tag is Flint‑511 and the current C7‑Vesper‑1 tag is Flint‑512, while the earlier Mica values are no longer relevant. The current C7‑Archive‑0 outbound tag is Reed‑611 and the current C7‑Archive‑1 outbound tag is Reed‑612."
+  },
+  "probe_id": "c7_folded_0_d060",
+  "question": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.",
+  "registration_sha256": "f42b61df6d413551431c84042d6ceca11dfa5e3d89b600a7669f5cc76fa4283b",
+  "route_info": {
+    "_deferred_memory": {
+      "deposited": false,
+      "importance_committed": false,
+      "picks": [
+        26
+      ],
+      "route_key_prepared": true,
+      "route_key_token": 1,
+      "seg_cache_ntok": 60,
+      "turn_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.<|end|><|start|>assistant<|channel|>final<|message|>Reed‑611|Reed‑612<|end|>",
+      "user_text": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer."
+    },
+    "_route_observation": {
+      "admission_profile": {
+        "admission_ranking_before_demotion": [
+          10,
+          26,
+          48,
+          27,
+          22,
+          16
+        ],
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26,
+          27
+        ],
+        "identified_candidates": [
+          10,
+          26,
+          48
+        ],
+        "identifier_hit_count": 3,
+        "identifier_tokens": [
+          "c7-archive-0"
+        ],
+        "margin_threshold": 0.1385774091529802,
+        "policy_branch": "declared_synthesis_identified_set",
+        "rank_plan": [
+          10,
+          26,
+          48
+        ],
+        "ranking": [
+          10,
+          26,
+          48,
+          27,
+          22,
+          16
+        ],
+        "rare_identifier_tokens": [
+          "c7-archive-0"
+        ],
+        "route_backend": "python",
+        "route_margin_1_2": 0.0,
+        "route_margin_evaluated": false,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+      },
+      "excluded_live_ids": [
+        71,
+        72
+      ],
+      "route_limit": 6,
+      "serving_path": "grm_e2e_session._probe_ladder_chat",
+      "trips": [
+        {
+          "clean_room": true,
+          "early_aborted": false,
+          "grounded": true,
+          "grounding_glyph_rescued": true,
+          "grounding_normalized": true,
+          "mount_set": [
+            26
+          ],
+          "ordinal": 0,
+          "planned": [
+            26
+          ],
+          "shuttle": false
+        }
+      ]
+    },
+    "admission_identified_candidates": [
+      10,
+      26,
+      48
+    ],
+    "admission_identifier_hit_count": 3,
+    "admission_margin_threshold": 0.1385774091529802,
+    "admission_policy": "A-DEC",
+    "admission_policy_branch": "declared_synthesis_identified_set",
+    "admission_rank_plan": [
+      10,
+      26,
+      48
+    ],
+    "admission_ranking_before_demotion": [
+      10,
+      26,
+      48,
+      27,
+      22,
+      16
+    ],
+    "admission_route_margin_1_2": 0.0,
+    "admission_route_margin_evaluated": false,
+    "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+    "admission_split_child_demoted": false,
+    "admission_split_demoted_ids": [],
+    "admission_split_family_ids": [
+      10,
+      26,
+      27
+    ],
+    "clean_room": true,
+    "driver_probe_ladder": true,
+    "driver_probe_multimount": true,
+    "driver_topk": 3,
+    "evicted": 0,
+    "fit_chunk_trips": [],
+    "fit_descended_head": [
+      26
+    ],
+    "fit_dropped_filler": [],
+    "fit_dropped_planned": [],
+    "fit_planned": [
+      26,
+      48
+    ],
+    "fit_seated": [
+      26
+    ],
+    "fit_shuttle": true,
+    "fit_shuttle_trips": [
+      [
+        48
+      ]
+    ],
+    "fit_split_children": [
+      26,
+      27
+    ],
+    "fit_split_ephemeral": false,
+    "fit_split_parent": 10,
+    "fit_unseatable": [],
+    "frame_ephemeral": true,
+    "frame_escape_active": false,
+    "grounding_glyph_rescued": true,
+    "grounding_normalized": true,
+    "live_segments_after_turn": [
+      {
+        "graft_id": null,
+        "ntok": 60
+      }
+    ],
+    "live_segments_carried_into_turn": [],
+    "live_segments_inherited": [],
+    "live_tokens": 60,
+    "mount_dropped_for_width": [],
+    "mount_fitted": [
+      26
+    ],
+    "mount_plan": [
+      26
+    ],
+    "mounts": [
+      27
+    ],
+    "point_lookup": true,
+    "precise_first": false,
+    "ranking_ids": [
+      10,
+      26,
+      48,
+      27,
+      22,
+      16
+    ],
+    "recency_mounted_ids": [
+      71,
+      72
+    ],
+    "recency_seats": {
+      "arena_width": 96,
+      "budget_after_charge": 96,
+      "charge_waived_reason": "identifier_query_point_lookup",
+      "charged_ntok": 0,
+      "nominated_ids": [
+        71,
+        72
+      ],
+      "nominated_ntok": 126
+    },
+    "resident": 163,
+    "served_without_plan_head": false,
+    "trip": 0
+  },
+  "score": {
+    "abstained": false,
+    "abstention_error": 0,
+    "answer": "Reed‑611|Reed‑612",
+    "exact_answer_error": 1,
+    "exact_correct": false,
+    "unsupported_answer_error": 0,
+    "wrong_value_error": 1
+  },
+  "split_children": []
+}

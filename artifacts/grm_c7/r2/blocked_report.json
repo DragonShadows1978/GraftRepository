@@ -1,0 +1,28 @@
+{
+  "status": "CPU_GREEN_GPU_NOT_RUN",
+  "evidence_class": "author CPU tests and source-copy mutation; no blind review or model quality evidence",
+  "amendment_path": "artifacts/grm_c7/r2/amendment.json",
+  "amendment_sha256": "6b0d07b5c979ba30d8315a7ffe474a134bcb9fc52602a10518a42dff09e00048",
+  "core_sha256": {
+    "core/graft_arena.py": "cf242ddfe0ff29ac2114e98768f5cf66939f0ff46886658e50a4f492fcdb1fa4",
+    "core/graft_repository.py": "fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db"
+  },
+  "cpu_passed": 107,
+  "mutations_killed": 5,
+  "mutations_total": 5,
+  "gpu_executed": false,
+  "r2_gpu_cap_hours": 2,
+  "total_C7_gpu_cap_hours": 3.9,
+  "model": {
+    "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "repository": "openai/gpt-oss-20b",
+    "revision": "6cee5e81ee83917806bbde320786a8fb61efebee"
+  },
+  "unresolved": [
+    "GPT-OSS UNKNOWN cause remains RED; CPU live-source answer is not a numerical causal diagnosis",
+    "GPT-OSS digest quality/coverage after FIX-3 unmeasured until lead r2",
+    "S2 salience _s2_generate bypasses wrapper/stops; separate optional path unchanged",
+    "No blind verification seat launched; order prohibits subagents"
+  ],
+  "lead_command": "bash artifacts/grm_c7/r2/lead_commands_r2.txt"
+}

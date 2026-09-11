@@ -1,0 +1,116 @@
+......F................................F................................ [ 84%]
+.............                                                            [100%]
+=================================== FAILURES ===================================
+__________________ test_correction_real_repository_and_reload __________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-988/test_correction_real_repositor0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x75d2646169f0>
+
+    def test_correction_real_repository_and_reload(tmp_path, monkeypatch):
+        from scripts.grm_c7_diagnose import repository
+        repo = repository(tmp_path/'repo', monkeypatch)
+        f = fixture()
+        try:
+            original = repo.add_document(f['turns'][0]['user'])
+            event = f['turns'][1]
+            repo.add_document(event['user'])
+            assert event['kind'] == 'supersede'
+            repo.apply_memory_command(event['correction_command'])
+            assert repo.arena.grafts[original]['retired']
+            replacements = [g for g in repo.arena.grafts
+                            if original in g.get('metadata', {}).get('supersedes', [])]
+            assert replacements
+            assert all('Flint-511' in g['text'] and 'Flint-512' in g['text'] for g in replacements)
+            for event in f['turns'][2:]:
+                if event['kind'] == 'supersede' and event['fact_id'].startswith('C7-Vesper-'):
+                    repo.add_document(event['user'])
+                    repo.apply_memory_command(event['correction_command'])
+            active = '\n'.join(g['text'] for g in repo.arena.grafts if not g.get('retired'))
+            assert 'Mica-431' not in active and 'Mica-432' not in active
+            assert 'Onyx-911' in active and 'Onyx-912' in active
+>           before = [repo._node_manifest(g) for g in repo.arena.grafts]
+                      ^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_c7_r3.py:76: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <core.graft_repository.GraftRepository object at 0x75d266944d10>
+g = {'cent': array([0.04419417, 0.04419417, 0.04419417, 0.04419417, 0.04419417,
+       0.04419417, 0.04419417, 0.04419417,....04419417, 0.04419417,
+       0.04419417, 0.04419417]), 'cold_only': False, 'device_present': True, 'dirty': True, ...}
+
+    def _node_manifest(self, g):
+        # Prior art: RS3 capture receipts / ordinary manifests (project, 2026).
+        # Persist the existing capture evidence without inventing geometry
+        # for older grafts. Payload format and capture behavior are unchanged.
+        capture = {key: value for key, value in g.items()
+                   if key.startswith("capture_")
+                   or key in ("n_sink", "arena_width", "live_shift")}
+        return {"kind": g.get("kind", "turn"),
+                "text": g["text"], "ntok": g["ntok"],
+                "sources": g.get("sources", []),
+                "retired": bool(g.get("retired")),
+                "no_fold": bool(g.get("no_fold")),
+                "tags": g.get("tags", []),
+>               "rare": sorted(g["rare"]),
+                               ^^^^^^^^^
+                "metadata": g.get("metadata", self._default_metadata(g)),
+                "host_present": bool(g.get("host_present", False)),
+                "device_present": bool(g.get("device_present", False)),
+                "dirty": bool(g.get("dirty", False)),
+                "durable": bool(g.get("durable", False)),
+                "cold_only": bool(g.get("cold_only", False)),
+                "payload_pending": bool(g.get("payload_pending", False)),
+                "native_node_id": g.get("native_node_id"),
+                "provenance": g.get("provenance", []),
+                **({"capture": capture} if capture else {})}
+E       KeyError: 'rare'
+
+core/graft_repository.py:4644: KeyError
+___________ test_nonrecency_existing_fixture_receipt_byte_identical ____________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-988/test_nonrecency_existing_fixtu0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x75d264514d40>
+
+    def test_nonrecency_existing_fixture_receipt_byte_identical(tmp_path, monkeypatch):
+        from scripts.grm_c7_common import FIX, read
+        from scripts.grm_c7_run import effective_question
+        f = read(FIX)
+        result = {}
+        for path in ('core', 'ladder'):
+            repo = repository(tmp_path/path, monkeypatch)
+            try:
+                for t in f['turns'][:6]:
+                    repo.arena.feed(harmony_turn(t['user'], t['assistant']))
+                p = next(p for p in f['probes'] if p['id'] == 'c7_fresh_0_d005')
+                answer, info = serve(repo, path, effective_question(p['question']))
+                assert answer == 'Basalt-811'
+                assert repo.arena.cur_mounts == [5]
+                assert info['admission_rank_plan'] == [5]
+                result[path] = {'answer': answer, 'info': info}
+            finally:
+                repo.close()
+        data = (json.dumps(result, sort_keys=True, indent=2, default=str)+'\n').encode()
+        if os.environ.get('GRM_FIX4_FREEZE_BEFORE') == '1':
+            with BEFORE.open('xb') as stream:
+                stream.write(data)
+>       assert data == BEFORE.read_bytes()
+E       assert b'{\n  "core"...  }\n  }\n}\n' == b'{\n  "core"...  }\n  }\n}\n'
+E         
+E         At index 539 diff: b'3' != b'4'
+E         Use -v to get more diff
+
+tests/test_grm_scout_fix4.py:96: AssertionError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_grm_c7_r3.py::test_correction_real_repository_and_reload - ...
+FAILED tests/test_grm_scout_fix4.py::test_nonrecency_existing_fixture_receipt_byte_identical
+2 failed, 83 passed, 2 warnings in 6.18s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

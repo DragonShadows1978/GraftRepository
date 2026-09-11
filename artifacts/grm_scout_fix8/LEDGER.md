@@ -1,0 +1,31 @@
+# FIX-8 implementation ledger
+
+- Read HOUSE_RULES and immutable order. Confirmed cwd and branch by reading .git pointer/HEAD only; no git command. Memory quick pass found old runtime taxonomy, no FIX8 implementation guidance used.
+- Source diagnosis: admission normalized_words and query/node content scans omit routing normalize_glyphs; shared normalizer currently only two hyphens plus emphasis. Official Unicode 17 PropList defines 31 Dash points; UAX15 defines NFKC.
+- Prior art: GRM contributors (2026), SC1.1/DET1.4 glyph projection, ADM1/RT1 own-text predicate, C7 numerical doubles/checkpoints and amendment7 reader, C2/CMC1 leases. Reuse these; ours is boundary wiring and receipt-bound replay. Unicode Consortium UAX15/UCD17 (2025): NFKC/Dash mapping. No prior art known to me for this exact composition.
+- Registered gates before execution in registration.json; archived the three potential core files before edits. No GPU, git, subagents, background, signals, kills or service operations.
+- Discovery command tried nonexistent artifacts/grm_c2/cpu/001.json; FileNotFoundError, no state change. Locating actual recorded plans next.
+
+- RED foreground CPU replay exited 1: red.json/red.log, 0/24 binders, 0/24 forwards; 132/132 C2 plans byte identical. Core unchanged at capture.
+- Applied normalization in core/grm_text_norm.py, admission normalized_words, and routing query/node scans. NFKC then UCD17 Dash mapping; casefold at emitted identifier tokens, preserve caps input, existing LSR legacy switch. Digest own-text rare keys already flow through _rare_tokens; no union-as-binding change.
+- GREEN foreground CPU replay exited 0: green.json/green.log, 24/24 bind and forward, 132/132 C2 plans identical (same full record bytes as RED). CPU fake geometry and cell-end state; no answer-quality claim.
+- Suites initial run: 400 passed, 12 failed (suites.log). Ten FIX4 historical continuation checks depend on r2 environment/source chain; FIX5 exact source hash and original two-method-only diff guards reject later core edits. No test weakened or historical registration modified. FIX6 lives in sibling grm-lt1 and its API is absent here; compatibility test to be receipted.
+- Live launch log logs/grm_fix8_r1.log lines 6/10 verifies agent gpt-6-astra, high. Initial registration generic model label refined here without rewriting it.
+
+- Replay registration frozen before replay gates, f42b61df6d413551431c84042d6ceca11dfa5e3d89b600a7669f5cc76fa4283b. First replay gate run 43 pass / 1 fixture failure: requests.json missing in temporary busy-lease fixture, so the test did not reach lease acquisition. lead_check.log passed CPU-only combined command.
+- Separate replay_amendment_1.json preserves original registration and before bytes; corrects test fixture and adds strict amendment verifier, replaces static source assertion with actual fresh-process module-origin check. No policy/threshold changes. Prior art: C7 immutable amendment chain (GRM, 2026).
+- FIX6 attempt 1 collection failed on unavailable local LT1 helper. Explicit read-only import adapter retry executed 10 tests, all failed against current core (missing admission_rule / margin-first API); receipts fix6_compatibility*.log. No FIX6 integration authorized by this minimal FIX8 order.
+
+- Amended FIX8 suite: `CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 python -m pytest -q tests/test_grm_scout_fix8.py tests/test_grm_scout_fix8_replay.py` -> 44 passed, fix8_gates_amendment1.log. Actual archived core origins verified in a fresh CPU process; no GPU loader executed.
+- Correct historical FIX4 environment (`GRM_C7_REVISION=r2 GRM_C7_FIX4=1`) -> 1 pass / 9 source SHA guard failures, fix4_registered_env.log. Initial tenth failure was missing launch environment. Before-FIX8 arena hash already differs from FIX4 registered hash; legacy_boundary_comparison.json.
+- FIX6 API suite against archived pre-FIX8 modules -> same 10 failures as current core; fix6_before_compatibility.log. Missing implementation is a pre-existing checkout boundary, not claimed repaired. No sibling source mutation or policy integration.
+- Wrote PER_PROBE.md (24 rows), compact recorded/replayed C2 plan streams and c2_identity.json: 132/132 identical, aggregate SHA eae443d91b0a18231865f397526f8e16cdee3c04aa47f8baf6db3a91114a35ce. These serialize recorded ranking/margin policy outputs, not numerical-router/model replay.
+- Verified immutable FIX8 order and all original A7 inputs under the explicit three-module archive mapping; final_integrity.json. Core delta preserved via difflib only (no git). Original scorer SHA 5f8018edd43c0e794ac8ed72424a872cc3de82ccffe6f85d65ec88b0f1531fe0 unchanged.
+- REPORT.md records source lines, evidence classes, all residual RED, exact lead command, separate FIX8/A7 budgets, prior art, process safety and live model/effort receipt. New replay cap 1800s; existing A7 cap separate, combined reservations 3360s. No GPU run, no full-suite PASS, no model-quality claim.
+
+- 2026-09-09 order amendment 1: separate immutable PLAN/registration, append-only
+  ledger and report at resume_amendment_1/. Historical F5 OOM remains RED; new
+  F5-R1 120s + F6 280s retain 1400s old charges under 1800s. Pre-lease 1000 MiB
+  device-memory/PID admission, single successor, CPU baseline 80 passed and
+  lead --check-only passed; no GPU. Prior art and safety residual documented
+  in amendment ledger/report; old narrative extended by append only.

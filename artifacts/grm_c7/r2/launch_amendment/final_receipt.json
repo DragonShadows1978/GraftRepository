@@ -1,0 +1,23 @@
+{
+  "status": "CPU_GREEN_GPU_NOT_RUN",
+  "cpu_passed": 112,
+  "mutations_killed": 6,
+  "mutations_total": 6,
+  "base_amendment_sha256": "6b0d07b5c979ba30d8315a7ffe474a134bcb9fc52602a10518a42dff09e00048",
+  "effective_amendment_sha256": "cb20ba62d3fa99ebe5b6dde12cacefbab0126098476f6b4601e3584fb6ca3712",
+  "core_sha256": {
+    "core/graft_arena.py": "cf242ddfe0ff29ac2114e98768f5cf66939f0ff46886658e50a4f492fcdb1fa4",
+    "core/graft_repository.py": "fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db"
+  },
+  "gpu_executed": false,
+  "r1_files_unchanged": 10833,
+  "lead_preflight": "PASS",
+  "lead_commands_sha256": "04922d2e3700b896fb51ea4c33d17e6effe9d5ac9881dba9f3acfdbbb44b32b7",
+  "report_sha256": "46f265ad6915b70f05d20b27cfdabb0e0593e62a48070bf369783787ebfb3b3b",
+  "red": [
+    "GPT-OSS UNKNOWN causality",
+    "GPT-OSS post-fix fold quality/coverage",
+    "S2 salience Harmony protocol out of scope"
+  ],
+  "evidence_class": "author CPU gates and file integrity; no GPU quality or blind review"
+}

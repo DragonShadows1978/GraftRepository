@@ -1,0 +1,720 @@
+{
+  "arm": "A",
+  "binding": {
+    "arm": "A",
+    "fixture_sha256": "b648ebb71072d1c357146f6cedb22f6d93dd259a69cb50d912e1e9b564624c17",
+    "registration_sha256": "65c543b1904e6e3bd81d95316dbc092fd72f70ae164044cce036ce8a6ec04b1c",
+    "revision": "r3",
+    "source_manifest_sha256": "9f335bd1fc31186fca8892f5be040f9b75c7a038178b0f97f7d51ed530343245"
+  },
+  "by_class": {
+    "alias": {
+      "memory": {
+        "exact_correct": 0,
+        "expected_n": 15,
+        "n": 0
+      },
+      "oracle": {
+        "exact_correct": 0,
+        "expected_n": 15,
+        "n": 0
+      }
+    },
+    "correction": {
+      "memory": {
+        "exact_correct": 0,
+        "expected_n": 15,
+        "n": 0
+      },
+      "oracle": {
+        "exact_correct": 0,
+        "expected_n": 15,
+        "n": 0
+      }
+    },
+    "folded": {
+      "memory": {
+        "exact_correct": 0,
+        "expected_n": 15,
+        "n": 0
+      },
+      "oracle": {
+        "exact_correct": 0,
+        "expected_n": 15,
+        "n": 0
+      }
+    },
+    "fresh": {
+      "memory": {
+        "exact_correct": 0,
+        "expected_n": 15,
+        "n": 0
+      },
+      "oracle": {
+        "exact_correct": 0,
+        "expected_n": 15,
+        "n": 0
+      }
+    }
+  },
+  "by_distance": [
+    {
+      "distance": 5,
+      "memory": null,
+      "n": 0,
+      "oracle": null,
+      "passes": false
+    },
+    {
+      "distance": 30,
+      "memory": null,
+      "n": 0,
+      "oracle": null,
+      "passes": false
+    },
+    {
+      "distance": 60,
+      "memory": null,
+      "n": 0,
+      "oracle": null,
+      "passes": false
+    },
+    {
+      "distance": 120,
+      "memory": null,
+      "n": 0,
+      "oracle": null,
+      "passes": false
+    },
+    {
+      "distance": 250,
+      "memory": null,
+      "n": 0,
+      "oracle": null,
+      "passes": false
+    }
+  ],
+  "by_distance_and_class": [
+    {
+      "class": "fresh",
+      "complete": false,
+      "distance": 5,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      }
+    },
+    {
+      "class": "alias",
+      "complete": false,
+      "distance": 5,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      }
+    },
+    {
+      "class": "correction",
+      "complete": false,
+      "distance": 5,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      }
+    },
+    {
+      "class": "folded",
+      "complete": false,
+      "distance": 5,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      }
+    },
+    {
+      "class": "fresh",
+      "complete": false,
+      "distance": 30,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      }
+    },
+    {
+      "class": "alias",
+      "complete": false,
+      "distance": 30,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      }
+    },
+    {
+      "class": "correction",
+      "complete": false,
+      "distance": 30,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      }
+    },
+    {
+      "class": "folded",
+      "complete": false,
+      "distance": 30,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      }
+    },
+    {
+      "class": "fresh",
+      "complete": false,
+      "distance": 60,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      }
+    },
+    {
+      "class": "alias",
+      "complete": false,
+      "distance": 60,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      }
+    },
+    {
+      "class": "correction",
+      "complete": false,
+      "distance": 60,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      }
+    },
+    {
+      "class": "folded",
+      "complete": false,
+      "distance": 60,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      }
+    },
+    {
+      "class": "fresh",
+      "complete": false,
+      "distance": 120,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      }
+    },
+    {
+      "class": "alias",
+      "complete": false,
+      "distance": 120,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      }
+    },
+    {
+      "class": "correction",
+      "complete": false,
+      "distance": 120,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      }
+    },
+    {
+      "class": "folded",
+      "complete": false,
+      "distance": 120,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      }
+    },
+    {
+      "class": "fresh",
+      "complete": false,
+      "distance": 250,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      }
+    },
+    {
+      "class": "alias",
+      "complete": false,
+      "distance": 250,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      }
+    },
+    {
+      "class": "correction",
+      "complete": false,
+      "distance": 250,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      }
+    },
+    {
+      "class": "folded",
+      "complete": false,
+      "distance": 250,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      }
+    }
+  ],
+  "complete": false,
+  "denominator_note": "Order predictions retained verbatim. Frozen fixture has 15 probes per class (10 answerable + 5 unanswerable controls), 60 total. No subset for 12/15/13/12 is specified: report all 60 and actual denominators; prediction evaluation is unresolved, not a PASS criterion.",
+  "evidence_class": "E2E only if complete; otherwise incomplete or no GPU evidence",
+  "failed_fold_count": 0,
+  "fold_count": 0,
+  "fold_coverage_rule": null,
+  "folded_path_exercised": false,
+  "max_token_seats": null,
+  "paging": [
+    {
+      "controlled_nvme_return": false,
+      "natural_nvme_return": false,
+      "old_hot_nodes": [],
+      "pressure_turn": 60
+    },
+    {
+      "controlled_nvme_return": false,
+      "natural_nvme_return": false,
+      "old_hot_nodes": [],
+      "pressure_turn": 140
+    },
+    {
+      "controlled_nvme_return": false,
+      "natural_nvme_return": false,
+      "old_hot_nodes": [],
+      "pressure_turn": 240
+    }
+  ],
+  "prediction": {
+    "aliases": "<= 2/12",
+    "aliases_expected_to_fail": true,
+    "corrections": ">= 6/13",
+    "folded": ">= 10/15",
+    "fresh": ">= 10/12",
+    "residency": "bounded",
+    "restarts": "retained"
+  },
+  "prediction_evaluation": "UNRESOLVED_DENOMINATORS",
+  "residency_bounded": null,
+  "restart_scores": [],
+  "status": "NOT_RUN"
+}

@@ -1,0 +1,23 @@
+{
+  "protected_count": 298,
+  "protected_changed": [],
+  "current_input_changes": [],
+  "original_orders_core_fixture_r2_cells_and_payloads_unchanged": true,
+  "blocked_lead_command_expected_exit": 1,
+  "blocked_lead_command_observed_exit": 1,
+  "old_launch_status": "ValueError: INPUT_SHA_MISMATCH: scripts/grm_c7_run.py",
+  "new_gpu_work": false,
+  "gpu_seconds": 0,
+  "cpu_baseline": {
+    "passed": 62,
+    "failed": 0,
+    "receipt": "cpu_green.log"
+  },
+  "mutations": {
+    "killed": 3,
+    "total": 3,
+    "errors": 0,
+    "receipt": "cpu_mutations.json"
+  },
+  "continuation_sha256": "a4422e23c93f92d7757e98c29787d7ff5a6e54fab8f02a2b549efd3b0948c577"
+}

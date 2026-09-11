@@ -1,0 +1,4237 @@
+[
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-032-039/checkpoint",
+    "checkpoint_sha256": "644c0d66199e14164bdac107d65c77501cfcc86367b3d30ebad8d2049a1e3a3c",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-fresh-0.",
+      "folded_path": null,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              16,
+              22,
+              10,
+              26,
+              27,
+              18
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26,
+              27
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-fresh-0"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              16,
+              22,
+              10
+            ],
+            "ranking": [
+              16,
+              22,
+              10,
+              26,
+              27,
+              18
+            ],
+            "rare_identifier_tokens": [
+              "c7-fresh-0"
+            ],
+            "route_backend": "native",
+            "route_margin_1_2": 0.9817569483318265,
+            "route_margin_evaluated": true,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            29,
+            30
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-fresh-0"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          16,
+          22,
+          10
+        ],
+        "admission_ranking_before_demotion": [
+          16,
+          22,
+          10,
+          26,
+          27,
+          18
+        ],
+        "admission_route_margin_1_2": 0.9817569483318265,
+        "admission_route_margin_evaluated": true,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26,
+          27
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          16,
+          22,
+          10,
+          26,
+          27,
+          18
+        ],
+        "recency_mounted_ids": [
+          29,
+          30
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            29,
+            30
+          ],
+          "nominated_ntok": 128
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 1,
+        "answer": "Not in memory: no stored record matches c7-fresh-0.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. What is the current C7-Fresh-0 value? Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "What is the current C7-Fresh-0 value? Reply only with the answer.",
+    "probe": {
+      "answerable": true,
+      "class": "fresh",
+      "distance": 30,
+      "entity": "C7-Fresh-0",
+      "expected": "Basalt-811",
+      "id": "c7_fresh_0_d030",
+      "oracle_source_texts": [
+        "The current C7-Fresh-0 value is Basalt-811."
+      ],
+      "question": "What is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 6,
+      "source_turns": [
+        6
+      ],
+      "turn": 36
+    },
+    "probe_id": "c7_fresh_0_d030",
+    "receipt": "artifacts/grm_c7/r3/cells/A-032-039/probes.jsonl",
+    "receipt_line": 2
+  },
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-032-039/checkpoint",
+    "checkpoint_sha256": "644c0d66199e14164bdac107d65c77501cfcc86367b3d30ebad8d2049a1e3a3c",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-fresh-1.",
+      "folded_path": null,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              16,
+              22,
+              10,
+              26,
+              27,
+              18
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26,
+              27
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-fresh-1"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              16,
+              22,
+              10
+            ],
+            "ranking": [
+              16,
+              22,
+              10,
+              26,
+              27,
+              18
+            ],
+            "rare_identifier_tokens": [
+              "c7-fresh-1"
+            ],
+            "route_backend": "native",
+            "route_margin_1_2": 0.9757878771791686,
+            "route_margin_evaluated": true,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            29,
+            30
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-fresh-1"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          16,
+          22,
+          10
+        ],
+        "admission_ranking_before_demotion": [
+          16,
+          22,
+          10,
+          26,
+          27,
+          18
+        ],
+        "admission_route_margin_1_2": 0.9757878771791686,
+        "admission_route_margin_evaluated": true,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26,
+          27
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          16,
+          22,
+          10,
+          26,
+          27,
+          18
+        ],
+        "recency_mounted_ids": [
+          29,
+          30
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            29,
+            30
+          ],
+          "nominated_ntok": 128
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 1,
+        "answer": "Not in memory: no stored record matches c7-fresh-1.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. What is the current C7-Fresh-1 value? Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "What is the current C7-Fresh-1 value? Reply only with the answer.",
+    "probe": {
+      "answerable": true,
+      "class": "fresh",
+      "distance": 30,
+      "entity": "C7-Fresh-1",
+      "expected": "Basalt-812",
+      "id": "c7_fresh_1_d030",
+      "oracle_source_texts": [
+        "The current C7-Fresh-1 value is Basalt-812."
+      ],
+      "question": "What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 7,
+      "source_turns": [
+        7
+      ],
+      "turn": 37
+    },
+    "probe_id": "c7_fresh_1_d030",
+    "receipt": "artifacts/grm_c7/r3/cells/A-032-039/probes.jsonl",
+    "receipt_line": 3
+  },
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-032-039/checkpoint",
+    "checkpoint_sha256": "644c0d66199e14164bdac107d65c77501cfcc86367b3d30ebad8d2049a1e3a3c",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-fresh-2.",
+      "folded_path": null,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              16,
+              22,
+              10,
+              26,
+              27,
+              18
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26,
+              27
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-fresh-2"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              16,
+              22,
+              10
+            ],
+            "ranking": [
+              16,
+              22,
+              10,
+              26,
+              27,
+              18
+            ],
+            "rare_identifier_tokens": [
+              "c7-fresh-2"
+            ],
+            "route_backend": "native",
+            "route_margin_1_2": 0.30849495315763376,
+            "route_margin_evaluated": true,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            29,
+            30
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-fresh-2"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          16,
+          22,
+          10
+        ],
+        "admission_ranking_before_demotion": [
+          16,
+          22,
+          10,
+          26,
+          27,
+          18
+        ],
+        "admission_route_margin_1_2": 0.30849495315763376,
+        "admission_route_margin_evaluated": true,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26,
+          27
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          16,
+          22,
+          10,
+          26,
+          27,
+          18
+        ],
+        "recency_mounted_ids": [
+          29,
+          30
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            29,
+            30
+          ],
+          "nominated_ntok": 128
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 0,
+        "answer": "Not in memory: no stored record matches c7-fresh-2.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. What is the inspection password for C7-Fresh-2? Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "What is the inspection password for C7-Fresh-2? Reply only with the answer.",
+    "probe": {
+      "answerable": false,
+      "class": "fresh",
+      "distance": 30,
+      "entity": "C7-Fresh-2",
+      "expected": "UNKNOWN",
+      "id": "c7_fresh_2_d030",
+      "oracle_source_texts": [
+        "The current C7-Fresh-2 value is Basalt-813."
+      ],
+      "question": "What is the inspection password for C7-Fresh-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 8,
+      "source_turns": [
+        8
+      ],
+      "turn": 38
+    },
+    "probe_id": "c7_fresh_2_d030",
+    "receipt": "artifacts/grm_c7/r3/cells/A-032-039/probes.jsonl",
+    "receipt_line": 4
+  },
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-063-070/checkpoint",
+    "checkpoint_sha256": "eff7f20a3043125e525a7b2e4da02efdecb750fa52ef636d63ed3025df2811ed",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-fresh-0.",
+      "folded_path": null,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              16,
+              22,
+              10,
+              26,
+              27,
+              48
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26,
+              27
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-fresh-0"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              16,
+              22,
+              10
+            ],
+            "ranking": [
+              16,
+              22,
+              10,
+              26,
+              27,
+              48
+            ],
+            "rare_identifier_tokens": [
+              "c7-fresh-0"
+            ],
+            "route_backend": "native",
+            "route_margin_1_2": 0.9816922122368442,
+            "route_margin_evaluated": true,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            55,
+            57
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-fresh-0"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          16,
+          22,
+          10
+        ],
+        "admission_ranking_before_demotion": [
+          16,
+          22,
+          10,
+          26,
+          27,
+          48
+        ],
+        "admission_route_margin_1_2": 0.9816922122368442,
+        "admission_route_margin_evaluated": true,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26,
+          27
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          16,
+          22,
+          10,
+          26,
+          27,
+          48
+        ],
+        "recency_mounted_ids": [
+          55,
+          57
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            55,
+            57
+          ],
+          "nominated_ntok": 109
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 1,
+        "answer": "Not in memory: no stored record matches c7-fresh-0.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. What is the current C7-Fresh-0 value? Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "What is the current C7-Fresh-0 value? Reply only with the answer.",
+    "probe": {
+      "answerable": true,
+      "class": "fresh",
+      "distance": 60,
+      "entity": "C7-Fresh-0",
+      "expected": "Basalt-811",
+      "id": "c7_fresh_0_d060",
+      "oracle_source_texts": [
+        "The current C7-Fresh-0 value is Basalt-811."
+      ],
+      "question": "What is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 6,
+      "source_turns": [
+        6
+      ],
+      "turn": 66
+    },
+    "probe_id": "c7_fresh_0_d060",
+    "receipt": "artifacts/grm_c7/r3/cells/A-063-070/probes.jsonl",
+    "receipt_line": 1
+  },
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-063-070/checkpoint",
+    "checkpoint_sha256": "eff7f20a3043125e525a7b2e4da02efdecb750fa52ef636d63ed3025df2811ed",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-fresh-1.",
+      "folded_path": null,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              16,
+              22,
+              10,
+              26,
+              27,
+              48
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26,
+              27
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-fresh-1"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              16,
+              22,
+              10
+            ],
+            "ranking": [
+              16,
+              22,
+              10,
+              26,
+              27,
+              48
+            ],
+            "rare_identifier_tokens": [
+              "c7-fresh-1"
+            ],
+            "route_backend": "native",
+            "route_margin_1_2": 0.9755984814481312,
+            "route_margin_evaluated": true,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            55,
+            57
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-fresh-1"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          16,
+          22,
+          10
+        ],
+        "admission_ranking_before_demotion": [
+          16,
+          22,
+          10,
+          26,
+          27,
+          48
+        ],
+        "admission_route_margin_1_2": 0.9755984814481312,
+        "admission_route_margin_evaluated": true,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26,
+          27
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          16,
+          22,
+          10,
+          26,
+          27,
+          48
+        ],
+        "recency_mounted_ids": [
+          55,
+          57
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            55,
+            57
+          ],
+          "nominated_ntok": 109
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 1,
+        "answer": "Not in memory: no stored record matches c7-fresh-1.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. What is the current C7-Fresh-1 value? Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "What is the current C7-Fresh-1 value? Reply only with the answer.",
+    "probe": {
+      "answerable": true,
+      "class": "fresh",
+      "distance": 60,
+      "entity": "C7-Fresh-1",
+      "expected": "Basalt-812",
+      "id": "c7_fresh_1_d060",
+      "oracle_source_texts": [
+        "The current C7-Fresh-1 value is Basalt-812."
+      ],
+      "question": "What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 7,
+      "source_turns": [
+        7
+      ],
+      "turn": 67
+    },
+    "probe_id": "c7_fresh_1_d060",
+    "receipt": "artifacts/grm_c7/r3/cells/A-063-070/probes.jsonl",
+    "receipt_line": 2
+  },
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-063-070/checkpoint",
+    "checkpoint_sha256": "eff7f20a3043125e525a7b2e4da02efdecb750fa52ef636d63ed3025df2811ed",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-fresh-2.",
+      "folded_path": null,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              16,
+              22,
+              10,
+              26,
+              27,
+              48
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26,
+              27
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-fresh-2"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              16,
+              22,
+              10
+            ],
+            "ranking": [
+              16,
+              22,
+              10,
+              26,
+              27,
+              48
+            ],
+            "rare_identifier_tokens": [
+              "c7-fresh-2"
+            ],
+            "route_backend": "native",
+            "route_margin_1_2": 0.30894898577737084,
+            "route_margin_evaluated": true,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            55,
+            57
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-fresh-2"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          16,
+          22,
+          10
+        ],
+        "admission_ranking_before_demotion": [
+          16,
+          22,
+          10,
+          26,
+          27,
+          48
+        ],
+        "admission_route_margin_1_2": 0.30894898577737084,
+        "admission_route_margin_evaluated": true,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26,
+          27
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          16,
+          22,
+          10,
+          26,
+          27,
+          48
+        ],
+        "recency_mounted_ids": [
+          55,
+          57
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            55,
+            57
+          ],
+          "nominated_ntok": 109
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 0,
+        "answer": "Not in memory: no stored record matches c7-fresh-2.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. What is the inspection password for C7-Fresh-2? Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "What is the inspection password for C7-Fresh-2? Reply only with the answer.",
+    "probe": {
+      "answerable": false,
+      "class": "fresh",
+      "distance": 60,
+      "entity": "C7-Fresh-2",
+      "expected": "UNKNOWN",
+      "id": "c7_fresh_2_d060",
+      "oracle_source_texts": [
+        "The current C7-Fresh-2 value is Basalt-813."
+      ],
+      "question": "What is the inspection password for C7-Fresh-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 8,
+      "source_turns": [
+        8
+      ],
+      "turn": 68
+    },
+    "probe_id": "c7_fresh_2_d060",
+    "receipt": "artifacts/grm_c7/r3/cells/A-063-070/probes.jsonl",
+    "receipt_line": 3
+  },
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-078-085/checkpoint",
+    "checkpoint_sha256": "75b5a5f86fc32d233f959a4390328358188beba16436755b9dd35e764d3907cf",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-vesper-2.",
+      "folded_path": null,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              48,
+              22,
+              10,
+              26,
+              27,
+              16
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26,
+              27
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-vesper-2"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              48,
+              22,
+              10
+            ],
+            "ranking": [
+              48,
+              22,
+              10,
+              26,
+              27,
+              16
+            ],
+            "rare_identifier_tokens": [
+              "c7-vesper-2"
+            ],
+            "route_backend": "native",
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": false,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            60,
+            65
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-vesper-2"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          48,
+          22,
+          10
+        ],
+        "admission_ranking_before_demotion": [
+          48,
+          22,
+          10,
+          26,
+          27,
+          16
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26,
+          27
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [
+          {
+            "graft_id": null,
+            "ntok": 54
+          }
+        ],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          48,
+          22,
+          10,
+          26,
+          27,
+          16
+        ],
+        "recency_mounted_ids": [
+          60,
+          65
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            60,
+            65
+          ],
+          "nominated_ntok": 92
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 0,
+        "answer": "Not in memory: no stored record matches c7-vesper-2.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. What is the inspection password for C7-Vesper-2? Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "What is the inspection password for C7-Vesper-2? Reply only with the answer.",
+    "probe": {
+      "answerable": false,
+      "class": "correction",
+      "distance": 60,
+      "entity": "C7-Vesper-2",
+      "expected": "UNKNOWN",
+      "id": "c7_correction_2_d060",
+      "oracle_source_texts": [
+        "The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.",
+        "Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+        "The current C7-Vesper-2 value is Onyx-913."
+      ],
+      "question": "What is the inspection password for C7-Vesper-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 19,
+      "source_turns": [
+        1,
+        2,
+        19
+      ],
+      "turn": 79
+    },
+    "probe_id": "c7_correction_2_d060",
+    "receipt": "artifacts/grm_c7/r3/cells/A-078-085/probes.jsonl",
+    "receipt_line": 2
+  },
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-078-085/checkpoint",
+    "checkpoint_sha256": "75b5a5f86fc32d233f959a4390328358188beba16436755b9dd35e764d3907cf",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-archive-0.",
+      "folded_path": false,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              10,
+              26,
+              48,
+              27,
+              22,
+              16
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26,
+              27
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-archive-0"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              10,
+              26,
+              48
+            ],
+            "ranking": [
+              10,
+              26,
+              48,
+              27,
+              22,
+              16
+            ],
+            "rare_identifier_tokens": [
+              "c7-archive-0"
+            ],
+            "route_backend": "python",
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": false,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            60,
+            65
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-archive-0"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          10,
+          26,
+          48
+        ],
+        "admission_ranking_before_demotion": [
+          10,
+          26,
+          48,
+          27,
+          22,
+          16
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26,
+          27
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          10,
+          26,
+          48,
+          27,
+          22,
+          16
+        ],
+        "recency_mounted_ids": [
+          60,
+          65
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            60,
+            65
+          ],
+          "nominated_ntok": 92
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 1,
+        "answer": "Not in memory: no stored record matches c7-archive-0.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "probe": {
+      "answerable": true,
+      "class": "folded",
+      "distance": 60,
+      "entity": "C7-Archive-0",
+      "expected": "Reed-611|Cedar-1011",
+      "id": "c7_folded_0_d060",
+      "oracle_source_texts": [
+        "For C7-Archive-0 the outbound tag is Reed-611.",
+        "For C7-Archive-0 the inbound tag is Cedar-1011."
+      ],
+      "question": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": true,
+      "source_turn": 20,
+      "source_turns": [
+        3,
+        20
+      ],
+      "turn": 80
+    },
+    "probe_id": "c7_folded_0_d060",
+    "receipt": "artifacts/grm_c7/r3/cells/A-078-085/probes.jsonl",
+    "receipt_line": 3
+  },
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-086-093/checkpoint",
+    "checkpoint_sha256": "b755c5870977a7260e30fcdba041351544053573fc8d9112634d447f3a3a4d79",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-archive-1.",
+      "folded_path": false,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              10,
+              26,
+              48,
+              27,
+              69,
+              22
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26,
+              27
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-archive-1"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              10,
+              26,
+              48
+            ],
+            "ranking": [
+              10,
+              26,
+              48,
+              27,
+              69,
+              22
+            ],
+            "rare_identifier_tokens": [
+              "c7-archive-1"
+            ],
+            "route_backend": "python",
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": false,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            71,
+            72
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-archive-1"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          10,
+          26,
+          48
+        ],
+        "admission_ranking_before_demotion": [
+          10,
+          26,
+          48,
+          27,
+          69,
+          22
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26,
+          27
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          10,
+          26,
+          48,
+          27,
+          69,
+          22
+        ],
+        "recency_mounted_ids": [
+          71,
+          72
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            71,
+            72
+          ],
+          "nominated_ntok": 126
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 1,
+        "answer": "Not in memory: no stored record matches c7-archive-1.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "probe": {
+      "answerable": true,
+      "class": "folded",
+      "distance": 60,
+      "entity": "C7-Archive-1",
+      "expected": "Reed-612|Cedar-1012",
+      "id": "c7_folded_1_d060",
+      "oracle_source_texts": [
+        "For C7-Archive-1 the outbound tag is Reed-612.",
+        "For C7-Archive-1 the inbound tag is Cedar-1012."
+      ],
+      "question": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": true,
+      "source_turn": 26,
+      "source_turns": [
+        4,
+        26
+      ],
+      "turn": 86
+    },
+    "probe_id": "c7_folded_1_d060",
+    "receipt": "artifacts/grm_c7/r3/cells/A-086-093/probes.jsonl",
+    "receipt_line": 1
+  },
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-086-093/checkpoint",
+    "checkpoint_sha256": "b755c5870977a7260e30fcdba041351544053573fc8d9112634d447f3a3a4d79",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-archive-2.",
+      "folded_path": null,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              48,
+              22,
+              10,
+              26,
+              27,
+              69
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26,
+              27
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-archive-2"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              48,
+              22,
+              10
+            ],
+            "ranking": [
+              48,
+              22,
+              10,
+              26,
+              27,
+              69
+            ],
+            "rare_identifier_tokens": [
+              "c7-archive-2"
+            ],
+            "route_backend": "native",
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": false,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            71,
+            72
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-archive-2"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          48,
+          22,
+          10
+        ],
+        "admission_ranking_before_demotion": [
+          48,
+          22,
+          10,
+          26,
+          27,
+          69
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26,
+          27
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          48,
+          22,
+          10,
+          26,
+          27,
+          69
+        ],
+        "recency_mounted_ids": [
+          71,
+          72
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            71,
+            72
+          ],
+          "nominated_ntok": 126
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 0,
+        "answer": "Not in memory: no stored record matches c7-archive-2.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. What is the inspection password for C7-Archive-2? Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "What is the inspection password for C7-Archive-2? Reply only with the answer.",
+    "probe": {
+      "answerable": false,
+      "class": "folded",
+      "distance": 60,
+      "entity": "C7-Archive-2",
+      "expected": "UNKNOWN",
+      "id": "c7_folded_2_d060",
+      "oracle_source_texts": [
+        "For C7-Archive-2 the inbound tag is Cedar-1013."
+      ],
+      "question": "What is the inspection password for C7-Archive-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 27,
+      "source_turns": [
+        27
+      ],
+      "turn": 87
+    },
+    "probe_id": "c7_folded_2_d060",
+    "receipt": "artifacts/grm_c7/r3/cells/A-086-093/probes.jsonl",
+    "receipt_line": 2
+  },
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-125-132/checkpoint",
+    "checkpoint_sha256": "dd466585b9aa49e305c76421c1bc617f822bc927d97830b49948e7bc8e230a6c",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-fresh-0.",
+      "folded_path": null,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              16,
+              89,
+              22,
+              10,
+              26,
+              99
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-fresh-0"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              16,
+              89,
+              22
+            ],
+            "ranking": [
+              16,
+              89,
+              22,
+              10,
+              26,
+              99
+            ],
+            "rare_identifier_tokens": [
+              "c7-fresh-0"
+            ],
+            "route_backend": "native",
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": false,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            117,
+            118
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-fresh-0"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          16,
+          89,
+          22
+        ],
+        "admission_ranking_before_demotion": [
+          16,
+          89,
+          22,
+          10,
+          26,
+          99
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          16,
+          89,
+          22,
+          10,
+          26,
+          99
+        ],
+        "recency_mounted_ids": [
+          117,
+          118
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            117,
+            118
+          ],
+          "nominated_ntok": 128
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 1,
+        "answer": "Not in memory: no stored record matches c7-fresh-0.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. What is the current C7-Fresh-0 value? Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "What is the current C7-Fresh-0 value? Reply only with the answer.",
+    "probe": {
+      "answerable": true,
+      "class": "fresh",
+      "distance": 120,
+      "entity": "C7-Fresh-0",
+      "expected": "Basalt-811",
+      "id": "c7_fresh_0_d120",
+      "oracle_source_texts": [
+        "The current C7-Fresh-0 value is Basalt-811."
+      ],
+      "question": "What is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 6,
+      "source_turns": [
+        6
+      ],
+      "turn": 126
+    },
+    "probe_id": "c7_fresh_0_d120",
+    "receipt": "artifacts/grm_c7/r3/cells/A-125-132/probes.jsonl",
+    "receipt_line": 1
+  },
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-125-132/checkpoint",
+    "checkpoint_sha256": "dd466585b9aa49e305c76421c1bc617f822bc927d97830b49948e7bc8e230a6c",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-fresh-1.",
+      "folded_path": null,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              16,
+              89,
+              22,
+              10,
+              26,
+              104
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-fresh-1"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              16,
+              89,
+              22
+            ],
+            "ranking": [
+              16,
+              89,
+              22,
+              10,
+              26,
+              104
+            ],
+            "rare_identifier_tokens": [
+              "c7-fresh-1"
+            ],
+            "route_backend": "native",
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": false,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            117,
+            118
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-fresh-1"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          16,
+          89,
+          22
+        ],
+        "admission_ranking_before_demotion": [
+          16,
+          89,
+          22,
+          10,
+          26,
+          104
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          16,
+          89,
+          22,
+          10,
+          26,
+          104
+        ],
+        "recency_mounted_ids": [
+          117,
+          118
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            117,
+            118
+          ],
+          "nominated_ntok": 128
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 1,
+        "answer": "Not in memory: no stored record matches c7-fresh-1.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. What is the current C7-Fresh-1 value? Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "What is the current C7-Fresh-1 value? Reply only with the answer.",
+    "probe": {
+      "answerable": true,
+      "class": "fresh",
+      "distance": 120,
+      "entity": "C7-Fresh-1",
+      "expected": "Basalt-812",
+      "id": "c7_fresh_1_d120",
+      "oracle_source_texts": [
+        "The current C7-Fresh-1 value is Basalt-812."
+      ],
+      "question": "What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 7,
+      "source_turns": [
+        7
+      ],
+      "turn": 127
+    },
+    "probe_id": "c7_fresh_1_d120",
+    "receipt": "artifacts/grm_c7/r3/cells/A-125-132/probes.jsonl",
+    "receipt_line": 2
+  },
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-125-132/checkpoint",
+    "checkpoint_sha256": "dd466585b9aa49e305c76421c1bc617f822bc927d97830b49948e7bc8e230a6c",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-fresh-2.",
+      "folded_path": null,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              16,
+              89,
+              22,
+              99,
+              10,
+              26
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-fresh-2"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              16,
+              89,
+              22
+            ],
+            "ranking": [
+              16,
+              89,
+              22,
+              99,
+              10,
+              26
+            ],
+            "rare_identifier_tokens": [
+              "c7-fresh-2"
+            ],
+            "route_backend": "native",
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": false,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            117,
+            118
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-fresh-2"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          16,
+          89,
+          22
+        ],
+        "admission_ranking_before_demotion": [
+          16,
+          89,
+          22,
+          99,
+          10,
+          26
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          16,
+          89,
+          22,
+          99,
+          10,
+          26
+        ],
+        "recency_mounted_ids": [
+          117,
+          118
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            117,
+            118
+          ],
+          "nominated_ntok": 128
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 0,
+        "answer": "Not in memory: no stored record matches c7-fresh-2.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. What is the inspection password for C7-Fresh-2? Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "What is the inspection password for C7-Fresh-2? Reply only with the answer.",
+    "probe": {
+      "answerable": false,
+      "class": "fresh",
+      "distance": 120,
+      "entity": "C7-Fresh-2",
+      "expected": "UNKNOWN",
+      "id": "c7_fresh_2_d120",
+      "oracle_source_texts": [
+        "The current C7-Fresh-2 value is Basalt-813."
+      ],
+      "question": "What is the inspection password for C7-Fresh-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 8,
+      "source_turns": [
+        8
+      ],
+      "turn": 128
+    },
+    "probe_id": "c7_fresh_2_d120",
+    "receipt": "artifacts/grm_c7/r3/cells/A-125-132/probes.jsonl",
+    "receipt_line": 3
+  },
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-133-140/checkpoint",
+    "checkpoint_sha256": "74729a84e43182b5ce187e25b3b761e634f22a60ae9615ef0aea321f2445b950",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-vesper-2.",
+      "folded_path": null,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              89,
+              22,
+              10,
+              26,
+              99,
+              16
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-vesper-2"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              89,
+              22,
+              10
+            ],
+            "ranking": [
+              89,
+              22,
+              10,
+              26,
+              99,
+              16
+            ],
+            "rare_identifier_tokens": [
+              "c7-vesper-2"
+            ],
+            "route_backend": "native",
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": false,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            122,
+            123
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-vesper-2"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          89,
+          22,
+          10
+        ],
+        "admission_ranking_before_demotion": [
+          89,
+          22,
+          10,
+          26,
+          99,
+          16
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [
+          {
+            "graft_id": null,
+            "ntok": 54
+          }
+        ],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          89,
+          22,
+          10,
+          26,
+          99,
+          16
+        ],
+        "recency_mounted_ids": [
+          122,
+          123
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            122,
+            123
+          ],
+          "nominated_ntok": 128
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 0,
+        "answer": "Not in memory: no stored record matches c7-vesper-2.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. What is the inspection password for C7-Vesper-2? Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "What is the inspection password for C7-Vesper-2? Reply only with the answer.",
+    "probe": {
+      "answerable": false,
+      "class": "correction",
+      "distance": 120,
+      "entity": "C7-Vesper-2",
+      "expected": "UNKNOWN",
+      "id": "c7_correction_2_d120",
+      "oracle_source_texts": [
+        "The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.",
+        "Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+        "The current C7-Vesper-2 value is Onyx-913."
+      ],
+      "question": "What is the inspection password for C7-Vesper-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 19,
+      "source_turns": [
+        1,
+        2,
+        19
+      ],
+      "turn": 139
+    },
+    "probe_id": "c7_correction_2_d120",
+    "receipt": "artifacts/grm_c7/r3/cells/A-133-140/probes.jsonl",
+    "receipt_line": 4
+  },
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-133-140/checkpoint",
+    "checkpoint_sha256": "74729a84e43182b5ce187e25b3b761e634f22a60ae9615ef0aea321f2445b950",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-archive-0.",
+      "folded_path": false,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              89,
+              10,
+              26,
+              99,
+              22,
+              104
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-archive-0"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              89,
+              10,
+              26
+            ],
+            "ranking": [
+              89,
+              10,
+              26,
+              99,
+              22,
+              104
+            ],
+            "rare_identifier_tokens": [
+              "c7-archive-0"
+            ],
+            "route_backend": "python",
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": false,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            122,
+            123
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-archive-0"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          89,
+          10,
+          26
+        ],
+        "admission_ranking_before_demotion": [
+          89,
+          10,
+          26,
+          99,
+          22,
+          104
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          89,
+          10,
+          26,
+          99,
+          22,
+          104
+        ],
+        "recency_mounted_ids": [
+          122,
+          123
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            122,
+            123
+          ],
+          "nominated_ntok": 128
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 1,
+        "answer": "Not in memory: no stored record matches c7-archive-0.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "probe": {
+      "answerable": true,
+      "class": "folded",
+      "distance": 120,
+      "entity": "C7-Archive-0",
+      "expected": "Reed-611|Cedar-1011",
+      "id": "c7_folded_0_d120",
+      "oracle_source_texts": [
+        "For C7-Archive-0 the outbound tag is Reed-611.",
+        "For C7-Archive-0 the inbound tag is Cedar-1011."
+      ],
+      "question": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": true,
+      "source_turn": 20,
+      "source_turns": [
+        3,
+        20
+      ],
+      "turn": 140
+    },
+    "probe_id": "c7_folded_0_d120",
+    "receipt": "artifacts/grm_c7/r3/cells/A-133-140/probes.jsonl",
+    "receipt_line": 5
+  },
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-141-148/checkpoint",
+    "checkpoint_sha256": "49cba3e767d98b2ffa9522ec79da6d8be05b4efaf1254f0dd36da62a34c1976d",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-archive-1.",
+      "folded_path": false,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              89,
+              10,
+              26,
+              104,
+              22,
+              78
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-archive-1"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              89,
+              10,
+              26
+            ],
+            "ranking": [
+              89,
+              10,
+              26,
+              104,
+              22,
+              78
+            ],
+            "rare_identifier_tokens": [
+              "c7-archive-1"
+            ],
+            "route_backend": "python",
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": false,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            127,
+            128
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-archive-1"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          89,
+          10,
+          26
+        ],
+        "admission_ranking_before_demotion": [
+          89,
+          10,
+          26,
+          104,
+          22,
+          78
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          89,
+          10,
+          26,
+          104,
+          22,
+          78
+        ],
+        "recency_mounted_ids": [
+          127,
+          128
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            127,
+            128
+          ],
+          "nominated_ntok": 128
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 1,
+        "answer": "Not in memory: no stored record matches c7-archive-1.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "probe": {
+      "answerable": true,
+      "class": "folded",
+      "distance": 120,
+      "entity": "C7-Archive-1",
+      "expected": "Reed-612|Cedar-1012",
+      "id": "c7_folded_1_d120",
+      "oracle_source_texts": [
+        "For C7-Archive-1 the outbound tag is Reed-612.",
+        "For C7-Archive-1 the inbound tag is Cedar-1012."
+      ],
+      "question": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": true,
+      "source_turn": 26,
+      "source_turns": [
+        4,
+        26
+      ],
+      "turn": 146
+    },
+    "probe_id": "c7_folded_1_d120",
+    "receipt": "artifacts/grm_c7/r3/cells/A-141-148/probes.jsonl",
+    "receipt_line": 1
+  },
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-141-148/checkpoint",
+    "checkpoint_sha256": "49cba3e767d98b2ffa9522ec79da6d8be05b4efaf1254f0dd36da62a34c1976d",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-archive-2.",
+      "folded_path": null,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              89,
+              22,
+              99,
+              10,
+              26,
+              104
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-archive-2"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              89,
+              22,
+              99
+            ],
+            "ranking": [
+              89,
+              22,
+              99,
+              10,
+              26,
+              104
+            ],
+            "rare_identifier_tokens": [
+              "c7-archive-2"
+            ],
+            "route_backend": "native",
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": false,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            127,
+            128
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-archive-2"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          89,
+          22,
+          99
+        ],
+        "admission_ranking_before_demotion": [
+          89,
+          22,
+          99,
+          10,
+          26,
+          104
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          89,
+          22,
+          99,
+          10,
+          26,
+          104
+        ],
+        "recency_mounted_ids": [
+          127,
+          128
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            127,
+            128
+          ],
+          "nominated_ntok": 128
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 0,
+        "answer": "Not in memory: no stored record matches c7-archive-2.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. What is the inspection password for C7-Archive-2? Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "What is the inspection password for C7-Archive-2? Reply only with the answer.",
+    "probe": {
+      "answerable": false,
+      "class": "folded",
+      "distance": 120,
+      "entity": "C7-Archive-2",
+      "expected": "UNKNOWN",
+      "id": "c7_folded_2_d120",
+      "oracle_source_texts": [
+        "For C7-Archive-2 the inbound tag is Cedar-1013."
+      ],
+      "question": "What is the inspection password for C7-Archive-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 27,
+      "source_turns": [
+        27
+      ],
+      "turn": 147
+    },
+    "probe_id": "c7_folded_2_d120",
+    "receipt": "artifacts/grm_c7/r3/cells/A-141-148/probes.jsonl",
+    "receipt_line": 2
+  },
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-249-256/checkpoint",
+    "checkpoint_sha256": "f454f084b83c935d021ff24f7bb1b656096f2333fd7a570384a8a7539b48f1c8",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-fresh-0.",
+      "folded_path": null,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              16,
+              89,
+              22,
+              10,
+              26,
+              99
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-fresh-0"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              16,
+              89,
+              22
+            ],
+            "ranking": [
+              16,
+              89,
+              22,
+              10,
+              26,
+              99
+            ],
+            "rare_identifier_tokens": [
+              "c7-fresh-0"
+            ],
+            "route_backend": "native",
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": false,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            235,
+            236
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-fresh-0"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          16,
+          89,
+          22
+        ],
+        "admission_ranking_before_demotion": [
+          16,
+          89,
+          22,
+          10,
+          26,
+          99
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          16,
+          89,
+          22,
+          10,
+          26,
+          99
+        ],
+        "recency_mounted_ids": [
+          235,
+          236
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            235,
+            236
+          ],
+          "nominated_ntok": 128
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 1,
+        "answer": "Not in memory: no stored record matches c7-fresh-0.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. What is the current C7-Fresh-0 value? Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "What is the current C7-Fresh-0 value? Reply only with the answer.",
+    "probe": {
+      "answerable": true,
+      "class": "fresh",
+      "distance": 250,
+      "entity": "C7-Fresh-0",
+      "expected": "Basalt-811",
+      "id": "c7_fresh_0_d250",
+      "oracle_source_texts": [
+        "The current C7-Fresh-0 value is Basalt-811."
+      ],
+      "question": "What is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 6,
+      "source_turns": [
+        6
+      ],
+      "turn": 256
+    },
+    "probe_id": "c7_fresh_0_d250",
+    "receipt": "artifacts/grm_c7/r3/cells/A-249-256/probes.jsonl",
+    "receipt_line": 1
+  },
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-257-264/checkpoint",
+    "checkpoint_sha256": "b4a52beb3ad238a203bac6b2a101ef67e9b9c5dbd66d87be9d66d2c57ee22352",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-fresh-1.",
+      "folded_path": null,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              16,
+              89,
+              22,
+              10,
+              26,
+              104
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-fresh-1"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              16,
+              89,
+              22
+            ],
+            "ranking": [
+              16,
+              89,
+              22,
+              10,
+              26,
+              104
+            ],
+            "rare_identifier_tokens": [
+              "c7-fresh-1"
+            ],
+            "route_backend": "native",
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": false,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            235,
+            236
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-fresh-1"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          16,
+          89,
+          22
+        ],
+        "admission_ranking_before_demotion": [
+          16,
+          89,
+          22,
+          10,
+          26,
+          104
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          16,
+          89,
+          22,
+          10,
+          26,
+          104
+        ],
+        "recency_mounted_ids": [
+          235,
+          236
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            235,
+            236
+          ],
+          "nominated_ntok": 128
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 1,
+        "answer": "Not in memory: no stored record matches c7-fresh-1.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. What is the current C7-Fresh-1 value? Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "What is the current C7-Fresh-1 value? Reply only with the answer.",
+    "probe": {
+      "answerable": true,
+      "class": "fresh",
+      "distance": 250,
+      "entity": "C7-Fresh-1",
+      "expected": "Basalt-812",
+      "id": "c7_fresh_1_d250",
+      "oracle_source_texts": [
+        "The current C7-Fresh-1 value is Basalt-812."
+      ],
+      "question": "What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 7,
+      "source_turns": [
+        7
+      ],
+      "turn": 257
+    },
+    "probe_id": "c7_fresh_1_d250",
+    "receipt": "artifacts/grm_c7/r3/cells/A-257-264/probes.jsonl",
+    "receipt_line": 1
+  },
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-257-264/checkpoint",
+    "checkpoint_sha256": "b4a52beb3ad238a203bac6b2a101ef67e9b9c5dbd66d87be9d66d2c57ee22352",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-fresh-2.",
+      "folded_path": null,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              16,
+              89,
+              22,
+              99,
+              10,
+              26
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-fresh-2"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              16,
+              89,
+              22
+            ],
+            "ranking": [
+              16,
+              89,
+              22,
+              99,
+              10,
+              26
+            ],
+            "rare_identifier_tokens": [
+              "c7-fresh-2"
+            ],
+            "route_backend": "native",
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": false,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            235,
+            236
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-fresh-2"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          16,
+          89,
+          22
+        ],
+        "admission_ranking_before_demotion": [
+          16,
+          89,
+          22,
+          99,
+          10,
+          26
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          16,
+          89,
+          22,
+          99,
+          10,
+          26
+        ],
+        "recency_mounted_ids": [
+          235,
+          236
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            235,
+            236
+          ],
+          "nominated_ntok": 128
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 0,
+        "answer": "Not in memory: no stored record matches c7-fresh-2.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. What is the inspection password for C7-Fresh-2? Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "What is the inspection password for C7-Fresh-2? Reply only with the answer.",
+    "probe": {
+      "answerable": false,
+      "class": "fresh",
+      "distance": 250,
+      "entity": "C7-Fresh-2",
+      "expected": "UNKNOWN",
+      "id": "c7_fresh_2_d250",
+      "oracle_source_texts": [
+        "The current C7-Fresh-2 value is Basalt-813."
+      ],
+      "question": "What is the inspection password for C7-Fresh-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 8,
+      "source_turns": [
+        8
+      ],
+      "turn": 258
+    },
+    "probe_id": "c7_fresh_2_d250",
+    "receipt": "artifacts/grm_c7/r3/cells/A-257-264/probes.jsonl",
+    "receipt_line": 2
+  },
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-265-272/checkpoint",
+    "checkpoint_sha256": "2d031bf92015f168d081752bd9bccc953c4c052ed22bcc3b021e286719b647f8",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-vesper-2.",
+      "folded_path": null,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              89,
+              22,
+              10,
+              26,
+              99,
+              16
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-vesper-2"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              89,
+              22,
+              10
+            ],
+            "ranking": [
+              89,
+              22,
+              10,
+              26,
+              99,
+              16
+            ],
+            "rare_identifier_tokens": [
+              "c7-vesper-2"
+            ],
+            "route_backend": "native",
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": false,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            240,
+            241
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-vesper-2"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          89,
+          22,
+          10
+        ],
+        "admission_ranking_before_demotion": [
+          89,
+          22,
+          10,
+          26,
+          99,
+          16
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [
+          {
+            "graft_id": null,
+            "ntok": 54
+          }
+        ],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          89,
+          22,
+          10,
+          26,
+          99,
+          16
+        ],
+        "recency_mounted_ids": [
+          240,
+          241
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            240,
+            241
+          ],
+          "nominated_ntok": 128
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 0,
+        "answer": "Not in memory: no stored record matches c7-vesper-2.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. What is the inspection password for C7-Vesper-2? Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "What is the inspection password for C7-Vesper-2? Reply only with the answer.",
+    "probe": {
+      "answerable": false,
+      "class": "correction",
+      "distance": 250,
+      "entity": "C7-Vesper-2",
+      "expected": "UNKNOWN",
+      "id": "c7_correction_2_d250",
+      "oracle_source_texts": [
+        "The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.",
+        "Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+        "The current C7-Vesper-2 value is Onyx-913."
+      ],
+      "question": "What is the inspection password for C7-Vesper-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 19,
+      "source_turns": [
+        1,
+        2,
+        19
+      ],
+      "turn": 269
+    },
+    "probe_id": "c7_correction_2_d250",
+    "receipt": "artifacts/grm_c7/r3/cells/A-265-272/probes.jsonl",
+    "receipt_line": 4
+  },
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-265-272/checkpoint",
+    "checkpoint_sha256": "2d031bf92015f168d081752bd9bccc953c4c052ed22bcc3b021e286719b647f8",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-archive-0.",
+      "folded_path": false,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              89,
+              10,
+              26,
+              99,
+              22,
+              104
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-archive-0"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              89,
+              10,
+              26
+            ],
+            "ranking": [
+              89,
+              10,
+              26,
+              99,
+              22,
+              104
+            ],
+            "rare_identifier_tokens": [
+              "c7-archive-0"
+            ],
+            "route_backend": "python",
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": false,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            240,
+            241
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-archive-0"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          89,
+          10,
+          26
+        ],
+        "admission_ranking_before_demotion": [
+          89,
+          10,
+          26,
+          99,
+          22,
+          104
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          89,
+          10,
+          26,
+          99,
+          22,
+          104
+        ],
+        "recency_mounted_ids": [
+          240,
+          241
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            240,
+            241
+          ],
+          "nominated_ntok": 128
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 1,
+        "answer": "Not in memory: no stored record matches c7-archive-0.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "probe": {
+      "answerable": true,
+      "class": "folded",
+      "distance": 250,
+      "entity": "C7-Archive-0",
+      "expected": "Reed-611|Cedar-1011",
+      "id": "c7_folded_0_d250",
+      "oracle_source_texts": [
+        "For C7-Archive-0 the outbound tag is Reed-611.",
+        "For C7-Archive-0 the inbound tag is Cedar-1011."
+      ],
+      "question": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": true,
+      "source_turn": 20,
+      "source_turns": [
+        3,
+        20
+      ],
+      "turn": 270
+    },
+    "probe_id": "c7_folded_0_d250",
+    "receipt": "artifacts/grm_c7/r3/cells/A-265-272/probes.jsonl",
+    "receipt_line": 5
+  },
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-273-280/checkpoint",
+    "checkpoint_sha256": "914c6ec20750f93d6840839cfee46c8d132f7d1e9c2cecaf73be149e2dbdde28",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-archive-1.",
+      "folded_path": false,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              89,
+              10,
+              26,
+              104,
+              22,
+              78
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-archive-1"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              89,
+              10,
+              26
+            ],
+            "ranking": [
+              89,
+              10,
+              26,
+              104,
+              22,
+              78
+            ],
+            "rare_identifier_tokens": [
+              "c7-archive-1"
+            ],
+            "route_backend": "python",
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": false,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            245,
+            246
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-archive-1"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          89,
+          10,
+          26
+        ],
+        "admission_ranking_before_demotion": [
+          89,
+          10,
+          26,
+          104,
+          22,
+          78
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          89,
+          10,
+          26,
+          104,
+          22,
+          78
+        ],
+        "recency_mounted_ids": [
+          245,
+          246
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            245,
+            246
+          ],
+          "nominated_ntok": 128
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 1,
+        "answer": "Not in memory: no stored record matches c7-archive-1.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer.",
+    "probe": {
+      "answerable": true,
+      "class": "folded",
+      "distance": 250,
+      "entity": "C7-Archive-1",
+      "expected": "Reed-612|Cedar-1012",
+      "id": "c7_folded_1_d250",
+      "oracle_source_texts": [
+        "For C7-Archive-1 the outbound tag is Reed-612.",
+        "For C7-Archive-1 the inbound tag is Cedar-1012."
+      ],
+      "question": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": true,
+      "source_turn": 26,
+      "source_turns": [
+        4,
+        26
+      ],
+      "turn": 276
+    },
+    "probe_id": "c7_folded_1_d250",
+    "receipt": "artifacts/grm_c7/r3/cells/A-273-280/probes.jsonl",
+    "receipt_line": 1
+  },
+  {
+    "checkpoint": "artifacts/grm_c7/r3/cells/A-273-280/checkpoint",
+    "checkpoint_sha256": "914c6ec20750f93d6840839cfee46c8d132f7d1e9c2cecaf73be149e2dbdde28",
+    "historical": {
+      "answer": "Not in memory: no stored record matches c7-archive-2.",
+      "folded_path": null,
+      "residency": {
+        "actual_recency_token_seats": 0,
+        "arena_cur_mount_n": 0,
+        "live_token_rows": 0,
+        "mounted_ids": [],
+        "summed_token_seats": 0,
+        "width": 96
+      },
+      "route_info": {
+        "_route_observation": {
+          "admission_profile": {
+            "admission_ranking_before_demotion": [
+              89,
+              22,
+              99,
+              10,
+              26,
+              104
+            ],
+            "admission_split_child_demoted": false,
+            "admission_split_demoted_ids": [],
+            "admission_split_family_ids": [
+              10,
+              26
+            ],
+            "identified_candidates": [],
+            "identifier_hit_count": 0,
+            "identifier_tokens": [
+              "c7-archive-2"
+            ],
+            "margin_threshold": 0.1385774091529802,
+            "policy_branch": "ambiguous_zero_identifier_hits_k3",
+            "rank_plan": [
+              89,
+              22,
+              99
+            ],
+            "ranking": [
+              89,
+              22,
+              99,
+              10,
+              26,
+              104
+            ],
+            "rare_identifier_tokens": [
+              "c7-archive-2"
+            ],
+            "route_backend": "native",
+            "route_margin_1_2": 0.0,
+            "route_margin_evaluated": false,
+            "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91"
+          },
+          "excluded_live_ids": [
+            245,
+            246
+          ],
+          "route_limit": 6,
+          "serving_path": "grm_e2e_session._probe_ladder_chat:abstention",
+          "trips": []
+        },
+        "abstain_identifier_tokens": [
+          "c7-archive-2"
+        ],
+        "abstain_reason": "identifier_unbound",
+        "abstained": true,
+        "admission_identified_candidates": [],
+        "admission_identifier_hit_count": 0,
+        "admission_margin_threshold": 0.1385774091529802,
+        "admission_policy": "A-DEC",
+        "admission_policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "admission_rank_plan": [
+          89,
+          22,
+          99
+        ],
+        "admission_ranking_before_demotion": [
+          89,
+          22,
+          99,
+          10,
+          26,
+          104
+        ],
+        "admission_route_margin_1_2": 0.0,
+        "admission_route_margin_evaluated": false,
+        "admission_rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "admission_split_child_demoted": false,
+        "admission_split_demoted_ids": [],
+        "admission_split_family_ids": [
+          10,
+          26
+        ],
+        "driver_probe_ladder": true,
+        "driver_probe_multimount": true,
+        "driver_topk": 3,
+        "frame_ephemeral": true,
+        "frame_escape_active": false,
+        "live_segments_after_turn": [],
+        "live_segments_carried_into_turn": [],
+        "live_segments_inherited": [],
+        "mount_dropped_for_width": [],
+        "mount_fitted": [],
+        "mount_plan": [],
+        "point_lookup": true,
+        "precise_first": false,
+        "ranking_ids": [
+          89,
+          22,
+          99,
+          10,
+          26,
+          104
+        ],
+        "recency_mounted_ids": [
+          245,
+          246
+        ],
+        "recency_seats": {
+          "arena_width": 96,
+          "budget_after_charge": null,
+          "charge_waived_reason": null,
+          "charged_ntok": null,
+          "nominated_ids": [
+            245,
+            246
+          ],
+          "nominated_ntok": 128
+        },
+        "trip": 0
+      },
+      "score": {
+        "abstained": true,
+        "abstention_error": 0,
+        "answer": "Not in memory: no stored record matches c7-archive-2.",
+        "exact_answer_error": 1,
+        "exact_correct": false,
+        "unsupported_answer_error": 0,
+        "wrong_value_error": 0
+      }
+    },
+    "middle": "Answer using only the mounted memory records. If those records do not contain the requested information, reply unknown. What is the inspection password for C7-Archive-2? Reply only with the answer.",
+    "mode": "recorded_admission_refusal",
+    "mounted_ids": [],
+    "mounted_payload_sha256": {},
+    "plain": "What is the inspection password for C7-Archive-2? Reply only with the answer.",
+    "probe": {
+      "answerable": false,
+      "class": "folded",
+      "distance": 250,
+      "entity": "C7-Archive-2",
+      "expected": "UNKNOWN",
+      "id": "c7_folded_2_d250",
+      "oracle_source_texts": [
+        "For C7-Archive-2 the inbound tag is Cedar-1013."
+      ],
+      "question": "What is the inspection password for C7-Archive-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 27,
+      "source_turns": [
+        27
+      ],
+      "turn": 277
+    },
+    "probe_id": "c7_folded_2_d250",
+    "receipt": "artifacts/grm_c7/r3/cells/A-273-280/probes.jsonl",
+    "receipt_line": 2
+  }
+]

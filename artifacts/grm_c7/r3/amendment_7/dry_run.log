@@ -1,0 +1,67 @@
+{
+  "status": "NOT_RUN_NO_GPU_ORDER",
+  "gpu_executed": false,
+  "registration_sha256": "f4f1aa27f4db79e1fd95c995d4e72e8b70ea0f29140effaa56462bcc31a294f1",
+  "cohort": {
+    "controls": 20,
+    "folded_answerable": 10,
+    "fresh_answerable": 10,
+    "total": 40
+  },
+  "batches": {
+    "B1": [
+      "c7_fresh_0_d005",
+      "c7_folded_1_d005",
+      "c7_folded_2_d030",
+      "c7_fresh_0_d030",
+      "c7_correction_2_d060",
+      "c7_fresh_2_d120",
+      "c7_fresh_1_d250"
+    ],
+    "B2": [
+      "c7_fresh_1_d005",
+      "c7_folded_2_d005",
+      "c7_alias_2_d060",
+      "c7_fresh_1_d030",
+      "c7_folded_0_d060",
+      "c7_correction_2_d120",
+      "c7_fresh_2_d250"
+    ],
+    "B3": [
+      "c7_fresh_2_d005",
+      "c7_alias_2_d030",
+      "c7_alias_2_d120",
+      "c7_fresh_2_d030",
+      "c7_folded_1_d060",
+      "c7_folded_0_d120",
+      "c7_correction_2_d250"
+    ],
+    "B4": [
+      "c7_alias_2_d005",
+      "c7_correction_2_d030",
+      "c7_alias_2_d250",
+      "c7_fresh_0_d060",
+      "c7_folded_2_d060",
+      "c7_folded_1_d120",
+      "c7_folded_0_d250"
+    ],
+    "B5": [
+      "c7_correction_2_d005",
+      "c7_folded_0_d030",
+      "c7_fresh_1_d060",
+      "c7_fresh_0_d120",
+      "c7_folded_2_d120",
+      "c7_folded_1_d250"
+    ],
+    "B6": [
+      "c7_folded_0_d005",
+      "c7_folded_1_d030",
+      "c7_fresh_2_d060",
+      "c7_fresh_1_d120",
+      "c7_fresh_0_d250",
+      "c7_folded_2_d250"
+    ]
+  },
+  "reserved_seconds": 1680,
+  "cap_seconds": 1800
+}

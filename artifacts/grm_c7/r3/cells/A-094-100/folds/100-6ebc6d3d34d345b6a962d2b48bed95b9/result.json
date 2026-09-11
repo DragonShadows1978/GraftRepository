@@ -1,0 +1,29 @@
+{
+  "accepted": true,
+  "attempts": [
+    {
+      "coverage": 1.0,
+      "hit_count": 8,
+      "need_count": 8,
+      "prompt_index": 0,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "For the archive: the  current C7-Outpost-16 value is Slate-1216, the current C7-Outpost-17 value is Slate-1217, the current C7-Outpost-18 value is Slate-1218, and the current C7-Outpost-19 value is Slate-1219."
+    }
+  ],
+  "digest_text": "For the archive: the  current C7-Outpost-16 value is Slate-1216, the current C7-Outpost-17 value is Slate-1217, the current C7-Outpost-18 value is Slate-1218, and the current C7-Outpost-19 value is Slate-1219.",
+  "error": null,
+  "result": {
+    "accepted": true,
+    "best_cov": 1.0,
+    "hit_count": 8,
+    "need_count": 8
+  },
+  "source_payload_sha256": {
+    "0079.npz": "88e6cd37fb60d0397c1d6b63d8220e0f4f729213e237e0be5e4face75f34e300",
+    "0080.npz": "5e22922f77acb2d062d059e7b7b4c4ce1240d6937224f3eadfeefbf9c016bdba",
+    "0081.npz": "a56ab9cd83dda1453b1d1211763a48a774f07d448def8b3e46c7192b9d540a9c",
+    "0082.npz": "d1fc5e7032d58eea208e305353c3f6abdc4ae5d16c52c9c87d2be37ae89e3789"
+  },
+  "turn": 100
+}

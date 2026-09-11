@@ -1,0 +1,492 @@
+{
+  "by_distance_and_class": [
+    {
+      "class": "fresh",
+      "complete": true,
+      "distance": 5,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 1,
+        "abstention_error_rate": 0.3333333333333333,
+        "exact_answer_error": 2,
+        "exact_answer_error_rate": 0.6666666666666666,
+        "n": 3,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": 0.0,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": 0.0
+      },
+      "n": 3,
+      "oracle": {
+        "n": 0,
+        "raw_rows_retained": 3,
+        "reason": "Lead-directed quarantine of pre-amendment oracle; unresolved upper-bound validity. Do not use as acceptance denominator.",
+        "status": "NOT_MEASURED"
+      }
+    },
+    {
+      "class": "alias",
+      "complete": true,
+      "distance": 5,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 2,
+        "abstention_error_rate": 0.6666666666666666,
+        "exact_answer_error": 3,
+        "exact_answer_error_rate": 1.0,
+        "n": 3,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": 0.0,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": 0.0
+      },
+      "n": 3,
+      "oracle": {
+        "n": 0,
+        "raw_rows_retained": 3,
+        "reason": "Lead-directed quarantine of pre-amendment oracle; unresolved upper-bound validity. Do not use as acceptance denominator.",
+        "status": "NOT_MEASURED"
+      }
+    },
+    {
+      "class": "correction",
+      "complete": false,
+      "distance": 5,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 2,
+        "abstention_error_rate": 1.0,
+        "exact_answer_error": 2,
+        "exact_answer_error_rate": 1.0,
+        "n": 2,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": 0.0,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": 0.0
+      },
+      "n": 2,
+      "oracle": {
+        "n": 0,
+        "raw_rows_retained": 2,
+        "reason": "Lead-directed quarantine of pre-amendment oracle; unresolved upper-bound validity. Do not use as acceptance denominator.",
+        "status": "NOT_MEASURED"
+      }
+    },
+    {
+      "class": "folded",
+      "complete": false,
+      "distance": 5,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "n": 0,
+        "raw_rows_retained": 0,
+        "reason": "Lead-directed quarantine of pre-amendment oracle; unresolved upper-bound validity. Do not use as acceptance denominator.",
+        "status": "NOT_MEASURED"
+      }
+    },
+    {
+      "class": "fresh",
+      "complete": false,
+      "distance": 30,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "n": 0,
+        "raw_rows_retained": 0,
+        "reason": "Lead-directed quarantine of pre-amendment oracle; unresolved upper-bound validity. Do not use as acceptance denominator.",
+        "status": "NOT_MEASURED"
+      }
+    },
+    {
+      "class": "alias",
+      "complete": false,
+      "distance": 30,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "n": 0,
+        "raw_rows_retained": 0,
+        "reason": "Lead-directed quarantine of pre-amendment oracle; unresolved upper-bound validity. Do not use as acceptance denominator.",
+        "status": "NOT_MEASURED"
+      }
+    },
+    {
+      "class": "correction",
+      "complete": false,
+      "distance": 30,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "n": 0,
+        "raw_rows_retained": 0,
+        "reason": "Lead-directed quarantine of pre-amendment oracle; unresolved upper-bound validity. Do not use as acceptance denominator.",
+        "status": "NOT_MEASURED"
+      }
+    },
+    {
+      "class": "folded",
+      "complete": false,
+      "distance": 30,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "n": 0,
+        "raw_rows_retained": 0,
+        "reason": "Lead-directed quarantine of pre-amendment oracle; unresolved upper-bound validity. Do not use as acceptance denominator.",
+        "status": "NOT_MEASURED"
+      }
+    },
+    {
+      "class": "fresh",
+      "complete": false,
+      "distance": 60,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "n": 0,
+        "raw_rows_retained": 0,
+        "reason": "Lead-directed quarantine of pre-amendment oracle; unresolved upper-bound validity. Do not use as acceptance denominator.",
+        "status": "NOT_MEASURED"
+      }
+    },
+    {
+      "class": "alias",
+      "complete": false,
+      "distance": 60,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "n": 0,
+        "raw_rows_retained": 0,
+        "reason": "Lead-directed quarantine of pre-amendment oracle; unresolved upper-bound validity. Do not use as acceptance denominator.",
+        "status": "NOT_MEASURED"
+      }
+    },
+    {
+      "class": "correction",
+      "complete": false,
+      "distance": 60,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "n": 0,
+        "raw_rows_retained": 0,
+        "reason": "Lead-directed quarantine of pre-amendment oracle; unresolved upper-bound validity. Do not use as acceptance denominator.",
+        "status": "NOT_MEASURED"
+      }
+    },
+    {
+      "class": "folded",
+      "complete": false,
+      "distance": 60,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "n": 0,
+        "raw_rows_retained": 0,
+        "reason": "Lead-directed quarantine of pre-amendment oracle; unresolved upper-bound validity. Do not use as acceptance denominator.",
+        "status": "NOT_MEASURED"
+      }
+    },
+    {
+      "class": "fresh",
+      "complete": false,
+      "distance": 120,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "n": 0,
+        "raw_rows_retained": 0,
+        "reason": "Lead-directed quarantine of pre-amendment oracle; unresolved upper-bound validity. Do not use as acceptance denominator.",
+        "status": "NOT_MEASURED"
+      }
+    },
+    {
+      "class": "alias",
+      "complete": false,
+      "distance": 120,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "n": 0,
+        "raw_rows_retained": 0,
+        "reason": "Lead-directed quarantine of pre-amendment oracle; unresolved upper-bound validity. Do not use as acceptance denominator.",
+        "status": "NOT_MEASURED"
+      }
+    },
+    {
+      "class": "correction",
+      "complete": false,
+      "distance": 120,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "n": 0,
+        "raw_rows_retained": 0,
+        "reason": "Lead-directed quarantine of pre-amendment oracle; unresolved upper-bound validity. Do not use as acceptance denominator.",
+        "status": "NOT_MEASURED"
+      }
+    },
+    {
+      "class": "folded",
+      "complete": false,
+      "distance": 120,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "n": 0,
+        "raw_rows_retained": 0,
+        "reason": "Lead-directed quarantine of pre-amendment oracle; unresolved upper-bound validity. Do not use as acceptance denominator.",
+        "status": "NOT_MEASURED"
+      }
+    },
+    {
+      "class": "fresh",
+      "complete": false,
+      "distance": 250,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "n": 0,
+        "raw_rows_retained": 0,
+        "reason": "Lead-directed quarantine of pre-amendment oracle; unresolved upper-bound validity. Do not use as acceptance denominator.",
+        "status": "NOT_MEASURED"
+      }
+    },
+    {
+      "class": "alias",
+      "complete": false,
+      "distance": 250,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "n": 0,
+        "raw_rows_retained": 0,
+        "reason": "Lead-directed quarantine of pre-amendment oracle; unresolved upper-bound validity. Do not use as acceptance denominator.",
+        "status": "NOT_MEASURED"
+      }
+    },
+    {
+      "class": "correction",
+      "complete": false,
+      "distance": 250,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "n": 0,
+        "raw_rows_retained": 0,
+        "reason": "Lead-directed quarantine of pre-amendment oracle; unresolved upper-bound validity. Do not use as acceptance denominator.",
+        "status": "NOT_MEASURED"
+      }
+    },
+    {
+      "class": "folded",
+      "complete": false,
+      "distance": 250,
+      "expected_n": 3,
+      "memory": {
+        "abstention_error": 0,
+        "abstention_error_rate": null,
+        "exact_answer_error": 0,
+        "exact_answer_error_rate": null,
+        "n": 0,
+        "unsupported_answer_error": 0,
+        "unsupported_answer_error_rate": null,
+        "wrong_value_error": 0,
+        "wrong_value_error_rate": null
+      },
+      "n": 0,
+      "oracle": {
+        "n": 0,
+        "raw_rows_retained": 0,
+        "reason": "Lead-directed quarantine of pre-amendment oracle; unresolved upper-bound validity. Do not use as acceptance denominator.",
+        "status": "NOT_MEASURED"
+      }
+    }
+  ],
+  "complete": false,
+  "evidence_class": "Historical E2E rows, explicit analysis-only oracle quarantine",
+  "memory_rows_retained": 8,
+  "mutates_original_receipts": false,
+  "oracle_column": "NOT_MEASURED",
+  "oracle_relative_acceptance": "NOT_MEASURED",
+  "product_promise": "NOT_MEASURED",
+  "status": "BLOCKED_CORE"
+}

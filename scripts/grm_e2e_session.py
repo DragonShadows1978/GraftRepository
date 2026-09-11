@@ -61,7 +61,7 @@ from core.grm_admission import (  # noqa: E402
     chunk_trip_cap,
     decisive_admission_profile,
     fit_info_fields,
-    identifier_unbound_abstention,
+    identifier_serving_decision,
     mountable_budget,
     plan_priority_fit,
     shuttle_trip_cap,
@@ -1210,7 +1210,29 @@ def _probe_ladder_chat(
     # Gated by the same fixes switch: the Arm-0 reproduction arm must serve
     # what the lived run served, and the lived run had no abstention rule.
     abstain = (
-        identifier_unbound_abstention(admission_profile) if fixes_on else None)
+        identifier_serving_decision(arena, user_text, admission_profile,
+                                    exclude=live_idx) if fixes_on else None)
+    if abstain is not None and abstain.get("served_from"):
+        # Prior art: core FIX-4 decision/reader (GRM contributors, 2026).
+        # Share both with step; no second admission or recency policy here.
+        ans, info = arena._serve_live_binding(
+            user_text, abstain, rec, ngen=int(ngen), deposit=not defer_memory,
+            defer_memory=defer_memory, stops=arena.stop_sequences)
+        info.update(admission_info_fields(admission_profile))
+        info.update(driver_probe_multimount=True, driver_probe_ladder=True,
+                    driver_topk=int(want), point_lookup=True, precise_first=False,
+                    mount_plan=[], mount_fitted=[], mount_dropped_for_width=[],
+                    ranking_ids=[int(x) for x in ranking])
+        info["_route_observation"] = _route_observation(
+            route_limit=route_limit, excluded_live_ids=live_idx,
+            admission_profile=admission_profile,
+            trips=[{"ordinal": 0, "clean_room": False, "planned": [],
+                    "mount_set": list(arena.cur_mounts),
+                    "served_from": "recency_mount",
+                    "served_from_node_ids": abstain["served_from_node_ids"]}],
+            serving_path="grm_e2e_session._probe_ladder_chat:recency_mount")
+        return ans, _probe_finish_deposit(
+            repo, before, user_text, ans, info, defer_memory=defer_memory)
     if abstain is not None:
         ans = str(abstain["abstain_text"])
         info: dict[str, Any] = {

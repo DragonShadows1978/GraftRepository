@@ -1,0 +1,2905 @@
+{
+  "c7_runner_edited": false,
+  "checks": [
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-001-008/checkpoint/checkpoint.json",
+      "sha256": "7f726a59087156da1f9c9d30fa80d728aca7e19a7dfe2dda77a419a8f2d1547c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-001-008/checkpoint/repository/manifest.json",
+      "sha256": "537cceaa797c0286fc12b08a53355dc261876497f47594310da2b3a3f99d9300"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-001-008/checkpoint/state.json",
+      "sha256": "3aa51103b6211cbbe970c66e8521f4858ef3aec570f9a5593cf69a7c77f1f8bc"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-001-008/cold_resume.jsonl",
+      "sha256": "f995ca425de991295c22ec9fe169b501fa3a3b456b53271944f2befb63b9b9f7"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-001-008/controller.json",
+      "sha256": "ecb201a2cc55d6cfa64275ecfffc8ea8980f8acc899cf93f7dabd0562590a462"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-001-008/folds/008-230997aa79504f2ebd570d5cbc000ee5/full_candidates.jsonl",
+      "sha256": "94e0d10436deebd8a94dfa9abf8c8b5c6caa4882f7ba81d910492292f7096424"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-001-008/folds/008-230997aa79504f2ebd570d5cbc000ee5/result.json",
+      "sha256": "6b0be6bf940dc3044046bec1a00851a9813634a701eb8b08344f976f313ed746"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-001-008/folds/008-230997aa79504f2ebd570d5cbc000ee5/start.json",
+      "sha256": "487efb3f9df1524a175c11be4dba69dd55bbace0785a0c0af1321f0340234268"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-001-008/reservation.json",
+      "sha256": "39f1678f495e9cf6ee38e44a77c94e160f7d1db1c2bd3915767603f51efb0aed"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-001-008/residency.jsonl",
+      "sha256": "c3b08ac441c41adcedd0f31e35952d8a4e8ec3fd273ea730619639ef507c03c1"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-001-008/session/instrumentation.jsonl",
+      "sha256": "1a9c53359056c84f0f121f3bd30d2552fb97583bb9aa972f872c43510b31dc31"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-001-008/session/repository/manifest.json",
+      "sha256": "537cceaa797c0286fc12b08a53355dc261876497f47594310da2b3a3f99d9300"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-001-008/session/transcript.jsonl",
+      "sha256": "c7540123de204451172f681daa8b8fe6f9743ea6339fdff22364d982ab1ad519"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-001-008/worker.json",
+      "sha256": "f89271bb2a9acd3c6eb5cc5a6343c5f71d744ba74575f513b75ec9dfa44b4be8"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-001-008/worker.log",
+      "sha256": "c5f8ae7036bebdb70e85373be02d9304e70e7f830e6b85408afd3cc76911caaf"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-009-016/checkpoint/checkpoint.json",
+      "sha256": "86bfe1981ba35a705f60c99598b60b4dfd9c18b9ef6d9344ba589b72d427b8ac"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-009-016/checkpoint/repository/manifest.json",
+      "sha256": "743f2cdcf6c3f3fa9b781cf02324c7e1c1363d7136c8ee758cb431a156f0beca"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-009-016/checkpoint/state.json",
+      "sha256": "2b7b3ed1cc55aaf60ed356500fd5a3dfe726541824f89bc3d746506574097de0"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-009-016/cold_resume.jsonl",
+      "sha256": "842c6458fb0dcbba7994f2ad3e74b8fa8b39f9b490735dbc71f9c50bf2f440d1"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-009-016/controller.json",
+      "sha256": "c96443f29c71091039341df22ce1c0638772716d6154f4e8e2af173d2a6b40aa"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-009-016/probes.jsonl",
+      "sha256": "79b25b76b3c6c5ee15253bb8d2a3dbff02ec16967c91f51081252ade0e283be6"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-009-016/reservation.json",
+      "sha256": "dd3d1171cdf301e71712e217cb95854499cfe9b1606cc4010a86449336b5c592"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-009-016/residency.jsonl",
+      "sha256": "3a2e22bcd3236c89bf832a07c8e4160b8eaec5b0671c47f07b8fcaf01aedbb0b"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-009-016/session/instrumentation.jsonl",
+      "sha256": "e9ca5414e2ee914eb524c47c068d04f82fc82288d8edf19b918bb18543a83296"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-009-016/session/repository/manifest.json",
+      "sha256": "743f2cdcf6c3f3fa9b781cf02324c7e1c1363d7136c8ee758cb431a156f0beca"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-009-016/session/transcript.jsonl",
+      "sha256": "64456b27dbc63f0c13e6c908dd9a45f9729fe9729a0de9288e0d660b43986859"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-009-016/worker.json",
+      "sha256": "10a3ec924925f94639f6bdd3d5addf660d74bdd7ebcd29bbcb6eb1422a66c926"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-009-016/worker.log",
+      "sha256": "28cd8ef4df9272c1e332a1fbda49541bcab471e0f6ae1f1c430356129a2076e1"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-017-023/checkpoint/checkpoint.json",
+      "sha256": "5e1ccb117d5c167b95e6cbadab463435b9b761ddb0ccae407df43b36cdcf06e4"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-017-023/checkpoint/repository/manifest.json",
+      "sha256": "8427f559e41a61a1f3e8a58aaf3a7e2ad1122f51ac357df9b37d78035be5344a"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-017-023/checkpoint/state.json",
+      "sha256": "3ac36f86a17ff7afff57eb0f8d183e36609d4c9370b8df16743c9fcc341f7e19"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-017-023/cold_resume.jsonl",
+      "sha256": "63dde8ce7ef5a0e4bb125105aeea03dc0b48e8d68a73d5d13388ae344440e006"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-017-023/controller.json",
+      "sha256": "9d9bdcf674543ef27c0181c27eb41dd598f005ed22722bd11e1191660d67a660"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-017-023/folds/017-e58dd8fb4e514839bd7681f72827546f/full_candidates.jsonl",
+      "sha256": "b8ac864c37693573fbd7dc11919efc2e6d1dbe738deab19a9c0447893e7617fd"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-017-023/folds/017-e58dd8fb4e514839bd7681f72827546f/result.json",
+      "sha256": "80eed25729cc3b293e8de99cea6a0d69e95f42b7e2c947b1b31a3dede9e6b4a6"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-017-023/folds/017-e58dd8fb4e514839bd7681f72827546f/start.json",
+      "sha256": "042a9640edeb578db968f5bc19c80ff14ac5d7bfcd836b56b3e20081a9b2ac26"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-017-023/forced_folds.jsonl",
+      "sha256": "b5d9d52387176a2e9454a7a7707fb65cc999ff4b7217429a1456a3db2459233d"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-017-023/probes.jsonl",
+      "sha256": "c997ca38b88c9cd7ed70785ac408ad83f1be7d94a512ef3df3db8aebd367aef5"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-017-023/reservation.json",
+      "sha256": "b83b451c9da24e1e8c5fadf218351680dc05ec37718fe2bbf322777bcdb94289"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-017-023/residency.jsonl",
+      "sha256": "a29d6d5d80468820cf2e7ab3f7895cffdbc13f18a4577853471286e0feb86302"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-017-023/session/instrumentation.jsonl",
+      "sha256": "8df5390a28b081b10cc6f04f3dfd3fa30d970212a74a5a9d36f89552a9cb88a2"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-017-023/session/repository/manifest.json",
+      "sha256": "8427f559e41a61a1f3e8a58aaf3a7e2ad1122f51ac357df9b37d78035be5344a"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-017-023/session/transcript.jsonl",
+      "sha256": "ee6c6511270864327758d612c6b041fab965879e54593dcad14d0d57ff68bfa8"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-017-023/worker.json",
+      "sha256": "2730389e35dcbaaf6626a84801e3e5c7e3faaffcbc575135e3427a89f8f4d51f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-017-023/worker.log",
+      "sha256": "9a066dec52f080095d673b6e7191b9f6026c8c7026c9cfbb90af37e15b70733c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-024-031/checkpoint/checkpoint.json",
+      "sha256": "a272871e9dcfa29685b489387ddfa358df257b7595740aa3d6ce90405d2b64e0"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-024-031/checkpoint/repository/manifest.json",
+      "sha256": "b996f0b324789c90acb89f74e8a9164656872917ecd5c2a6a4f37bdedf4f612f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-024-031/checkpoint/state.json",
+      "sha256": "be12ffd776159eaa3db95cb250161d66879c56c78d90eb4feedd4af20393fa8b"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-024-031/cold_resume.jsonl",
+      "sha256": "3e57a1ed5669bd97bacfbbb9c91b5c8d255c8ba1881a104d85a837c5480e267c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-024-031/controller.json",
+      "sha256": "41e9a427007240d7acd36e0977ec73aec02758369a2a30f43ddb64a91b2aefc2"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-024-031/folds/026-4f13fe3daf6546478af55dbaca89ef40/full_candidates.jsonl",
+      "sha256": "853adcd76acbb8ce89065a1b975f493b714f8281b20eb35b2b3b155075fb8d3f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-024-031/folds/026-4f13fe3daf6546478af55dbaca89ef40/result.json",
+      "sha256": "b55466f6e85cf787aa8bf257bd08f3984455e180de7a4b022ac3965381023fde"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-024-031/folds/026-4f13fe3daf6546478af55dbaca89ef40/start.json",
+      "sha256": "ffe5adb6212445655ea0d1a38ff35729903095683e18f043bf9ffc1efc3283c9"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-024-031/forced_folds.jsonl",
+      "sha256": "cda41877539ec43c8235f45181db0390a534bb68cab15fad76ee8573cc68d9a1"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-024-031/probes.jsonl",
+      "sha256": "97047ac0ddeb9afb2d25ad4d9ea37a544d63419da6b6cf21714c9bad08cfeaec"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-024-031/reservation.json",
+      "sha256": "3c18509f07ec243a128c0d26f6b60b6f4b333919d41ef5307f1026c1feaa4279"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-024-031/residency.jsonl",
+      "sha256": "36ac348474bee023425129d7ee53391665f63cb38c3dd84baf03556fb72f1b37"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-024-031/session/instrumentation.jsonl",
+      "sha256": "0e6081d8aeaf1c3d1c08a9362566c4eadcd69714cf3f6d2ce1e43475d69eff89"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-024-031/session/repository/manifest.json",
+      "sha256": "b996f0b324789c90acb89f74e8a9164656872917ecd5c2a6a4f37bdedf4f612f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-024-031/session/transcript.jsonl",
+      "sha256": "ea72e582f4a84fee9de0cc540c5d39c3458ed12f210acfc2a3db2687c2ec8a97"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-024-031/worker.json",
+      "sha256": "2917889dffd906dc578f547a843ade6a85efa16c2b4396b081b59d23825b6dad"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-024-031/worker.log",
+      "sha256": "2829ff804236ec0cc7f85b4923180726b87505da4af6b761219f0512359fe30c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-032-039/checkpoint/checkpoint.json",
+      "sha256": "7665c195b6e837b8e3318d6da3c2e51170fd094841c638656891814e9b6e91b5"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-032-039/checkpoint/repository/manifest.json",
+      "sha256": "9c3a70fe9d8d61639b5fe89f8cd07c7757140f53ce15f871e47a4c58df98c493"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-032-039/checkpoint/state.json",
+      "sha256": "c59bc9fd755c34a5188ebd56ebab15ef1bf2114c6ade515673e0760b7eb6306d"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-032-039/cold_resume.jsonl",
+      "sha256": "65f10bd7d157d17c2141e952f8f76d706581085cc9d0856c5c93f134597bd25d"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-032-039/controller.json",
+      "sha256": "62490b93a6ca9bcdb395c1bdaa3f830df69c390283fd3cada31ef60efaca459c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-032-039/probes.jsonl",
+      "sha256": "07483dfe248644853892c89cb4a1812c9f442ea01923a14f0ee0dfe9bc2c96eb"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-032-039/reservation.json",
+      "sha256": "76e7ee1a84110a79ba0c91cf488be8651f5bab2d585f7771d6f8d515570fbc6c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-032-039/residency.jsonl",
+      "sha256": "2b96ce43b52f7d6e9ace84d77834b1ee6ff27557834b0d0ead580c1d13dd4c0f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-032-039/session/instrumentation.jsonl",
+      "sha256": "68c95f666a21ed612ae39f41a04f9b3f76f52ba42bf460cbd99480f419889b7c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-032-039/session/repository/manifest.json",
+      "sha256": "9c3a70fe9d8d61639b5fe89f8cd07c7757140f53ce15f871e47a4c58df98c493"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-032-039/session/transcript.jsonl",
+      "sha256": "dc68cb08d05bddaf65b2b0ae4a9a0685233787546a84b09ebc40018dbc87f9a2"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-032-039/worker.json",
+      "sha256": "f4ec0934b5c5c398238a8180be2528b8a1bc618dc49bafa04cf306189975375c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-032-039/worker.log",
+      "sha256": "5a4404fa053bdc6d97abfe96f6d536c4bf01f121da31bd62a22502c10979ddf8"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-040-047/checkpoint/checkpoint.json",
+      "sha256": "a3debb5dfa2e12c4d9e114b60d2775c7f8eb15a333cdff063cb8021c1168c658"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-040-047/checkpoint/repository/manifest.json",
+      "sha256": "34ec0597e59ca9fd516dc50873f60ad5a5eef0fc713cec21acb4301f1b7aceda"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-040-047/checkpoint/state.json",
+      "sha256": "d19c7fb883369fb14c6fc9c4d3756eff55ecb4f9a9e93e3091a224b3af72ffa2"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-040-047/cold_resume.jsonl",
+      "sha256": "2193bade77ab8a6630fbd5e2268aa4aae7a6f197ab058891f0a9fc2fa7053d99"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-040-047/controller.json",
+      "sha256": "338843af27e3a3aa252168b8c6602b6f890b6bd5142fb955f9e880446d9b1061"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-040-047/probes.jsonl",
+      "sha256": "a9379b3e1502449a21418cbdc2e8da70953bcab78a25796cf33922ef03361e75"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-040-047/reservation.json",
+      "sha256": "f6746b97967c3c5b211a193a94251db92e8c1ccee9c9dd3e61d89801ee66b486"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-040-047/residency.jsonl",
+      "sha256": "720d4e5af6726cae4e446a4f12604bbf101b8abf99ac342e168cac902e9cef73"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-040-047/session/instrumentation.jsonl",
+      "sha256": "aa1fa1e8841dd651dee928c9b193a74bf765a24eaa6093b1f16cc8792f07cef6"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-040-047/session/repository/manifest.json",
+      "sha256": "34ec0597e59ca9fd516dc50873f60ad5a5eef0fc713cec21acb4301f1b7aceda"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-040-047/session/transcript.jsonl",
+      "sha256": "d35c6f035116194a0e304174b18c5c879c5a4c23f8e54cdfaf82529a37ebb8cd"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-040-047/worker.json",
+      "sha256": "56f7fdd03cc7ae92b28fc8607a4d40fa65c8c55e50686605262bdedaf1270cfa"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-040-047/worker.log",
+      "sha256": "94bba7ce7a14d7a1d5ef0a73c22d30c98ca8acd0c15067f310cfa57221ced3e6"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-048-055/checkpoint/checkpoint.json",
+      "sha256": "9b686259777197be2f74826c296536e8375860f819d84d89849d9c37dced259c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-048-055/checkpoint/repository/manifest.json",
+      "sha256": "5f6fe0ba91ae9753e9e94ddced08a9020f2ec4f92ffe3868ab97065c337e1814"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-048-055/checkpoint/state.json",
+      "sha256": "9d35c366ee078f5143ae333f8c9522c90a8476a4e5857273de4672d6cc10d91a"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-048-055/cold_resume.jsonl",
+      "sha256": "823ada90aa72b1ac7818ccd17145b89327987c8fdeb21d393f113353288988f5"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-048-055/controller.json",
+      "sha256": "989c60df48d753f56a5d6632b6951ed35417b574e8dd60d4681ef29b7b2f1a74"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-048-055/folds/055-e8e93a5dfe2141ce8c78ea0eff872f37/full_candidates.jsonl",
+      "sha256": "f12060a956d1bf276bee0adff58d056498e3092711dceb05da3d122a0a903288"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-048-055/folds/055-e8e93a5dfe2141ce8c78ea0eff872f37/result.json",
+      "sha256": "e6e07546688a57668479103dfaeccc0290e1c842eddef17ec10a1f0d7d23d939"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-048-055/folds/055-e8e93a5dfe2141ce8c78ea0eff872f37/start.json",
+      "sha256": "8e10e064975c329c7fff89df821a1f4c43202a79b0136628c17e0797707afd8a"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-048-055/probes.jsonl",
+      "sha256": "854d3bbfa1fee2b59c35f782163ccf1c01025807c1f72a9c2c567355c637a2da"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-048-055/reservation.json",
+      "sha256": "a4d3bbc5709a7f05d281631f9c6f1cc1347b65483db51b33dca57e73fb3f5f19"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-048-055/residency.jsonl",
+      "sha256": "7459e60fd21c75074ffce92239e9d90fd22e87ad9e2376a6de87243ee0f090ec"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-048-055/session/instrumentation.jsonl",
+      "sha256": "7273286cfa9389d25cbe225f47f1c17842d2ffebda4ad07a8084957441837bcd"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-048-055/session/repository/manifest.json",
+      "sha256": "5f6fe0ba91ae9753e9e94ddced08a9020f2ec4f92ffe3868ab97065c337e1814"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-048-055/session/transcript.jsonl",
+      "sha256": "e68952042e0bcba9397633bd528d975f75d7526f73f8917613df8ac6edc9daa0"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-048-055/worker.json",
+      "sha256": "b2f9452343fb114060d08de014ed7e7b1e37fca5f1740cce48e05ff51e8a9958"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-048-055/worker.log",
+      "sha256": "9ef73ac40ca731b1ffcee7b12ad240940416aa8ba46ee30bc63791a8320b012a"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-056-062/checkpoint/checkpoint.json",
+      "sha256": "1c3b19f41f176cb1424b692274f7534ae6921549096cc630b6b304429ea40c99"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-056-062/checkpoint/repository/manifest.json",
+      "sha256": "f95f290a4dc755f987f3068e5c5caa4b417ced96e1b87833795bf366dcb15a30"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-056-062/checkpoint/state.json",
+      "sha256": "fa0ad0d7082375d3b2fbead9dab2858c9d55d5d210a58ff0269b94f60cebe3e7"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-056-062/cold_resume.jsonl",
+      "sha256": "4de7251f42ea463dc428ef220ec1b594ba44ba8d2ac2a5afd3dcb07a678639f6"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-056-062/controller.json",
+      "sha256": "2e11338d8dfa2cf8fd9d0fd8c364316eb0e44b94d71a5174fb4a3f7d2f6d6b4c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-056-062/page_ins.jsonl",
+      "sha256": "446456b96ee6b10bd190af91f7a77f2a3b2c3063b0e31fccaf141207d2b0aa9c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-056-062/pressure.jsonl",
+      "sha256": "4c67838824b7f6c0b0b6851bf20ef01795b574852f05f408bb81ff218358f9bd"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-056-062/probes.jsonl",
+      "sha256": "3d07117d23bc2c3961d0a7d4ec12f1f31bb0da562183aa4da51a62cd0cd681a3"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-056-062/reservation.json",
+      "sha256": "507de8da5dc194ef70a3b4dc077587e132039b687b4a4e466b42412ee555f3df"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-056-062/residency.jsonl",
+      "sha256": "efd9929ebfe736c537a968d5787be56906506b8db21bdd0af5fd3271524b2c4d"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-056-062/session/instrumentation.jsonl",
+      "sha256": "7262a7561d14ef032b2f521e61fc20d1ec9d32d450e371734636bcdf3dc30a60"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-056-062/session/repository/manifest.json",
+      "sha256": "f95f290a4dc755f987f3068e5c5caa4b417ced96e1b87833795bf366dcb15a30"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-056-062/session/transcript.jsonl",
+      "sha256": "cc210108335eb6147fd12d641f0dbfe845574541e577c7d3c1d13e504ec85ae1"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-056-062/worker.json",
+      "sha256": "a5690d41eca3f16da7a42f77b870c8d9cd2f5b71daff6d9fb611134f1da8f6bd"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-056-062/worker.log",
+      "sha256": "b698f3e5e28c7da069ce7ce3f49eafc07ffc4506731edcdeb1d69f8dd34b9828"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-063-070/checkpoint/checkpoint.json",
+      "sha256": "e3ea09380284109642c5c22422f9c3f26798928fba95bbfbd450f40aacfdc8e3"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-063-070/checkpoint/repository/manifest.json",
+      "sha256": "e56e3d2afc4da675979c519c70cc196df5b2bfe59ab548761fe818bf994a1cb0"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-063-070/checkpoint/state.json",
+      "sha256": "9a122cb83d861f58b643ba9ba9f42f55572a55e491cddc4e112cc75e05f884dd"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-063-070/cold_resume.jsonl",
+      "sha256": "5c63f3bfa9387c7ab2b4df5115161e4e41ba1c0260f3af10b63cc5ffb1a4225d"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-063-070/controller.json",
+      "sha256": "3e76fd166782b5d8990fe5976146dfe2b80d9243abc9872457b17bdebfc62084"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-063-070/probes.jsonl",
+      "sha256": "aea2f495c9138f046824cdc24549f642a98e055b3754ea385649e547eb4260dd"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-063-070/reservation.json",
+      "sha256": "f24d835ecfd542661f3e8a93778bb78d173dbdbda5b6f94675b78b13bee027ca"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-063-070/residency.jsonl",
+      "sha256": "38ef8de9a6e46cc294444d332e56b8ca2d189a28ff68c05be658bda9c9cf568a"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-063-070/session/instrumentation.jsonl",
+      "sha256": "143ab73ad66b1000bde99a24079a620018bc52a576e2d35c3da18943cb2db519"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-063-070/session/repository/manifest.json",
+      "sha256": "e56e3d2afc4da675979c519c70cc196df5b2bfe59ab548761fe818bf994a1cb0"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-063-070/session/transcript.jsonl",
+      "sha256": "92435a71654ff1a554af715fa07cc5b4f358e5eee1d94c752f2978bfd4d8a707"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-063-070/worker.json",
+      "sha256": "f51c8f786cd3880cb7c89d7e750528d0e6a8e9b0f801ee8f4b148a4c7d12b2ca"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-063-070/worker.log",
+      "sha256": "01dc1902ccd482a9e922cbdb436c5ebedf269f80644422e8503789716f205b2e"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-071-077/checkpoint/checkpoint.json",
+      "sha256": "f2463627de5c547b1fa657a536c339d086ab6f6266395bfa7023cf9be785c688"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-071-077/checkpoint/repository/manifest.json",
+      "sha256": "c4101e7497cbb323fe4f479c2fb2141f6cbd91220f90eac0e17e037981bff49b"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-071-077/checkpoint/state.json",
+      "sha256": "aa9542f1d5354bf5f705c05e634f5b891154de1c240556429febcd6a30a6fabf"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-071-077/cold_resume.jsonl",
+      "sha256": "7f908a52a61dc463aa6917cfe223d120c3b81240a6a946f76cf29388fa59657c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-071-077/controller.json",
+      "sha256": "61daca79c0ffc1736229e69ff54f23c9dac005cc6d2703f9a16682d3c2aa52f6"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-071-077/folds/074-d451af6e1e6c406e8e1238d95cc5d259/full_candidates.jsonl",
+      "sha256": "68af2e2c9428a7c3b728bec5943203c3a8edf3499de44c041e8efe87f71f89bb"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-071-077/folds/074-d451af6e1e6c406e8e1238d95cc5d259/result.json",
+      "sha256": "e41fc2422eca42a5c052f424becd4d94632423077c403c26d3f401d67f0ba0c3"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-071-077/folds/074-d451af6e1e6c406e8e1238d95cc5d259/start.json",
+      "sha256": "fa4c6b007e9cf297a517dfc200477363f93f3b2ce2a56ed22101defd3a240f2f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-071-077/page_ins.jsonl",
+      "sha256": "c4f1e130b8b8b5c61fafd0a1134a1a0680971d45316902a7827147385dee257d"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-071-077/probes.jsonl",
+      "sha256": "b7b88d56574d78f658f6ca8d3204ce17cb589b8476a27e2a9c430ac0b979f283"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-071-077/reservation.json",
+      "sha256": "fa408fcea9b8211a3abb96e78beec13043f40685218e1556facd9299b8b7d9eb"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-071-077/residency.jsonl",
+      "sha256": "f2673652b21483927afbbfad0ccac3d6e45f3272b00ff02cfa655e6cec8e9730"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-071-077/session/instrumentation.jsonl",
+      "sha256": "e680db65019a0e10c579285ccc218a0af2d086523ed49fbd5ab06a6fdb17065e"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-071-077/session/repository/manifest.json",
+      "sha256": "c4101e7497cbb323fe4f479c2fb2141f6cbd91220f90eac0e17e037981bff49b"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-071-077/session/transcript.jsonl",
+      "sha256": "17cf68424e2fa36dda2cc354621c976b0559f2df0b8ce3d475424f97eb93f621"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-071-077/worker.json",
+      "sha256": "ead9a56c9faed3caaf1e24d73505b5eadeddfa1b15326e8b82d24274860833b0"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-071-077/worker.log",
+      "sha256": "cf7699f95e0f344befd490573391db07253ceb1d00da590c5d9a128ba2ecc456"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-078-085/checkpoint/checkpoint.json",
+      "sha256": "589382ec3477ad26e73f8b9bbc9bd5c26546e293ad39283b66ca8a143e56e54a"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-078-085/checkpoint/repository/manifest.json",
+      "sha256": "6097f625a4fce316ac86fc5b5c597781c32b648215b09548d81f09be612ccdfe"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-078-085/checkpoint/state.json",
+      "sha256": "268e8d006f00bd56fd7b8196499819fadf05f49b1270a86961c6d512940efad0"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-078-085/cold_resume.jsonl",
+      "sha256": "8f9ce6a88afc095a814a8239019004b1bc1fda6c1806ef1c5c1a4c2ab9c691a5"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-078-085/controller.json",
+      "sha256": "490c5ce72478e958369cc1b5d17a5b98fe4b72448ad584737c4ba9e8b7a8f727"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-078-085/folds/085-714010a2079843be86c09a45e5780c54/full_candidates.jsonl",
+      "sha256": "587683bb9c2fb7c8a59a9b7243dfdcb6302fde0c372c397f9eaaa4233830e45f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-078-085/folds/085-714010a2079843be86c09a45e5780c54/result.json",
+      "sha256": "0680720f7f5efcf085df64f9e009b5a70c12b7ca3aa5441f7359e047faca6ca9"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-078-085/folds/085-714010a2079843be86c09a45e5780c54/start.json",
+      "sha256": "4333aaa0bede5ed43d8715394460c241747e19cfb3953ce4eb660a4988132711"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-078-085/probes.jsonl",
+      "sha256": "66f932021c555f8e2e38dc58a090e2a1df4645a38af7c3a4f1406bffa9f02dc2"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-078-085/reservation.json",
+      "sha256": "4330678aafd3f0ba0e1e1388523416a5e842f8d71de18441b027dcd0478263cd"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-078-085/residency.jsonl",
+      "sha256": "dd3e25d06433e9e6f7a3a1811070aa9a471a6ff3345273deb5d7bab660e74c31"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-078-085/session/instrumentation.jsonl",
+      "sha256": "c2746a676fc209dcb3fa16f5125f2ad451f4852310ee66c87de403e536dd5f6c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-078-085/session/repository/manifest.json",
+      "sha256": "6097f625a4fce316ac86fc5b5c597781c32b648215b09548d81f09be612ccdfe"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-078-085/session/transcript.jsonl",
+      "sha256": "3c6614f6c1955897561d8948183d8219ee791e7f594a4f7a9ef47dc0ac76a62c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-078-085/worker.json",
+      "sha256": "b6db62b7bee6893f23ce0914a890dc8578a888bb2c7d1f66e2c321bbc7403732"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-078-085/worker.log",
+      "sha256": "763771087fe8d8f12265cf9dcdec7994c5ef8e008f2995e19883d40e42e6f648"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-086-093/checkpoint/checkpoint.json",
+      "sha256": "903432d704e4773d25ee50e755a216f693b72b2ca5d1b6b8e0e697b6e5395c62"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-086-093/checkpoint/repository/manifest.json",
+      "sha256": "f86623a51d687faf1e3d876e7a18c3306fb107fe20512f50f1d9107312c1143f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-086-093/checkpoint/state.json",
+      "sha256": "4ab2f93fb753ab8a8557de3f3e961c137f535a7fe8fb341b0500c8c4575a4042"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-086-093/cold_resume.jsonl",
+      "sha256": "4efad00d3f1bc953a1767471f4ac843b3f71d5f00ace0ff239982dac320a1295"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-086-093/controller.json",
+      "sha256": "8fd7eedc0f245714bbb81d66baa3c92adceac523f66e09655de0ff6911aeb1f8"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-086-093/folds/091-c6bdc6101ee9410cbfc37f6e4bd2666a/full_candidates.jsonl",
+      "sha256": "0360ab428b22648d7c88d68b6925a181928009fb2b6f62ef3ae1a1f7c868911a"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-086-093/folds/091-c6bdc6101ee9410cbfc37f6e4bd2666a/result.json",
+      "sha256": "6bf342979a11293ff36c149942c0851d90fb84f79a02e4f58b6f8688e0efda16"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-086-093/folds/091-c6bdc6101ee9410cbfc37f6e4bd2666a/start.json",
+      "sha256": "92d0aa3ee28cacbf7569820aed9850fbd62544593c954f47da22226957a14eeb"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-086-093/probes.jsonl",
+      "sha256": "ed4d3365291cb8ae21be44ffa6de5db8860d7a837ced45b8aaf47be9b3647b05"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-086-093/reservation.json",
+      "sha256": "134a86f3174fda89afd023faac276f6de7e9ec4b0a3f3ece5543fcd76aefd2cb"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-086-093/residency.jsonl",
+      "sha256": "d0465cc38a3c8fb22df2c4b36f57020f06f06475db99a1a8ecff14389b4a26d6"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-086-093/session/instrumentation.jsonl",
+      "sha256": "cf4ff3352250f429df933bb962583eea6be4c2bbeab2f6ca5c8772be3d610eea"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-086-093/session/repository/manifest.json",
+      "sha256": "f86623a51d687faf1e3d876e7a18c3306fb107fe20512f50f1d9107312c1143f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-086-093/session/transcript.jsonl",
+      "sha256": "bbb1acae9a2aa112e123a339ec3e058edd9814b70ed63dff34eb2ff0e129c792"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-086-093/worker.json",
+      "sha256": "d8f607ab3cffa49ebac41caf117953ae2206007c0a34924e261411f60b132b05"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-086-093/worker.log",
+      "sha256": "5511a930084f18148f1602deff318dbee738180acfb0b537301a3fd03519391a"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-094-100/checkpoint/checkpoint.json",
+      "sha256": "4b14be50e2a49f7406b86d46fc736beda613402b70572667c47724dbd28d6187"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-094-100/checkpoint/repository/manifest.json",
+      "sha256": "2f5bc54b5961bf5d5f1ecc82c1895ca09531a0a568e5697e841bac1fbcdcf9fb"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-094-100/checkpoint/state.json",
+      "sha256": "12f5ec2cc4320fafade463b3ff263871e4558cfba84a81e08451a8b09058855c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-094-100/cold_resume.jsonl",
+      "sha256": "514e0e67138f9e780e20d09061a9495c35ee1c1c3b80132dd52f3442c23d711d"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-094-100/controller.json",
+      "sha256": "85a459ab198d09f38fab244907f6c4e0c17489c89ee5d804aaf645ac0c5f34b9"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-094-100/folds/095-9c9f656ac72c432a9407ae3bdd641ca2/full_candidates.jsonl",
+      "sha256": "7a3d7eefebc0a9cf14ab9a2883a6668dbc212415fb9244b24fd8c4f4fe7f9d34"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-094-100/folds/095-9c9f656ac72c432a9407ae3bdd641ca2/result.json",
+      "sha256": "1d0a9cd01711381f07274a558b027e79f0bcf174534c320184bac4c514a5f0f7"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-094-100/folds/095-9c9f656ac72c432a9407ae3bdd641ca2/start.json",
+      "sha256": "a35c008393ddd4727dfa8d053263b87918372542029de38e66613551c65fe5b0"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-094-100/folds/099-d57ff85cc205427e846ebe160d9e9d05/full_candidates.jsonl",
+      "sha256": "e90f5db645ab14e5b5f9b4d0ccadf5f0c8e6e8452b8e974349587d28c2204ad0"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-094-100/folds/099-d57ff85cc205427e846ebe160d9e9d05/result.json",
+      "sha256": "f66a5057a266504a14f2b24353159022c67a2724d6c433052cd206430c256f50"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-094-100/folds/099-d57ff85cc205427e846ebe160d9e9d05/start.json",
+      "sha256": "2961ddb3a46502656256994715c20c306d90ad686e9fe8e33aa1b3ad93a752c9"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-094-100/reservation.json",
+      "sha256": "4587e820074db3f4575055a83c835e393e93c6b4a458cbd6fdd927fde0d722cb"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-094-100/residency.jsonl",
+      "sha256": "c75738a5f1473f0c6fc63fc068cd447809de7060c504db28b6466a43f3ee61da"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-094-100/restart.jsonl",
+      "sha256": "10d83bfa993bb1a1860a15f19be4a4477f9002807169fe85333171fc0321580e"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-094-100/session/instrumentation.jsonl",
+      "sha256": "c7904b294ae49042f9d99c697e21be5dcf508cba174df759b9f990f908f31607"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-094-100/session/repository/manifest.json",
+      "sha256": "2f5bc54b5961bf5d5f1ecc82c1895ca09531a0a568e5697e841bac1fbcdcf9fb"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-094-100/session/transcript.jsonl",
+      "sha256": "a36d20748108b469bb628ba50c984433c2f0b687fe90f22fe55c8e8432b2f44f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-094-100/worker.json",
+      "sha256": "b0c54cd42884f6d2b4ddd3ca8427fd812ddd68477a57f83da039498968d55f1c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-094-100/worker.log",
+      "sha256": "ff86f96fc448444a83fac3bd00d02afd3480b5bf334dd0f8ccbb0341137b44a8"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-101-108/checkpoint/checkpoint.json",
+      "sha256": "8d304a2d4c88038ca146e1fa9b00180676a126194f0cf9b6b5ab506f824e3c14"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-101-108/checkpoint/repository/manifest.json",
+      "sha256": "c59c802ec3eb3c98e9355b87bdb0ad65a0eb3505bb7b7855571eac063d80c998"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-101-108/checkpoint/state.json",
+      "sha256": "16476589aeaf506546e7316ee5fdfcc8454e6b70c451f717e3f94989a9bb87f1"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-101-108/cold_resume.jsonl",
+      "sha256": "e87facbdb505b28d0db450a3de5ac74ab16f513b0dd1374bb628ff9d1c43d3ff"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-101-108/controller.json",
+      "sha256": "d00ddc730ef4c3a1d50247a91c9aac5f3648bcc7ce6da154839e48a952221752"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-101-108/folds/103-a2cab5d7dda04ce585276279ddc0aada/full_candidates.jsonl",
+      "sha256": "ae8cf57714bcdbf2feb0aaadce9e371b9073617b41c27f032ddfd3cc3c43e111"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-101-108/folds/103-a2cab5d7dda04ce585276279ddc0aada/result.json",
+      "sha256": "d2f3addcc8b89d65275197160e12156832b3d1fd87b0db5df31f6011b421f32a"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-101-108/folds/103-a2cab5d7dda04ce585276279ddc0aada/start.json",
+      "sha256": "9303fac43527986eeb79eb77463d053441aa4c05ccd5bc47fcb8556103716374"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-101-108/folds/107-669469d0a01a41279d17313e282199fc/full_candidates.jsonl",
+      "sha256": "a3403842f7f905116671101890a773287e77c7436a18c119b23bf069d38fe8df"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-101-108/folds/107-669469d0a01a41279d17313e282199fc/result.json",
+      "sha256": "b62ef2e3670a222e646f2fdb8b5796737b534cc3bc781bb262cef53feaba1f88"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-101-108/folds/107-669469d0a01a41279d17313e282199fc/start.json",
+      "sha256": "50416f6a8716db69d59e4163b4ef9260563e6d587136ada47f80b4e0213ae778"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-101-108/reservation.json",
+      "sha256": "bcc115a367b92c0e8ebb036454aaaee9fa03cbec4358c5e356e47700e9c953ab"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-101-108/residency.jsonl",
+      "sha256": "5cf2198c80ea3ed5ade9d2c6e68711b89eb16994d5c1dcd455d9c04adad3ce30"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-101-108/restart.jsonl",
+      "sha256": "18c9bb4ecf7fefeb577a050dad33dca49b525300fb32c25bc517029d070412fa"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-101-108/session/instrumentation.jsonl",
+      "sha256": "c72c02372fe24b5fab0308d7f2fd18f8e5763eac1b145be29ab19f5dd78b274d"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-101-108/session/repository/manifest.json",
+      "sha256": "c59c802ec3eb3c98e9355b87bdb0ad65a0eb3505bb7b7855571eac063d80c998"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-101-108/session/transcript.jsonl",
+      "sha256": "fa1f39b1ec7ab784f866bc94956daba58c116fe8088550afcd43cc4b6ebe18f9"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-101-108/worker.json",
+      "sha256": "90a08ad0617e9f85d89d803b93e106c55f668cf24e6f763da8342a1c4d8cd750"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-101-108/worker.log",
+      "sha256": "699be14fd082936c3a1da2d800156375f982d93807286f3d1104d6b0f1062dd2"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-109-116/checkpoint/checkpoint.json",
+      "sha256": "3aa68fcf9cb2acf9bce585bcf5943f6e6aa84ee2b2b5c2452803e533e4f4a532"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-109-116/checkpoint/repository/manifest.json",
+      "sha256": "0a69187e23cf61d5509ff1dc60eb2563837a6f86261818f7157df5012c7b8178"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-109-116/checkpoint/state.json",
+      "sha256": "7b324b306ffecdcce23686749a06c2ecf41013b824ed1934fa3af7868fe2de15"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-109-116/cold_resume.jsonl",
+      "sha256": "aca9f272e19eb83840197255f33e6b0273f4985dfeb5b8cffb61bab458ff8cc7"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-109-116/controller.json",
+      "sha256": "27f700518a48879832bd9992e0c256e16833430080b6c595f09a2ccb5f67ad79"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-109-116/folds/111-6000d2c67f2e45f1bb15ac26f83828e8/full_candidates.jsonl",
+      "sha256": "12dcefc0e67bfee5e589f26a611f956af190892a0e2241990abc88836df21bdc"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-109-116/folds/111-6000d2c67f2e45f1bb15ac26f83828e8/result.json",
+      "sha256": "a6af2d9f95ced8abd02e5d239e611f986b8a39da1f91b9a41382c8b8d5ccf94b"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-109-116/folds/111-6000d2c67f2e45f1bb15ac26f83828e8/start.json",
+      "sha256": "4f288453ac0b750cb6a561fc6cec83f53dc1b871aae5ada02ceec30f429977e9"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-109-116/folds/115-052af57424844ad9835495607ad47edf/full_candidates.jsonl",
+      "sha256": "bb490cce92682b57a4d2ca988383ed56d18220ba84189b3ddbb6fc766b1ad143"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-109-116/folds/115-052af57424844ad9835495607ad47edf/result.json",
+      "sha256": "61602f993550b00fc51dedb5028b4315a260a44b72a6cb7784b5aeba46d2f571"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-109-116/folds/115-052af57424844ad9835495607ad47edf/start.json",
+      "sha256": "14c3326d527ba6aae9438b3ed629c4ab24b3f04511f38114dafebe60ff52c537"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-109-116/reservation.json",
+      "sha256": "694cbc20a58c8e9c71fe22a168e7200281f931bdfc19661d02706bcb7dff446c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-109-116/residency.jsonl",
+      "sha256": "834a1fffb7caf1dfc40e618dcdc8c38b1082812bcb40c3f7e09044a9b428acb0"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-109-116/session/instrumentation.jsonl",
+      "sha256": "a23c4fb787fbcd9e87c800e0e50101176169bc7d5ad6cb9be6703aede346da99"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-109-116/session/repository/manifest.json",
+      "sha256": "0a69187e23cf61d5509ff1dc60eb2563837a6f86261818f7157df5012c7b8178"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-109-116/session/transcript.jsonl",
+      "sha256": "6f502801ae9cdd386196eaf95a1cf770e611af6e0bd20e842c7e8c1c0f350942"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-109-116/worker.json",
+      "sha256": "29bfe539056a72a51732bc80d9a69cb711903b5cb6214e7163223ab77d6cbb0b"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-109-116/worker.log",
+      "sha256": "f286a26aae35f600132a445c57c578a46dbf52f885b0e266d15a99173e41cef2"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-117-124/checkpoint/checkpoint.json",
+      "sha256": "08e427ff64e4b4382cbb2875436ecf3215e0bea7ab80e754e16e4d09c988eb5a"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-117-124/checkpoint/repository/manifest.json",
+      "sha256": "ae2c24215a366decc32c10683d379367bc7d9c59c419131f47b1679d5f600b0f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-117-124/checkpoint/state.json",
+      "sha256": "14281f9c070c63daca81cff50890c9edcf0f50618f8ab3e6c56d357221f56926"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-117-124/cold_resume.jsonl",
+      "sha256": "660290de0be649eed736919b2879c5c5c3e7413dc71faf5d1141e2cdbdf9a038"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-117-124/controller.json",
+      "sha256": "94856a9769c648995de0035fe87988440f3f52063540cf2de2024deee38f5122"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-117-124/reservation.json",
+      "sha256": "1c988cdf6df7b651d0a446a15a883345e148f74e1f34710e2cdcd30291780119"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-117-124/residency.jsonl",
+      "sha256": "7660d74dfdbc3770ee50fb1562c12a4a9dd5932388ca40731bdc43fc349c39b7"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-117-124/session/instrumentation.jsonl",
+      "sha256": "b8e2328bc15f768ad38010106152b864014c5bc178748aa833997023e59fd000"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-117-124/session/repository/manifest.json",
+      "sha256": "ae2c24215a366decc32c10683d379367bc7d9c59c419131f47b1679d5f600b0f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-117-124/session/transcript.jsonl",
+      "sha256": "24aec137a313dff7e46fbc7308f88c2da30bd3685b822d538520fb95397fb5cb"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-117-124/worker.json",
+      "sha256": "643cb3d43be55632a94f8eb116e07e25051fdb663601da715e9708fa9801f87f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-117-124/worker.log",
+      "sha256": "e00f8d74bb1fc08dee944bfd4fe35b42fa166af159263546772fe01fa2ab7a0a"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-125-132/checkpoint/checkpoint.json",
+      "sha256": "f74daba7d19db5b3188ae76c4a6047a6ddf03d1d4ee0b1273d9229c7b92df511"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-125-132/checkpoint/repository/manifest.json",
+      "sha256": "465804754b81d748c93f5e5a6fd84c2aa37cdfafa34c57c3c4384d7b22c7082f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-125-132/checkpoint/state.json",
+      "sha256": "5bd9175d8f841a5bbb9c05535c2cdf894803797fb8853fd7bf6b793912c03e52"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-125-132/cold_resume.jsonl",
+      "sha256": "9e78dc975fe884f1d3243a028fb486d8b4b3b72dfe608cb9b27918b0521d86ea"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-125-132/controller.json",
+      "sha256": "ccb1500885d94245453d2d79e5d8a3ad5e173e6f82cf16e1571e18a1d3e4912b"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-125-132/probes.jsonl",
+      "sha256": "c8cc2048d6a2329bbc7b50b748ebcd6968cf8392f52bb46125fbf92c49bda433"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-125-132/reservation.json",
+      "sha256": "138714558f21fd52248cc9623427036f40c40d46c8ef5c98837a0a46d2428f5d"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-125-132/residency.jsonl",
+      "sha256": "771b659607784187168e5f766866143af659b7f12cb09e8c68b2083a19bb0db4"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-125-132/session/instrumentation.jsonl",
+      "sha256": "1c2ff8710cc25131dd77986e5c8e427d2ae207128e25cf4135f3c2e850a8b7ec"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-125-132/session/repository/manifest.json",
+      "sha256": "465804754b81d748c93f5e5a6fd84c2aa37cdfafa34c57c3c4384d7b22c7082f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-125-132/session/transcript.jsonl",
+      "sha256": "a758b6f708fe21151e0e1b4e6b211a5e7dc95412eb84217a6fdbe22cf7a2ca49"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-125-132/worker.json",
+      "sha256": "595cc8b7de34a5ff5d8d9ddb4a01863b671db0950c85a7ebcd701a7dcb2204c0"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-125-132/worker.log",
+      "sha256": "c886fe69c841613011b39f907a87eeecd50c4c9cecea701bc65a7099ad80b432"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-133-140/checkpoint/checkpoint.json",
+      "sha256": "19cda2d45d357cdf3babe9dc070754e55775bf76edc2573c3b40820abe46b272"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-133-140/checkpoint/repository/manifest.json",
+      "sha256": "8b713c7247a80931022e6749c8439527f9be06f5e4b4e49a3de6739d358de098"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-133-140/checkpoint/state.json",
+      "sha256": "1c147760471787834a5bd7e0c0eddc9e65bf979fa25a1fcc768ed221a9814c33"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-133-140/cold_resume.jsonl",
+      "sha256": "0f3c1342f80d0a1d762042dc3846ce0958c43a36aca2a0d5ca892d1afdfe208e"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-133-140/controller.json",
+      "sha256": "e76a713a2a8584a2d1a6be3be4dbbbdd0d765464c4543ec4a98b002e2c1b6df4"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-133-140/page_ins.jsonl",
+      "sha256": "86845e1ade6c2e23c525fd58590f5f06876387982581d5c1d04f80075c977b9b"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-133-140/pressure.jsonl",
+      "sha256": "56a5332548cf3c51f29b1e53a1abb508e3ff8763744fc111d183553078430658"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-133-140/probes.jsonl",
+      "sha256": "687000a80ee542480abee2ae52090ed7ae9e2ecb6d6cd9ccecefce0790204fd3"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-133-140/reservation.json",
+      "sha256": "43c5a835c8c2db39239cf6f374e6bfff874bcdafc59197b71953acc7af22a652"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-133-140/residency.jsonl",
+      "sha256": "513991a9cb4ad7171ebb74d288351d5f3575b94d360dc37b26df51fea1da28f3"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-133-140/session/instrumentation.jsonl",
+      "sha256": "63c417f8f3bee72821c0532e89005a3ac076522f09708e965711e2c3fd008d6a"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-133-140/session/repository/manifest.json",
+      "sha256": "8b713c7247a80931022e6749c8439527f9be06f5e4b4e49a3de6739d358de098"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-133-140/session/transcript.jsonl",
+      "sha256": "b7314538d9a57b1830e91caf893d87ccc146bb3f0e11ea094f64b0b9d5d94d90"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-133-140/worker.json",
+      "sha256": "85428782b4238d53deb13aeb3999500ae556e5a0dcf4fb7b46826aa4b76dcfc8"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-133-140/worker.log",
+      "sha256": "f74aa2e2797691d3ee215961a2abedf56ba1402ffa1ca58ae18630618091816b"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-141-148/checkpoint/checkpoint.json",
+      "sha256": "c40f00a4646cd87c6a2d8e9fb0242afdb75f02809a04c3d389a5bb1ce37a582e"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-141-148/checkpoint/repository/manifest.json",
+      "sha256": "2060a925ddcf0409ffc6599dc7bad3b33345bab8ed663b9ef45f0ab0e3c32ec5"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-141-148/checkpoint/state.json",
+      "sha256": "447668f5d1b90ce500900cb79675a91fb1af11efbe5dfd41bf9b1d406d00e156"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-141-148/cold_resume.jsonl",
+      "sha256": "23810e31f7e1e5c46161a98b2682fa21e9d6f2ed98762d2eb26bb5b75edfc23b"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-141-148/controller.json",
+      "sha256": "f5273f083d83a94c72a4195d94e7bd71de585130a134a0f0911cb90aaff10d0c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-141-148/probes.jsonl",
+      "sha256": "8aeba42c0a28c3b4b9ee3d9484d5c4c034eb8052423ebbc68c52632d25991f9f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-141-148/reservation.json",
+      "sha256": "499e26350ffd123f769cfeaf0ac5207bb18fd9cf667feceeb93994c1aa3ce68f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-141-148/residency.jsonl",
+      "sha256": "f59ab00cd8bc6d2563bd2ac0174a0bbcda94143b7511bed1b12d149578093a7e"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-141-148/session/instrumentation.jsonl",
+      "sha256": "fcf36884f64b2e74c64651383337195a4f227388e40ed6d68faf226f08a3cc74"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-141-148/session/repository/manifest.json",
+      "sha256": "2060a925ddcf0409ffc6599dc7bad3b33345bab8ed663b9ef45f0ab0e3c32ec5"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-141-148/session/transcript.jsonl",
+      "sha256": "fbe92904227921af172f7251eb60513872392c140bff04048685c1fda0802ec1"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-141-148/worker.json",
+      "sha256": "2f488d50f42217f9a93b2609a7eb12dbab6cb84b127c4c4b0362c71a82d08937"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-141-148/worker.log",
+      "sha256": "588ce165d39340eead28de5eecde8754648315e2afd338f0e75edc73829899e2"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-149-156/checkpoint/checkpoint.json",
+      "sha256": "a0098479b743a4937d5a4424d96744eefa834c1050e4ee69d13bcc5b6c5b201c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-149-156/checkpoint/repository/manifest.json",
+      "sha256": "a919d10b4408f017bbe07478c4a98c22468d6b330f39c5cda1457016a8a18e79"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-149-156/checkpoint/state.json",
+      "sha256": "5a121e90c0593c8abaa8e0f131b3640d9deb3c88dd858da199821bb2ae167b52"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-149-156/cold_resume.jsonl",
+      "sha256": "7e8d78b2351728331df5c4982972c33b421e98572fd67b47732cf185c0a66a4c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-149-156/controller.json",
+      "sha256": "26845c6b769857492a48be87fd6251d71b143183b522672b5ebd5811d97f39b8"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-149-156/reservation.json",
+      "sha256": "5cdc69704c447b84ae62b6d4dfbc1e92067fb7708c165bfb8e1bfea4a04e80a8"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-149-156/residency.jsonl",
+      "sha256": "3f6e9fc0d23c05e5e3c6df4179943d13a3f13de4d30c5ba2f54ae4161c1ac8d1"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-149-156/session/instrumentation.jsonl",
+      "sha256": "1e00647939dc99528480a0392a4a1ab65011708292ed6685ecb8c25d14a6f4d8"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-149-156/session/repository/manifest.json",
+      "sha256": "a919d10b4408f017bbe07478c4a98c22468d6b330f39c5cda1457016a8a18e79"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-149-156/session/transcript.jsonl",
+      "sha256": "365fa9d6de5fe3da9c744c94344af078709c1329ea1d276ac8d6e8aa0ae351ab"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-149-156/worker.json",
+      "sha256": "957a357d2ec5b644215bd41e52d72dcbf0b97949eeebca8e07f0ca5f2482dfa9"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-149-156/worker.log",
+      "sha256": "67093d26c28215712d29e946140c398652dfb1304d4bb689937df354ceb594b2"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-157-164/checkpoint/checkpoint.json",
+      "sha256": "f2711e220002d3d777b498964f04b016846c33a00e171350a5a809a0c61f5e95"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-157-164/checkpoint/repository/manifest.json",
+      "sha256": "cf1b652296e5fe90504e9237161cd608f819be7e8b390d46dbf047c903445795"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-157-164/checkpoint/state.json",
+      "sha256": "bd1b90070d2788eda931599b159e0cd259e884d0735b4f9b5748d2be1b4f183e"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-157-164/cold_resume.jsonl",
+      "sha256": "62558e923c9e9d9abf4046567cf4230042473c0008c91300995f45507f9832a4"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-157-164/controller.json",
+      "sha256": "2c99287e9351afe93c94a649b1c46b2e5d91f1ee6a1aa677b2ace0b4e9436380"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-157-164/reservation.json",
+      "sha256": "89ebd6f37a11fff6578ae237bfd9330c3f5dc14f681ec6e0107cf0a8d7540197"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-157-164/residency.jsonl",
+      "sha256": "e0375ac4856d5a7a8d62e43756a5a9713c8cf15cb22989b6338e70660d842891"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-157-164/session/instrumentation.jsonl",
+      "sha256": "1cc15498f3121ab5d1aec51f08863d62e053d613ea9f13f927bd003624896052"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-157-164/session/repository/manifest.json",
+      "sha256": "cf1b652296e5fe90504e9237161cd608f819be7e8b390d46dbf047c903445795"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-157-164/session/transcript.jsonl",
+      "sha256": "649ba25d786f48fb3972906394d4dc71dd9b5c8323a79b966d8ef88505e9ddc4"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-157-164/worker.json",
+      "sha256": "4c73b64d062f390dffb1f77152f504e2cb753876f2c4ff236d2e5cf22c890dbd"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-157-164/worker.log",
+      "sha256": "3e84505d47f59f34f4031da2b48a917030b2d61f6eae2a083b071d2451f13b0e"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-165-172/checkpoint/checkpoint.json",
+      "sha256": "be6cd20360be5670851d03f732887e4de77df5236adcc48b7d30bb6912929874"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-165-172/checkpoint/repository/manifest.json",
+      "sha256": "2eabecd1dbc6213365e3599552f10bf62d032c78884a4a0f3128eb402e78268e"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-165-172/checkpoint/state.json",
+      "sha256": "f0cc1eb15ffaca2a7409250d74f68dadcd3aa59e73a59984d8deed844df780c6"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-165-172/cold_resume.jsonl",
+      "sha256": "3e4dc0dab2081f0b5b24da9fb6f174fa2291e9f9356cf7e4102cf9a5dc36a982"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-165-172/controller.json",
+      "sha256": "7f9d8492ee38e099f63b756adaf7148a9a4ba00d25b9609fedeac5ff60817dc8"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-165-172/reservation.json",
+      "sha256": "c745b729c1aaf878e339d4ec4e8297958bf8bb9fc3223accaaa4d21782164810"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-165-172/residency.jsonl",
+      "sha256": "406f939f790da2c52cf2598ecb65340ccf3472c7427ffdd0185e627410520203"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-165-172/session/instrumentation.jsonl",
+      "sha256": "6639747acdc44c688b2cf49c06eabbe7381cef6af289f10db407b3c7d06d7676"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-165-172/session/repository/manifest.json",
+      "sha256": "2eabecd1dbc6213365e3599552f10bf62d032c78884a4a0f3128eb402e78268e"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-165-172/session/transcript.jsonl",
+      "sha256": "15c2dc81abb2ee1a4c05cbfcc8b496b9d50cba3441a51eb0a58f4bd4112fda74"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-165-172/worker.json",
+      "sha256": "03e2b24e3b12628ad850827d1cf82874e31cb648b01423657372349bfa4c0e76"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-165-172/worker.log",
+      "sha256": "603f0f771bd07f4397db097e6f032cf413b5b69521e29bbe7a3fa6506c0b09ec"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-173-180/checkpoint/checkpoint.json",
+      "sha256": "8a469d05621000a2a3e0666fda717569b00e4d45b9737e0589b052752a35d28a"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-173-180/checkpoint/repository/manifest.json",
+      "sha256": "f70c62e9b60b168b80456d7da86e35ef1b5fadc7b066a9d522bd0d90933bac64"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-173-180/checkpoint/state.json",
+      "sha256": "0d3bdcbb15c133f9ea123a132e858eb071a55c6450aac780d1e91d0bd08dec7d"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-173-180/cold_resume.jsonl",
+      "sha256": "34dd818e23f52b905a37e0ecae8a3c7e339bfd27cda874cd70ebd604c6e0de39"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-173-180/controller.json",
+      "sha256": "6ec7dc74dbb38a48f2489953f421289721d1f2d20fd87d578c44d7261cb5e9d7"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-173-180/reservation.json",
+      "sha256": "fc2513d4eaf3cd0a686425a3bbfd228e028a8084675b3347ce58c0c0badc50a6"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-173-180/residency.jsonl",
+      "sha256": "7037b2ae69a56be7df62178c400a21830e64dc635a126d05bebd7d236c613388"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-173-180/session/instrumentation.jsonl",
+      "sha256": "4d201ff6c741d142e8a2411f8539e174a3262d5a943507fa8c33ffb7c4962d91"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-173-180/session/repository/manifest.json",
+      "sha256": "f70c62e9b60b168b80456d7da86e35ef1b5fadc7b066a9d522bd0d90933bac64"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-173-180/session/transcript.jsonl",
+      "sha256": "e99f3ce9ae919fad24f939e1b1136de984c10300ddc48587f10324d8b1671d93"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-173-180/worker.json",
+      "sha256": "e8a5df879ac7f5cc8698955a1be494dd643cdc97cda2c6a3c2c3b2ae5a9d2d86"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-173-180/worker.log",
+      "sha256": "c871d68bb5bf2755f7bcad3ff61d11b1930062a360375e115caf1b6001b6a1d2"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-181-188/checkpoint/checkpoint.json",
+      "sha256": "7970c808afa37fcfc89af9c957ddc9a842fae18e837534a43bf0feb6acf6076c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-181-188/checkpoint/repository/manifest.json",
+      "sha256": "04d5635ab73cf30a92dd6963f1605b75931f45d40f3be79bb6f3da093c8ced13"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-181-188/checkpoint/state.json",
+      "sha256": "1acbd596fc11e8653e7fcbd69ab962a12318a27977be01db622d8dcba221c5e9"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-181-188/cold_resume.jsonl",
+      "sha256": "84477dbc2f4b335850c803fc59d943f10f156511c42f0e614f677015040c4bc1"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-181-188/controller.json",
+      "sha256": "9d108e0dbbd741e25ebb29b532333c0d2fabc8e84a788507148565570e1a2933"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-181-188/reservation.json",
+      "sha256": "42f5e0ec24478f07f5642d7daf55468a38e200a2422aab5853114c1d6d2f3148"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-181-188/residency.jsonl",
+      "sha256": "1a27b7973b05ec5203afc9a4d90029e3cea9b5723c0503456d200d30a8b6db6b"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-181-188/session/instrumentation.jsonl",
+      "sha256": "d1889390172c46fc8bb5772f6aa92d798d3d27b4b7dc04150c46edfb51b7a02e"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-181-188/session/repository/manifest.json",
+      "sha256": "04d5635ab73cf30a92dd6963f1605b75931f45d40f3be79bb6f3da093c8ced13"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-181-188/session/transcript.jsonl",
+      "sha256": "98c983d7a489ff071b58285a2081f5431cbd0d8742784a57e2a1ce25b92e1be2"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-181-188/worker.json",
+      "sha256": "c5bed816a067c09b59a30b09ff782f187bdd6266adb214c663182baf5ab0b027"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-181-188/worker.log",
+      "sha256": "fe82ee480209d255e24cac9df7717980155beb1b7c53bcfd86eab84f68a327c6"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-189-196/checkpoint/checkpoint.json",
+      "sha256": "85595ab4fbb6b869b6c295e7d445953b6da5bbb169736a4649a184929d9b99a0"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-189-196/checkpoint/repository/manifest.json",
+      "sha256": "460d954e3a9415964450420f732b1aa9621d440999a765a4bb26b0045cd3a866"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-189-196/checkpoint/state.json",
+      "sha256": "61c58c046afd5eb577516831345ab13a5fd1cd842fc4a66fb091585fba0d59b7"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-189-196/cold_resume.jsonl",
+      "sha256": "e47e928fd36d0886e88badf258ae3055a18439a269d0a4312c0aef18a58dcab3"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-189-196/controller.json",
+      "sha256": "e529ca868baeb8afc4347c7a22625743fa837bbd1c6287aa43d44b22249280f4"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-189-196/reservation.json",
+      "sha256": "d97077936cbc5f0e250b524729ccb6aafa56aaf7dd604d34d4f3c1e68b91538e"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-189-196/residency.jsonl",
+      "sha256": "3df87014c08bc95279edccd3815cb5756bc3bf2628f7e1aeea7b1807edf3cc1d"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-189-196/session/instrumentation.jsonl",
+      "sha256": "aec8eec8621925aa3455aa9ded5af499ae4e2b240d30f95891863c8ce0601806"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-189-196/session/repository/manifest.json",
+      "sha256": "460d954e3a9415964450420f732b1aa9621d440999a765a4bb26b0045cd3a866"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-189-196/session/transcript.jsonl",
+      "sha256": "df52e5f9c9f810e814547eb9fc76b7e9551695d12aade7148d4945e5e6f2e74b"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-189-196/worker.json",
+      "sha256": "554f5c665cad411410a160c033abcadfa529f8dc5106f75c7dee74b828ae596c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-189-196/worker.log",
+      "sha256": "1bde42a9c2a5698c19f01da4837af4f85f3de3fa62c817d69ff13c21b540ca96"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-197-200/checkpoint/checkpoint.json",
+      "sha256": "2f5f410faeb4a49fbaa71407f758a317eb79215e87bdf36c4937414cbd2490b1"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-197-200/checkpoint/repository/manifest.json",
+      "sha256": "7161ddb136bc8f0901e4a2b248e66975ab1ce50fff3ecc32545f8d686ff5e263"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-197-200/checkpoint/state.json",
+      "sha256": "cd9bf517f0d72d59dc983935e7613d5e7375a38f9335b12867e004106350bef9"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-197-200/cold_resume.jsonl",
+      "sha256": "fe532b5ffbb8d26b67f2f47bd9bbd1fad1594147ca015bc429a7a198d52a90e0"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-197-200/controller.json",
+      "sha256": "bbe97f1b9ca7f05a88b05aa34c925f887232562bfc5e6e160e5a4af0b0b3af4c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-197-200/reservation.json",
+      "sha256": "9683eeb5007caa766523fc7bbcfb627c0ec2ca4e389ec60cb9b4fe8856fff53e"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-197-200/residency.jsonl",
+      "sha256": "5571c9598ca1e53ecd30ad42516ad6f067b96777d3252c8a500cc65b1269c3db"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-197-200/restart.jsonl",
+      "sha256": "5a7a7c52a204e7c1353273dd58685f191d3f3b8467e47824ca5686e7fffd2dbc"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-197-200/session/instrumentation.jsonl",
+      "sha256": "18edf811b5d458ddea49f2f30c491f04bb2c49e794ace459fd34c534cfe96a3a"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-197-200/session/repository/manifest.json",
+      "sha256": "7161ddb136bc8f0901e4a2b248e66975ab1ce50fff3ecc32545f8d686ff5e263"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-197-200/session/transcript.jsonl",
+      "sha256": "f4b525853886b6acfba2be9fe2e31aa3379c2d7e4fd503ad4b6f2588405b84af"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-197-200/worker.json",
+      "sha256": "2a08100370c1d9893b1389c99af22e547d1203196b1aaa163e449c3860eeddf6"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-197-200/worker.log",
+      "sha256": "fb7fb9d93e6224372fb9bc44f59efd1eccb98ebf654f7fe06ab4b87b98b03a2e"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-201-208/checkpoint/checkpoint.json",
+      "sha256": "f92ab7d589d435395c8ce5ec46a068631a7f4c677353087d2ff8e850ee124f38"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-201-208/checkpoint/repository/manifest.json",
+      "sha256": "107adc15c44428418374b9ab5d6a9bb810c8618255b6a547bb93c5f6d795f47b"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-201-208/checkpoint/state.json",
+      "sha256": "ae1dcb480162fb37d27cbb4edd93cb02ee708b2d65543b662a2ed9a307ddb1e3"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-201-208/cold_resume.jsonl",
+      "sha256": "d30422706d07769eb8a6fdaf77a6d524bab2e252458c77e07917fa54b6011f49"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-201-208/controller.json",
+      "sha256": "d36659be8a384f0e3d238b061e7e15308f268703a9510abad87313096fb593cd"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-201-208/reservation.json",
+      "sha256": "732092de2b9caa8bd86d49822a0cf2c728e2fcbc9241d20d8f8f70cd7cc773b2"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-201-208/residency.jsonl",
+      "sha256": "ac42978610a76f4528d227a9814aa7ef179b1b73ddf86d82f04bf38575ea25e3"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-201-208/restart.jsonl",
+      "sha256": "3b21998625d3d0e781a089a88e866a005b12a340d44f00bc72464cd16e8e031a"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-201-208/session/instrumentation.jsonl",
+      "sha256": "7db3d35b426f18f95115aa2206f59eed15aec433888f7786acbfcfb26d8b4d0b"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-201-208/session/repository/manifest.json",
+      "sha256": "107adc15c44428418374b9ab5d6a9bb810c8618255b6a547bb93c5f6d795f47b"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-201-208/session/transcript.jsonl",
+      "sha256": "474d00b9878c1b1f01504885f1f7a653ca37757aa8e0ec4d8d78314b1cad3fb6"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-201-208/worker.json",
+      "sha256": "ef190bf2fe1cbbc68446fb0b1d595eec19a9e9438a082df39962c4c532a95834"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-201-208/worker.log",
+      "sha256": "b055708311769696395d204bdce8f10d818ecd92305cf46f3fb7041aa028c473"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-209-216/checkpoint/checkpoint.json",
+      "sha256": "6b7c82e4fe3268e075c481408790ed222e377b3897f36501dc36ab365575de3f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-209-216/checkpoint/repository/manifest.json",
+      "sha256": "744c838eeebc4192268050dbf8a7c99b6ee7fb64cc2cef714ab93368723ff53b"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-209-216/checkpoint/state.json",
+      "sha256": "0c8a9a5a6633c10c06f060822dfa6056d258778cd1a7983f2f908ad71c0b0f53"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-209-216/cold_resume.jsonl",
+      "sha256": "53a7b36610a96aa977790e6501e542b4a5daeabc3d8d507eefe9f46abc3c6507"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-209-216/controller.json",
+      "sha256": "8c9a486e4acfefee4ca97fb69a22a7f9b40547e909e1d2d01ca6e2b238608866"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-209-216/reservation.json",
+      "sha256": "f03e66886b65284b56ca9fbcde038d8de0029f3cb017d42f99a19af83c8fe1e3"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-209-216/residency.jsonl",
+      "sha256": "5734771e0128793fea8a5896de8a79707c0417aead2d294961ee851bc3199c28"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-209-216/session/instrumentation.jsonl",
+      "sha256": "ce616edd5b3d901d4536a0ca47dbc0620afb1d1317d77fd29819027188ffeb81"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-209-216/session/repository/manifest.json",
+      "sha256": "744c838eeebc4192268050dbf8a7c99b6ee7fb64cc2cef714ab93368723ff53b"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-209-216/session/transcript.jsonl",
+      "sha256": "8cf3a6b16f1ce44dfed42e858280c4a66f22b2cf3563ca877ef86db82f09b283"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-209-216/worker.json",
+      "sha256": "24a6a004c91c69a1440a1b4c9bb1b1fed8de860698538dd13dd0d36063512b2a"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-209-216/worker.log",
+      "sha256": "ffdf8d9c57c7372230d7fcac790375b06f5c370dafa501de9191c8fe3a99865c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-217-224/checkpoint/checkpoint.json",
+      "sha256": "6371155d76912d52452dfe40ccfa1e27f55a25d285d1b7818ba4c0d96f15d026"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-217-224/checkpoint/repository/manifest.json",
+      "sha256": "57e8a3d38adf1b1c6acf2e99736f494215fc196f318e7a3f5bf8e3426a597c75"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-217-224/checkpoint/state.json",
+      "sha256": "40534793bddd6306a1e23d3a7f37200576027b902a9d146afa9deef7fdc843b9"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-217-224/cold_resume.jsonl",
+      "sha256": "58cedc702865ca3b771b061d347a2bed65345718230a340975e2eb14544c489f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-217-224/controller.json",
+      "sha256": "811b914915554406b6f10796894d0b4095f5267135e859f5d9b49aaaecbc5c0e"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-217-224/reservation.json",
+      "sha256": "5b31e2dbf3ab97ee1eaf34bafe7166cdad0e7bb02d8d68b1771400788a06900e"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-217-224/residency.jsonl",
+      "sha256": "76a4ebc00bf5a34f9036ddeaec1731702ce9cafdbb5059eac5e9d624b35e3ca8"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-217-224/session/instrumentation.jsonl",
+      "sha256": "a63f6dadcb9bca7f75f70fc0b3af4861a03bb94cdcfb1695947be5da497e037f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-217-224/session/repository/manifest.json",
+      "sha256": "57e8a3d38adf1b1c6acf2e99736f494215fc196f318e7a3f5bf8e3426a597c75"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-217-224/session/transcript.jsonl",
+      "sha256": "a169cea79d269caa60513e1e88f4fe69cc69850901946ab72800f3bf6d833905"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-217-224/worker.json",
+      "sha256": "cc1225f060b9fb687db3a057d688ddcdab42905b7a619d8359daf817816a79ef"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-217-224/worker.log",
+      "sha256": "2cdc25a940f50803f2b6f6643c500cd00c49c83935c2589447625aba66b887bb"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-225-232/checkpoint/checkpoint.json",
+      "sha256": "46966d49d2f5d88354a38e1ce91e90158ab9b7cad33ea3eb9c291fbdd588b2c6"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-225-232/checkpoint/repository/manifest.json",
+      "sha256": "3fc82166a8580524c000f348b65092bb03e9d234496011c758bf743b5be2dd3c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-225-232/checkpoint/state.json",
+      "sha256": "399d161994ceeb37e6cfe782812c694589a65ab94492d53a9c99e25926428330"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-225-232/cold_resume.jsonl",
+      "sha256": "b98f2ffb5f01657a602bbcb9599e28d040fd2175247c4083f46c80efed3fcd34"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-225-232/controller.json",
+      "sha256": "320be5e2cab27b83426625f2ac1b9ef61b5853216b1db536a94642d4952b1763"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-225-232/reservation.json",
+      "sha256": "5f51b9838ba6d8b6be93a8f081f3e268f6522067583295f22d6621c6ff03109a"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-225-232/residency.jsonl",
+      "sha256": "75ba7942da90b3cd950e1f90d3e205b2ab451d28a78335152f4d5221763288c8"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-225-232/session/instrumentation.jsonl",
+      "sha256": "54a2e1896852dc6e955a4d1fdf4ede636a212807cdcc8e7b54efa361d4c16608"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-225-232/session/repository/manifest.json",
+      "sha256": "3fc82166a8580524c000f348b65092bb03e9d234496011c758bf743b5be2dd3c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-225-232/session/transcript.jsonl",
+      "sha256": "8aec02fca66a80b31728abbe7a97e4bd81cd3de43aad513b831db247e492c9d3"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-225-232/worker.json",
+      "sha256": "4da7ee1082973de61f4fd28035ea8b17552d61e68e26de2270788bad42d8835b"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-225-232/worker.log",
+      "sha256": "60af8dca113096e7352af4fe3fda8b0d9a38bde01d98120de665ffd2cdccd55b"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-233-240/checkpoint/checkpoint.json",
+      "sha256": "40a55baa865f0f53c177815e686a7a0ebe95169e407241e942cb4c97106bc59d"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-233-240/checkpoint/repository/manifest.json",
+      "sha256": "07014352ccd759f6e4cef155b5b649ce3df397b5e1c8f877be98f3304f5c01c0"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-233-240/checkpoint/state.json",
+      "sha256": "120c4213c65609207af0b7b3f37c633a9f972010940f1ec8f10e614cf0151989"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-233-240/cold_resume.jsonl",
+      "sha256": "a58350adb258507306932bee049645105892e6a43c8f3c5f93a2cfebbd9e32b4"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-233-240/controller.json",
+      "sha256": "b8acec0bf76f7465101a4ead001f5b37364b3c6a83b97e61156eab342cfebb59"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-233-240/page_ins.jsonl",
+      "sha256": "1cf9cd8ff929af9102d11a0396fd33059f66170bbb304173ff732d2cedca67a0"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-233-240/pressure.jsonl",
+      "sha256": "3465cca6bc632cb5327f7b05f7f567968f441f591649453c2d90de4e1bb4c8b4"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-233-240/reservation.json",
+      "sha256": "768e3a47d630a2eb7c439736ad298d2bebcffb1cefcf475a47c13be89b429bbd"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-233-240/residency.jsonl",
+      "sha256": "08804f5f42b799a60633f26926cbead6285854ffd794b5ea1e58672e0a680cf1"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-233-240/session/instrumentation.jsonl",
+      "sha256": "610881b68b41e0fa7ea0c819ea4f3135cda8412ca8cd21bbd9fd6df815b4433f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-233-240/session/repository/manifest.json",
+      "sha256": "07014352ccd759f6e4cef155b5b649ce3df397b5e1c8f877be98f3304f5c01c0"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-233-240/session/transcript.jsonl",
+      "sha256": "218bd18859903f20a538f454a314ae7e3805100a4483d5346b50e66b3b3da753"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-233-240/worker.json",
+      "sha256": "d6b2738560738384e1e729dcf1f56d1d01fb65ae73a02f1b784db48138628096"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-233-240/worker.log",
+      "sha256": "04400568a6ed20eba6d094e9011b41bdc4915d363aaa217200d2bdea475f06f0"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-241-248/checkpoint/checkpoint.json",
+      "sha256": "fdaf09ad7fc9af6bfcdcdede41876e9051d92ad1748d649c9121ad0ccde43a8f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-241-248/checkpoint/repository/manifest.json",
+      "sha256": "9105f361451fb2c284ed72942eb85b4cad76c694535241f46a9e5bed935ad7d0"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-241-248/checkpoint/state.json",
+      "sha256": "3b7f7b5680f146c63061c69a8a4adc02458f52d53b19977c8f1982498eed458c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-241-248/cold_resume.jsonl",
+      "sha256": "11e9e7fdf3027f4f6c60ea46f8754742f5157bab10d78f322bafe9de1e4d59ca"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-241-248/controller.json",
+      "sha256": "9292ce9f6b3b85a1cc6e64e8e2d8d520bf8746ad1a2585e0fa79102318a66dcc"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-241-248/reservation.json",
+      "sha256": "fc7229828762a10712ee31462139f5803b8569a80e8d4aaea9b3f382ac48f1a2"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-241-248/residency.jsonl",
+      "sha256": "143655622ff393184a815e17b3c9b4f692a7d1f9d7529af5fd544651ef00a05e"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-241-248/session/instrumentation.jsonl",
+      "sha256": "a35f67c14ca1919342c35cb0f898c9bb6261b26783c161aa468af9828630c66f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-241-248/session/repository/manifest.json",
+      "sha256": "9105f361451fb2c284ed72942eb85b4cad76c694535241f46a9e5bed935ad7d0"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-241-248/session/transcript.jsonl",
+      "sha256": "43e4f37ea3c1ae6ae01d8ea25160b00b2505c2798ff761ad6ba77317b965e31f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-241-248/worker.json",
+      "sha256": "58057450077cb6137537ac34a93ce44e0d07d7e0aaa3505b04a90ef3bf30692d"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-241-248/worker.log",
+      "sha256": "b4adcb561fd5e18c24c271a8c1cb125183fb7adc2694d005c98e9a789e8912a4"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-249-256/checkpoint/checkpoint.json",
+      "sha256": "c9f1a6cd8440bbe074019b2f4a99fcf09796f01a3a45f931f4909ed540b09af9"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-249-256/checkpoint/repository/manifest.json",
+      "sha256": "b318cbbcd4ad2c9905d8f6c0117f458eb5e5d91d8fb625098cef45d4669ed9a4"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-249-256/checkpoint/state.json",
+      "sha256": "c965295079ff66bc6e05e598950107fd57e03870d43e4ae8d254513ae2ee87a5"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-249-256/cold_resume.jsonl",
+      "sha256": "5115d770e634475b83f5c90cdfb1d3ba65024f204b21d85e168121702e0fe9e0"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-249-256/controller.json",
+      "sha256": "830f34f69483fbf7aa7fac50860b311b78ec9a6e86b5029864a54a408d47b188"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-249-256/probes.jsonl",
+      "sha256": "dd04f97dff41af7bb92c538b69231734b1327529be1be30740128cbc559d419d"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-249-256/reservation.json",
+      "sha256": "20cbec6ff51724bc1288bbd13d24982132813e5bad3a65d24485ea9c3673365a"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-249-256/residency.jsonl",
+      "sha256": "4b2e795a1d961c09e3b575469e24f4afdeb2beb0695281435b6474a1ebef1351"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-249-256/session/instrumentation.jsonl",
+      "sha256": "f99fc36fd1e4243343e15a7f343460f4d3e7b06467c7585ae363fdecea4944ac"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-249-256/session/repository/manifest.json",
+      "sha256": "b318cbbcd4ad2c9905d8f6c0117f458eb5e5d91d8fb625098cef45d4669ed9a4"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-249-256/session/transcript.jsonl",
+      "sha256": "ec523fc42ebcef4f395b734a027ce5dba5fa1e165c444a4920f2f20c1c84fc09"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-249-256/worker.json",
+      "sha256": "052ad7d1bf32649af49be36adc3a23f555f1c7dca32f9f13d089ea43e1d40c07"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-249-256/worker.log",
+      "sha256": "554926240a451e579bdf69ee673f041cfb924c20bfb8feb17d14e328c1814197"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-257-264/checkpoint/checkpoint.json",
+      "sha256": "f49dad20a68eb7796bdd929c7e3a28c99a99a4937f893ff80467bf33999fb7eb"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-257-264/checkpoint/repository/manifest.json",
+      "sha256": "544d599c50cd1452ff9fcfd32e55582757a3728081f717a9c2839a69f26368fb"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-257-264/checkpoint/state.json",
+      "sha256": "beb39c461ebadfe2ce57f5da5a4c463dfdab27c9ac4161cabf4cf5b297e7eb19"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-257-264/cold_resume.jsonl",
+      "sha256": "47cebd0ded848400203d619047e7bc4f132b0b9271d9cc7ede5d57d51de78cde"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-257-264/controller.json",
+      "sha256": "670a184e9bd75dee95d081e1fe6717469723425d67d0f9b8f17e7ef5a21b115a"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-257-264/probes.jsonl",
+      "sha256": "2b458693a7c7dbee2266356dc612423fbabbf8f835916411dde51daa9c83c8f0"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-257-264/reservation.json",
+      "sha256": "38fbadbaebb85a43d8e9c75c51a8ce2291543d2fce5ffd87ddc3d489884b2454"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-257-264/residency.jsonl",
+      "sha256": "97803a9679ef16a829b4bc8fdcb376dd6c26b39be90ea56ea07300760111dc0c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-257-264/session/instrumentation.jsonl",
+      "sha256": "2dc7f9262a3defcf20e51ff2066169c57219f27ac311f0f2f42720847df56e4d"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-257-264/session/repository/manifest.json",
+      "sha256": "544d599c50cd1452ff9fcfd32e55582757a3728081f717a9c2839a69f26368fb"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-257-264/session/transcript.jsonl",
+      "sha256": "546d9a0d53ba7f57293d14661fccbbafc237251ba6790885f8b28eb1b200bcf0"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-257-264/worker.json",
+      "sha256": "9a6ae2d34c9a79358d6c3288c5eb46306525baeba8b45e0b4dfbd6429b5c5513"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-257-264/worker.log",
+      "sha256": "bff874e0d4e96f25d21438a9375bfa371aee8d7fdbc6fe9cc05b4df9accba87a"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-265-272/checkpoint/checkpoint.json",
+      "sha256": "8da710b3bfaecb325272045991afd4c3a90d6011fc7ff90ebf820243e67723a3"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-265-272/checkpoint/repository/manifest.json",
+      "sha256": "db664ee9245745a36d0e729f073a45fbe5b5d4d4671c8df8f1107382f6d9ac2b"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-265-272/checkpoint/state.json",
+      "sha256": "5dd8fcbd539598d4bad65fddc68862e51d45ecf1002d373228192668105be007"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-265-272/cold_resume.jsonl",
+      "sha256": "e5f67a3f6ee0bb351a0cfef9a059c68a86aa33e622e846ed6c26d2780bba3062"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-265-272/controller.json",
+      "sha256": "6009cbaa422c106e9053fba3a30300ebf9888ed1349afa5677ae4288c0ad8d0d"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-265-272/probes.jsonl",
+      "sha256": "a8aa667e6ae355291db9903117dcecee9fc5de91ff4c85cb60665355223d02cb"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-265-272/reservation.json",
+      "sha256": "b6f0fb26e92d84c7faa4d09a82b48971cce55dc13227e0f8e8f552b3c381de69"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-265-272/residency.jsonl",
+      "sha256": "e26b5b243ce46676e409e6b8cb09102ca132d093c978f7926e50503cf798a1a1"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-265-272/session/instrumentation.jsonl",
+      "sha256": "faa4a3afbb6ffb2e1b65ff6c44c5e0d4ec588dc52f5ee6dffac31ce0d09037af"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-265-272/session/repository/manifest.json",
+      "sha256": "db664ee9245745a36d0e729f073a45fbe5b5d4d4671c8df8f1107382f6d9ac2b"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-265-272/session/transcript.jsonl",
+      "sha256": "5981fc3421ea58d185e200cb34f41abe7e549512b06876bf209ffd859c9fd2a2"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-265-272/worker.json",
+      "sha256": "20098af85e545b2d35cc22642bef2daeb3d5b0b1ca41941fe9dfb4cd322914f7"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-265-272/worker.log",
+      "sha256": "6611326d53209cd29aa993f758ce8b226b065010390cdfce87e2bb1474982dbd"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-273-280/checkpoint/checkpoint.json",
+      "sha256": "7ff29375904cf02736322431065022d4fdf5292711c782be3fa46ed21f081b47"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-273-280/checkpoint/repository/manifest.json",
+      "sha256": "9ae26b294dcabb4a05ee6b827f8d1ad613093f262a040cc85c15967c3cc26eab"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-273-280/checkpoint/state.json",
+      "sha256": "24635e3a49f41ecece0ae973b7115e99019aea75c7a0786f6f5e65d3d03f09d3"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-273-280/cold_resume.jsonl",
+      "sha256": "c105d0f2ebc835f1206aaa04e5598b457a280cf93a9c96f2139575deed3a71db"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-273-280/controller.json",
+      "sha256": "b3b655514af4ffc6d472f551ed65c5f59c7a48616d8e25f38980649ff4aed41d"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-273-280/probes.jsonl",
+      "sha256": "44d840bc0f8cffdbbe9ca2c6927566a27418c9ec364f64a148697b725954084e"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-273-280/reservation.json",
+      "sha256": "61dd00c25b7ae57284691b586c0bcaf7066bbcd34cf2dd3cf54892f23aa07626"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-273-280/residency.jsonl",
+      "sha256": "4f9c402a5d44d5bba0c618c453b41445e2c55f4df900a2ad55ffb1d07fcdae2b"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-273-280/session/instrumentation.jsonl",
+      "sha256": "59ed1991d9d966785903eb82d22aeef01e9a01d512f30ba61e147849fce4ef15"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-273-280/session/repository/manifest.json",
+      "sha256": "9ae26b294dcabb4a05ee6b827f8d1ad613093f262a040cc85c15967c3cc26eab"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-273-280/session/transcript.jsonl",
+      "sha256": "cc2d18e4035f06afdc03652b016071cc0d176605825d154d1d82d502f7b84e9d"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-273-280/worker.json",
+      "sha256": "84f21ba226d23025cbf1e70a9adc548ec17a053eec34d914a6e917b778ccda5a"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-273-280/worker.log",
+      "sha256": "38773f6c687a7030dae69c45ad326be6461519080353a9d37ea7dbbf671a0d82"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-281-288/checkpoint/checkpoint.json",
+      "sha256": "5f122d0ccc8de6a71062128f06cb421c6126489d9b343275eccc80718938cfb8"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-281-288/checkpoint/repository/manifest.json",
+      "sha256": "4a85bdb86602c59ea1d137bc395f3ff519945378822b8012035c20fab85bbdb4"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-281-288/checkpoint/state.json",
+      "sha256": "8b3c08bf2ae549e6dc41997e6c8973c3552beb13e5b92a34585c1258210bc63f"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-281-288/cold_resume.jsonl",
+      "sha256": "29981337efa020bb6f225eec95b60f13e2a1eaf6a0877628bb3479033525d5a1"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-281-288/controller.json",
+      "sha256": "eea82c4ef7d39c8a53f41b1b9f075d0cf755c783d2d4d195fb58d9671a817236"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-281-288/reservation.json",
+      "sha256": "d4db2784f0d26a91fa99b5b960d576b7b0f027ca0826b61fa86c347b1ae1e136"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-281-288/residency.jsonl",
+      "sha256": "ffdc4e374ecda125e28d867f1e801f955258192afee994036556f94b5a18e43c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-281-288/session/instrumentation.jsonl",
+      "sha256": "ea4d33d19cf37d98bcc9847bddc2151bb8fcf0bf82e54bde84dc37d8f3bb49d9"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-281-288/session/repository/manifest.json",
+      "sha256": "4a85bdb86602c59ea1d137bc395f3ff519945378822b8012035c20fab85bbdb4"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-281-288/session/transcript.jsonl",
+      "sha256": "8adc1d5e41a9eacba8437fcc19b6d41014e51996c499b97e9410d9dab60aad56"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-281-288/worker.json",
+      "sha256": "a6baea6b1fad0861bb04ea52f8e59389f6d9698dc2460ab1da7763c10bdb3061"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-281-288/worker.log",
+      "sha256": "300268fa90cb4c8868d295c4e227ddfb8036799dc08623c52a3f61fb52e54a50"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-289-296/checkpoint/checkpoint.json",
+      "sha256": "348fd7146e2df013d73293c306c43c92def9bca873de133e28d358bae02a0320"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-289-296/checkpoint/repository/manifest.json",
+      "sha256": "5bb5ef1201de80bfda3b9e615000f27e4d28583f00c550bbb36a2b3078958c61"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-289-296/checkpoint/state.json",
+      "sha256": "63d9096538988d70c029d63da0c078668da848c801bde9fc1a50c4d1bbbc83e3"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-289-296/cold_resume.jsonl",
+      "sha256": "5b742e043ff3dc10c373a270fc3223cc14ca6efa0439d9f5788430eef9ae2d68"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-289-296/controller.json",
+      "sha256": "64bbcdab23da99d9ddfc1605907de9a1e220a1244f8bf8c42b59efbde2a317ca"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-289-296/reservation.json",
+      "sha256": "8abbdce72bd98a628148cd0bf947d56aabeea05b0351c507a9f8af947522ea48"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-289-296/residency.jsonl",
+      "sha256": "44f664f2823a1c400cedfbe8177d4dc950951b24013b3936099ae71833d148f6"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-289-296/session/instrumentation.jsonl",
+      "sha256": "faf082ec3e0c8a729f3c83b8456e149159edbced21b3831b75ee844307fc5724"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-289-296/session/repository/manifest.json",
+      "sha256": "5bb5ef1201de80bfda3b9e615000f27e4d28583f00c550bbb36a2b3078958c61"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-289-296/session/transcript.jsonl",
+      "sha256": "2eaf508de44fb57deaa3f47aa9769e548c587565b8f79d1a1fe6e31ee09b2930"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-289-296/worker.json",
+      "sha256": "5a5310ab0c831705a1beab03c7f3b726998da4a79bc6b530357991a1c5bd668e"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-289-296/worker.log",
+      "sha256": "8e164d3289cdc99dc11028afea09a8f8148f974d5ca8a83b6dd9e969e090ed71"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-297-300/checkpoint/checkpoint.json",
+      "sha256": "b3781fa54d395047099317f370ff845d20efa9572ef0a3fde49831eed2c387f8"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-297-300/checkpoint/repository/manifest.json",
+      "sha256": "7802acc575c9afd8bb09918d46f6becf8b8f21e8e9460619933a376ab65abd5c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-297-300/checkpoint/state.json",
+      "sha256": "d079c6b6f921face7af28e065763ef8bf6d0b08596f339b6160d6b581f9eeba9"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-297-300/cold_resume.jsonl",
+      "sha256": "537e542b21ba8110c7f01fcde68cf5c61e306d3edd1168ba1cbbb34627d5a103"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-297-300/controller.json",
+      "sha256": "69ba8ecbe54bf41ddc01b49b4f1ec8a91326e5b56ee3a3ba3e37ac25e5f1245d"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-297-300/reservation.json",
+      "sha256": "888bb44facdbfd5e69eaeb56c058c7b41368130aa6aa63d1829b571f2fe5790a"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-297-300/residency.jsonl",
+      "sha256": "d67138d71336e0174338d801fce59a07ded178cabc5ea90d0b1aeb66b10edc10"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-297-300/session/instrumentation.jsonl",
+      "sha256": "d51b2caf9d58baa114d3f3172c58740b8e14a5564dba50b27eb52e06ab52fed3"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-297-300/session/repository/manifest.json",
+      "sha256": "7802acc575c9afd8bb09918d46f6becf8b8f21e8e9460619933a376ab65abd5c"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-297-300/session/transcript.jsonl",
+      "sha256": "5d19cea6443a36f6447f0216463593539e09dd756ac2b2d38df4e58c66d8cbdf"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-297-300/worker.json",
+      "sha256": "c9839131b7891067faa65b8c417384ebc24429e7dd5bf9187563196d020ad156"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/cells/A-297-300/worker.log",
+      "sha256": "ea9b18804ddd246dc50f367707e1bf4fa88bb53d3e37025e8f72446fdeabcf8e"
+    },
+    {
+      "matches": true,
+      "path": "core/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "matches": true,
+      "path": "core/deepseek_v2_lite_tc.py",
+      "sha256": "96e371754496eb2ca467ad199bebed07c354cf5eae4b0a08daf571c6f04f0d07"
+    },
+    {
+      "matches": true,
+      "path": "core/gemma4_tc.py",
+      "sha256": "c9a8cc1d01c30bb2b20e9c2e477d4bedf21072d0b1b6b157f3ba75c78a271d8b"
+    },
+    {
+      "matches": true,
+      "path": "core/gpt_oss20b_tc.py",
+      "sha256": "da8ca3bc8c961d731d9e32bf4558702ad1b8b10c8ecc37b18326e7df4ade74a1"
+    },
+    {
+      "matches": true,
+      "path": "core/graft_arena.py",
+      "sha256": "e03a44b5e0155fc10a0be5c56e66e117c768a67993fab76df3ecf3aa62cdb20b"
+    },
+    {
+      "matches": true,
+      "path": "core/graft_quant.py",
+      "sha256": "ebe40790286a719db38de403210aa20e17e7e4d2699f7b7dae452e014f4fa130"
+    },
+    {
+      "matches": true,
+      "path": "core/graft_repository.py",
+      "sha256": "fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db"
+    },
+    {
+      "matches": true,
+      "path": "core/grm_admission.py",
+      "sha256": "62510861b5b1a33af375a4120d78351d2f880b2618a5462c1776a073f3f2d00f"
+    },
+    {
+      "matches": true,
+      "path": "core/grm_cuda_router.py",
+      "sha256": "8dfd7a6ff5395eb846996c67b1570c9fb0e8b26dd78e84f28059f1b291766ce5"
+    },
+    {
+      "matches": true,
+      "path": "core/grm_demand.py",
+      "sha256": "daf787a95abbfd206638f5fbf74de2ee57efaaa54b4eac39509402e1386650e0"
+    },
+    {
+      "matches": true,
+      "path": "core/grm_frame.py",
+      "sha256": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2"
+    },
+    {
+      "matches": true,
+      "path": "core/grm_native.py",
+      "sha256": "1f5a69716d751c670f37328cf012544b800f86226ad4549a0781bac654aaf3df"
+    },
+    {
+      "matches": true,
+      "path": "core/grm_runtime.py",
+      "sha256": "39f823cbdb98e32528fb5240777cb8c0144f3be77fa86466a67f1f636505c13e"
+    },
+    {
+      "matches": true,
+      "path": "core/grm_supersession.py",
+      "sha256": "c8e9baf7c69e41ebdcf05fda84a2895ed7d2b6f7ff67903fdb655924510fdd5e"
+    },
+    {
+      "matches": true,
+      "path": "core/grm_text_norm.py",
+      "sha256": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8"
+    },
+    {
+      "matches": true,
+      "path": "core/grm_three_pass.py",
+      "sha256": "f8ad848165bba7f28a13757fb2e9644ff0eb63a4127158ce2a20ce6189cd11ae"
+    },
+    {
+      "matches": true,
+      "path": "core/kv_graft.py",
+      "sha256": "d8d44d032c5398c4606b1b6f1b547a94baa2415e36225cb04dd6ef313622ef2d"
+    },
+    {
+      "matches": true,
+      "path": "core/minicpm3_tc.py",
+      "sha256": "3d19734f51d28eb48dc20a62658f2bfc250fdac4fce2cb906116d034b1371a69"
+    },
+    {
+      "matches": true,
+      "path": "core/mistral7b_tc.py",
+      "sha256": "49430e5920508d740a2f8be7b6ba0caadd0442c7798454cf6fa2a808204bf1c4"
+    },
+    {
+      "matches": true,
+      "path": "core/paging_telemetry.py",
+      "sha256": "4eb484b1f6b512962b18d08cb714dd61346980a8af550c1fd814bcbad474097c"
+    },
+    {
+      "matches": true,
+      "path": "core/qwen35_tc.py",
+      "sha256": "3f84f8e99f5cf8932440e5d6ff29df41cbf3fdaf13d27f3bbe8fb1dc3a7ec41b"
+    },
+    {
+      "matches": true,
+      "path": "core/qwen35_translation_poc.py",
+      "sha256": "5a7f364aa7a4ff24bb9299671fc945626037cff44595f0b80364ebe9d1cfa3d1"
+    },
+    {
+      "matches": true,
+      "path": "core/qwen38_tc.py",
+      "sha256": "39875f97f09906ccdfcdf6f510c9ed2f7cad01e85007363a8d7ad00869f9d67e"
+    },
+    {
+      "matches": true,
+      "path": "core/qwen3_1p7b_tc.py",
+      "sha256": "1a563f502753a86b57abff8710440ae0e1921ed083481dee8232872704093c0f"
+    },
+    {
+      "matches": true,
+      "path": "core/qwen3_tc.py",
+      "sha256": "ba0e2d9ab68716922b9f942bc4bb8cd2c4a791abe2a2fabd42a65799212d95aa"
+    },
+    {
+      "matches": true,
+      "path": "core/qwen_tc.py",
+      "sha256": "1353e44f727fc24d1638e4e238d160619fea561602c921259b010af5f63478e3"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/amendment_lead_1.json",
+      "sha256": "e7c8bb527953ae82512ce1fa13e8118288a7223d162b3b15f5f3c6c10f1984d5"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/fixture.json",
+      "sha256": "18c4bc891115ac6d96f7c443ad023f3e923ee92ab6aac21a1f1150bd14408ff0"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/fixture_manifest.json",
+      "sha256": "182a65d3e5c975b5de83966dce5edb293cbabc342436b3d9f3884e43934fd307"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/lead_commands.txt",
+      "sha256": "a0320cf79b5d2ba3f86f16e13673802fa316e65d0d66db2123683dc09f695ee7"
+    },
+    {
+      "matches": true,
+      "path": "artifacts/grm_c7/registration.json",
+      "sha256": "7bc0a0d1ad4cca02a02ae7653ce4b841a8f2fcd0c1e8e051d46b5f5ed7c70c1c"
+    },
+    {
+      "matches": true,
+      "path": "core/graft_arena.py",
+      "sha256": "e03a44b5e0155fc10a0be5c56e66e117c768a67993fab76df3ecf3aa62cdb20b"
+    },
+    {
+      "matches": true,
+      "path": "core/graft_repository.py",
+      "sha256": "fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db"
+    },
+    {
+      "matches": true,
+      "path": "core/grm_admission.py",
+      "sha256": "62510861b5b1a33af375a4120d78351d2f880b2618a5462c1776a073f3f2d00f"
+    },
+    {
+      "matches": true,
+      "path": "orders/GRM_C7_AMENDMENT_2.md",
+      "sha256": "854773643d4f9a2c2e439fdb6b77594e029eeb804bb69dd7a43b574dc67bfffc"
+    },
+    {
+      "matches": true,
+      "path": "scripts/grm_c7_common.py",
+      "sha256": "652707551085d37696de4ded43080afc7c12d4ee1896c1f0e4e9aeaff33e477e"
+    },
+    {
+      "matches": true,
+      "path": "scripts/grm_c7_diagnose.py",
+      "sha256": "f3165a31792ce3576e8b6c52c77a1ae930e2a3b208f3f864842c1e6047b1c5a1"
+    },
+    {
+      "matches": true,
+      "path": "scripts/grm_c7_run.py",
+      "sha256": "9ddcf91d7fc1d1ff7ff3b032804b3fc74d6e11540b8865e230b5525e981a2031"
+    },
+    {
+      "matches": true,
+      "path": "scripts/grm_e2e_session.py",
+      "sha256": "74434dbb750e8e7635afa2f55709ae0533a3562f5b63aa54fc1f81d664bfd450"
+    },
+    {
+      "matches": true,
+      "path": "tests/test_grm_c7_lead_2_diagnosis.py",
+      "sha256": "44cf68b9fddc16ecff937012bafc335d30bcbded25372aa6fc578cec79b8eacf"
+    }
+  ],
+  "core_edited": false,
+  "fixture_amended_test_result": "1 passed, 2 warnings in 5.79s",
+  "gpu_executed": false,
+  "initial_test_result": "1 failed, 5 passed, 2 warnings in 4.72s",
+  "payload_binary_scope": "not written/removed; not exhaustively rehashed",
+  "protected_file_count": 564,
+  "r2_registered": false,
+  "registered_input_count": 14,
+  "status": "PASS",
+  "test_failure_retained": true
+}

@@ -1,0 +1,6 @@
+{
+  "finding": "Inherited fold start.json prompts are ERA prompts because observer any(s[kind] != turn) treats absent kind serialized as null as deep. Core consolidate uses graft.get(kind, turn), selecting DIGEST prompts. Recorded candidate primers prove DIGEST prompts for all 13 events.",
+  "gate": "Select candidate-matching primer set from exact source-bound DIGEST/ERA constants; require all three candidate texts match reconstructed generation. Retain observed start prompts, mismatch flag and inferred actual prompts separately.",
+  "previous_amendment_sha256": "151acad9b09fadc0ede006457f124db70ebff0d0a135f963991c12f4e685f552",
+  "scope": "Diagnosis only; observer not edited; no gate tolerance change."
+}

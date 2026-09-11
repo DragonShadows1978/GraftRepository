@@ -1,0 +1,9 @@
+{
+  "batch": "F5-R1",
+  "predecessor_controller_sha256": "a2c627406accdd159610611ea1c1fd8ece094de7e2d252536053c2e067ccafbd",
+  "preflight": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_scout_fix8/resume_amendment_1/probes/F5-R1-3e53c9c35a3847eabf941fcc79f69bf3.json",
+  "preflight_sha256": "df7fb7bf775a0b0034c79dab48644c77bf21ac4f17477d44acccc2f338dd2286",
+  "registration_sha256": "f42b61df6d413551431c84042d6ceca11dfa5e3d89b600a7669f5cc76fa4283b",
+  "resume_registration_sha256": "6a6800a0c222487d9bf7f89afd77acf82266ce0754a2e2bb146e0a81bcef244e",
+  "seconds": 120
+}

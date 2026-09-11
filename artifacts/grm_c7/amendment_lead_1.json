@@ -1,0 +1,82 @@
+{
+  "acceptance": {
+    "complete_rows_required": 60,
+    "coverage": 0.7,
+    "empty_missing_or_partial": "NOT_RUN/INCOMPLETE, never PASS",
+    "folded": "all 10 answerable folded probes must seat digest/era covering sources with no raw source mount",
+    "max_exact_answer_error_delta_per_distance": 0.15,
+    "max_seats_rule": "each served phase summed mounted ntok <=192 + actual recency-only mounted ntok",
+    "paging": "each pressure forces registered old source hot -> durable cold -> production loader return; report controlled return separately from probe-selected return",
+    "restart": "same per-probe exact/wrong/abstention scores at 100/200, same persisted metadata, different process identity"
+  },
+  "acceptance_explanation": "The exact registered restart wording already says same persisted metadata. C2 manifest_projection compares capture on every node, including split children. SCOUT-FIX-2 populates those child fields; existing comparison now checks inherited evidence as well. No acceptance weakening or threshold/fixture/probe/oracle change; A2 paging amendment remains in effect.",
+  "acceptance_wording_changed": false,
+  "agent_effort": "high requested; effective setting not independently exposed",
+  "agent_model": "GPT-6 (system identity; exact deployment API ID not exposed)",
+  "campaign_start_evidence": "artifacts/grm_c7/cells absent at publication",
+  "campaign_started_before_amendment": false,
+  "cpu_gates": {
+    "commands": [
+      "CUDA_VISIBLE_DEVICES='' PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -q tests/test_grm_c7.py tests/test_grm_c7_a1.py tests/test_grm_c7_a2.py tests/test_grm_c7_lead_1.py",
+      "CUDA_VISIBLE_DEVICES='' PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -q tests/test_grm_scout_fix2_capture.py",
+      "CUDA_VISIBLE_DEVICES='' python scripts/grm_c7_run.py --dry-run"
+    ],
+    "mutations": "existing five scorer mutants and original >=0.80 threshold; run only after passing CPU baseline",
+    "requirements": [
+      "all existing C7 and SCOUT-FIX-2 cases pass",
+      "forged/stale/missing amendment and changed live source/order/commands fail closed",
+      "receipt/checkpoint carry exact amended source SHA",
+      "old binding cannot resume amended checkpoint",
+      "restart projection detects split child capture loss",
+      "39 arm A cells plus 39 arm B NON_FIT cells unchanged",
+      "lead_commands byte equality to before archive"
+    ]
+  },
+  "immutable": true,
+  "lead_commands_sha256": "a0320cf79b5d2ba3f86f16e13673802fa316e65d0d66db2123683dc09f695ee7",
+  "new_inputs": {
+    "orders/GRM_C7_AMENDMENT_1.md": "5e23a7f9fd06ac9442129fcbf28345a5ff88b2e149a2843171499665ca8d7215",
+    "tests/test_grm_c7_lead_1.py": "dc598520cf426fdb31813203f304aaa4cefb86bfa118afd6fd17a8699bb0c275",
+    "tests/test_grm_scout_fix2_capture.py": "afd9113a3badd66c209ad4b7bc21cb9b2849cd6512b7416b5b4015d5d7e870f9"
+  },
+  "order": {
+    "path": "orders/GRM_C7_AMENDMENT_1.md",
+    "sha256": "5e23a7f9fd06ac9442129fcbf28345a5ff88b2e149a2843171499665ca8d7215"
+  },
+  "overrides": {
+    "core/graft_repository.py": {
+      "after_sha256": "fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db",
+      "before_archive": "artifacts/grm_c7/amendment_lead_1_before/graft_repository.py",
+      "before_sha256": "2bb38b8efd8f75f3d189ade592133f3a40b245182b98c04b485976d5b2ed4311"
+    },
+    "scripts/grm_c7_common.py": {
+      "after_sha256": "652707551085d37696de4ded43080afc7c12d4ee1896c1f0e4e9aeaff33e477e",
+      "before_archive": "artifacts/grm_c7/amendment_lead_1_before/grm_c7_common.py",
+      "before_sha256": "01cbdb512656c690ac44ffb72c6c50d0123d4033758c0449f0033b6440ccf82b"
+    },
+    "scripts/grm_c7_run.py": {
+      "after_sha256": "9ddcf91d7fc1d1ff7ff3b032804b3fc74d6e11540b8865e230b5525e981a2031",
+      "before_archive": "artifacts/grm_c7/amendment_lead_1_before/grm_c7_run.py",
+      "before_sha256": "dfc0a44dbd30467a41dccf87f661039dabf8635cc85ca609a1b67e8683420d66"
+    }
+  },
+  "previous_amendment_sha256": "41b70efdf1735684322a8762c2b716348180bb51ec48a6cc05c630b13c2285fb",
+  "prior_art": "Local C7 A1/A2 and C2 sha-bound manifests/checkpoints and capture projection (GRM contributors, 2026), inspected source. Taken: hash-chain, explicit scope, immutable archives and all-node capture comparison. New: SCOUT-FIX-2 authorization in C7 receipt/checkpoint bindings. No prior art known to me for this exact composition; no new algorithm or external literature claim.",
+  "registered_items": {
+    "cells_budgets_thresholds": "unchanged",
+    "fixtures": "unchanged",
+    "oracle": "unchanged",
+    "paging": "A2 controlled roundtrip unchanged; child capture retained",
+    "probes": "unchanged",
+    "restart_metadata_scope": "all persisted nodes including split children"
+  },
+  "registration_sha256": "7bc0a0d1ad4cca02a02ae7653ce4b841a8f2fcd0c1e8e051d46b5f5ed7c70c1c",
+  "schema": "grm.c7.lead-amendment.v1",
+  "source_delta": {
+    "before_archive_origin": "/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_scout_fix_2/graft_repository.py.before; local copy matches original C7 registration SHA",
+    "inspected_change": "deepcopy import plus inheritance of capture_* and n_sink/arena_width/live_shift at _cull_graft_direct child construction, with capture_inherited_from_parent and immediate capture_parent_graft_id",
+    "lead_reported_origin": "SCOUT-FIX-2 commit 6b2d3c8 on grm-c2, supplied by lead; not verified with git",
+    "patch_path": "artifacts/grm_c7/source_delta_lead_1.patch",
+    "patch_sha256": "541fc234e0e4f2456304341ecebf85f3b5bc817dfbcacc62e19428b1651f49bf"
+  }
+}

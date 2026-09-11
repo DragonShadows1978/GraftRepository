@@ -1,0 +1,144 @@
+--- before/core/grm_text_norm.py
++++ core/grm_text_norm.py
+@@ -12,20 +12,33 @@
+ shatters into ``{"8"}`` while the mounted node's ASCII "Quartz-8-Jade"
+ tokenizes whole, so ``content <= have`` is False on a CORRECT answer.
+ 
+-``normalize_glyphs`` folds EXACTLY the two glyph classes DET1.4 registered
+-and nothing else.  It is deliberately not a second definition of them: the
+-test suite pins ``normalize_glyphs(s).casefold() == normalize_value_text(s)``
+-over a corpus covering both classes, so the two functions cannot drift.
++FIX-8 extends this existing projection with NFKC and the Unicode Dash
++property for routing, admission and lexical scans. The DET1.4 corpus remains
++compatible; the frozen answer scorer is unchanged.
+ """
+ 
+ from __future__ import annotations
+ 
+ import re
++import unicodedata
+ 
+ #: DET1.4 class 1 -- Unicode hyphen presentation.  U+2010 HYPHEN and U+2011
+ #: NON-BREAKING HYPHEN are the ASCII hyphen rendered; the model emits U+2011
+ #: inside identifier-shaped values and the stored node text carries U+002D.
+ UNICODE_HYPHENS = ("‐", "‑")
++
++# Prior art: Unicode Consortium, UAX #15 / UCD 17.0 (2025), NFKC and
++# PropList Dash (31 code points, including non-Pd minus signs).
++# https://www.unicode.org/Public/17.0.0/ucd/PropList.txt
++# https://www.unicode.org/reports/tr15/
++# GRM SC1.1/DET1.4 (GRM contributors, 2026) supplies the existing projection.
++# FIX-8 reuses it at missed identifier boundaries; no new matching algorithm.
++UNICODE_DASHES = (
++    "-\u058a\u05be\u1400\u1806\u2010\u2011\u2012\u2013\u2014\u2015"
++    "\u2053\u207b\u208b\u2212\u2e17\u2e1a\u2e3a\u2e3b\u2e40\u2e5d"
++    "\u301c\u3030\u30a0\ufe31\ufe32\ufe58\ufe63\uff0d\U00010d6e\U00010ead"
++)
++_DASH_TRANSLATION = str.maketrans({glyph: "-" for glyph in UNICODE_DASHES})
+ 
+ #: DET1.4 class 2 -- Markdown emphasis delimiters.  Paired, same-line, and
+ #: iterated to a fixed point so nested bold/italic is projected too.  The
+@@ -34,10 +47,10 @@
+ 
+ 
+ def normalize_glyphs(text: str) -> str:
+-    """Project the two REGISTERED glyph classes; fold nothing else.
++    """Shared FIX-8 NFKC/dash projection, retaining SC1.1 emphasis handling.
+ 
+-    Folded (and only these):
+-      1. ``U+2010``/``U+2011`` -> ``"-"``.
++    Folded:
++      1. NFKC, then Unicode 17.0 Dash -> ``"-"``.
+       2. Paired Markdown emphasis delimiters (``**``, ``__``, ``*``, ``_``)
+          around a same-line payload, iterated to a fixed point.
+ 
+@@ -61,9 +74,7 @@
+     already lowercase the tokens they EMIT, so case survives exactly as far
+     as it does today and no further.
+     """
+-    out = str(text)
+-    for glyph in UNICODE_HYPHENS:
+-        out = out.replace(glyph, "-")
++    out = unicodedata.normalize("NFKC", str(text)).translate(_DASH_TRANSLATION)
+     previous = None
+     while previous != out:
+         previous = out
+--- before/core/grm_admission.py
++++ core/grm_admission.py
+@@ -18,6 +18,8 @@
+ import os
+ import re
+ from typing import Any
++
++from core.grm_text_norm import normalize_glyphs
+ 
+ 
+ ENV_NAME = "GRM_ADM_DECISIVE"
+@@ -71,10 +73,14 @@
+ 
+ 
+ def normalized_words(text: str) -> list[str]:
+-    """ADM1's frozen word normalization, byte-for-byte in semantics."""
++    """ADM1 word scan with the shared routing glyph projection."""
++    # Prior art: SC1.1/DET1.4 (GRM contributors, 2026), Unicode UAX15/UCD17
++    # (Unicode Consortium, 2025). FIX-8 applies the existing normalizer to
++    # own-text evidence, including digest/split/recency nodes; no inherited
++    # routing-key union is accepted as proof of identifier presence.
+     return [
+         token.rstrip(".,:;").casefold()
+-        for token in re.findall(r"[A-Za-z0-9][\w:.,\-]*", text or "")
++        for token in re.findall(r"[A-Za-z0-9][\w:.,\-]*", normalize_glyphs(text or ""))
+         if token.rstrip(".,:;")
+     ]
+ 
+--- before/core/graft_arena.py
++++ core/graft_arena.py
+@@ -1387,8 +1387,11 @@
+         """Lowercase content words from a route query (stopword-filtered).
+         Keeps label nouns that _rare_tokens drops (no digit / not ALL-CAPS)."""
+         out = set()
++        # Prior art: SC1.1/DET1.4 (GRM contributors, 2026), shared projection;
++        # FIX-8 closes the same glyph boundary in query and own-text scans.
++        text = cls._norm_text(text)
+         for w in re.findall(r"[A-Za-z0-9][\w:.,\-]*", text):
+-            tok = w.rstrip(".,:;").lower()
++            tok = w.rstrip(".,:;").casefold()
+             if len(tok) < 2 or tok in cls._QUERY_LEX_STOP:
+                 continue
+             out.add(tok)
+@@ -1404,8 +1407,9 @@
+         """Lowercase word tokens from node text for query-side content match.
+         Not stored; computed on demand. Node rare keys / indexes untouched."""
+         out = set()
+-        for w in re.findall(r"[A-Za-z0-9][\w:.,\-]*", text or ""):
+-            tok = w.rstrip(".,:;").lower()
++        # Prior art: shared SC1.1 projection, extended by FIX-8 (2026).
++        for w in re.findall(r"[A-Za-z0-9][\w:.,\-]*", ArenaCache._norm_text(text or "")):
++            tok = w.rstrip(".,:;").casefold()
+             if tok:
+                 out.add(tok)
+         return out
+@@ -2019,10 +2023,10 @@
+ 
+     @staticmethod
+     def _norm_text(text):
+-        """SC1.1: project the two REGISTERED glyph classes, switch-gated.
+-
+-        ON (``GRM_LSR_FIXES`` default) applies ``normalize_glyphs`` — U+2010/
+-        U+2011 collapse to "-" and paired Markdown emphasis is stripped —
++        """SC1.1/FIX-8 shared NFKC/dash/emphasis projection, switch-gated.
++
++        ON (``GRM_LSR_FIXES`` default) applies ``normalize_glyphs`` — NFKC,
++        Unicode Dash to "-" and paired Markdown emphasis stripping —
+         so the lexical channels obey the same principle the DET1 value
+         comparator does: *value comparison is semantics, not glyphs*.
+         Measured cause: the model emits "Quartz‑8‑Jade" (U+2011) and the
+@@ -2056,7 +2060,7 @@
+         for w in re.findall(r"[A-Za-z0-9][\w:.,\-]*", text):
+             w = w.rstrip(".,:;")
+             if any(ch.isdigit() for ch in w) or (w.isupper() and len(w) >= 3):
+-                out.add(w.lower())
++                out.add(w.casefold())
+         return out
+ 
+     @staticmethod

@@ -1,0 +1,6 @@
+# DIAGNOSIS ONLY. SCOUT-FIX stop: no r2 GPU launch authorized by this result.
+cd /mnt/ForgeRealm/wt/grm-c7
+sha256sum -c artifacts/grm_c7/diagnosis_lead_2/SHA256SUMS
+# Output directory must be new: evidence writer intentionally refuses overwrite.
+CUDA_VISIBLE_DEVICES='' PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 GRM_C7_DIAG_OUT=/tmp/grm-c7-lead2-independent-review python -m pytest -q tests/test_grm_c7_lead_2_diagnosis.py
+CUDA_VISIBLE_DEVICES='' python scripts/grm_c7_run.py --summary A

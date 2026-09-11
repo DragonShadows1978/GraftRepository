@@ -1,0 +1,15 @@
+{
+  "overrides": {
+    "/mnt/ForgeRealm/wt/grm-c7/scripts/grm_scout_fix8_replay.py": {
+      "after_sha256": "204b27f2ec0b7900c1c2248424ce43d62b13da3c812d5fcce79ddaff09d3321e",
+      "before_sha256": "65dc26b004b0557acd878f7dd6a36e46dea2f838508e7f0a437adaf4cc0f73c0"
+    },
+    "/mnt/ForgeRealm/wt/grm-c7/tests/test_grm_scout_fix8_replay.py": {
+      "after_sha256": "931851a38a5e2a0a72885493aa72ffbd89ca7860434e39d55e075083a68f7844",
+      "before_sha256": "55a0ddd1aec5dbd3b8552e2d069f36c05c54456236e1be49473ae175bcd7947c"
+    }
+  },
+  "prior_art": "GRM C7 immutable amendment chains (contributors, 2026); reused without new policy.",
+  "reason": "Correct missing requests.json in busy-lease CPU fixture; test actual archived module origins in fresh process; explicit verifier for this immutable two-file amendment. No cohort, core, scorer, thresholds, budget or A7 registration change.",
+  "registration_sha256": "f42b61df6d413551431c84042d6ceca11dfa5e3d89b600a7669f5cc76fa4283b"
+}

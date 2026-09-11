@@ -1,0 +1,29 @@
+{
+  "accepted": true,
+  "attempts": [
+    {
+      "coverage": 1.0,
+      "hit_count": 8,
+      "need_count": 8,
+      "prompt_index": 0,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "For the archive: the  current C7-Outpost-28 value is Slate-1228, the current C7-Outpost-29 value is Slate-1229, the current C7-Outpost-30 value is Slate-1230, and the current C7-Outpost-31 value is Slate-1231."
+    }
+  ],
+  "digest_text": "For the archive: the  current C7-Outpost-28 value is Slate-1228, the current C7-Outpost-29 value is Slate-1229, the current C7-Outpost-30 value is Slate-1230, and the current C7-Outpost-31 value is Slate-1231.",
+  "error": null,
+  "result": {
+    "accepted": true,
+    "best_cov": 1.0,
+    "hit_count": 8,
+    "need_count": 8
+  },
+  "source_payload_sha256": {
+    "0095.npz": "5938b5acbeb6aa47c0805df280668e32170ad87cbee9d2441b540f02badf5914",
+    "0096.npz": "3691f4b9b7d8c6b81914f3b4d851b6d65fc60990d62eaaa1c289e54e441641f5",
+    "0097.npz": "4c9fbefa17aa8485e8436bb4cd9374629e35803d90b1f49f7a0497065d0971b8",
+    "0098.npz": "8bb2c7328bfad64f224321e735caaad891a85d68b325d5b17fe95c67122bac8a"
+  },
+  "turn": 112
+}

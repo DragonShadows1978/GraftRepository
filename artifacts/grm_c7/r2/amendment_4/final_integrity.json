@@ -1,0 +1,27 @@
+{
+  "command": [
+    "/usr/bin/python",
+    "/mnt/ForgeRealm/wt/grm-c7/scripts/grm_c7_amendment4.py",
+    "--output",
+    "/tmp/grm-c7-a4-cpu-42q4w8l0/replay"
+  ],
+  "core_edited": false,
+  "evidence_class": "CPU receipt replay and deterministic artifact comparison; no model run",
+  "exit_code": 0,
+  "gpu_executed": false,
+  "historical_input_hashes_rechecked": true,
+  "identical_artifacts": {
+    "FOLD_TABLE.md": "6442e105e713c01c01a4bad473605ae2d1b7ee1f410fa7f5742d59c7818953e6",
+    "HISTORICAL_ORACLE_QUARANTINE.md": "9ec3293c7a1965d23fa19b640c6849fcec101c7088afcdb0f30b34f6bd7bd84e",
+    "MEMORY_TABLE.md": "25adec7ccbbb4f65d016e18ddeb95bb095c4854af4989a24779f29350f8d4112",
+    "ORACLE_TABLE.md": "544cab3f5a73a63da6aa340ce5cdd2e3b8f644af3e2b4782c9ed67b41cf0bbd3",
+    "folds.json": "75ef7b0d89da7786ef37c424698d5c5b9200d242f5c705252ac753472b9225d3",
+    "memory_abstentions.json": "4074082af6eea707f24169dfd85586f56e4b84953cf90fef680ec654da11a1ed",
+    "oracle_abstentions.json": "06eb9ec43360900beb2363adbe5583b82ac40c55108615318484d2b8ccdca258",
+    "oracle_proposal_prompts.json": "4aca7decebd298920c15386b709fefc519f5883ceb5e1f813a211b742a91c7a3",
+    "summary.json": "aee7973e4d178629c85bc203bae3064fa2f0b3b4c82667f236e5e94180ba31f6"
+  },
+  "receipt_recovery": "Outer bookkeeping script shadowed subprocess variable after successful returncode assertion and comparisons. This receipt completed from retained output and rechecked comparisons; model/CPU replay not rerun.",
+  "status": "PASS",
+  "temp_output_retained": "/tmp/grm-c7-a4-cpu-42q4w8l0/replay"
+}

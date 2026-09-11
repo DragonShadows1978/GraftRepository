@@ -1,0 +1,47 @@
+{
+  "accepted": false,
+  "attempts": [
+    {
+      "coverage": 0.3333333333333333,
+      "hit_count": 3,
+      "need_count": 9,
+      "prompt_index": 0,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "For the archive: the  name \u201cC7-Outpost-06\u201d refers to the value \u201cPearl-1205\u201d; the name \u201cC7-Handle-06\u201d refers to the same value."
+    },
+    {
+      "coverage": 0.3333333333333333,
+      "hit_count": 3,
+      "need_count": 9,
+      "prompt_index": 1,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "ARCHIVE NOTE \u2014 The conversation established that the  current C7\u2011Outpost\u201106 value is Pearl\u20111205.  The alias C7\u2011Handle\u201106 refers to the same value."
+    },
+    {
+      "coverage": 0.0,
+      "hit_count": 0,
+      "need_count": 9,
+      "prompt_index": 2,
+      "qc": false,
+      "relaxed_list": false,
+      "text": "The facts to archive are:   \n\n|  Item |  Meaning |  Notes |  \n|---|---|---|  \n| **C7\u2011Outpost\u201106** |  The current \u201coutpost\u201d code that the user is referencing. |  The user says it is \u201cPearl\u20111205.\u201d |  \n| **Pearl\u20111205** |  The value that the user says is associated with the outpost. |  No other context is given. |  \n| **C7\u2011Handle\u201106** |  The alias that the user says refers to the same outpost. |"
+    }
+  ],
+  "digest_text": null,
+  "error": null,
+  "result": {
+    "accepted": false,
+    "best_cov": 0.3333333333333333,
+    "hit_count": 3,
+    "need_count": 9
+  },
+  "source_payload_sha256": {
+    "0048.npz": "24a2e8fd27ad904ed18a38bbc7cb21b063c3636c121db732e8780e5fdb815424",
+    "0053.npz": "cb7f8bf6c304a80c1511647aea9b8dcd91733f9d382d673a00dca5a15b7c8c7c",
+    "0058.npz": "8f00db10ebdd517210d9e0b485f54a58ddb35f1f578f984390796ef52f7e75d7",
+    "0060.npz": "565a6e5429d999930571c6918b941cb1dfd5006690d808c5432d3c6769bdf4c2"
+  },
+  "turn": 85
+}

@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /mnt/ForgeRealm/wt/grm-c7
+export GRM_C7_REVISION=r3
+unset GRM_C7_FIX4
+export GRM_ALIAS_FOLLOW=0
+# Prior art: C7/C2 foreground leased cells (GRM contributors, 2026).
+# Fresh r3: FIX3/4/5 are source-pinned ON; FIX7 absent. 7920s total cap.
+# This is a LEAD GPU command. --check-only runs CPU preflight/receipt checks.
+CUDA_VISIBLE_DEVICES='' python -m scripts.grm_c7_register_r3 --preflight
+CUDA_VISIBLE_DEVICES='' python -m scripts.grm_c7_register_r3 --ready
+CUDA_VISIBLE_DEVICES='' python scripts/grm_c7_run.py --dry-run
+if [[ "${1:-}" == "--check-only" ]]; then exit 0; fi
+if [[ $# -ne 0 ]]; then echo 'Unsupported argument' >&2; exit 2; fi
+run_cell() {
+    local cell_id="$1"
+    local status
+    status="$(CUDA_VISIBLE_DEVICES='' python - "$cell_id" <<'CHECK_COMPLETE'
+import sys
+from scripts.grm_c7_register_r3 import resume_check
+print(resume_check(sys.argv[1])['status'])
+CHECK_COMPLETE
+)"
+    if [[ "$status" == "COMPLETE" ]]; then
+        echo "Already complete and checkpoint verified: $cell_id"
+    elif [[ "$status" == "UNSTARTED" ]]; then
+        CUDA_VISIBLE_DEVICES='' python -m scripts.grm_c7_register_r3 --preflight
+        # Existing owned worker 280s; lease 285s; foreground cooldown 30s.
+        # No retry, lock clearing, process-name kill or background job.
+        timeout --signal=INT 590 python scripts/grm_c7_run.py --cell "$cell_id"
+    else
+        echo "RED: unexpected resume state $status" >&2
+        return 1
+    fi
+}
+run_cell A-001-008
+run_cell A-009-016
+run_cell A-017-023
+run_cell A-024-031
+run_cell A-032-039
+run_cell A-040-047
+run_cell A-048-055
+run_cell A-056-062
+run_cell A-063-070
+run_cell A-071-077
+run_cell A-078-085
+run_cell A-086-093
+run_cell A-094-100
+run_cell A-101-108
+run_cell A-109-116
+run_cell A-117-124
+run_cell A-125-132
+run_cell A-133-140
+run_cell A-141-148
+run_cell A-149-156
+run_cell A-157-164
+run_cell A-165-172
+run_cell A-173-180
+run_cell A-181-188
+run_cell A-189-196
+run_cell A-197-200
+run_cell A-201-208
+run_cell A-209-216
+run_cell A-217-224
+run_cell A-225-232
+run_cell A-233-240
+run_cell A-241-248
+run_cell A-249-256
+run_cell A-257-264
+run_cell A-265-272
+run_cell A-273-280
+run_cell A-281-288
+run_cell A-289-296
+run_cell A-297-300
+# Preserve summary even if the retained alias residual makes acceptance RED.
+python scripts/grm_c7_run.py --summary A > artifacts/grm_c7/r3/summary_A.json

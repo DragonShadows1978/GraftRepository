@@ -1,0 +1,3671 @@
+{
+  "aliases": [
+    {
+      "alias": "C7-Signal-0",
+      "entity": "C7-AliasBase-0",
+      "turn": 9
+    },
+    {
+      "alias": "C7-Signal-1",
+      "entity": "C7-AliasBase-1",
+      "turn": 10
+    },
+    {
+      "alias": "C7-Signal-2",
+      "entity": "C7-AliasBase-2",
+      "turn": 16
+    },
+    {
+      "alias": "C7-Handle-00",
+      "entity": "C7-Outpost-00",
+      "turn": 51
+    },
+    {
+      "alias": "C7-Handle-01",
+      "entity": "C7-Outpost-01",
+      "turn": 54
+    },
+    {
+      "alias": "C7-Handle-02",
+      "entity": "C7-Outpost-02",
+      "turn": 59
+    },
+    {
+      "alias": "C7-Handle-03",
+      "entity": "C7-Outpost-03",
+      "turn": 62
+    },
+    {
+      "alias": "C7-Handle-04",
+      "entity": "C7-Outpost-04",
+      "turn": 65
+    },
+    {
+      "alias": "C7-Handle-05",
+      "entity": "C7-Outpost-05",
+      "turn": 73
+    },
+    {
+      "alias": "C7-Handle-06",
+      "entity": "C7-Outpost-06",
+      "turn": 81
+    },
+    {
+      "alias": "C7-Handle-07",
+      "entity": "C7-Outpost-07",
+      "turn": 82
+    },
+    {
+      "alias": "C7-Handle-08",
+      "entity": "C7-Outpost-08",
+      "turn": 83
+    },
+    {
+      "alias": "C7-Handle-09",
+      "entity": "C7-Outpost-09",
+      "turn": 84
+    },
+    {
+      "alias": "C7-Handle-10",
+      "entity": "C7-Outpost-10",
+      "turn": 85
+    },
+    {
+      "alias": "C7-Handle-11",
+      "entity": "C7-Outpost-11",
+      "turn": 88
+    }
+  ],
+  "corrections": [
+    {
+      "corrects_turn": 2,
+      "earlier_correction": true,
+      "entity": "C7-Vesper-0",
+      "turn": 17
+    },
+    {
+      "corrects_turn": 2,
+      "earlier_correction": true,
+      "entity": "C7-Vesper-1",
+      "turn": 18
+    },
+    {
+      "corrects_turn": 51,
+      "earlier_correction": false,
+      "entity": "C7-Outpost-00",
+      "turn": 52
+    },
+    {
+      "corrects_turn": 52,
+      "earlier_correction": true,
+      "entity": "C7-Outpost-00",
+      "turn": 53
+    },
+    {
+      "corrects_turn": 54,
+      "earlier_correction": false,
+      "entity": "C7-Outpost-01",
+      "turn": 55
+    },
+    {
+      "corrects_turn": 55,
+      "earlier_correction": true,
+      "entity": "C7-Outpost-01",
+      "turn": 58
+    },
+    {
+      "corrects_turn": 59,
+      "earlier_correction": false,
+      "entity": "C7-Outpost-02",
+      "turn": 60
+    },
+    {
+      "corrects_turn": 60,
+      "earlier_correction": true,
+      "entity": "C7-Outpost-02",
+      "turn": 61
+    },
+    {
+      "corrects_turn": 62,
+      "earlier_correction": false,
+      "entity": "C7-Outpost-03",
+      "turn": 63
+    },
+    {
+      "corrects_turn": 63,
+      "earlier_correction": true,
+      "entity": "C7-Outpost-03",
+      "turn": 64
+    },
+    {
+      "corrects_turn": 65,
+      "earlier_correction": false,
+      "entity": "C7-Outpost-04",
+      "turn": 71
+    },
+    {
+      "corrects_turn": 71,
+      "earlier_correction": true,
+      "entity": "C7-Outpost-04",
+      "turn": 72
+    },
+    {
+      "corrects_turn": 73,
+      "earlier_correction": false,
+      "entity": "C7-Outpost-05",
+      "turn": 74
+    },
+    {
+      "corrects_turn": 74,
+      "earlier_correction": true,
+      "entity": "C7-Outpost-05",
+      "turn": 75
+    }
+  ],
+  "distance_definition": "probe turn minus latest authoritative source/alias/negative anchor turn",
+  "entities": [
+    "C7-AliasBase-0",
+    "C7-AliasBase-1",
+    "C7-AliasBase-2",
+    "C7-Archive-0",
+    "C7-Archive-1",
+    "C7-Archive-2",
+    "C7-Fresh-0",
+    "C7-Fresh-1",
+    "C7-Fresh-2",
+    "C7-Outpost-00",
+    "C7-Outpost-01",
+    "C7-Outpost-02",
+    "C7-Outpost-03",
+    "C7-Outpost-04",
+    "C7-Outpost-05",
+    "C7-Outpost-06",
+    "C7-Outpost-07",
+    "C7-Outpost-08",
+    "C7-Outpost-09",
+    "C7-Outpost-10",
+    "C7-Outpost-11",
+    "C7-Outpost-12",
+    "C7-Outpost-13",
+    "C7-Outpost-14",
+    "C7-Outpost-15",
+    "C7-Outpost-16",
+    "C7-Outpost-17",
+    "C7-Outpost-18",
+    "C7-Outpost-19",
+    "C7-Outpost-20",
+    "C7-Outpost-21",
+    "C7-Outpost-22",
+    "C7-Outpost-23",
+    "C7-Outpost-24",
+    "C7-Outpost-25",
+    "C7-Outpost-26",
+    "C7-Outpost-27",
+    "C7-Outpost-28",
+    "C7-Outpost-29",
+    "C7-Outpost-30",
+    "C7-Outpost-31",
+    "C7-Outpost-32",
+    "C7-Outpost-33",
+    "C7-Outpost-34",
+    "C7-Outpost-35",
+    "C7-Outpost-36",
+    "C7-Outpost-37",
+    "C7-Outpost-38",
+    "C7-Outpost-39",
+    "C7-Vesper-0",
+    "C7-Vesper-1",
+    "C7-Vesper-2"
+  ],
+  "forced_folds": [
+    {
+      "after_turn": 20,
+      "kind": "digest",
+      "retry": false,
+      "source_turns": [
+        3,
+        20
+      ]
+    },
+    {
+      "after_turn": 26,
+      "kind": "digest",
+      "retry": false,
+      "source_turns": [
+        4,
+        26
+      ]
+    }
+  ],
+  "pressure_after_turns": [
+    60,
+    140,
+    240
+  ],
+  "probes": [
+    {
+      "answerable": true,
+      "class": "fresh",
+      "distance": 5,
+      "entity": "C7-Fresh-0",
+      "expected": "Basalt-811",
+      "id": "c7_fresh_0_d005",
+      "oracle_source_texts": [
+        "The current C7-Fresh-0 value is Basalt-811."
+      ],
+      "question": "What is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 6,
+      "source_turns": [
+        6
+      ],
+      "turn": 11
+    },
+    {
+      "answerable": true,
+      "class": "fresh",
+      "distance": 5,
+      "entity": "C7-Fresh-1",
+      "expected": "Basalt-812",
+      "id": "c7_fresh_1_d005",
+      "oracle_source_texts": [
+        "The current C7-Fresh-1 value is Basalt-812."
+      ],
+      "question": "What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 7,
+      "source_turns": [
+        7
+      ],
+      "turn": 12
+    },
+    {
+      "answerable": false,
+      "class": "fresh",
+      "distance": 5,
+      "entity": "C7-Fresh-2",
+      "expected": "UNKNOWN",
+      "id": "c7_fresh_2_d005",
+      "oracle_source_texts": [
+        "The current C7-Fresh-2 value is Basalt-813."
+      ],
+      "question": "What is the inspection password for C7-Fresh-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 8,
+      "source_turns": [
+        8
+      ],
+      "turn": 13
+    },
+    {
+      "answerable": true,
+      "class": "alias",
+      "distance": 5,
+      "entity": "C7-AliasBase-0",
+      "expected": "Jasper-711",
+      "id": "c7_alias_0_d005",
+      "oracle_source_texts": [
+        "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+        "C7-Signal-0 is an alias for C7-AliasBase-0."
+      ],
+      "question": "What is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 9,
+      "source_turns": [
+        5,
+        9
+      ],
+      "turn": 14
+    },
+    {
+      "answerable": true,
+      "class": "alias",
+      "distance": 5,
+      "entity": "C7-AliasBase-1",
+      "expected": "Jasper-712",
+      "id": "c7_alias_1_d005",
+      "oracle_source_texts": [
+        "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+        "C7-Signal-1 is an alias for C7-AliasBase-1."
+      ],
+      "question": "What is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 10,
+      "source_turns": [
+        5,
+        10
+      ],
+      "turn": 15
+    },
+    {
+      "answerable": false,
+      "class": "alias",
+      "distance": 5,
+      "entity": "C7-AliasBase-2",
+      "expected": "UNKNOWN",
+      "id": "c7_alias_2_d005",
+      "oracle_source_texts": [
+        "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+        "C7-Signal-2 is an alias for C7-AliasBase-2."
+      ],
+      "question": "What is the inspection password for C7-AliasBase-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 16,
+      "source_turns": [
+        5,
+        16
+      ],
+      "turn": 21
+    },
+    {
+      "answerable": true,
+      "class": "correction",
+      "distance": 5,
+      "entity": "C7-Vesper-0",
+      "expected": "Onyx-911",
+      "id": "c7_correction_0_d005",
+      "oracle_source_texts": [
+        "The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.",
+        "Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+        "The current C7-Vesper-0 value is Onyx-911."
+      ],
+      "question": "After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 17,
+      "source_turns": [
+        1,
+        2,
+        17
+      ],
+      "turn": 22
+    },
+    {
+      "answerable": true,
+      "class": "correction",
+      "distance": 5,
+      "entity": "C7-Vesper-1",
+      "expected": "Onyx-912",
+      "id": "c7_correction_1_d005",
+      "oracle_source_texts": [
+        "The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.",
+        "Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+        "The current C7-Vesper-1 value is Onyx-912."
+      ],
+      "question": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 18,
+      "source_turns": [
+        1,
+        2,
+        18
+      ],
+      "turn": 23
+    },
+    {
+      "answerable": false,
+      "class": "correction",
+      "distance": 5,
+      "entity": "C7-Vesper-2",
+      "expected": "UNKNOWN",
+      "id": "c7_correction_2_d005",
+      "oracle_source_texts": [
+        "The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.",
+        "Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+        "The current C7-Vesper-2 value is Onyx-913."
+      ],
+      "question": "What is the inspection password for C7-Vesper-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 19,
+      "source_turns": [
+        1,
+        2,
+        19
+      ],
+      "turn": 24
+    },
+    {
+      "answerable": true,
+      "class": "folded",
+      "distance": 5,
+      "entity": "C7-Archive-0",
+      "expected": "Reed-611|Cedar-1011",
+      "id": "c7_folded_0_d005",
+      "oracle_source_texts": [
+        "For C7-Archive-0 the outbound tag is Reed-611.",
+        "For C7-Archive-0 the inbound tag is Cedar-1011."
+      ],
+      "question": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": true,
+      "source_turn": 20,
+      "source_turns": [
+        3,
+        20
+      ],
+      "turn": 25
+    },
+    {
+      "answerable": true,
+      "class": "folded",
+      "distance": 5,
+      "entity": "C7-Archive-1",
+      "expected": "Reed-612|Cedar-1012",
+      "id": "c7_folded_1_d005",
+      "oracle_source_texts": [
+        "For C7-Archive-1 the outbound tag is Reed-612.",
+        "For C7-Archive-1 the inbound tag is Cedar-1012."
+      ],
+      "question": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": true,
+      "source_turn": 26,
+      "source_turns": [
+        4,
+        26
+      ],
+      "turn": 31
+    },
+    {
+      "answerable": false,
+      "class": "folded",
+      "distance": 5,
+      "entity": "C7-Archive-2",
+      "expected": "UNKNOWN",
+      "id": "c7_folded_2_d005",
+      "oracle_source_texts": [
+        "For C7-Archive-2 the inbound tag is Cedar-1013."
+      ],
+      "question": "What is the inspection password for C7-Archive-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 27,
+      "source_turns": [
+        27
+      ],
+      "turn": 32
+    },
+    {
+      "answerable": true,
+      "class": "fresh",
+      "distance": 30,
+      "entity": "C7-Fresh-0",
+      "expected": "Basalt-811",
+      "id": "c7_fresh_0_d030",
+      "oracle_source_texts": [
+        "The current C7-Fresh-0 value is Basalt-811."
+      ],
+      "question": "What is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 6,
+      "source_turns": [
+        6
+      ],
+      "turn": 36
+    },
+    {
+      "answerable": true,
+      "class": "fresh",
+      "distance": 30,
+      "entity": "C7-Fresh-1",
+      "expected": "Basalt-812",
+      "id": "c7_fresh_1_d030",
+      "oracle_source_texts": [
+        "The current C7-Fresh-1 value is Basalt-812."
+      ],
+      "question": "What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 7,
+      "source_turns": [
+        7
+      ],
+      "turn": 37
+    },
+    {
+      "answerable": false,
+      "class": "fresh",
+      "distance": 30,
+      "entity": "C7-Fresh-2",
+      "expected": "UNKNOWN",
+      "id": "c7_fresh_2_d030",
+      "oracle_source_texts": [
+        "The current C7-Fresh-2 value is Basalt-813."
+      ],
+      "question": "What is the inspection password for C7-Fresh-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 8,
+      "source_turns": [
+        8
+      ],
+      "turn": 38
+    },
+    {
+      "answerable": true,
+      "class": "alias",
+      "distance": 30,
+      "entity": "C7-AliasBase-0",
+      "expected": "Jasper-711",
+      "id": "c7_alias_0_d030",
+      "oracle_source_texts": [
+        "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+        "C7-Signal-0 is an alias for C7-AliasBase-0."
+      ],
+      "question": "What is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 9,
+      "source_turns": [
+        5,
+        9
+      ],
+      "turn": 39
+    },
+    {
+      "answerable": true,
+      "class": "alias",
+      "distance": 30,
+      "entity": "C7-AliasBase-1",
+      "expected": "Jasper-712",
+      "id": "c7_alias_1_d030",
+      "oracle_source_texts": [
+        "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+        "C7-Signal-1 is an alias for C7-AliasBase-1."
+      ],
+      "question": "What is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 10,
+      "source_turns": [
+        5,
+        10
+      ],
+      "turn": 40
+    },
+    {
+      "answerable": false,
+      "class": "alias",
+      "distance": 30,
+      "entity": "C7-AliasBase-2",
+      "expected": "UNKNOWN",
+      "id": "c7_alias_2_d030",
+      "oracle_source_texts": [
+        "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+        "C7-Signal-2 is an alias for C7-AliasBase-2."
+      ],
+      "question": "What is the inspection password for C7-AliasBase-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 16,
+      "source_turns": [
+        5,
+        16
+      ],
+      "turn": 46
+    },
+    {
+      "answerable": true,
+      "class": "correction",
+      "distance": 30,
+      "entity": "C7-Vesper-0",
+      "expected": "Onyx-911",
+      "id": "c7_correction_0_d030",
+      "oracle_source_texts": [
+        "The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.",
+        "Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+        "The current C7-Vesper-0 value is Onyx-911."
+      ],
+      "question": "After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 17,
+      "source_turns": [
+        1,
+        2,
+        17
+      ],
+      "turn": 47
+    },
+    {
+      "answerable": true,
+      "class": "correction",
+      "distance": 30,
+      "entity": "C7-Vesper-1",
+      "expected": "Onyx-912",
+      "id": "c7_correction_1_d030",
+      "oracle_source_texts": [
+        "The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.",
+        "Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+        "The current C7-Vesper-1 value is Onyx-912."
+      ],
+      "question": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 18,
+      "source_turns": [
+        1,
+        2,
+        18
+      ],
+      "turn": 48
+    },
+    {
+      "answerable": false,
+      "class": "correction",
+      "distance": 30,
+      "entity": "C7-Vesper-2",
+      "expected": "UNKNOWN",
+      "id": "c7_correction_2_d030",
+      "oracle_source_texts": [
+        "The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.",
+        "Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+        "The current C7-Vesper-2 value is Onyx-913."
+      ],
+      "question": "What is the inspection password for C7-Vesper-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 19,
+      "source_turns": [
+        1,
+        2,
+        19
+      ],
+      "turn": 49
+    },
+    {
+      "answerable": true,
+      "class": "folded",
+      "distance": 30,
+      "entity": "C7-Archive-0",
+      "expected": "Reed-611|Cedar-1011",
+      "id": "c7_folded_0_d030",
+      "oracle_source_texts": [
+        "For C7-Archive-0 the outbound tag is Reed-611.",
+        "For C7-Archive-0 the inbound tag is Cedar-1011."
+      ],
+      "question": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": true,
+      "source_turn": 20,
+      "source_turns": [
+        3,
+        20
+      ],
+      "turn": 50
+    },
+    {
+      "answerable": true,
+      "class": "folded",
+      "distance": 30,
+      "entity": "C7-Archive-1",
+      "expected": "Reed-612|Cedar-1012",
+      "id": "c7_folded_1_d030",
+      "oracle_source_texts": [
+        "For C7-Archive-1 the outbound tag is Reed-612.",
+        "For C7-Archive-1 the inbound tag is Cedar-1012."
+      ],
+      "question": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": true,
+      "source_turn": 26,
+      "source_turns": [
+        4,
+        26
+      ],
+      "turn": 56
+    },
+    {
+      "answerable": false,
+      "class": "folded",
+      "distance": 30,
+      "entity": "C7-Archive-2",
+      "expected": "UNKNOWN",
+      "id": "c7_folded_2_d030",
+      "oracle_source_texts": [
+        "For C7-Archive-2 the inbound tag is Cedar-1013."
+      ],
+      "question": "What is the inspection password for C7-Archive-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 27,
+      "source_turns": [
+        27
+      ],
+      "turn": 57
+    },
+    {
+      "answerable": true,
+      "class": "fresh",
+      "distance": 60,
+      "entity": "C7-Fresh-0",
+      "expected": "Basalt-811",
+      "id": "c7_fresh_0_d060",
+      "oracle_source_texts": [
+        "The current C7-Fresh-0 value is Basalt-811."
+      ],
+      "question": "What is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 6,
+      "source_turns": [
+        6
+      ],
+      "turn": 66
+    },
+    {
+      "answerable": true,
+      "class": "fresh",
+      "distance": 60,
+      "entity": "C7-Fresh-1",
+      "expected": "Basalt-812",
+      "id": "c7_fresh_1_d060",
+      "oracle_source_texts": [
+        "The current C7-Fresh-1 value is Basalt-812."
+      ],
+      "question": "What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 7,
+      "source_turns": [
+        7
+      ],
+      "turn": 67
+    },
+    {
+      "answerable": false,
+      "class": "fresh",
+      "distance": 60,
+      "entity": "C7-Fresh-2",
+      "expected": "UNKNOWN",
+      "id": "c7_fresh_2_d060",
+      "oracle_source_texts": [
+        "The current C7-Fresh-2 value is Basalt-813."
+      ],
+      "question": "What is the inspection password for C7-Fresh-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 8,
+      "source_turns": [
+        8
+      ],
+      "turn": 68
+    },
+    {
+      "answerable": true,
+      "class": "alias",
+      "distance": 60,
+      "entity": "C7-AliasBase-0",
+      "expected": "Jasper-711",
+      "id": "c7_alias_0_d060",
+      "oracle_source_texts": [
+        "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+        "C7-Signal-0 is an alias for C7-AliasBase-0."
+      ],
+      "question": "What is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 9,
+      "source_turns": [
+        5,
+        9
+      ],
+      "turn": 69
+    },
+    {
+      "answerable": true,
+      "class": "alias",
+      "distance": 60,
+      "entity": "C7-AliasBase-1",
+      "expected": "Jasper-712",
+      "id": "c7_alias_1_d060",
+      "oracle_source_texts": [
+        "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+        "C7-Signal-1 is an alias for C7-AliasBase-1."
+      ],
+      "question": "What is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 10,
+      "source_turns": [
+        5,
+        10
+      ],
+      "turn": 70
+    },
+    {
+      "answerable": false,
+      "class": "alias",
+      "distance": 60,
+      "entity": "C7-AliasBase-2",
+      "expected": "UNKNOWN",
+      "id": "c7_alias_2_d060",
+      "oracle_source_texts": [
+        "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+        "C7-Signal-2 is an alias for C7-AliasBase-2."
+      ],
+      "question": "What is the inspection password for C7-AliasBase-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 16,
+      "source_turns": [
+        5,
+        16
+      ],
+      "turn": 76
+    },
+    {
+      "answerable": true,
+      "class": "correction",
+      "distance": 60,
+      "entity": "C7-Vesper-0",
+      "expected": "Onyx-911",
+      "id": "c7_correction_0_d060",
+      "oracle_source_texts": [
+        "The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.",
+        "Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+        "The current C7-Vesper-0 value is Onyx-911."
+      ],
+      "question": "After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 17,
+      "source_turns": [
+        1,
+        2,
+        17
+      ],
+      "turn": 77
+    },
+    {
+      "answerable": true,
+      "class": "correction",
+      "distance": 60,
+      "entity": "C7-Vesper-1",
+      "expected": "Onyx-912",
+      "id": "c7_correction_1_d060",
+      "oracle_source_texts": [
+        "The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.",
+        "Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+        "The current C7-Vesper-1 value is Onyx-912."
+      ],
+      "question": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 18,
+      "source_turns": [
+        1,
+        2,
+        18
+      ],
+      "turn": 78
+    },
+    {
+      "answerable": false,
+      "class": "correction",
+      "distance": 60,
+      "entity": "C7-Vesper-2",
+      "expected": "UNKNOWN",
+      "id": "c7_correction_2_d060",
+      "oracle_source_texts": [
+        "The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.",
+        "Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+        "The current C7-Vesper-2 value is Onyx-913."
+      ],
+      "question": "What is the inspection password for C7-Vesper-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 19,
+      "source_turns": [
+        1,
+        2,
+        19
+      ],
+      "turn": 79
+    },
+    {
+      "answerable": true,
+      "class": "folded",
+      "distance": 60,
+      "entity": "C7-Archive-0",
+      "expected": "Reed-611|Cedar-1011",
+      "id": "c7_folded_0_d060",
+      "oracle_source_texts": [
+        "For C7-Archive-0 the outbound tag is Reed-611.",
+        "For C7-Archive-0 the inbound tag is Cedar-1011."
+      ],
+      "question": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": true,
+      "source_turn": 20,
+      "source_turns": [
+        3,
+        20
+      ],
+      "turn": 80
+    },
+    {
+      "answerable": true,
+      "class": "folded",
+      "distance": 60,
+      "entity": "C7-Archive-1",
+      "expected": "Reed-612|Cedar-1012",
+      "id": "c7_folded_1_d060",
+      "oracle_source_texts": [
+        "For C7-Archive-1 the outbound tag is Reed-612.",
+        "For C7-Archive-1 the inbound tag is Cedar-1012."
+      ],
+      "question": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": true,
+      "source_turn": 26,
+      "source_turns": [
+        4,
+        26
+      ],
+      "turn": 86
+    },
+    {
+      "answerable": false,
+      "class": "folded",
+      "distance": 60,
+      "entity": "C7-Archive-2",
+      "expected": "UNKNOWN",
+      "id": "c7_folded_2_d060",
+      "oracle_source_texts": [
+        "For C7-Archive-2 the inbound tag is Cedar-1013."
+      ],
+      "question": "What is the inspection password for C7-Archive-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 27,
+      "source_turns": [
+        27
+      ],
+      "turn": 87
+    },
+    {
+      "answerable": true,
+      "class": "fresh",
+      "distance": 120,
+      "entity": "C7-Fresh-0",
+      "expected": "Basalt-811",
+      "id": "c7_fresh_0_d120",
+      "oracle_source_texts": [
+        "The current C7-Fresh-0 value is Basalt-811."
+      ],
+      "question": "What is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 6,
+      "source_turns": [
+        6
+      ],
+      "turn": 126
+    },
+    {
+      "answerable": true,
+      "class": "fresh",
+      "distance": 120,
+      "entity": "C7-Fresh-1",
+      "expected": "Basalt-812",
+      "id": "c7_fresh_1_d120",
+      "oracle_source_texts": [
+        "The current C7-Fresh-1 value is Basalt-812."
+      ],
+      "question": "What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 7,
+      "source_turns": [
+        7
+      ],
+      "turn": 127
+    },
+    {
+      "answerable": false,
+      "class": "fresh",
+      "distance": 120,
+      "entity": "C7-Fresh-2",
+      "expected": "UNKNOWN",
+      "id": "c7_fresh_2_d120",
+      "oracle_source_texts": [
+        "The current C7-Fresh-2 value is Basalt-813."
+      ],
+      "question": "What is the inspection password for C7-Fresh-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 8,
+      "source_turns": [
+        8
+      ],
+      "turn": 128
+    },
+    {
+      "answerable": true,
+      "class": "alias",
+      "distance": 120,
+      "entity": "C7-AliasBase-0",
+      "expected": "Jasper-711",
+      "id": "c7_alias_0_d120",
+      "oracle_source_texts": [
+        "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+        "C7-Signal-0 is an alias for C7-AliasBase-0."
+      ],
+      "question": "What is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 9,
+      "source_turns": [
+        5,
+        9
+      ],
+      "turn": 129
+    },
+    {
+      "answerable": true,
+      "class": "alias",
+      "distance": 120,
+      "entity": "C7-AliasBase-1",
+      "expected": "Jasper-712",
+      "id": "c7_alias_1_d120",
+      "oracle_source_texts": [
+        "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+        "C7-Signal-1 is an alias for C7-AliasBase-1."
+      ],
+      "question": "What is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 10,
+      "source_turns": [
+        5,
+        10
+      ],
+      "turn": 130
+    },
+    {
+      "answerable": false,
+      "class": "alias",
+      "distance": 120,
+      "entity": "C7-AliasBase-2",
+      "expected": "UNKNOWN",
+      "id": "c7_alias_2_d120",
+      "oracle_source_texts": [
+        "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+        "C7-Signal-2 is an alias for C7-AliasBase-2."
+      ],
+      "question": "What is the inspection password for C7-AliasBase-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 16,
+      "source_turns": [
+        5,
+        16
+      ],
+      "turn": 136
+    },
+    {
+      "answerable": true,
+      "class": "correction",
+      "distance": 120,
+      "entity": "C7-Vesper-0",
+      "expected": "Onyx-911",
+      "id": "c7_correction_0_d120",
+      "oracle_source_texts": [
+        "The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.",
+        "Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+        "The current C7-Vesper-0 value is Onyx-911."
+      ],
+      "question": "After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 17,
+      "source_turns": [
+        1,
+        2,
+        17
+      ],
+      "turn": 137
+    },
+    {
+      "answerable": true,
+      "class": "correction",
+      "distance": 120,
+      "entity": "C7-Vesper-1",
+      "expected": "Onyx-912",
+      "id": "c7_correction_1_d120",
+      "oracle_source_texts": [
+        "The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.",
+        "Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+        "The current C7-Vesper-1 value is Onyx-912."
+      ],
+      "question": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 18,
+      "source_turns": [
+        1,
+        2,
+        18
+      ],
+      "turn": 138
+    },
+    {
+      "answerable": false,
+      "class": "correction",
+      "distance": 120,
+      "entity": "C7-Vesper-2",
+      "expected": "UNKNOWN",
+      "id": "c7_correction_2_d120",
+      "oracle_source_texts": [
+        "The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.",
+        "Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+        "The current C7-Vesper-2 value is Onyx-913."
+      ],
+      "question": "What is the inspection password for C7-Vesper-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 19,
+      "source_turns": [
+        1,
+        2,
+        19
+      ],
+      "turn": 139
+    },
+    {
+      "answerable": true,
+      "class": "folded",
+      "distance": 120,
+      "entity": "C7-Archive-0",
+      "expected": "Reed-611|Cedar-1011",
+      "id": "c7_folded_0_d120",
+      "oracle_source_texts": [
+        "For C7-Archive-0 the outbound tag is Reed-611.",
+        "For C7-Archive-0 the inbound tag is Cedar-1011."
+      ],
+      "question": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": true,
+      "source_turn": 20,
+      "source_turns": [
+        3,
+        20
+      ],
+      "turn": 140
+    },
+    {
+      "answerable": true,
+      "class": "folded",
+      "distance": 120,
+      "entity": "C7-Archive-1",
+      "expected": "Reed-612|Cedar-1012",
+      "id": "c7_folded_1_d120",
+      "oracle_source_texts": [
+        "For C7-Archive-1 the outbound tag is Reed-612.",
+        "For C7-Archive-1 the inbound tag is Cedar-1012."
+      ],
+      "question": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": true,
+      "source_turn": 26,
+      "source_turns": [
+        4,
+        26
+      ],
+      "turn": 146
+    },
+    {
+      "answerable": false,
+      "class": "folded",
+      "distance": 120,
+      "entity": "C7-Archive-2",
+      "expected": "UNKNOWN",
+      "id": "c7_folded_2_d120",
+      "oracle_source_texts": [
+        "For C7-Archive-2 the inbound tag is Cedar-1013."
+      ],
+      "question": "What is the inspection password for C7-Archive-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 27,
+      "source_turns": [
+        27
+      ],
+      "turn": 147
+    },
+    {
+      "answerable": true,
+      "class": "fresh",
+      "distance": 250,
+      "entity": "C7-Fresh-0",
+      "expected": "Basalt-811",
+      "id": "c7_fresh_0_d250",
+      "oracle_source_texts": [
+        "The current C7-Fresh-0 value is Basalt-811."
+      ],
+      "question": "What is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 6,
+      "source_turns": [
+        6
+      ],
+      "turn": 256
+    },
+    {
+      "answerable": true,
+      "class": "fresh",
+      "distance": 250,
+      "entity": "C7-Fresh-1",
+      "expected": "Basalt-812",
+      "id": "c7_fresh_1_d250",
+      "oracle_source_texts": [
+        "The current C7-Fresh-1 value is Basalt-812."
+      ],
+      "question": "What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 7,
+      "source_turns": [
+        7
+      ],
+      "turn": 257
+    },
+    {
+      "answerable": false,
+      "class": "fresh",
+      "distance": 250,
+      "entity": "C7-Fresh-2",
+      "expected": "UNKNOWN",
+      "id": "c7_fresh_2_d250",
+      "oracle_source_texts": [
+        "The current C7-Fresh-2 value is Basalt-813."
+      ],
+      "question": "What is the inspection password for C7-Fresh-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 8,
+      "source_turns": [
+        8
+      ],
+      "turn": 258
+    },
+    {
+      "answerable": true,
+      "class": "alias",
+      "distance": 250,
+      "entity": "C7-AliasBase-0",
+      "expected": "Jasper-711",
+      "id": "c7_alias_0_d250",
+      "oracle_source_texts": [
+        "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+        "C7-Signal-0 is an alias for C7-AliasBase-0."
+      ],
+      "question": "What is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 9,
+      "source_turns": [
+        5,
+        9
+      ],
+      "turn": 259
+    },
+    {
+      "answerable": true,
+      "class": "alias",
+      "distance": 250,
+      "entity": "C7-AliasBase-1",
+      "expected": "Jasper-712",
+      "id": "c7_alias_1_d250",
+      "oracle_source_texts": [
+        "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+        "C7-Signal-1 is an alias for C7-AliasBase-1."
+      ],
+      "question": "What is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 10,
+      "source_turns": [
+        5,
+        10
+      ],
+      "turn": 260
+    },
+    {
+      "answerable": false,
+      "class": "alias",
+      "distance": 250,
+      "entity": "C7-AliasBase-2",
+      "expected": "UNKNOWN",
+      "id": "c7_alias_2_d250",
+      "oracle_source_texts": [
+        "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+        "C7-Signal-2 is an alias for C7-AliasBase-2."
+      ],
+      "question": "What is the inspection password for C7-AliasBase-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 16,
+      "source_turns": [
+        5,
+        16
+      ],
+      "turn": 266
+    },
+    {
+      "answerable": true,
+      "class": "correction",
+      "distance": 250,
+      "entity": "C7-Vesper-0",
+      "expected": "Onyx-911",
+      "id": "c7_correction_0_d250",
+      "oracle_source_texts": [
+        "The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.",
+        "Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+        "The current C7-Vesper-0 value is Onyx-911."
+      ],
+      "question": "After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 17,
+      "source_turns": [
+        1,
+        2,
+        17
+      ],
+      "turn": 267
+    },
+    {
+      "answerable": true,
+      "class": "correction",
+      "distance": 250,
+      "entity": "C7-Vesper-1",
+      "expected": "Onyx-912",
+      "id": "c7_correction_1_d250",
+      "oracle_source_texts": [
+        "The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.",
+        "Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+        "The current C7-Vesper-1 value is Onyx-912."
+      ],
+      "question": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 18,
+      "source_turns": [
+        1,
+        2,
+        18
+      ],
+      "turn": 268
+    },
+    {
+      "answerable": false,
+      "class": "correction",
+      "distance": 250,
+      "entity": "C7-Vesper-2",
+      "expected": "UNKNOWN",
+      "id": "c7_correction_2_d250",
+      "oracle_source_texts": [
+        "The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.",
+        "Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+        "The current C7-Vesper-2 value is Onyx-913."
+      ],
+      "question": "What is the inspection password for C7-Vesper-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 19,
+      "source_turns": [
+        1,
+        2,
+        19
+      ],
+      "turn": 269
+    },
+    {
+      "answerable": true,
+      "class": "folded",
+      "distance": 250,
+      "entity": "C7-Archive-0",
+      "expected": "Reed-611|Cedar-1011",
+      "id": "c7_folded_0_d250",
+      "oracle_source_texts": [
+        "For C7-Archive-0 the outbound tag is Reed-611.",
+        "For C7-Archive-0 the inbound tag is Cedar-1011."
+      ],
+      "question": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": true,
+      "source_turn": 20,
+      "source_turns": [
+        3,
+        20
+      ],
+      "turn": 270
+    },
+    {
+      "answerable": true,
+      "class": "folded",
+      "distance": 250,
+      "entity": "C7-Archive-1",
+      "expected": "Reed-612|Cedar-1012",
+      "id": "c7_folded_1_d250",
+      "oracle_source_texts": [
+        "For C7-Archive-1 the outbound tag is Reed-612.",
+        "For C7-Archive-1 the inbound tag is Cedar-1012."
+      ],
+      "question": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": true,
+      "source_turn": 26,
+      "source_turns": [
+        4,
+        26
+      ],
+      "turn": 276
+    },
+    {
+      "answerable": false,
+      "class": "folded",
+      "distance": 250,
+      "entity": "C7-Archive-2",
+      "expected": "UNKNOWN",
+      "id": "c7_folded_2_d250",
+      "oracle_source_texts": [
+        "For C7-Archive-2 the inbound tag is Cedar-1013."
+      ],
+      "question": "What is the inspection password for C7-Archive-2? Reply only with the answer; if unspecified, reply UNKNOWN.",
+      "requires_folded": false,
+      "source_turn": 27,
+      "source_turns": [
+        27
+      ],
+      "turn": 277
+    }
+  ],
+  "restart_after_turns": [
+    100,
+    200
+  ],
+  "schema": "grm.c7.fixture.v1",
+  "turn_numbering": "one-based, inclusive",
+  "turns": [
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Vesper-0",
+      "fact_phrase": "current C7-Vesper-0 value is Mica-431",
+      "kind": "fact",
+      "turn": 1,
+      "user": "The current C7-Vesper-0 value is Mica-431. The current C7-Vesper-1 value is Mica-432.",
+      "value": "Mica-431"
+    },
+    {
+      "assistant": "Recorded.",
+      "correction_command": "correct memory: current C7-Vesper-0 value is Mica-431 => Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+      "fact_id": "C7-Vesper-0",
+      "fact_phrase": "current C7-Vesper-0 value is Flint-511",
+      "kind": "supersede",
+      "old_value": "Mica-431",
+      "turn": 2,
+      "user": "Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+      "value": "Flint-511"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Archive-0",
+      "fact_phrase": "current C7-Archive-0 value is Reed-611",
+      "kind": "fact",
+      "turn": 3,
+      "user": "For C7-Archive-0 the outbound tag is Reed-611.",
+      "value": "Reed-611"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Archive-1",
+      "fact_phrase": "current C7-Archive-1 value is Reed-612",
+      "kind": "fact",
+      "turn": 4,
+      "user": "For C7-Archive-1 the outbound tag is Reed-612.",
+      "value": "Reed-612"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-AliasBase-0",
+      "fact_phrase": "current C7-AliasBase-0 value is Jasper-711",
+      "kind": "fact",
+      "turn": 5,
+      "user": "The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.",
+      "value": "Jasper-711"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Fresh-0",
+      "fact_phrase": "current C7-Fresh-0 value is Basalt-811",
+      "kind": "fact",
+      "turn": 6,
+      "user": "The current C7-Fresh-0 value is Basalt-811.",
+      "value": "Basalt-811"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Fresh-1",
+      "fact_phrase": "current C7-Fresh-1 value is Basalt-812",
+      "kind": "fact",
+      "turn": 7,
+      "user": "The current C7-Fresh-1 value is Basalt-812.",
+      "value": "Basalt-812"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Fresh-2",
+      "fact_phrase": "current C7-Fresh-2 value is Basalt-813",
+      "kind": "fact",
+      "turn": 8,
+      "user": "The current C7-Fresh-2 value is Basalt-813.",
+      "value": "Basalt-813"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-AliasBase-0",
+      "fact_phrase": "current C7-AliasBase-0 value is Jasper-711",
+      "kind": "fact",
+      "turn": 9,
+      "user": "C7-Signal-0 is an alias for C7-AliasBase-0.",
+      "value": "Jasper-711"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-AliasBase-1",
+      "fact_phrase": "current C7-AliasBase-1 value is Jasper-712",
+      "kind": "fact",
+      "turn": 10,
+      "user": "C7-Signal-1 is an alias for C7-AliasBase-1.",
+      "value": "Jasper-712"
+    },
+    {
+      "accepts": [
+        "Basalt-811"
+      ],
+      "expected": "Basalt-811",
+      "fact_id": "C7-Fresh-0",
+      "kind": "probe",
+      "probe_id": "c7_fresh_0_d005",
+      "source_turn": 6,
+      "turn": 11,
+      "user": "What is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Basalt-812"
+      ],
+      "expected": "Basalt-812",
+      "fact_id": "C7-Fresh-1",
+      "kind": "probe",
+      "probe_id": "c7_fresh_1_d005",
+      "source_turn": 7,
+      "turn": 12,
+      "user": "What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "UNKNOWN"
+      ],
+      "expected": "UNKNOWN",
+      "fact_id": "C7-Fresh-2",
+      "kind": "probe",
+      "probe_id": "c7_fresh_2_d005",
+      "source_turn": 8,
+      "turn": 13,
+      "user": "What is the inspection password for C7-Fresh-2? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Jasper-711"
+      ],
+      "expected": "Jasper-711",
+      "fact_id": "C7-AliasBase-0",
+      "kind": "probe",
+      "probe_id": "c7_alias_0_d005",
+      "source_turn": 9,
+      "turn": 14,
+      "user": "What is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Jasper-712"
+      ],
+      "expected": "Jasper-712",
+      "fact_id": "C7-AliasBase-1",
+      "kind": "probe",
+      "probe_id": "c7_alias_1_d005",
+      "source_turn": 10,
+      "turn": 15,
+      "user": "What is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-AliasBase-2",
+      "fact_phrase": "current C7-AliasBase-2 value is UNSET",
+      "kind": "fact",
+      "turn": 16,
+      "user": "C7-Signal-2 is an alias for C7-AliasBase-2.",
+      "value": "UNSET"
+    },
+    {
+      "assistant": "Recorded.",
+      "correction_command": "correct memory: current C7-Vesper-0 value is Flint-511 => The current C7-Vesper-0 value is Onyx-911.",
+      "fact_id": "C7-Vesper-0",
+      "fact_phrase": "current C7-Vesper-0 value is Onyx-911",
+      "kind": "supersede",
+      "old_value": "Flint-511",
+      "turn": 17,
+      "user": "The current C7-Vesper-0 value is Onyx-911.",
+      "value": "Onyx-911"
+    },
+    {
+      "assistant": "Recorded.",
+      "correction_command": "correct memory: current C7-Vesper-1 value is Flint-512 => The current C7-Vesper-1 value is Onyx-912.",
+      "fact_id": "C7-Vesper-1",
+      "fact_phrase": "current C7-Vesper-1 value is Onyx-912",
+      "kind": "supersede",
+      "old_value": "Flint-512",
+      "turn": 18,
+      "user": "The current C7-Vesper-1 value is Onyx-912.",
+      "value": "Onyx-912"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Vesper-2",
+      "fact_phrase": "current C7-Vesper-2 value is Onyx-913",
+      "kind": "fact",
+      "turn": 19,
+      "user": "The current C7-Vesper-2 value is Onyx-913.",
+      "value": "Onyx-913"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Archive-0",
+      "fact_phrase": "current C7-Archive-0 value is Cedar-1011",
+      "kind": "fact",
+      "turn": 20,
+      "user": "For C7-Archive-0 the inbound tag is Cedar-1011.",
+      "value": "Cedar-1011"
+    },
+    {
+      "accepts": [
+        "UNKNOWN"
+      ],
+      "expected": "UNKNOWN",
+      "fact_id": "C7-AliasBase-2",
+      "kind": "probe",
+      "probe_id": "c7_alias_2_d005",
+      "source_turn": 16,
+      "turn": 21,
+      "user": "What is the inspection password for C7-AliasBase-2? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Onyx-911"
+      ],
+      "expected": "Onyx-911",
+      "fact_id": "C7-Vesper-0",
+      "kind": "probe",
+      "probe_id": "c7_correction_0_d005",
+      "source_turn": 17,
+      "turn": 22,
+      "user": "After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Onyx-912"
+      ],
+      "expected": "Onyx-912",
+      "fact_id": "C7-Vesper-1",
+      "kind": "probe",
+      "probe_id": "c7_correction_1_d005",
+      "source_turn": 18,
+      "turn": 23,
+      "user": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "UNKNOWN"
+      ],
+      "expected": "UNKNOWN",
+      "fact_id": "C7-Vesper-2",
+      "kind": "probe",
+      "probe_id": "c7_correction_2_d005",
+      "source_turn": 19,
+      "turn": 24,
+      "user": "What is the inspection password for C7-Vesper-2? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Reed-611|Cedar-1011"
+      ],
+      "expected": "Reed-611|Cedar-1011",
+      "fact_id": "C7-Archive-0",
+      "kind": "probe",
+      "probe_id": "c7_folded_0_d005",
+      "source_turn": 20,
+      "turn": 25,
+      "user": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Archive-1",
+      "fact_phrase": "current C7-Archive-1 value is Cedar-1012",
+      "kind": "fact",
+      "turn": 26,
+      "user": "For C7-Archive-1 the inbound tag is Cedar-1012.",
+      "value": "Cedar-1012"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Archive-2",
+      "fact_phrase": "current C7-Archive-2 value is Cedar-1013",
+      "kind": "fact",
+      "turn": 27,
+      "user": "For C7-Archive-2 the inbound tag is Cedar-1013.",
+      "value": "Cedar-1013"
+    },
+    {
+      "kind": "filler",
+      "turn": 28,
+      "user": "Log marker 28. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 29,
+      "user": "Log marker 29. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 30,
+      "user": "Log marker 30. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "accepts": [
+        "Reed-612|Cedar-1012"
+      ],
+      "expected": "Reed-612|Cedar-1012",
+      "fact_id": "C7-Archive-1",
+      "kind": "probe",
+      "probe_id": "c7_folded_1_d005",
+      "source_turn": 26,
+      "turn": 31,
+      "user": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "UNKNOWN"
+      ],
+      "expected": "UNKNOWN",
+      "fact_id": "C7-Archive-2",
+      "kind": "probe",
+      "probe_id": "c7_folded_2_d005",
+      "source_turn": 27,
+      "turn": 32,
+      "user": "What is the inspection password for C7-Archive-2? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "kind": "filler",
+      "turn": 33,
+      "user": "Log marker 33. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 34,
+      "user": "Log marker 34. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 35,
+      "user": "Log marker 35. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "accepts": [
+        "Basalt-811"
+      ],
+      "expected": "Basalt-811",
+      "fact_id": "C7-Fresh-0",
+      "kind": "probe",
+      "probe_id": "c7_fresh_0_d030",
+      "source_turn": 6,
+      "turn": 36,
+      "user": "What is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Basalt-812"
+      ],
+      "expected": "Basalt-812",
+      "fact_id": "C7-Fresh-1",
+      "kind": "probe",
+      "probe_id": "c7_fresh_1_d030",
+      "source_turn": 7,
+      "turn": 37,
+      "user": "What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "UNKNOWN"
+      ],
+      "expected": "UNKNOWN",
+      "fact_id": "C7-Fresh-2",
+      "kind": "probe",
+      "probe_id": "c7_fresh_2_d030",
+      "source_turn": 8,
+      "turn": 38,
+      "user": "What is the inspection password for C7-Fresh-2? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Jasper-711"
+      ],
+      "expected": "Jasper-711",
+      "fact_id": "C7-AliasBase-0",
+      "kind": "probe",
+      "probe_id": "c7_alias_0_d030",
+      "source_turn": 9,
+      "turn": 39,
+      "user": "What is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Jasper-712"
+      ],
+      "expected": "Jasper-712",
+      "fact_id": "C7-AliasBase-1",
+      "kind": "probe",
+      "probe_id": "c7_alias_1_d030",
+      "source_turn": 10,
+      "turn": 40,
+      "user": "What is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "kind": "filler",
+      "turn": 41,
+      "user": "Log marker 41. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 42,
+      "user": "Log marker 42. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 43,
+      "user": "Log marker 43. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 44,
+      "user": "Log marker 44. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 45,
+      "user": "Log marker 45. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "accepts": [
+        "UNKNOWN"
+      ],
+      "expected": "UNKNOWN",
+      "fact_id": "C7-AliasBase-2",
+      "kind": "probe",
+      "probe_id": "c7_alias_2_d030",
+      "source_turn": 16,
+      "turn": 46,
+      "user": "What is the inspection password for C7-AliasBase-2? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Onyx-911"
+      ],
+      "expected": "Onyx-911",
+      "fact_id": "C7-Vesper-0",
+      "kind": "probe",
+      "probe_id": "c7_correction_0_d030",
+      "source_turn": 17,
+      "turn": 47,
+      "user": "After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Onyx-912"
+      ],
+      "expected": "Onyx-912",
+      "fact_id": "C7-Vesper-1",
+      "kind": "probe",
+      "probe_id": "c7_correction_1_d030",
+      "source_turn": 18,
+      "turn": 48,
+      "user": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "UNKNOWN"
+      ],
+      "expected": "UNKNOWN",
+      "fact_id": "C7-Vesper-2",
+      "kind": "probe",
+      "probe_id": "c7_correction_2_d030",
+      "source_turn": 19,
+      "turn": 49,
+      "user": "What is the inspection password for C7-Vesper-2? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Reed-611|Cedar-1011"
+      ],
+      "expected": "Reed-611|Cedar-1011",
+      "fact_id": "C7-Archive-0",
+      "kind": "probe",
+      "probe_id": "c7_folded_0_d030",
+      "source_turn": 20,
+      "turn": 50,
+      "user": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-00",
+      "fact_phrase": "current C7-Outpost-00 value is Slate-1200",
+      "kind": "fact",
+      "turn": 51,
+      "user": "The current C7-Outpost-00 value is Slate-1200. C7-Handle-00 is an alias for C7-Outpost-00.",
+      "value": "Slate-1200"
+    },
+    {
+      "assistant": "Recorded.",
+      "correction_command": "correct memory: current C7-Outpost-00 value is Slate-1200 => The current C7-Outpost-00 value is Coral-1200.",
+      "fact_id": "C7-Outpost-00",
+      "fact_phrase": "current C7-Outpost-00 value is Coral-1200",
+      "kind": "supersede",
+      "old_value": "Slate-1200",
+      "turn": 52,
+      "user": "The current C7-Outpost-00 value is Coral-1200.",
+      "value": "Coral-1200"
+    },
+    {
+      "assistant": "Recorded.",
+      "correction_command": "correct memory: current C7-Outpost-00 value is Coral-1200 => The current C7-Outpost-00 value is Pearl-1200.",
+      "fact_id": "C7-Outpost-00",
+      "fact_phrase": "current C7-Outpost-00 value is Pearl-1200",
+      "kind": "supersede",
+      "old_value": "Coral-1200",
+      "turn": 53,
+      "user": "The current C7-Outpost-00 value is Pearl-1200.",
+      "value": "Pearl-1200"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-01",
+      "fact_phrase": "current C7-Outpost-01 value is Slate-1201",
+      "kind": "fact",
+      "turn": 54,
+      "user": "The current C7-Outpost-01 value is Slate-1201. C7-Handle-01 is an alias for C7-Outpost-01.",
+      "value": "Slate-1201"
+    },
+    {
+      "assistant": "Recorded.",
+      "correction_command": "correct memory: current C7-Outpost-01 value is Slate-1201 => The current C7-Outpost-01 value is Coral-1201.",
+      "fact_id": "C7-Outpost-01",
+      "fact_phrase": "current C7-Outpost-01 value is Coral-1201",
+      "kind": "supersede",
+      "old_value": "Slate-1201",
+      "turn": 55,
+      "user": "The current C7-Outpost-01 value is Coral-1201.",
+      "value": "Coral-1201"
+    },
+    {
+      "accepts": [
+        "Reed-612|Cedar-1012"
+      ],
+      "expected": "Reed-612|Cedar-1012",
+      "fact_id": "C7-Archive-1",
+      "kind": "probe",
+      "probe_id": "c7_folded_1_d030",
+      "source_turn": 26,
+      "turn": 56,
+      "user": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "UNKNOWN"
+      ],
+      "expected": "UNKNOWN",
+      "fact_id": "C7-Archive-2",
+      "kind": "probe",
+      "probe_id": "c7_folded_2_d030",
+      "source_turn": 27,
+      "turn": 57,
+      "user": "What is the inspection password for C7-Archive-2? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "assistant": "Recorded.",
+      "correction_command": "correct memory: current C7-Outpost-01 value is Coral-1201 => The current C7-Outpost-01 value is Pearl-1201.",
+      "fact_id": "C7-Outpost-01",
+      "fact_phrase": "current C7-Outpost-01 value is Pearl-1201",
+      "kind": "supersede",
+      "old_value": "Coral-1201",
+      "turn": 58,
+      "user": "The current C7-Outpost-01 value is Pearl-1201.",
+      "value": "Pearl-1201"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-02",
+      "fact_phrase": "current C7-Outpost-02 value is Slate-1202",
+      "kind": "fact",
+      "turn": 59,
+      "user": "The current C7-Outpost-02 value is Slate-1202. C7-Handle-02 is an alias for C7-Outpost-02.",
+      "value": "Slate-1202"
+    },
+    {
+      "assistant": "Recorded.",
+      "correction_command": "correct memory: current C7-Outpost-02 value is Slate-1202 => The current C7-Outpost-02 value is Coral-1202.",
+      "fact_id": "C7-Outpost-02",
+      "fact_phrase": "current C7-Outpost-02 value is Coral-1202",
+      "kind": "supersede",
+      "old_value": "Slate-1202",
+      "turn": 60,
+      "user": "The current C7-Outpost-02 value is Coral-1202.",
+      "value": "Coral-1202"
+    },
+    {
+      "assistant": "Recorded.",
+      "correction_command": "correct memory: current C7-Outpost-02 value is Coral-1202 => The current C7-Outpost-02 value is Pearl-1202.",
+      "fact_id": "C7-Outpost-02",
+      "fact_phrase": "current C7-Outpost-02 value is Pearl-1202",
+      "kind": "supersede",
+      "old_value": "Coral-1202",
+      "turn": 61,
+      "user": "The current C7-Outpost-02 value is Pearl-1202.",
+      "value": "Pearl-1202"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-03",
+      "fact_phrase": "current C7-Outpost-03 value is Slate-1203",
+      "kind": "fact",
+      "turn": 62,
+      "user": "The current C7-Outpost-03 value is Slate-1203. C7-Handle-03 is an alias for C7-Outpost-03.",
+      "value": "Slate-1203"
+    },
+    {
+      "assistant": "Recorded.",
+      "correction_command": "correct memory: current C7-Outpost-03 value is Slate-1203 => The current C7-Outpost-03 value is Coral-1203.",
+      "fact_id": "C7-Outpost-03",
+      "fact_phrase": "current C7-Outpost-03 value is Coral-1203",
+      "kind": "supersede",
+      "old_value": "Slate-1203",
+      "turn": 63,
+      "user": "The current C7-Outpost-03 value is Coral-1203.",
+      "value": "Coral-1203"
+    },
+    {
+      "assistant": "Recorded.",
+      "correction_command": "correct memory: current C7-Outpost-03 value is Coral-1203 => The current C7-Outpost-03 value is Pearl-1203.",
+      "fact_id": "C7-Outpost-03",
+      "fact_phrase": "current C7-Outpost-03 value is Pearl-1203",
+      "kind": "supersede",
+      "old_value": "Coral-1203",
+      "turn": 64,
+      "user": "The current C7-Outpost-03 value is Pearl-1203.",
+      "value": "Pearl-1203"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-04",
+      "fact_phrase": "current C7-Outpost-04 value is Slate-1204",
+      "kind": "fact",
+      "turn": 65,
+      "user": "The current C7-Outpost-04 value is Slate-1204. C7-Handle-04 is an alias for C7-Outpost-04.",
+      "value": "Slate-1204"
+    },
+    {
+      "accepts": [
+        "Basalt-811"
+      ],
+      "expected": "Basalt-811",
+      "fact_id": "C7-Fresh-0",
+      "kind": "probe",
+      "probe_id": "c7_fresh_0_d060",
+      "source_turn": 6,
+      "turn": 66,
+      "user": "What is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Basalt-812"
+      ],
+      "expected": "Basalt-812",
+      "fact_id": "C7-Fresh-1",
+      "kind": "probe",
+      "probe_id": "c7_fresh_1_d060",
+      "source_turn": 7,
+      "turn": 67,
+      "user": "What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "UNKNOWN"
+      ],
+      "expected": "UNKNOWN",
+      "fact_id": "C7-Fresh-2",
+      "kind": "probe",
+      "probe_id": "c7_fresh_2_d060",
+      "source_turn": 8,
+      "turn": 68,
+      "user": "What is the inspection password for C7-Fresh-2? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Jasper-711"
+      ],
+      "expected": "Jasper-711",
+      "fact_id": "C7-AliasBase-0",
+      "kind": "probe",
+      "probe_id": "c7_alias_0_d060",
+      "source_turn": 9,
+      "turn": 69,
+      "user": "What is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Jasper-712"
+      ],
+      "expected": "Jasper-712",
+      "fact_id": "C7-AliasBase-1",
+      "kind": "probe",
+      "probe_id": "c7_alias_1_d060",
+      "source_turn": 10,
+      "turn": 70,
+      "user": "What is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "assistant": "Recorded.",
+      "correction_command": "correct memory: current C7-Outpost-04 value is Slate-1204 => The current C7-Outpost-04 value is Coral-1204.",
+      "fact_id": "C7-Outpost-04",
+      "fact_phrase": "current C7-Outpost-04 value is Coral-1204",
+      "kind": "supersede",
+      "old_value": "Slate-1204",
+      "turn": 71,
+      "user": "The current C7-Outpost-04 value is Coral-1204.",
+      "value": "Coral-1204"
+    },
+    {
+      "assistant": "Recorded.",
+      "correction_command": "correct memory: current C7-Outpost-04 value is Coral-1204 => The current C7-Outpost-04 value is Pearl-1204.",
+      "fact_id": "C7-Outpost-04",
+      "fact_phrase": "current C7-Outpost-04 value is Pearl-1204",
+      "kind": "supersede",
+      "old_value": "Coral-1204",
+      "turn": 72,
+      "user": "The current C7-Outpost-04 value is Pearl-1204.",
+      "value": "Pearl-1204"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-05",
+      "fact_phrase": "current C7-Outpost-05 value is Slate-1205",
+      "kind": "fact",
+      "turn": 73,
+      "user": "The current C7-Outpost-05 value is Slate-1205. C7-Handle-05 is an alias for C7-Outpost-05.",
+      "value": "Slate-1205"
+    },
+    {
+      "assistant": "Recorded.",
+      "correction_command": "correct memory: current C7-Outpost-05 value is Slate-1205 => The current C7-Outpost-05 value is Coral-1205.",
+      "fact_id": "C7-Outpost-05",
+      "fact_phrase": "current C7-Outpost-05 value is Coral-1205",
+      "kind": "supersede",
+      "old_value": "Slate-1205",
+      "turn": 74,
+      "user": "The current C7-Outpost-05 value is Coral-1205.",
+      "value": "Coral-1205"
+    },
+    {
+      "assistant": "Recorded.",
+      "correction_command": "correct memory: current C7-Outpost-05 value is Coral-1205 => The current C7-Outpost-05 value is Pearl-1205.",
+      "fact_id": "C7-Outpost-05",
+      "fact_phrase": "current C7-Outpost-05 value is Pearl-1205",
+      "kind": "supersede",
+      "old_value": "Coral-1205",
+      "turn": 75,
+      "user": "The current C7-Outpost-05 value is Pearl-1205.",
+      "value": "Pearl-1205"
+    },
+    {
+      "accepts": [
+        "UNKNOWN"
+      ],
+      "expected": "UNKNOWN",
+      "fact_id": "C7-AliasBase-2",
+      "kind": "probe",
+      "probe_id": "c7_alias_2_d060",
+      "source_turn": 16,
+      "turn": 76,
+      "user": "What is the inspection password for C7-AliasBase-2? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Onyx-911"
+      ],
+      "expected": "Onyx-911",
+      "fact_id": "C7-Vesper-0",
+      "kind": "probe",
+      "probe_id": "c7_correction_0_d060",
+      "source_turn": 17,
+      "turn": 77,
+      "user": "After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Onyx-912"
+      ],
+      "expected": "Onyx-912",
+      "fact_id": "C7-Vesper-1",
+      "kind": "probe",
+      "probe_id": "c7_correction_1_d060",
+      "source_turn": 18,
+      "turn": 78,
+      "user": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "UNKNOWN"
+      ],
+      "expected": "UNKNOWN",
+      "fact_id": "C7-Vesper-2",
+      "kind": "probe",
+      "probe_id": "c7_correction_2_d060",
+      "source_turn": 19,
+      "turn": 79,
+      "user": "What is the inspection password for C7-Vesper-2? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Reed-611|Cedar-1011"
+      ],
+      "expected": "Reed-611|Cedar-1011",
+      "fact_id": "C7-Archive-0",
+      "kind": "probe",
+      "probe_id": "c7_folded_0_d060",
+      "source_turn": 20,
+      "turn": 80,
+      "user": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-06",
+      "fact_phrase": "current C7-Outpost-06 value is Slate-1206",
+      "kind": "fact",
+      "turn": 81,
+      "user": "The current C7-Outpost-06 value is Slate-1206. C7-Handle-06 is an alias for C7-Outpost-06.",
+      "value": "Slate-1206"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-07",
+      "fact_phrase": "current C7-Outpost-07 value is Slate-1207",
+      "kind": "fact",
+      "turn": 82,
+      "user": "The current C7-Outpost-07 value is Slate-1207. C7-Handle-07 is an alias for C7-Outpost-07.",
+      "value": "Slate-1207"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-08",
+      "fact_phrase": "current C7-Outpost-08 value is Slate-1208",
+      "kind": "fact",
+      "turn": 83,
+      "user": "The current C7-Outpost-08 value is Slate-1208. C7-Handle-08 is an alias for C7-Outpost-08.",
+      "value": "Slate-1208"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-09",
+      "fact_phrase": "current C7-Outpost-09 value is Slate-1209",
+      "kind": "fact",
+      "turn": 84,
+      "user": "The current C7-Outpost-09 value is Slate-1209. C7-Handle-09 is an alias for C7-Outpost-09.",
+      "value": "Slate-1209"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-10",
+      "fact_phrase": "current C7-Outpost-10 value is Slate-1210",
+      "kind": "fact",
+      "turn": 85,
+      "user": "The current C7-Outpost-10 value is Slate-1210. C7-Handle-10 is an alias for C7-Outpost-10.",
+      "value": "Slate-1210"
+    },
+    {
+      "accepts": [
+        "Reed-612|Cedar-1012"
+      ],
+      "expected": "Reed-612|Cedar-1012",
+      "fact_id": "C7-Archive-1",
+      "kind": "probe",
+      "probe_id": "c7_folded_1_d060",
+      "source_turn": 26,
+      "turn": 86,
+      "user": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "UNKNOWN"
+      ],
+      "expected": "UNKNOWN",
+      "fact_id": "C7-Archive-2",
+      "kind": "probe",
+      "probe_id": "c7_folded_2_d060",
+      "source_turn": 27,
+      "turn": 87,
+      "user": "What is the inspection password for C7-Archive-2? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-11",
+      "fact_phrase": "current C7-Outpost-11 value is Slate-1211",
+      "kind": "fact",
+      "turn": 88,
+      "user": "The current C7-Outpost-11 value is Slate-1211. C7-Handle-11 is an alias for C7-Outpost-11.",
+      "value": "Slate-1211"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-12",
+      "fact_phrase": "current C7-Outpost-12 value is Slate-1212",
+      "kind": "fact",
+      "turn": 89,
+      "user": "The current C7-Outpost-12 value is Slate-1212.",
+      "value": "Slate-1212"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-13",
+      "fact_phrase": "current C7-Outpost-13 value is Slate-1213",
+      "kind": "fact",
+      "turn": 90,
+      "user": "The current C7-Outpost-13 value is Slate-1213.",
+      "value": "Slate-1213"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-14",
+      "fact_phrase": "current C7-Outpost-14 value is Slate-1214",
+      "kind": "fact",
+      "turn": 91,
+      "user": "The current C7-Outpost-14 value is Slate-1214.",
+      "value": "Slate-1214"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-15",
+      "fact_phrase": "current C7-Outpost-15 value is Slate-1215",
+      "kind": "fact",
+      "turn": 92,
+      "user": "The current C7-Outpost-15 value is Slate-1215.",
+      "value": "Slate-1215"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-16",
+      "fact_phrase": "current C7-Outpost-16 value is Slate-1216",
+      "kind": "fact",
+      "turn": 93,
+      "user": "The current C7-Outpost-16 value is Slate-1216.",
+      "value": "Slate-1216"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-17",
+      "fact_phrase": "current C7-Outpost-17 value is Slate-1217",
+      "kind": "fact",
+      "turn": 94,
+      "user": "The current C7-Outpost-17 value is Slate-1217.",
+      "value": "Slate-1217"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-18",
+      "fact_phrase": "current C7-Outpost-18 value is Slate-1218",
+      "kind": "fact",
+      "turn": 95,
+      "user": "The current C7-Outpost-18 value is Slate-1218.",
+      "value": "Slate-1218"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-19",
+      "fact_phrase": "current C7-Outpost-19 value is Slate-1219",
+      "kind": "fact",
+      "turn": 96,
+      "user": "The current C7-Outpost-19 value is Slate-1219.",
+      "value": "Slate-1219"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-20",
+      "fact_phrase": "current C7-Outpost-20 value is Slate-1220",
+      "kind": "fact",
+      "turn": 97,
+      "user": "The current C7-Outpost-20 value is Slate-1220.",
+      "value": "Slate-1220"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-21",
+      "fact_phrase": "current C7-Outpost-21 value is Slate-1221",
+      "kind": "fact",
+      "turn": 98,
+      "user": "The current C7-Outpost-21 value is Slate-1221.",
+      "value": "Slate-1221"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-22",
+      "fact_phrase": "current C7-Outpost-22 value is Slate-1222",
+      "kind": "fact",
+      "turn": 99,
+      "user": "The current C7-Outpost-22 value is Slate-1222.",
+      "value": "Slate-1222"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-23",
+      "fact_phrase": "current C7-Outpost-23 value is Slate-1223",
+      "kind": "fact",
+      "turn": 100,
+      "user": "The current C7-Outpost-23 value is Slate-1223.",
+      "value": "Slate-1223"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-24",
+      "fact_phrase": "current C7-Outpost-24 value is Slate-1224",
+      "kind": "fact",
+      "turn": 101,
+      "user": "The current C7-Outpost-24 value is Slate-1224.",
+      "value": "Slate-1224"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-25",
+      "fact_phrase": "current C7-Outpost-25 value is Slate-1225",
+      "kind": "fact",
+      "turn": 102,
+      "user": "The current C7-Outpost-25 value is Slate-1225.",
+      "value": "Slate-1225"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-26",
+      "fact_phrase": "current C7-Outpost-26 value is Slate-1226",
+      "kind": "fact",
+      "turn": 103,
+      "user": "The current C7-Outpost-26 value is Slate-1226.",
+      "value": "Slate-1226"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-27",
+      "fact_phrase": "current C7-Outpost-27 value is Slate-1227",
+      "kind": "fact",
+      "turn": 104,
+      "user": "The current C7-Outpost-27 value is Slate-1227.",
+      "value": "Slate-1227"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-28",
+      "fact_phrase": "current C7-Outpost-28 value is Slate-1228",
+      "kind": "fact",
+      "turn": 105,
+      "user": "The current C7-Outpost-28 value is Slate-1228.",
+      "value": "Slate-1228"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-29",
+      "fact_phrase": "current C7-Outpost-29 value is Slate-1229",
+      "kind": "fact",
+      "turn": 106,
+      "user": "The current C7-Outpost-29 value is Slate-1229.",
+      "value": "Slate-1229"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-30",
+      "fact_phrase": "current C7-Outpost-30 value is Slate-1230",
+      "kind": "fact",
+      "turn": 107,
+      "user": "The current C7-Outpost-30 value is Slate-1230.",
+      "value": "Slate-1230"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-31",
+      "fact_phrase": "current C7-Outpost-31 value is Slate-1231",
+      "kind": "fact",
+      "turn": 108,
+      "user": "The current C7-Outpost-31 value is Slate-1231.",
+      "value": "Slate-1231"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-32",
+      "fact_phrase": "current C7-Outpost-32 value is Slate-1232",
+      "kind": "fact",
+      "turn": 109,
+      "user": "The current C7-Outpost-32 value is Slate-1232.",
+      "value": "Slate-1232"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-33",
+      "fact_phrase": "current C7-Outpost-33 value is Slate-1233",
+      "kind": "fact",
+      "turn": 110,
+      "user": "The current C7-Outpost-33 value is Slate-1233.",
+      "value": "Slate-1233"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-34",
+      "fact_phrase": "current C7-Outpost-34 value is Slate-1234",
+      "kind": "fact",
+      "turn": 111,
+      "user": "The current C7-Outpost-34 value is Slate-1234.",
+      "value": "Slate-1234"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-35",
+      "fact_phrase": "current C7-Outpost-35 value is Slate-1235",
+      "kind": "fact",
+      "turn": 112,
+      "user": "The current C7-Outpost-35 value is Slate-1235.",
+      "value": "Slate-1235"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-36",
+      "fact_phrase": "current C7-Outpost-36 value is Slate-1236",
+      "kind": "fact",
+      "turn": 113,
+      "user": "The current C7-Outpost-36 value is Slate-1236.",
+      "value": "Slate-1236"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-37",
+      "fact_phrase": "current C7-Outpost-37 value is Slate-1237",
+      "kind": "fact",
+      "turn": 114,
+      "user": "The current C7-Outpost-37 value is Slate-1237.",
+      "value": "Slate-1237"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-38",
+      "fact_phrase": "current C7-Outpost-38 value is Slate-1238",
+      "kind": "fact",
+      "turn": 115,
+      "user": "The current C7-Outpost-38 value is Slate-1238.",
+      "value": "Slate-1238"
+    },
+    {
+      "assistant": "Recorded.",
+      "fact_id": "C7-Outpost-39",
+      "fact_phrase": "current C7-Outpost-39 value is Slate-1239",
+      "kind": "fact",
+      "turn": 116,
+      "user": "The current C7-Outpost-39 value is Slate-1239.",
+      "value": "Slate-1239"
+    },
+    {
+      "kind": "filler",
+      "turn": 117,
+      "user": "Log marker 117. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 118,
+      "user": "Log marker 118. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 119,
+      "user": "Log marker 119. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 120,
+      "user": "Log marker 120. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 121,
+      "user": "Log marker 121. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 122,
+      "user": "Log marker 122. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 123,
+      "user": "Log marker 123. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 124,
+      "user": "Log marker 124. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 125,
+      "user": "Log marker 125. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "accepts": [
+        "Basalt-811"
+      ],
+      "expected": "Basalt-811",
+      "fact_id": "C7-Fresh-0",
+      "kind": "probe",
+      "probe_id": "c7_fresh_0_d120",
+      "source_turn": 6,
+      "turn": 126,
+      "user": "What is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Basalt-812"
+      ],
+      "expected": "Basalt-812",
+      "fact_id": "C7-Fresh-1",
+      "kind": "probe",
+      "probe_id": "c7_fresh_1_d120",
+      "source_turn": 7,
+      "turn": 127,
+      "user": "What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "UNKNOWN"
+      ],
+      "expected": "UNKNOWN",
+      "fact_id": "C7-Fresh-2",
+      "kind": "probe",
+      "probe_id": "c7_fresh_2_d120",
+      "source_turn": 8,
+      "turn": 128,
+      "user": "What is the inspection password for C7-Fresh-2? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Jasper-711"
+      ],
+      "expected": "Jasper-711",
+      "fact_id": "C7-AliasBase-0",
+      "kind": "probe",
+      "probe_id": "c7_alias_0_d120",
+      "source_turn": 9,
+      "turn": 129,
+      "user": "What is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Jasper-712"
+      ],
+      "expected": "Jasper-712",
+      "fact_id": "C7-AliasBase-1",
+      "kind": "probe",
+      "probe_id": "c7_alias_1_d120",
+      "source_turn": 10,
+      "turn": 130,
+      "user": "What is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "kind": "filler",
+      "turn": 131,
+      "user": "Log marker 131. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 132,
+      "user": "Log marker 132. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 133,
+      "user": "Log marker 133. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 134,
+      "user": "Log marker 134. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 135,
+      "user": "Log marker 135. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "accepts": [
+        "UNKNOWN"
+      ],
+      "expected": "UNKNOWN",
+      "fact_id": "C7-AliasBase-2",
+      "kind": "probe",
+      "probe_id": "c7_alias_2_d120",
+      "source_turn": 16,
+      "turn": 136,
+      "user": "What is the inspection password for C7-AliasBase-2? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Onyx-911"
+      ],
+      "expected": "Onyx-911",
+      "fact_id": "C7-Vesper-0",
+      "kind": "probe",
+      "probe_id": "c7_correction_0_d120",
+      "source_turn": 17,
+      "turn": 137,
+      "user": "After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Onyx-912"
+      ],
+      "expected": "Onyx-912",
+      "fact_id": "C7-Vesper-1",
+      "kind": "probe",
+      "probe_id": "c7_correction_1_d120",
+      "source_turn": 18,
+      "turn": 138,
+      "user": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "UNKNOWN"
+      ],
+      "expected": "UNKNOWN",
+      "fact_id": "C7-Vesper-2",
+      "kind": "probe",
+      "probe_id": "c7_correction_2_d120",
+      "source_turn": 19,
+      "turn": 139,
+      "user": "What is the inspection password for C7-Vesper-2? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Reed-611|Cedar-1011"
+      ],
+      "expected": "Reed-611|Cedar-1011",
+      "fact_id": "C7-Archive-0",
+      "kind": "probe",
+      "probe_id": "c7_folded_0_d120",
+      "source_turn": 20,
+      "turn": 140,
+      "user": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "kind": "filler",
+      "turn": 141,
+      "user": "Log marker 141. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 142,
+      "user": "Log marker 142. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 143,
+      "user": "Log marker 143. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 144,
+      "user": "Log marker 144. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 145,
+      "user": "Log marker 145. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "accepts": [
+        "Reed-612|Cedar-1012"
+      ],
+      "expected": "Reed-612|Cedar-1012",
+      "fact_id": "C7-Archive-1",
+      "kind": "probe",
+      "probe_id": "c7_folded_1_d120",
+      "source_turn": 26,
+      "turn": 146,
+      "user": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "UNKNOWN"
+      ],
+      "expected": "UNKNOWN",
+      "fact_id": "C7-Archive-2",
+      "kind": "probe",
+      "probe_id": "c7_folded_2_d120",
+      "source_turn": 27,
+      "turn": 147,
+      "user": "What is the inspection password for C7-Archive-2? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "kind": "filler",
+      "turn": 148,
+      "user": "Log marker 148. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 149,
+      "user": "Log marker 149. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 150,
+      "user": "Log marker 150. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 151,
+      "user": "Log marker 151. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 152,
+      "user": "Log marker 152. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 153,
+      "user": "Log marker 153. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 154,
+      "user": "Log marker 154. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 155,
+      "user": "Log marker 155. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 156,
+      "user": "Log marker 156. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 157,
+      "user": "Log marker 157. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 158,
+      "user": "Log marker 158. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 159,
+      "user": "Log marker 159. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 160,
+      "user": "Log marker 160. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 161,
+      "user": "Log marker 161. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 162,
+      "user": "Log marker 162. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 163,
+      "user": "Log marker 163. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 164,
+      "user": "Log marker 164. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 165,
+      "user": "Log marker 165. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 166,
+      "user": "Log marker 166. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 167,
+      "user": "Log marker 167. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 168,
+      "user": "Log marker 168. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 169,
+      "user": "Log marker 169. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 170,
+      "user": "Log marker 170. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 171,
+      "user": "Log marker 171. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 172,
+      "user": "Log marker 172. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 173,
+      "user": "Log marker 173. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 174,
+      "user": "Log marker 174. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 175,
+      "user": "Log marker 175. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 176,
+      "user": "Log marker 176. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 177,
+      "user": "Log marker 177. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 178,
+      "user": "Log marker 178. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 179,
+      "user": "Log marker 179. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 180,
+      "user": "Log marker 180. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 181,
+      "user": "Log marker 181. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 182,
+      "user": "Log marker 182. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 183,
+      "user": "Log marker 183. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 184,
+      "user": "Log marker 184. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 185,
+      "user": "Log marker 185. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 186,
+      "user": "Log marker 186. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 187,
+      "user": "Log marker 187. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 188,
+      "user": "Log marker 188. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 189,
+      "user": "Log marker 189. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 190,
+      "user": "Log marker 190. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 191,
+      "user": "Log marker 191. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 192,
+      "user": "Log marker 192. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 193,
+      "user": "Log marker 193. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 194,
+      "user": "Log marker 194. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 195,
+      "user": "Log marker 195. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 196,
+      "user": "Log marker 196. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 197,
+      "user": "Log marker 197. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 198,
+      "user": "Log marker 198. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 199,
+      "user": "Log marker 199. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 200,
+      "user": "Log marker 200. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 201,
+      "user": "Log marker 201. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 202,
+      "user": "Log marker 202. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 203,
+      "user": "Log marker 203. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 204,
+      "user": "Log marker 204. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 205,
+      "user": "Log marker 205. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 206,
+      "user": "Log marker 206. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 207,
+      "user": "Log marker 207. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 208,
+      "user": "Log marker 208. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 209,
+      "user": "Log marker 209. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 210,
+      "user": "Log marker 210. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 211,
+      "user": "Log marker 211. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 212,
+      "user": "Log marker 212. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 213,
+      "user": "Log marker 213. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 214,
+      "user": "Log marker 214. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 215,
+      "user": "Log marker 215. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 216,
+      "user": "Log marker 216. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 217,
+      "user": "Log marker 217. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 218,
+      "user": "Log marker 218. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 219,
+      "user": "Log marker 219. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 220,
+      "user": "Log marker 220. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 221,
+      "user": "Log marker 221. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 222,
+      "user": "Log marker 222. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 223,
+      "user": "Log marker 223. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 224,
+      "user": "Log marker 224. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 225,
+      "user": "Log marker 225. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 226,
+      "user": "Log marker 226. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 227,
+      "user": "Log marker 227. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 228,
+      "user": "Log marker 228. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 229,
+      "user": "Log marker 229. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 230,
+      "user": "Log marker 230. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 231,
+      "user": "Log marker 231. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 232,
+      "user": "Log marker 232. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 233,
+      "user": "Log marker 233. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 234,
+      "user": "Log marker 234. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 235,
+      "user": "Log marker 235. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 236,
+      "user": "Log marker 236. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 237,
+      "user": "Log marker 237. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 238,
+      "user": "Log marker 238. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 239,
+      "user": "Log marker 239. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 240,
+      "user": "Log marker 240. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 241,
+      "user": "Log marker 241. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 242,
+      "user": "Log marker 242. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 243,
+      "user": "Log marker 243. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 244,
+      "user": "Log marker 244. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 245,
+      "user": "Log marker 245. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 246,
+      "user": "Log marker 246. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 247,
+      "user": "Log marker 247. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 248,
+      "user": "Log marker 248. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 249,
+      "user": "Log marker 249. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 250,
+      "user": "Log marker 250. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 251,
+      "user": "Log marker 251. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 252,
+      "user": "Log marker 252. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 253,
+      "user": "Log marker 253. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 254,
+      "user": "Log marker 254. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 255,
+      "user": "Log marker 255. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "accepts": [
+        "Basalt-811"
+      ],
+      "expected": "Basalt-811",
+      "fact_id": "C7-Fresh-0",
+      "kind": "probe",
+      "probe_id": "c7_fresh_0_d250",
+      "source_turn": 6,
+      "turn": 256,
+      "user": "What is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Basalt-812"
+      ],
+      "expected": "Basalt-812",
+      "fact_id": "C7-Fresh-1",
+      "kind": "probe",
+      "probe_id": "c7_fresh_1_d250",
+      "source_turn": 7,
+      "turn": 257,
+      "user": "What is the current C7-Fresh-1 value? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "UNKNOWN"
+      ],
+      "expected": "UNKNOWN",
+      "fact_id": "C7-Fresh-2",
+      "kind": "probe",
+      "probe_id": "c7_fresh_2_d250",
+      "source_turn": 8,
+      "turn": 258,
+      "user": "What is the inspection password for C7-Fresh-2? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Jasper-711"
+      ],
+      "expected": "Jasper-711",
+      "fact_id": "C7-AliasBase-0",
+      "kind": "probe",
+      "probe_id": "c7_alias_0_d250",
+      "source_turn": 9,
+      "turn": 259,
+      "user": "What is the current value for C7-Signal-0? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Jasper-712"
+      ],
+      "expected": "Jasper-712",
+      "fact_id": "C7-AliasBase-1",
+      "kind": "probe",
+      "probe_id": "c7_alias_1_d250",
+      "source_turn": 10,
+      "turn": 260,
+      "user": "What is the current value for C7-Signal-1? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "kind": "filler",
+      "turn": 261,
+      "user": "Log marker 261. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 262,
+      "user": "Log marker 262. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 263,
+      "user": "Log marker 263. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 264,
+      "user": "Log marker 264. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 265,
+      "user": "Log marker 265. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "accepts": [
+        "UNKNOWN"
+      ],
+      "expected": "UNKNOWN",
+      "fact_id": "C7-AliasBase-2",
+      "kind": "probe",
+      "probe_id": "c7_alias_2_d250",
+      "source_turn": 16,
+      "turn": 266,
+      "user": "What is the inspection password for C7-AliasBase-2? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Onyx-911"
+      ],
+      "expected": "Onyx-911",
+      "fact_id": "C7-Vesper-0",
+      "kind": "probe",
+      "probe_id": "c7_correction_0_d250",
+      "source_turn": 17,
+      "turn": 267,
+      "user": "After all corrections, what is the current C7-Vesper-0 value? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Onyx-912"
+      ],
+      "expected": "Onyx-912",
+      "fact_id": "C7-Vesper-1",
+      "kind": "probe",
+      "probe_id": "c7_correction_1_d250",
+      "source_turn": 18,
+      "turn": 268,
+      "user": "After all corrections, what is the current C7-Vesper-1 value? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "UNKNOWN"
+      ],
+      "expected": "UNKNOWN",
+      "fact_id": "C7-Vesper-2",
+      "kind": "probe",
+      "probe_id": "c7_correction_2_d250",
+      "source_turn": 19,
+      "turn": 269,
+      "user": "What is the inspection password for C7-Vesper-2? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "Reed-611|Cedar-1011"
+      ],
+      "expected": "Reed-611|Cedar-1011",
+      "fact_id": "C7-Archive-0",
+      "kind": "probe",
+      "probe_id": "c7_folded_0_d250",
+      "source_turn": 20,
+      "turn": 270,
+      "user": "For C7-Archive-0, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "kind": "filler",
+      "turn": 271,
+      "user": "Log marker 271. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 272,
+      "user": "Log marker 272. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 273,
+      "user": "Log marker 273. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 274,
+      "user": "Log marker 274. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 275,
+      "user": "Log marker 275. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "accepts": [
+        "Reed-612|Cedar-1012"
+      ],
+      "expected": "Reed-612|Cedar-1012",
+      "fact_id": "C7-Archive-1",
+      "kind": "probe",
+      "probe_id": "c7_folded_1_d250",
+      "source_turn": 26,
+      "turn": 276,
+      "user": "For C7-Archive-1, give outbound then inbound tags separated by |. Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "accepts": [
+        "UNKNOWN"
+      ],
+      "expected": "UNKNOWN",
+      "fact_id": "C7-Archive-2",
+      "kind": "probe",
+      "probe_id": "c7_folded_2_d250",
+      "source_turn": 27,
+      "turn": 277,
+      "user": "What is the inspection password for C7-Archive-2? Reply only with the answer; if unspecified, reply UNKNOWN."
+    },
+    {
+      "kind": "filler",
+      "turn": 278,
+      "user": "Log marker 278. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 279,
+      "user": "Log marker 279. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 280,
+      "user": "Log marker 280. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 281,
+      "user": "Log marker 281. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 282,
+      "user": "Log marker 282. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 283,
+      "user": "Log marker 283. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 284,
+      "user": "Log marker 284. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 285,
+      "user": "Log marker 285. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 286,
+      "user": "Log marker 286. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 287,
+      "user": "Log marker 287. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 288,
+      "user": "Log marker 288. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 289,
+      "user": "Log marker 289. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 290,
+      "user": "Log marker 290. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 291,
+      "user": "Log marker 291. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 292,
+      "user": "Log marker 292. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 293,
+      "user": "Log marker 293. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 294,
+      "user": "Log marker 294. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 295,
+      "user": "Log marker 295. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 296,
+      "user": "Log marker 296. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 297,
+      "user": "Log marker 297. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 298,
+      "user": "Log marker 298. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 299,
+      "user": "Log marker 299. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    },
+    {
+      "kind": "filler",
+      "turn": 300,
+      "user": "Log marker 300. Discuss briefly how to arrange empty shipping crates; do not invent or change any named record values."
+    }
+  ]
+}

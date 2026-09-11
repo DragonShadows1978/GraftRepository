@@ -1,0 +1,47 @@
+{
+  "accepted": false,
+  "attempts": [
+    {
+      "coverage": 0.25,
+      "hit_count": 2,
+      "need_count": 8,
+      "prompt_index": 0,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "For the archive: the  name \u201cC7-Archive-1\u201d refers to a specific item or record, the code \u201cCedar-1012\u201d is an identifier linked to that item, the number \u201c1012\u201d is part of that identifier, and the time \u201cC7\u201d is a label or tag associated with it."
+    },
+    {
+      "coverage": 0.25,
+      "hit_count": 2,
+      "need_count": 8,
+      "prompt_index": 1,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "ARCHIVE NOTE \u2014 The conversation established that the  inbound tag for the C7\u2011Vesper\u20112 system is \u201cCedar\u20111012.\u201d  The user\u2019s statement was recorded verbatim.  The system\u2019s tag is a code that identifies the inbound tag for the C7\u2011Vesper\u20112 system.  The user\u2019s statement was recorded."
+    },
+    {
+      "coverage": 0.25,
+      "hit_count": 2,
+      "need_count": 8,
+      "prompt_index": 2,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "The facts to archive are:   \n\n- **C7\u2011Archive\u20111** \u2013 the name of the archive.  \n- **Cedar\u20111012** \u2013 the inbound tag that is linked to that archive.  \n\nNo other names, codes, numbers or times were mentioned."
+    }
+  ],
+  "digest_text": null,
+  "error": null,
+  "result": {
+    "accepted": false,
+    "best_cov": 0.25,
+    "hit_count": 2,
+    "need_count": 8
+  },
+  "source_payload_sha256": {
+    "0013.npz": "653ab667d820b47cfbc2a857bd556857cc8854c54d2b4727d70800ea2889250e",
+    "0015.npz": "9c882d94396ad0476a71969729cef6e44cb8043de52b7ff65bf40fcaa8a9cea3",
+    "0016.npz": "49a073351cefa1dc89c811dbaa43c2fe2a6b1c6270fd532894d0e02f5e956edf",
+    "0017.npz": "56c498c47671305405ef06e8f6037b6a5d942ceeab61c1626f2d5c032646fcb4"
+  },
+  "turn": 55
+}

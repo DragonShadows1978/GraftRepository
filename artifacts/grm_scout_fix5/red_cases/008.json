@@ -1,0 +1,45 @@
+{
+  "attempts": [
+    {
+      "coverage": 0.0,
+      "hit_count": 0,
+      "need_count": 10,
+      "prompt_index": 0,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "For the archive: the retained identifiers in the archival record include ."
+    },
+    {
+      "coverage": 0.0,
+      "hit_count": 0,
+      "need_count": 10,
+      "prompt_index": 1,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "ARCHIVE NOTE \u2014 The conversation established that the retained identifiers in the archival record include ."
+    },
+    {
+      "coverage": 0.0,
+      "hit_count": 0,
+      "need_count": 10,
+      "prompt_index": 2,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "The facts to archive are: retained identifiers in the archival record include ."
+    }
+  ],
+  "budget": 240,
+  "digest_text": null,
+  "prompts": [
+    "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.<|end|><|start|>assistant<|channel|>final<|message|> For the archive: the",
+    "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Write a brief archive note covering everything above in complete sentences, preserving every name, code, number, and time verbatim and stating what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> ARCHIVE NOTE \u2014 The conversation established that the",
+    "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>List every fact from the conversation above: every name, code, number, and time, and what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> The facts to archive are:"
+  ],
+  "result": {
+    "accepted": false,
+    "best_cov": 0.0,
+    "hit_count": 0,
+    "need_count": 10
+  },
+  "turn": 8
+}

@@ -1,0 +1,39 @@
+{
+  "changed_turns": [
+    2
+  ],
+  "effective_questions_path": "artifacts/grm_c7/r3/effective_questions.json",
+  "evidence_class": "CPU fixture byte/schema inspection",
+  "fixture_sha256": "b648ebb71072d1c357146f6cedb22f6d93dd259a69cb50d912e1e9b564624c17",
+  "note": "Fixture correction-index metadata is retained verbatim (14 indexed later corrections); turn2 adds one actual supersede event (15 total). All 299 other turn byte spans are verified by the registered test; effective probe instruction transform applies to memory/oracle/sentinels.",
+  "old_fixture_sha256": "18c4bc891115ac6d96f7c443ad023f3e923ee92ab6aac21a1f1150bd14408ff0",
+  "probe_count": 60,
+  "production_prompt": "Recall probe. What is the current {fact_id} value? Reply with only the value.",
+  "r2_effective_prompt_before": "What is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply unknown.",
+  "r3_effective_prompt_after": "What is the current C7-Fresh-0 value? Reply only with the answer.",
+  "registered_correction_index_entries": 14,
+  "registered_prompt_before": "What is the current C7-Fresh-0 value? Reply only with the answer; if unspecified, reply UNKNOWN.",
+  "supersede_event_count": 15,
+  "turn2_after": {
+    "assistant": "Recorded.",
+    "correction_command": "correct memory: current C7-Vesper-0 value is Mica-431 => Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+    "fact_id": "C7-Vesper-0",
+    "fact_phrase": "current C7-Vesper-0 value is Flint-511",
+    "kind": "supersede",
+    "old_value": "Mica-431",
+    "turn": 2,
+    "user": "Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+    "value": "Flint-511"
+  },
+  "turn2_before": {
+    "assistant": "Recorded.",
+    "fact_id": "C7-Vesper-0",
+    "fact_phrase": "current C7-Vesper-0 value is Flint-511",
+    "kind": "fact",
+    "turn": 2,
+    "user": "Correction of both original records: the current C7-Vesper-0 value is Flint-511; the current C7-Vesper-1 value is Flint-512. The previous Mica values are obsolete.",
+    "value": "Flint-511"
+  },
+  "turn_count": 300,
+  "unchanged_probe_records": true
+}

@@ -1,0 +1,11 @@
+{
+  "fold": {
+    "index": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-086-093/checkpoint/repository/index.npz",
+    "manifest": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-086-093/checkpoint/repository/manifest.json",
+    "result": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-086-093/folds/091-b0a742d7fa0f498ea4ab9d653be59f4c/result.json",
+    "start": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-086-093/folds/091-b0a742d7fa0f498ea4ab9d653be59f4c/start.json",
+    "turn": 91
+  },
+  "registration_sha256": "631b6ad9891149ec6efdbfbab4409afdf5a4e34c1e29cce326fd76cbf755cb46",
+  "seconds": 80
+}

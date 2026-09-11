@@ -1,0 +1,51 @@
+{
+  "status": "RED",
+  "complete": true,
+  "row_receipts": 80,
+  "A0_parity": true,
+  "groups": {
+    "controls": {
+      "A0": {
+        "exact_correct": 0,
+        "wrong_value_error": 0,
+        "abstention_error": 0,
+        "unsupported_answer_error": 10
+      },
+      "A1": {
+        "exact_correct": 7,
+        "wrong_value_error": 0,
+        "abstention_error": 0,
+        "unsupported_answer_error": 3
+      }
+    },
+    "fresh": {
+      "A0": {
+        "exact_correct": 2,
+        "wrong_value_error": 0,
+        "abstention_error": 8,
+        "unsupported_answer_error": 0
+      },
+      "A1": {
+        "exact_correct": 0,
+        "wrong_value_error": 0,
+        "abstention_error": 10,
+        "unsupported_answer_error": 0
+      }
+    },
+    "folded": {
+      "A0": {
+        "exact_correct": 0,
+        "wrong_value_error": 4,
+        "abstention_error": 6,
+        "unsupported_answer_error": 0
+      },
+      "A1": {
+        "exact_correct": 0,
+        "wrong_value_error": 4,
+        "abstention_error": 6,
+        "unsupported_answer_error": 0
+      }
+    }
+  },
+  "scope": "fixed-mount reader contrast, refusal carry-forwards separated; not admission or product certification"
+}

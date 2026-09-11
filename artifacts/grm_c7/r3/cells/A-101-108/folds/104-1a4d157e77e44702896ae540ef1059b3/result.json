@@ -1,0 +1,29 @@
+{
+  "accepted": true,
+  "attempts": [
+    {
+      "coverage": 1.0,
+      "hit_count": 8,
+      "need_count": 8,
+      "prompt_index": 0,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "For the archive: the  current C7\u2011Outpost\u201120 value is Slate\u20111220, the current C7\u2011Outpost\u201121 value is Slate\u20111221, the current C7\u2011Outpost\u201122 value is Slate\u20111222, and the current C7\u2011Outpost\u201123 value is Slate\u20111223."
+    }
+  ],
+  "digest_text": "For the archive: the  current C7\u2011Outpost\u201120 value is Slate\u20111220, the current C7\u2011Outpost\u201121 value is Slate\u20111221, the current C7\u2011Outpost\u201122 value is Slate\u20111222, and the current C7\u2011Outpost\u201123 value is Slate\u20111223.",
+  "error": null,
+  "result": {
+    "accepted": true,
+    "best_cov": 1.0,
+    "hit_count": 8,
+    "need_count": 8
+  },
+  "source_payload_sha256": {
+    "0084.npz": "f2e61addda709ae9f253daab50a2c2215f5a42463dcec8cefa8cecc864762c4d",
+    "0085.npz": "31fbb3b46efb13bb537a9bd9e338ed896d634e431d7bc8405c6fec66811240fb",
+    "0086.npz": "7e8b1557387f69998cbada81caebae31f656a641a7666b43f8f2721f23d8f8fc",
+    "0087.npz": "aea47c836d0af81c5eb1036cebeb145fbe48d19d207a929c6d0ed77544136935"
+  },
+  "turn": 104
+}

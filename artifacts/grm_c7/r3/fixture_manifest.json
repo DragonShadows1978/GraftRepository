@@ -1,0 +1,11 @@
+{
+  "aliases": 15,
+  "amendment": "Only turn 2 receives supersede, old_value and correction_command; correction index list retained verbatim; effective questions separate",
+  "corrections": 14,
+  "entities": 52,
+  "fixture_sha256": "b648ebb71072d1c357146f6cedb22f6d93dd259a69cb50d912e1e9b564624c17",
+  "parent_fixture_sha256": "18c4bc891115ac6d96f7c443ad023f3e923ee92ab6aac21a1f1150bd14408ff0",
+  "probes": 60,
+  "schema": "grm.c7.fixture-manifest.v1",
+  "turns": 300
+}

@@ -1,0 +1,25 @@
+{
+  "attempts": [
+    {
+      "coverage": 1.0,
+      "hit_count": 12,
+      "need_count": 12,
+      "prompt_index": 0,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "For the archive: the retained identifiers in the archival record include C7-Handle-07, C7-Handle-08, C7-Handle-09, C7-Handle-10, C7-Outpost-07, C7-Outpost-08, C7-Outpost-09, C7-Outpost-10, Slate-1207, Slate-1208, Slate-1209, Slate-1210."
+    }
+  ],
+  "budget": 288,
+  "digest_text": "For the archive: the retained identifiers in the archival record include C7-Handle-07, C7-Handle-08, C7-Handle-09, C7-Handle-10, C7-Outpost-07, C7-Outpost-08, C7-Outpost-09, C7-Outpost-10, Slate-1207, Slate-1208, Slate-1209, Slate-1210.",
+  "prompts": [
+    "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.\n\nKeep every one of these 12 facts (fact tokens across the source spans below), with their relationships and corrections intact:\n[source 1] The current C7-Outpost-07 value is Slate-1207. C7-Handle-07 is an alias for C7-Outpost-07.\n[source 2] The current C7-Outpost-08 value is Slate-1208. C7-Handle-08 is an alias for C7-Outpost-08.\n[source 3] The current C7-Outpost-09 value is Slate-1209. C7-Handle-09 is an alias for C7-Outpost-09.\n[source 4] The current C7-Outpost-10 value is Slate-1210. C7-Handle-10 is an alias for C7-Outpost-10.\n\nWrite a single prose archive block in complete sentences. Do not copy the sources or their list format; combine their facts, preserving identifiers verbatim. Do not invent times or other unstated details.\n<|end|><|start|>assistant<|channel|>final<|message|> For the archive: the"
+  ],
+  "result": {
+    "accepted": true,
+    "best_cov": 1.0,
+    "hit_count": 12,
+    "need_count": 12
+  },
+  "turn": 91
+}

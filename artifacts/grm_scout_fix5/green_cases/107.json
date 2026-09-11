@@ -1,0 +1,25 @@
+{
+  "attempts": [
+    {
+      "coverage": 1.0,
+      "hit_count": 8,
+      "need_count": 8,
+      "prompt_index": 0,
+      "qc": true,
+      "relaxed_list": false,
+      "text": "For the archive: the retained identifiers in the archival record include C7-Outpost-23, C7-Outpost-24, C7-Outpost-25, C7-Outpost-26, Slate-1223, Slate-1224, Slate-1225, Slate-1226."
+    }
+  ],
+  "budget": 192,
+  "digest_text": "For the archive: the retained identifiers in the archival record include C7-Outpost-23, C7-Outpost-24, C7-Outpost-25, C7-Outpost-26, Slate-1223, Slate-1224, Slate-1225, Slate-1226.",
+  "prompts": [
+    "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.\n\nKeep every one of these 8 facts (fact tokens across the source spans below), with their relationships and corrections intact:\n[source 1] The current C7-Outpost-23 value is Slate-1223.\n[source 2] The current C7-Outpost-24 value is Slate-1224.\n[source 3] The current C7-Outpost-25 value is Slate-1225.\n[source 4] The current C7-Outpost-26 value is Slate-1226.\n\nWrite a single prose archive block in complete sentences. Do not copy the sources or their list format; combine their facts, preserving identifiers verbatim. Do not invent times or other unstated details.\n<|end|><|start|>assistant<|channel|>final<|message|> For the archive: the"
+  ],
+  "result": {
+    "accepted": true,
+    "best_cov": 1.0,
+    "hit_count": 8,
+    "need_count": 8
+  },
+  "turn": 107
+}

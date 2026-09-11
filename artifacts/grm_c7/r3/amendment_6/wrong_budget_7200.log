@@ -1,0 +1,35 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________________________ test_registration_and_budget _________________________
+
+    def test_registration_and_budget():
+        r = common.verify()
+        assert len(r['cells']) == 39 and set(r['arms']) == {'A'}
+        assert r['budget_seconds_arm_A'] == 7920
+        assert r['arms']['A']['flags']['arena_width'] == 96
+        assert r['fixes'] == {'FIX-3':True,'FIX-4':True,'FIX-5':True,'FIX-7':False}
+        assert run.OUT == R3 and run.FIX == R3/'fixture.json'
+        assert run.binding('A')['registration_sha256'] == common.sha(R3/'registration.json')
+        cell = r['cells'][0]
+>       run.reserve_check(r, cell, 7640, 0)
+
+tests/test_grm_c7_r3.py:130: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+r = {'acceptance': {'complete_rows_required': 60, 'coverage': 0.7, 'empty_missing_or_partial': 'NOT_RUN/INCOMPLETE, never ..., ...}, 'agent_effort': 'high', 'agent_identity_receipt': 'logs/grm_c7_a6.log:6,10', 'agent_model': 'gpt-6-astra', ...}
+cell = {'arm': 'A', 'cooldown_seconds': 30, 'depends': None, 'estimate_seconds': 143.436089, ...}
+completed = 7640, reserved = 0
+
+    def reserve_check(r, cell, completed, reserved):
+        # Prior art: C2 pessimistic reservation accounting (GRM, 2026). Charge
+        # orphaned reservations in full. No automatic retry after controller loss.
+        if r['arms'][cell['arm']]['status'] != 'FIT_ESTIMATE':
+            raise ValueError('NON_FIT: registered arm never launched/retried')
+        if completed + reserved + cell['worker_seconds'] > 7200:
+>           raise ValueError('BUDGET_RAIL: next cell cannot be reserved')
+E           ValueError: BUDGET_RAIL: next cell cannot be reserved
+
+/tmp/grm-c7-r3-mutant-oenf5f5v/mutant.py:101: ValueError
+=========================== short test summary info ============================
+FAILED tests/test_grm_c7_r3.py::test_registration_and_budget - ValueError: BU...
+1 failed in 0.18s

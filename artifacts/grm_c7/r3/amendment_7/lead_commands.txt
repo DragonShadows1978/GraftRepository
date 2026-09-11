@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /mnt/ForgeRealm/wt/grm-c7
+# Prior art: C7/RD1 foreground leased replay (GRM contributors, 2026).
+# Six 280s leases; 30s foreground cooldown outside lease. No retries, no kills.
+# CPU verification precedes every lease. --check-only never imports a model.
+CUDA_VISIBLE_DEVICES='' python scripts/grm_c7_middle_replay.py --dry-run
+if [[ "${1:-}" == '--check-only' ]]; then exit 0; fi
+if [[ $# -ne 0 ]]; then echo 'Unsupported argument' >&2; exit 2; fi
+for batch in B1 B2 B3 B4 B5 B6; do
+    status="$(CUDA_VISIBLE_DEVICES='' python - "$batch" <<'PY'
+import sys
+from scripts.grm_c7_amendment7 import OUT, read, sha, REG, need
+p=OUT/'gpu'/sys.argv[1]
+if not p.exists():print('UNSTARTED')
+else:
+    c=read(p/'controller.json')
+    need(c['registration_sha256']==sha(REG),'RESULT_BINDING_MISMATCH')
+    need(c['status']=='COMPLETE','STARTED_CELL_NEVER_RETRIED')
+    print('COMPLETE')
+PY
+)"
+    if [[ "$status" == 'COMPLETE' ]]; then
+        echo "Verified completed batch: $batch"
+    else
+        python scripts/grm_c7_middle_replay.py --batch "$batch"
+    fi
+done
+python scripts/grm_c7_middle_replay.py --summary > artifacts/grm_c7/r3/amendment_7/gpu_summary.json

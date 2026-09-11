@@ -1,0 +1,3416 @@
+[
+  {
+    "class": "folded",
+    "expected": "Reed-611|Cedar-1011",
+    "probe_id": "c7_folded_0_d005",
+    "turn": 25,
+    "versions": {
+      "r2": {
+        "answer": "Reed-611 | unknown",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/checkpoint",
+        "excluded_live_ids": [
+          15,
+          16
+        ],
+        "identified": [
+          2
+        ],
+        "identifier_tokens": [
+          "c7-archive-0"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          2,
+          3
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          2,
+          3,
+          0,
+          4,
+          10,
+          11
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/probes.jsonl:2",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Reed-611 | unknown",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 2,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 3,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the outbound tag is Reed-611.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          },
+          {
+            "checkpoint_retired": false,
+            "id": 16,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 20,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the inbound tag is Cedar-1011.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Cedar-1011 | Cedar-1011",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-024-031/checkpoint",
+        "excluded_live_ids": [
+          18,
+          19
+        ],
+        "identified": [],
+        "identifier_tokens": [
+          "c7-archive-0"
+        ],
+        "mechanism": "outbound digest does not bind; FIX4 serves the ASCII inbound recency node only",
+        "mounted_ids": [
+          19
+        ],
+        "policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "ranking": [
+          10,
+          16,
+          12,
+          13,
+          11,
+          15
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-024-031/probes.jsonl:2",
+        "score": {
+          "abstained": false,
+          "abstention_error": 0,
+          "answer": "Cedar-1011 | Cedar-1011",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 1
+        },
+        "served_from_node_ids": [
+          19
+        ],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 3,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-009-016/folds/009-c13aa9d99c854db890903ab7c56359ad/result.json",
+                "turn": 9
+              }
+            ],
+            "source_turn": 3,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the outbound tag is Reed-611.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          },
+          {
+            "checkpoint_retired": false,
+            "id": 19,
+            "retired_at_probe": false,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-056-062/folds/060-eb60800b61f34068853339a96d043022/result.json",
+                "turn": 60
+              }
+            ],
+            "source_turn": 20,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the inbound tag is Cedar-1011.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "folded",
+    "expected": "Reed-611|Cedar-1011",
+    "probe_id": "c7_folded_0_d030",
+    "turn": 50,
+    "versions": {
+      "r2": {
+        "answer": "Reed-611 | unknown",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-048-055/checkpoint",
+        "excluded_live_ids": [
+          28,
+          29
+        ],
+        "identified": [
+          16,
+          2
+        ],
+        "identifier_tokens": [
+          "c7-archive-0"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          2,
+          16
+        ],
+        "policy_branch": "declared_synthesis_identified_set",
+        "ranking": [
+          16,
+          2,
+          18,
+          3,
+          17,
+          0
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-048-055/probes.jsonl:3",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Reed-611 | unknown",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 2,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 3,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the outbound tag is Reed-611.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          },
+          {
+            "checkpoint_retired": false,
+            "id": 16,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 20,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the inbound tag is Cedar-1011.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Cedar-1011 | Cedar-1011",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-048-055/checkpoint",
+        "excluded_live_ids": [
+          34,
+          35
+        ],
+        "identified": [
+          19
+        ],
+        "identifier_tokens": [
+          "c7-archive-0"
+        ],
+        "mechanism": "outbound Unicode digest does not bind; ASCII inbound source binds; missing outbound at readout",
+        "mounted_ids": [
+          19
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          19,
+          21,
+          20,
+          27,
+          10,
+          26
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-048-055/probes.jsonl:3",
+        "score": {
+          "abstained": false,
+          "abstention_error": 0,
+          "answer": "Cedar-1011 | Cedar-1011",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 1
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 3,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-009-016/folds/009-c13aa9d99c854db890903ab7c56359ad/result.json",
+                "turn": 9
+              }
+            ],
+            "source_turn": 3,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the outbound tag is Reed-611.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          },
+          {
+            "checkpoint_retired": false,
+            "id": 19,
+            "retired_at_probe": false,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-056-062/folds/060-eb60800b61f34068853339a96d043022/result.json",
+                "turn": 60
+              }
+            ],
+            "source_turn": 20,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the inbound tag is Cedar-1011.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "folded",
+    "expected": "Reed-611|Cedar-1011",
+    "probe_id": "c7_folded_0_d060",
+    "turn": 80,
+    "versions": {
+      "r2": {
+        "answer": "Reed-611 | unknown",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-078-085/checkpoint",
+        "excluded_live_ids": [
+          53,
+          58
+        ],
+        "identified": [
+          16,
+          2
+        ],
+        "identifier_tokens": [
+          "c7-archive-0"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          2,
+          16
+        ],
+        "policy_branch": "declared_synthesis_identified_set",
+        "ranking": [
+          16,
+          2,
+          18,
+          3,
+          17,
+          0
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-078-085/probes.jsonl:3",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Reed-611 | unknown",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 2,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 3,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the outbound tag is Reed-611.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          },
+          {
+            "checkpoint_retired": false,
+            "id": 16,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 20,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the inbound tag is Cedar-1011.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Not in memory: no stored record matches c7-archive-0.",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-078-085/checkpoint",
+        "excluded_live_ids": [
+          60,
+          65
+        ],
+        "identified": [],
+        "identifier_tokens": [
+          "c7-archive-0"
+        ],
+        "mechanism": "accepted folds retired ASCII raw sources; Unicode-dash digest fails own-text identifier binding; deterministic admission refusal before generation",
+        "mounted_ids": [],
+        "policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "ranking": [
+          10,
+          26,
+          48,
+          27,
+          22,
+          16
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-078-085/probes.jsonl:3",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Not in memory: no stored record matches c7-archive-0.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 3,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-009-016/folds/009-c13aa9d99c854db890903ab7c56359ad/result.json",
+                "turn": 9
+              }
+            ],
+            "source_turn": 3,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the outbound tag is Reed-611.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          },
+          {
+            "checkpoint_retired": true,
+            "id": 19,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-056-062/folds/060-eb60800b61f34068853339a96d043022/result.json",
+                "turn": 60
+              }
+            ],
+            "source_turn": 20,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the inbound tag is Cedar-1011.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "folded",
+    "expected": "Reed-611|Cedar-1011",
+    "probe_id": "c7_folded_0_d120",
+    "turn": 140,
+    "versions": {
+      "r2": {
+        "answer": "Reed-611 | unknown",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-133-140/checkpoint",
+        "excluded_live_ids": [
+          106,
+          107
+        ],
+        "identified": [
+          16,
+          2
+        ],
+        "identifier_tokens": [
+          "c7-archive-0"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          2,
+          16
+        ],
+        "policy_branch": "declared_synthesis_identified_set",
+        "ranking": [
+          16,
+          2,
+          18,
+          3,
+          17,
+          0
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-133-140/probes.jsonl:5",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Reed-611 | unknown",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 2,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 3,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the outbound tag is Reed-611.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          },
+          {
+            "checkpoint_retired": false,
+            "id": 16,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 20,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the inbound tag is Cedar-1011.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Not in memory: no stored record matches c7-archive-0.",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-133-140/checkpoint",
+        "excluded_live_ids": [
+          122,
+          123
+        ],
+        "identified": [],
+        "identifier_tokens": [
+          "c7-archive-0"
+        ],
+        "mechanism": "accepted folds retired ASCII raw sources; Unicode-dash digest fails own-text identifier binding; deterministic admission refusal before generation",
+        "mounted_ids": [],
+        "policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "ranking": [
+          89,
+          10,
+          26,
+          99,
+          22,
+          104
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-133-140/probes.jsonl:5",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Not in memory: no stored record matches c7-archive-0.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 3,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-009-016/folds/009-c13aa9d99c854db890903ab7c56359ad/result.json",
+                "turn": 9
+              }
+            ],
+            "source_turn": 3,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the outbound tag is Reed-611.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          },
+          {
+            "checkpoint_retired": true,
+            "id": 19,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-056-062/folds/060-eb60800b61f34068853339a96d043022/result.json",
+                "turn": 60
+              }
+            ],
+            "source_turn": 20,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the inbound tag is Cedar-1011.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "folded",
+    "expected": "Reed-611|Cedar-1011",
+    "probe_id": "c7_folded_0_d250",
+    "turn": 270,
+    "versions": {
+      "r2": {
+        "answer": "Reed-611 | unknown",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-265-272/checkpoint",
+        "excluded_live_ids": [
+          224,
+          225
+        ],
+        "identified": [
+          16,
+          2
+        ],
+        "identifier_tokens": [
+          "c7-archive-0"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          2,
+          16
+        ],
+        "policy_branch": "declared_synthesis_identified_set",
+        "ranking": [
+          16,
+          2,
+          18,
+          3,
+          17,
+          0
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-265-272/probes.jsonl:5",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Reed-611 | unknown",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 2,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 3,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the outbound tag is Reed-611.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          },
+          {
+            "checkpoint_retired": false,
+            "id": 16,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 20,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the inbound tag is Cedar-1011.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Not in memory: no stored record matches c7-archive-0.",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-265-272/checkpoint",
+        "excluded_live_ids": [
+          240,
+          241
+        ],
+        "identified": [],
+        "identifier_tokens": [
+          "c7-archive-0"
+        ],
+        "mechanism": "accepted folds retired ASCII raw sources; Unicode-dash digest fails own-text identifier binding; deterministic admission refusal before generation",
+        "mounted_ids": [],
+        "policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "ranking": [
+          89,
+          10,
+          26,
+          99,
+          22,
+          104
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-265-272/probes.jsonl:5",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Not in memory: no stored record matches c7-archive-0.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 3,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-009-016/folds/009-c13aa9d99c854db890903ab7c56359ad/result.json",
+                "turn": 9
+              }
+            ],
+            "source_turn": 3,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the outbound tag is Reed-611.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          },
+          {
+            "checkpoint_retired": true,
+            "id": 19,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-056-062/folds/060-eb60800b61f34068853339a96d043022/result.json",
+                "turn": 60
+              }
+            ],
+            "source_turn": 20,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-0 the inbound tag is Cedar-1011.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "folded",
+    "expected": "Reed-612|Cedar-1012",
+    "probe_id": "c7_folded_1_d005",
+    "turn": 31,
+    "versions": {
+      "r2": {
+        "answer": "Outbound: Cedar-1012 | Inbound: unknown.",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/checkpoint",
+        "excluded_live_ids": [
+          20,
+          21
+        ],
+        "identified": [
+          17,
+          3
+        ],
+        "identifier_tokens": [
+          "c7-archive-1"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          3,
+          17
+        ],
+        "policy_branch": "declared_synthesis_identified_set",
+        "ranking": [
+          17,
+          3,
+          18,
+          16,
+          2,
+          0
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/probes.jsonl:3",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Outbound: Cedar-1012 | Inbound: unknown.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 3,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 4,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the outbound tag is Reed-612.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          },
+          {
+            "checkpoint_retired": false,
+            "id": 17,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 26,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the inbound tag is Cedar-1012.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Cedar-1012 | Cedar-1012",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-024-031/checkpoint",
+        "excluded_live_ids": [
+          24,
+          25
+        ],
+        "identified": [
+          20
+        ],
+        "identifier_tokens": [
+          "c7-archive-1"
+        ],
+        "mechanism": "outbound Unicode digest does not bind; ASCII inbound source binds; missing outbound at readout",
+        "mounted_ids": [
+          20,
+          21
+        ],
+        "policy_branch": "one_off_rank_identifier_insurance_k3",
+        "ranking": [
+          10,
+          20,
+          21,
+          19,
+          22,
+          16
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-024-031/probes.jsonl:3",
+        "score": {
+          "abstained": false,
+          "abstention_error": 0,
+          "answer": "Cedar-1012 | Cedar-1012",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 1
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 4,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-009-016/folds/009-c13aa9d99c854db890903ab7c56359ad/result.json",
+                "turn": 9
+              }
+            ],
+            "source_turn": 4,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the outbound tag is Reed-612.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          },
+          {
+            "checkpoint_retired": false,
+            "id": 20,
+            "retired_at_probe": false,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-056-062/folds/060-eb60800b61f34068853339a96d043022/result.json",
+                "turn": 60
+              }
+            ],
+            "source_turn": 26,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the inbound tag is Cedar-1012.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "folded",
+    "expected": "Reed-612|Cedar-1012",
+    "probe_id": "c7_folded_1_d030",
+    "turn": 56,
+    "versions": {
+      "r2": {
+        "answer": "Outbound: Cedar-1012 | Inbound: unknown",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint",
+        "excluded_live_ids": [
+          33,
+          36
+        ],
+        "identified": [
+          17,
+          3
+        ],
+        "identifier_tokens": [
+          "c7-archive-1"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          3,
+          17
+        ],
+        "policy_branch": "declared_synthesis_identified_set",
+        "ranking": [
+          17,
+          3,
+          18,
+          16,
+          2,
+          0
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/probes.jsonl:1",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Outbound: Cedar-1012 | Inbound: unknown",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 3,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 4,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the outbound tag is Reed-612.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          },
+          {
+            "checkpoint_retired": false,
+            "id": 17,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 26,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the inbound tag is Cedar-1012.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Cedar-1012 | Cedar-1012",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-056-062/checkpoint",
+        "excluded_live_ids": [
+          39,
+          42
+        ],
+        "identified": [
+          20
+        ],
+        "identifier_tokens": [
+          "c7-archive-1"
+        ],
+        "mechanism": "outbound Unicode digest does not bind; ASCII inbound source binds; missing outbound at readout",
+        "mounted_ids": [
+          20
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          20,
+          21,
+          19,
+          27,
+          10,
+          26
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-056-062/probes.jsonl:1",
+        "score": {
+          "abstained": false,
+          "abstention_error": 0,
+          "answer": "Cedar-1012 | Cedar-1012",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 1
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 4,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-009-016/folds/009-c13aa9d99c854db890903ab7c56359ad/result.json",
+                "turn": 9
+              }
+            ],
+            "source_turn": 4,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the outbound tag is Reed-612.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          },
+          {
+            "checkpoint_retired": true,
+            "id": 20,
+            "retired_at_probe": false,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-056-062/folds/060-eb60800b61f34068853339a96d043022/result.json",
+                "turn": 60
+              }
+            ],
+            "source_turn": 26,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the inbound tag is Cedar-1012.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "folded",
+    "expected": "Reed-612|Cedar-1012",
+    "probe_id": "c7_folded_1_d060",
+    "turn": 86,
+    "versions": {
+      "r2": {
+        "answer": "Outbound: Cedar-1012 | Inbound: unknown",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-086-093/checkpoint",
+        "excluded_live_ids": [
+          63,
+          64
+        ],
+        "identified": [
+          17,
+          3
+        ],
+        "identifier_tokens": [
+          "c7-archive-1"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          3,
+          17
+        ],
+        "policy_branch": "declared_synthesis_identified_set",
+        "ranking": [
+          17,
+          3,
+          18,
+          16,
+          2,
+          0
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-086-093/probes.jsonl:1",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Outbound: Cedar-1012 | Inbound: unknown",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 3,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 4,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the outbound tag is Reed-612.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          },
+          {
+            "checkpoint_retired": false,
+            "id": 17,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 26,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the inbound tag is Cedar-1012.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Not in memory: no stored record matches c7-archive-1.",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-086-093/checkpoint",
+        "excluded_live_ids": [
+          71,
+          72
+        ],
+        "identified": [],
+        "identifier_tokens": [
+          "c7-archive-1"
+        ],
+        "mechanism": "accepted folds retired ASCII raw sources; Unicode-dash digest fails own-text identifier binding; deterministic admission refusal before generation",
+        "mounted_ids": [],
+        "policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "ranking": [
+          10,
+          26,
+          48,
+          27,
+          69,
+          22
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-086-093/probes.jsonl:1",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Not in memory: no stored record matches c7-archive-1.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 4,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-009-016/folds/009-c13aa9d99c854db890903ab7c56359ad/result.json",
+                "turn": 9
+              }
+            ],
+            "source_turn": 4,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the outbound tag is Reed-612.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          },
+          {
+            "checkpoint_retired": true,
+            "id": 20,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-056-062/folds/060-eb60800b61f34068853339a96d043022/result.json",
+                "turn": 60
+              }
+            ],
+            "source_turn": 26,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the inbound tag is Cedar-1012.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "folded",
+    "expected": "Reed-612|Cedar-1012",
+    "probe_id": "c7_folded_1_d120",
+    "turn": 146,
+    "versions": {
+      "r2": {
+        "answer": "Outbound: Cedar-1012 | Inbound: unknown",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-141-148/checkpoint",
+        "excluded_live_ids": [
+          111,
+          112
+        ],
+        "identified": [
+          17,
+          3
+        ],
+        "identifier_tokens": [
+          "c7-archive-1"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          3,
+          17
+        ],
+        "policy_branch": "declared_synthesis_identified_set",
+        "ranking": [
+          17,
+          3,
+          18,
+          16,
+          2,
+          0
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-141-148/probes.jsonl:1",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Outbound: Cedar-1012 | Inbound: unknown",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 3,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 4,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the outbound tag is Reed-612.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          },
+          {
+            "checkpoint_retired": false,
+            "id": 17,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 26,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the inbound tag is Cedar-1012.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Not in memory: no stored record matches c7-archive-1.",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-141-148/checkpoint",
+        "excluded_live_ids": [
+          127,
+          128
+        ],
+        "identified": [],
+        "identifier_tokens": [
+          "c7-archive-1"
+        ],
+        "mechanism": "accepted folds retired ASCII raw sources; Unicode-dash digest fails own-text identifier binding; deterministic admission refusal before generation",
+        "mounted_ids": [],
+        "policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "ranking": [
+          89,
+          10,
+          26,
+          104,
+          22,
+          78
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-141-148/probes.jsonl:1",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Not in memory: no stored record matches c7-archive-1.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 4,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-009-016/folds/009-c13aa9d99c854db890903ab7c56359ad/result.json",
+                "turn": 9
+              }
+            ],
+            "source_turn": 4,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the outbound tag is Reed-612.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          },
+          {
+            "checkpoint_retired": true,
+            "id": 20,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-056-062/folds/060-eb60800b61f34068853339a96d043022/result.json",
+                "turn": 60
+              }
+            ],
+            "source_turn": 26,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the inbound tag is Cedar-1012.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "folded",
+    "expected": "Reed-612|Cedar-1012",
+    "probe_id": "c7_folded_1_d250",
+    "turn": 276,
+    "versions": {
+      "r2": {
+        "answer": "Outbound: Cedar-1012 | Inbound: unknown",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-273-280/checkpoint",
+        "excluded_live_ids": [
+          229,
+          230
+        ],
+        "identified": [
+          17,
+          3
+        ],
+        "identifier_tokens": [
+          "c7-archive-1"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          3,
+          17
+        ],
+        "policy_branch": "declared_synthesis_identified_set",
+        "ranking": [
+          17,
+          3,
+          18,
+          16,
+          2,
+          0
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-273-280/probes.jsonl:1",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Outbound: Cedar-1012 | Inbound: unknown",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 3,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 4,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the outbound tag is Reed-612.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          },
+          {
+            "checkpoint_retired": false,
+            "id": 17,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 26,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the inbound tag is Cedar-1012.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Not in memory: no stored record matches c7-archive-1.",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-273-280/checkpoint",
+        "excluded_live_ids": [
+          245,
+          246
+        ],
+        "identified": [],
+        "identifier_tokens": [
+          "c7-archive-1"
+        ],
+        "mechanism": "accepted folds retired ASCII raw sources; Unicode-dash digest fails own-text identifier binding; deterministic admission refusal before generation",
+        "mounted_ids": [],
+        "policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "ranking": [
+          89,
+          10,
+          26,
+          104,
+          22,
+          78
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-273-280/probes.jsonl:1",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Not in memory: no stored record matches c7-archive-1.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 4,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-009-016/folds/009-c13aa9d99c854db890903ab7c56359ad/result.json",
+                "turn": 9
+              }
+            ],
+            "source_turn": 4,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the outbound tag is Reed-612.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          },
+          {
+            "checkpoint_retired": true,
+            "id": 20,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-056-062/folds/060-eb60800b61f34068853339a96d043022/result.json",
+                "turn": 60
+              }
+            ],
+            "source_turn": 26,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-1 the inbound tag is Cedar-1012.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "folded",
+    "expected": "UNKNOWN",
+    "probe_id": "c7_folded_2_d005",
+    "turn": 32,
+    "versions": {
+      "r2": {
+        "answer": "unknown",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/checkpoint",
+        "excluded_live_ids": [
+          20,
+          21
+        ],
+        "identified": [
+          18
+        ],
+        "identifier_tokens": [
+          "c7-archive-2"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          18
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          18,
+          0,
+          15,
+          4,
+          13,
+          11
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/probes.jsonl:1",
+        "score": {
+          "abstained": true,
+          "abstention_error": 0,
+          "answer": "unknown",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 18,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 27,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-2 the inbound tag is Cedar-1013.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Cedar-1013",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-032-039/checkpoint",
+        "excluded_live_ids": [
+          24,
+          25
+        ],
+        "identified": [
+          21
+        ],
+        "identifier_tokens": [
+          "c7-archive-2"
+        ],
+        "mechanism": "outbound Unicode digest does not bind; ASCII inbound source binds; missing outbound at readout",
+        "mounted_ids": [
+          21
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          21,
+          22,
+          10,
+          26,
+          27,
+          16
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-032-039/probes.jsonl:1",
+        "score": {
+          "abstained": false,
+          "abstention_error": 0,
+          "answer": "Cedar-1013",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 1,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 21,
+            "retired_at_probe": false,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-056-062/folds/060-eb60800b61f34068853339a96d043022/result.json",
+                "turn": 60
+              }
+            ],
+            "source_turn": 27,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-2 the inbound tag is Cedar-1013.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "folded",
+    "expected": "UNKNOWN",
+    "probe_id": "c7_folded_2_d030",
+    "turn": 57,
+    "versions": {
+      "r2": {
+        "answer": "unknown",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint",
+        "excluded_live_ids": [
+          33,
+          36
+        ],
+        "identified": [
+          18
+        ],
+        "identifier_tokens": [
+          "c7-archive-2"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          18
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          18,
+          0,
+          15,
+          4,
+          13,
+          11
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/probes.jsonl:2",
+        "score": {
+          "abstained": true,
+          "abstention_error": 0,
+          "answer": "unknown",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 18,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 27,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-2 the inbound tag is Cedar-1013.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Cedar-1013",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-056-062/checkpoint",
+        "excluded_live_ids": [
+          39,
+          42
+        ],
+        "identified": [
+          21
+        ],
+        "identifier_tokens": [
+          "c7-archive-2"
+        ],
+        "mechanism": "outbound Unicode digest does not bind; ASCII inbound source binds; missing outbound at readout",
+        "mounted_ids": [
+          21
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          21,
+          22,
+          10,
+          26,
+          27,
+          16
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-056-062/probes.jsonl:2",
+        "score": {
+          "abstained": false,
+          "abstention_error": 0,
+          "answer": "Cedar-1013",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 1,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 21,
+            "retired_at_probe": false,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-056-062/folds/060-eb60800b61f34068853339a96d043022/result.json",
+                "turn": 60
+              }
+            ],
+            "source_turn": 27,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-2 the inbound tag is Cedar-1013.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "folded",
+    "expected": "UNKNOWN",
+    "probe_id": "c7_folded_2_d060",
+    "turn": 87,
+    "versions": {
+      "r2": {
+        "answer": "unknown",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-086-093/checkpoint",
+        "excluded_live_ids": [
+          63,
+          64
+        ],
+        "identified": [
+          18
+        ],
+        "identifier_tokens": [
+          "c7-archive-2"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          18
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          18,
+          0,
+          61,
+          60,
+          62,
+          58
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-086-093/probes.jsonl:2",
+        "score": {
+          "abstained": true,
+          "abstention_error": 0,
+          "answer": "unknown",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 18,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 27,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-2 the inbound tag is Cedar-1013.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Not in memory: no stored record matches c7-archive-2.",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-086-093/checkpoint",
+        "excluded_live_ids": [
+          71,
+          72
+        ],
+        "identified": [],
+        "identifier_tokens": [
+          "c7-archive-2"
+        ],
+        "mechanism": "accepted folds retired ASCII raw sources; Unicode-dash digest fails own-text identifier binding; deterministic admission refusal before generation",
+        "mounted_ids": [],
+        "policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "ranking": [
+          48,
+          22,
+          10,
+          26,
+          27,
+          69
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-086-093/probes.jsonl:2",
+        "score": {
+          "abstained": true,
+          "abstention_error": 0,
+          "answer": "Not in memory: no stored record matches c7-archive-2.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 21,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-056-062/folds/060-eb60800b61f34068853339a96d043022/result.json",
+                "turn": 60
+              }
+            ],
+            "source_turn": 27,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-2 the inbound tag is Cedar-1013.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "folded",
+    "expected": "UNKNOWN",
+    "probe_id": "c7_folded_2_d120",
+    "turn": 147,
+    "versions": {
+      "r2": {
+        "answer": "unknown",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-141-148/checkpoint",
+        "excluded_live_ids": [
+          111,
+          112
+        ],
+        "identified": [
+          18
+        ],
+        "identifier_tokens": [
+          "c7-archive-2"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          18
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          18,
+          0,
+          81,
+          61,
+          60,
+          62
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-141-148/probes.jsonl:2",
+        "score": {
+          "abstained": true,
+          "abstention_error": 0,
+          "answer": "unknown",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 18,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 27,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-2 the inbound tag is Cedar-1013.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Not in memory: no stored record matches c7-archive-2.",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-141-148/checkpoint",
+        "excluded_live_ids": [
+          127,
+          128
+        ],
+        "identified": [],
+        "identifier_tokens": [
+          "c7-archive-2"
+        ],
+        "mechanism": "accepted folds retired ASCII raw sources; Unicode-dash digest fails own-text identifier binding; deterministic admission refusal before generation",
+        "mounted_ids": [],
+        "policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "ranking": [
+          89,
+          22,
+          99,
+          10,
+          26,
+          104
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-141-148/probes.jsonl:2",
+        "score": {
+          "abstained": true,
+          "abstention_error": 0,
+          "answer": "Not in memory: no stored record matches c7-archive-2.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 21,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-056-062/folds/060-eb60800b61f34068853339a96d043022/result.json",
+                "turn": 60
+              }
+            ],
+            "source_turn": 27,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-2 the inbound tag is Cedar-1013.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "folded",
+    "expected": "UNKNOWN",
+    "probe_id": "c7_folded_2_d250",
+    "turn": 277,
+    "versions": {
+      "r2": {
+        "answer": "unknown",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-273-280/checkpoint",
+        "excluded_live_ids": [
+          229,
+          230
+        ],
+        "identified": [
+          18
+        ],
+        "identifier_tokens": [
+          "c7-archive-2"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          18
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          18,
+          0,
+          81,
+          61,
+          60,
+          62
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-273-280/probes.jsonl:2",
+        "score": {
+          "abstained": true,
+          "abstention_error": 0,
+          "answer": "unknown",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 18,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 27,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-2 the inbound tag is Cedar-1013.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Not in memory: no stored record matches c7-archive-2.",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-273-280/checkpoint",
+        "excluded_live_ids": [
+          245,
+          246
+        ],
+        "identified": [],
+        "identifier_tokens": [
+          "c7-archive-2"
+        ],
+        "mechanism": "accepted folds retired ASCII raw sources; Unicode-dash digest fails own-text identifier binding; deterministic admission refusal before generation",
+        "mounted_ids": [],
+        "policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "ranking": [
+          89,
+          22,
+          99,
+          10,
+          26,
+          104
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-273-280/probes.jsonl:2",
+        "score": {
+          "abstained": true,
+          "abstention_error": 0,
+          "answer": "Not in memory: no stored record matches c7-archive-2.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 21,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-056-062/folds/060-eb60800b61f34068853339a96d043022/result.json",
+                "turn": 60
+              }
+            ],
+            "source_turn": 27,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For C7-Archive-2 the inbound tag is Cedar-1013.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "fresh",
+    "expected": "Basalt-811",
+    "probe_id": "c7_fresh_0_d005",
+    "turn": 11,
+    "versions": {
+      "r2": {
+        "answer": "Basalt-811",
+        "checkpoint": "artifacts/grm_c7/r2/cells/A-009-016/checkpoint",
+        "excluded_live_ids": [
+          8,
+          9
+        ],
+        "identified": [
+          5
+        ],
+        "identifier_tokens": [
+          "c7-fresh-0"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader output recorded; see frozen score",
+        "mounted_ids": [
+          5
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          5,
+          0,
+          1,
+          4,
+          3,
+          7
+        ],
+        "receipt": "artifacts/grm_c7/r2/cells/A-009-016/probes.jsonl:1",
+        "score": {
+          "abstained": false,
+          "abstention_error": 0,
+          "answer": "Basalt-811",
+          "exact_answer_error": 0,
+          "exact_correct": true,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 5,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 6,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-0 value is Basalt-811.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Basalt‑811",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-009-016/checkpoint",
+        "excluded_live_ids": [
+          9,
+          11
+        ],
+        "identified": [
+          6
+        ],
+        "identifier_tokens": [
+          "c7-fresh-0"
+        ],
+        "mechanism": "before turn-18 fold; ASCII raw source binds and mounts",
+        "mounted_ids": [
+          6
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          6,
+          10,
+          2,
+          8,
+          7
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-009-016/probes.jsonl:1",
+        "score": {
+          "abstained": false,
+          "abstention_error": 0,
+          "answer": "Basalt‑811",
+          "exact_answer_error": 0,
+          "exact_correct": true,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 6,
+            "retired_at_probe": false,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-017-023/folds/018-7384d606b7e8423288aac67b8c457da9/result.json",
+                "turn": 18
+              }
+            ],
+            "source_turn": 6,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-0 value is Basalt-811.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "fresh",
+    "expected": "Basalt-811",
+    "probe_id": "c7_fresh_0_d030",
+    "turn": 36,
+    "versions": {
+      "r2": {
+        "answer": "Basalt-811",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/checkpoint",
+        "excluded_live_ids": [
+          23,
+          24
+        ],
+        "identified": [
+          5
+        ],
+        "identifier_tokens": [
+          "c7-fresh-0"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader output recorded; see frozen score",
+        "mounted_ids": [
+          5
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          5,
+          0,
+          15,
+          13,
+          11,
+          4
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/probes.jsonl:2",
+        "score": {
+          "abstained": false,
+          "abstention_error": 0,
+          "answer": "Basalt-811",
+          "exact_answer_error": 0,
+          "exact_correct": true,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 5,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 6,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-0 value is Basalt-811.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Not in memory: no stored record matches c7-fresh-0.",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-032-039/checkpoint",
+        "excluded_live_ids": [
+          29,
+          30
+        ],
+        "identified": [],
+        "identifier_tokens": [
+          "c7-fresh-0"
+        ],
+        "mechanism": "accepted folds retired ASCII raw sources; Unicode-dash digest fails own-text identifier binding; deterministic admission refusal before generation",
+        "mounted_ids": [],
+        "policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "ranking": [
+          16,
+          22,
+          10,
+          26,
+          27,
+          18
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-032-039/probes.jsonl:2",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Not in memory: no stored record matches c7-fresh-0.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 6,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-017-023/folds/018-7384d606b7e8423288aac67b8c457da9/result.json",
+                "turn": 18
+              }
+            ],
+            "source_turn": 6,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-0 value is Basalt-811.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "fresh",
+    "expected": "Basalt-811",
+    "probe_id": "c7_fresh_0_d060",
+    "turn": 66,
+    "versions": {
+      "r2": {
+        "answer": "Basalt-811",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-063-070/checkpoint",
+        "excluded_live_ids": [
+          48,
+          50
+        ],
+        "identified": [
+          5
+        ],
+        "identifier_tokens": [
+          "c7-fresh-0"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader output recorded; see frozen score",
+        "mounted_ids": [
+          5
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          5,
+          0,
+          15,
+          13,
+          11,
+          4
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-063-070/probes.jsonl:1",
+        "score": {
+          "abstained": false,
+          "abstention_error": 0,
+          "answer": "Basalt-811",
+          "exact_answer_error": 0,
+          "exact_correct": true,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 5,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 6,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-0 value is Basalt-811.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Not in memory: no stored record matches c7-fresh-0.",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-063-070/checkpoint",
+        "excluded_live_ids": [
+          55,
+          57
+        ],
+        "identified": [],
+        "identifier_tokens": [
+          "c7-fresh-0"
+        ],
+        "mechanism": "accepted folds retired ASCII raw sources; Unicode-dash digest fails own-text identifier binding; deterministic admission refusal before generation",
+        "mounted_ids": [],
+        "policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "ranking": [
+          16,
+          22,
+          10,
+          26,
+          27,
+          48
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-063-070/probes.jsonl:1",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Not in memory: no stored record matches c7-fresh-0.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 6,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-017-023/folds/018-7384d606b7e8423288aac67b8c457da9/result.json",
+                "turn": 18
+              }
+            ],
+            "source_turn": 6,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-0 value is Basalt-811.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "fresh",
+    "expected": "Basalt-811",
+    "probe_id": "c7_fresh_0_d120",
+    "turn": 126,
+    "versions": {
+      "r2": {
+        "answer": "Basalt-811",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-125-132/checkpoint",
+        "excluded_live_ids": [
+          101,
+          102
+        ],
+        "identified": [
+          5
+        ],
+        "identifier_tokens": [
+          "c7-fresh-0"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader output recorded; see frozen score",
+        "mounted_ids": [
+          5
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          5,
+          0,
+          60,
+          62,
+          61,
+          63
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-125-132/probes.jsonl:1",
+        "score": {
+          "abstained": false,
+          "abstention_error": 0,
+          "answer": "Basalt-811",
+          "exact_answer_error": 0,
+          "exact_correct": true,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 5,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 6,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-0 value is Basalt-811.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Not in memory: no stored record matches c7-fresh-0.",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-125-132/checkpoint",
+        "excluded_live_ids": [
+          117,
+          118
+        ],
+        "identified": [],
+        "identifier_tokens": [
+          "c7-fresh-0"
+        ],
+        "mechanism": "accepted folds retired ASCII raw sources; Unicode-dash digest fails own-text identifier binding; deterministic admission refusal before generation",
+        "mounted_ids": [],
+        "policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "ranking": [
+          16,
+          89,
+          22,
+          10,
+          26,
+          99
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-125-132/probes.jsonl:1",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Not in memory: no stored record matches c7-fresh-0.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 6,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-017-023/folds/018-7384d606b7e8423288aac67b8c457da9/result.json",
+                "turn": 18
+              }
+            ],
+            "source_turn": 6,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-0 value is Basalt-811.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "fresh",
+    "expected": "Basalt-811",
+    "probe_id": "c7_fresh_0_d250",
+    "turn": 256,
+    "versions": {
+      "r2": {
+        "answer": "Basalt-811",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-249-256/checkpoint",
+        "excluded_live_ids": [
+          219,
+          220
+        ],
+        "identified": [
+          5
+        ],
+        "identifier_tokens": [
+          "c7-fresh-0"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader output recorded; see frozen score",
+        "mounted_ids": [
+          5
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          5,
+          0,
+          60,
+          62,
+          61,
+          63
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-249-256/probes.jsonl:1",
+        "score": {
+          "abstained": false,
+          "abstention_error": 0,
+          "answer": "Basalt-811",
+          "exact_answer_error": 0,
+          "exact_correct": true,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 5,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 6,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-0 value is Basalt-811.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Not in memory: no stored record matches c7-fresh-0.",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-249-256/checkpoint",
+        "excluded_live_ids": [
+          235,
+          236
+        ],
+        "identified": [],
+        "identifier_tokens": [
+          "c7-fresh-0"
+        ],
+        "mechanism": "accepted folds retired ASCII raw sources; Unicode-dash digest fails own-text identifier binding; deterministic admission refusal before generation",
+        "mounted_ids": [],
+        "policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "ranking": [
+          16,
+          89,
+          22,
+          10,
+          26,
+          99
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-249-256/probes.jsonl:1",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Not in memory: no stored record matches c7-fresh-0.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 6,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-017-023/folds/018-7384d606b7e8423288aac67b8c457da9/result.json",
+                "turn": 18
+              }
+            ],
+            "source_turn": 6,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-0 value is Basalt-811.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "fresh",
+    "expected": "Basalt-812",
+    "probe_id": "c7_fresh_1_d005",
+    "turn": 12,
+    "versions": {
+      "r2": {
+        "answer": "Unknown.",
+        "checkpoint": "artifacts/grm_c7/r2/cells/A-009-016/checkpoint",
+        "excluded_live_ids": [
+          8,
+          9
+        ],
+        "identified": [
+          6
+        ],
+        "identifier_tokens": [
+          "c7-fresh-1"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          6
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          6,
+          0,
+          1,
+          4,
+          3,
+          2
+        ],
+        "receipt": "artifacts/grm_c7/r2/cells/A-009-016/probes.jsonl:2",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Unknown.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 6,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 7,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-1 value is Basalt-812.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Basalt-812",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-009-016/checkpoint",
+        "excluded_live_ids": [
+          9,
+          11
+        ],
+        "identified": [
+          7
+        ],
+        "identifier_tokens": [
+          "c7-fresh-1"
+        ],
+        "mechanism": "before turn-18 fold; ASCII raw source binds and mounts",
+        "mounted_ids": [
+          7
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          7,
+          10,
+          2,
+          8,
+          6
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-009-016/probes.jsonl:2",
+        "score": {
+          "abstained": false,
+          "abstention_error": 0,
+          "answer": "Basalt-812",
+          "exact_answer_error": 0,
+          "exact_correct": true,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 7,
+            "retired_at_probe": false,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-017-023/folds/018-7384d606b7e8423288aac67b8c457da9/result.json",
+                "turn": 18
+              }
+            ],
+            "source_turn": 7,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-1 value is Basalt-812.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "fresh",
+    "expected": "Basalt-812",
+    "probe_id": "c7_fresh_1_d030",
+    "turn": 37,
+    "versions": {
+      "r2": {
+        "answer": "Unknown.",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/checkpoint",
+        "excluded_live_ids": [
+          23,
+          24
+        ],
+        "identified": [
+          6
+        ],
+        "identifier_tokens": [
+          "c7-fresh-1"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          6
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          6,
+          0,
+          15,
+          11,
+          13,
+          14
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/probes.jsonl:3",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Unknown.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 6,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 7,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-1 value is Basalt-812.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Not in memory: no stored record matches c7-fresh-1.",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-032-039/checkpoint",
+        "excluded_live_ids": [
+          29,
+          30
+        ],
+        "identified": [],
+        "identifier_tokens": [
+          "c7-fresh-1"
+        ],
+        "mechanism": "accepted folds retired ASCII raw sources; Unicode-dash digest fails own-text identifier binding; deterministic admission refusal before generation",
+        "mounted_ids": [],
+        "policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "ranking": [
+          16,
+          22,
+          10,
+          26,
+          27,
+          18
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-032-039/probes.jsonl:3",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Not in memory: no stored record matches c7-fresh-1.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 7,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-017-023/folds/018-7384d606b7e8423288aac67b8c457da9/result.json",
+                "turn": 18
+              }
+            ],
+            "source_turn": 7,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-1 value is Basalt-812.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "fresh",
+    "expected": "Basalt-812",
+    "probe_id": "c7_fresh_1_d060",
+    "turn": 67,
+    "versions": {
+      "r2": {
+        "answer": "Unknown.",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-063-070/checkpoint",
+        "excluded_live_ids": [
+          48,
+          50
+        ],
+        "identified": [
+          6
+        ],
+        "identifier_tokens": [
+          "c7-fresh-1"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          6
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          6,
+          0,
+          15,
+          11,
+          13,
+          14
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-063-070/probes.jsonl:2",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Unknown.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 6,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 7,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-1 value is Basalt-812.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Not in memory: no stored record matches c7-fresh-1.",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-063-070/checkpoint",
+        "excluded_live_ids": [
+          55,
+          57
+        ],
+        "identified": [],
+        "identifier_tokens": [
+          "c7-fresh-1"
+        ],
+        "mechanism": "accepted folds retired ASCII raw sources; Unicode-dash digest fails own-text identifier binding; deterministic admission refusal before generation",
+        "mounted_ids": [],
+        "policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "ranking": [
+          16,
+          22,
+          10,
+          26,
+          27,
+          48
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-063-070/probes.jsonl:2",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Not in memory: no stored record matches c7-fresh-1.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 7,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-017-023/folds/018-7384d606b7e8423288aac67b8c457da9/result.json",
+                "turn": 18
+              }
+            ],
+            "source_turn": 7,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-1 value is Basalt-812.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "fresh",
+    "expected": "Basalt-812",
+    "probe_id": "c7_fresh_1_d120",
+    "turn": 127,
+    "versions": {
+      "r2": {
+        "answer": "Unknown.",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-125-132/checkpoint",
+        "excluded_live_ids": [
+          101,
+          102
+        ],
+        "identified": [
+          6
+        ],
+        "identifier_tokens": [
+          "c7-fresh-1"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          6
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          6,
+          0,
+          60,
+          62,
+          61,
+          63
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-125-132/probes.jsonl:2",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Unknown.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 6,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 7,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-1 value is Basalt-812.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Not in memory: no stored record matches c7-fresh-1.",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-125-132/checkpoint",
+        "excluded_live_ids": [
+          117,
+          118
+        ],
+        "identified": [],
+        "identifier_tokens": [
+          "c7-fresh-1"
+        ],
+        "mechanism": "accepted folds retired ASCII raw sources; Unicode-dash digest fails own-text identifier binding; deterministic admission refusal before generation",
+        "mounted_ids": [],
+        "policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "ranking": [
+          16,
+          89,
+          22,
+          10,
+          26,
+          104
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-125-132/probes.jsonl:2",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Not in memory: no stored record matches c7-fresh-1.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 7,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-017-023/folds/018-7384d606b7e8423288aac67b8c457da9/result.json",
+                "turn": 18
+              }
+            ],
+            "source_turn": 7,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-1 value is Basalt-812.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "fresh",
+    "expected": "Basalt-812",
+    "probe_id": "c7_fresh_1_d250",
+    "turn": 257,
+    "versions": {
+      "r2": {
+        "answer": "Unknown.",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-257-264/checkpoint",
+        "excluded_live_ids": [
+          219,
+          220
+        ],
+        "identified": [
+          6
+        ],
+        "identifier_tokens": [
+          "c7-fresh-1"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          6
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          6,
+          0,
+          60,
+          62,
+          61,
+          63
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-257-264/probes.jsonl:1",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Unknown.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 6,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 7,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-1 value is Basalt-812.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Not in memory: no stored record matches c7-fresh-1.",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-257-264/checkpoint",
+        "excluded_live_ids": [
+          235,
+          236
+        ],
+        "identified": [],
+        "identifier_tokens": [
+          "c7-fresh-1"
+        ],
+        "mechanism": "accepted folds retired ASCII raw sources; Unicode-dash digest fails own-text identifier binding; deterministic admission refusal before generation",
+        "mounted_ids": [],
+        "policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "ranking": [
+          16,
+          89,
+          22,
+          10,
+          26,
+          104
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-257-264/probes.jsonl:1",
+        "score": {
+          "abstained": true,
+          "abstention_error": 1,
+          "answer": "Not in memory: no stored record matches c7-fresh-1.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 7,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-017-023/folds/018-7384d606b7e8423288aac67b8c457da9/result.json",
+                "turn": 18
+              }
+            ],
+            "source_turn": 7,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-1 value is Basalt-812.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "fresh",
+    "expected": "UNKNOWN",
+    "probe_id": "c7_fresh_2_d005",
+    "turn": 13,
+    "versions": {
+      "r2": {
+        "answer": "unknown",
+        "checkpoint": "artifacts/grm_c7/r2/cells/A-009-016/checkpoint",
+        "excluded_live_ids": [
+          8,
+          9
+        ],
+        "identified": [
+          7
+        ],
+        "identifier_tokens": [
+          "c7-fresh-2"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          7
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          7,
+          0,
+          1,
+          4,
+          3,
+          2
+        ],
+        "receipt": "artifacts/grm_c7/r2/cells/A-009-016/probes.jsonl:3",
+        "score": {
+          "abstained": true,
+          "abstention_error": 0,
+          "answer": "unknown",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 7,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 8,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-2 value is Basalt-813.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "The inspection password for C7‑Fresh‑2 is **Flint‑511**.",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-009-016/checkpoint",
+        "excluded_live_ids": [
+          9,
+          11
+        ],
+        "identified": [
+          8
+        ],
+        "identifier_tokens": [
+          "c7-fresh-2"
+        ],
+        "mechanism": "before turn-18 fold; ASCII raw source binds and mounts",
+        "mounted_ids": [
+          2,
+          8
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          8,
+          10,
+          2,
+          6,
+          7
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-009-016/probes.jsonl:3",
+        "score": {
+          "abstained": false,
+          "abstention_error": 0,
+          "answer": "The inspection password for C7‑Fresh‑2 is **Flint‑511**.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 1,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 8,
+            "retired_at_probe": false,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-017-023/folds/018-7384d606b7e8423288aac67b8c457da9/result.json",
+                "turn": 18
+              }
+            ],
+            "source_turn": 8,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-2 value is Basalt-813.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "fresh",
+    "expected": "UNKNOWN",
+    "probe_id": "c7_fresh_2_d030",
+    "turn": 38,
+    "versions": {
+      "r2": {
+        "answer": "unknown",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/checkpoint",
+        "excluded_live_ids": [
+          23,
+          24
+        ],
+        "identified": [
+          7
+        ],
+        "identifier_tokens": [
+          "c7-fresh-2"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          7
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          7,
+          0,
+          15,
+          4,
+          11,
+          13
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/probes.jsonl:4",
+        "score": {
+          "abstained": true,
+          "abstention_error": 0,
+          "answer": "unknown",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 7,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 8,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-2 value is Basalt-813.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Not in memory: no stored record matches c7-fresh-2.",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-032-039/checkpoint",
+        "excluded_live_ids": [
+          29,
+          30
+        ],
+        "identified": [],
+        "identifier_tokens": [
+          "c7-fresh-2"
+        ],
+        "mechanism": "accepted folds retired ASCII raw sources; Unicode-dash digest fails own-text identifier binding; deterministic admission refusal before generation",
+        "mounted_ids": [],
+        "policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "ranking": [
+          16,
+          22,
+          10,
+          26,
+          27,
+          18
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-032-039/probes.jsonl:4",
+        "score": {
+          "abstained": true,
+          "abstention_error": 0,
+          "answer": "Not in memory: no stored record matches c7-fresh-2.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 8,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-017-023/folds/018-7384d606b7e8423288aac67b8c457da9/result.json",
+                "turn": 18
+              }
+            ],
+            "source_turn": 8,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-2 value is Basalt-813.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "fresh",
+    "expected": "UNKNOWN",
+    "probe_id": "c7_fresh_2_d060",
+    "turn": 68,
+    "versions": {
+      "r2": {
+        "answer": "unknown",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-063-070/checkpoint",
+        "excluded_live_ids": [
+          48,
+          50
+        ],
+        "identified": [
+          7
+        ],
+        "identifier_tokens": [
+          "c7-fresh-2"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          7
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          7,
+          0,
+          15,
+          4,
+          11,
+          13
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-063-070/probes.jsonl:3",
+        "score": {
+          "abstained": true,
+          "abstention_error": 0,
+          "answer": "unknown",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 7,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 8,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-2 value is Basalt-813.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Not in memory: no stored record matches c7-fresh-2.",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-063-070/checkpoint",
+        "excluded_live_ids": [
+          55,
+          57
+        ],
+        "identified": [],
+        "identifier_tokens": [
+          "c7-fresh-2"
+        ],
+        "mechanism": "accepted folds retired ASCII raw sources; Unicode-dash digest fails own-text identifier binding; deterministic admission refusal before generation",
+        "mounted_ids": [],
+        "policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "ranking": [
+          16,
+          22,
+          10,
+          26,
+          27,
+          48
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-063-070/probes.jsonl:3",
+        "score": {
+          "abstained": true,
+          "abstention_error": 0,
+          "answer": "Not in memory: no stored record matches c7-fresh-2.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 8,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-017-023/folds/018-7384d606b7e8423288aac67b8c457da9/result.json",
+                "turn": 18
+              }
+            ],
+            "source_turn": 8,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-2 value is Basalt-813.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "fresh",
+    "expected": "UNKNOWN",
+    "probe_id": "c7_fresh_2_d120",
+    "turn": 128,
+    "versions": {
+      "r2": {
+        "answer": "unknown",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-125-132/checkpoint",
+        "excluded_live_ids": [
+          101,
+          102
+        ],
+        "identified": [
+          7
+        ],
+        "identifier_tokens": [
+          "c7-fresh-2"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          7
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          7,
+          0,
+          81,
+          61,
+          62,
+          60
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-125-132/probes.jsonl:3",
+        "score": {
+          "abstained": true,
+          "abstention_error": 0,
+          "answer": "unknown",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 7,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 8,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-2 value is Basalt-813.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Not in memory: no stored record matches c7-fresh-2.",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-125-132/checkpoint",
+        "excluded_live_ids": [
+          117,
+          118
+        ],
+        "identified": [],
+        "identifier_tokens": [
+          "c7-fresh-2"
+        ],
+        "mechanism": "accepted folds retired ASCII raw sources; Unicode-dash digest fails own-text identifier binding; deterministic admission refusal before generation",
+        "mounted_ids": [],
+        "policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "ranking": [
+          16,
+          89,
+          22,
+          99,
+          10,
+          26
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-125-132/probes.jsonl:3",
+        "score": {
+          "abstained": true,
+          "abstention_error": 0,
+          "answer": "Not in memory: no stored record matches c7-fresh-2.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 8,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-017-023/folds/018-7384d606b7e8423288aac67b8c457da9/result.json",
+                "turn": 18
+              }
+            ],
+            "source_turn": 8,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-2 value is Basalt-813.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "class": "fresh",
+    "expected": "UNKNOWN",
+    "probe_id": "c7_fresh_2_d250",
+    "turn": 258,
+    "versions": {
+      "r2": {
+        "answer": "unknown",
+        "checkpoint": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-257-264/checkpoint",
+        "excluded_live_ids": [
+          219,
+          220
+        ],
+        "identified": [
+          7
+        ],
+        "identifier_tokens": [
+          "c7-fresh-2"
+        ],
+        "mechanism": "ASCII raw source remains eligible; reader abstains",
+        "mounted_ids": [
+          7
+        ],
+        "policy_branch": "exactly_one_identifier_decisive_rank1",
+        "ranking": [
+          7,
+          0,
+          81,
+          61,
+          62,
+          60
+        ],
+        "receipt": "artifacts/grm_c7/r2/fix4_attempt_1/cells/A-257-264/probes.jsonl:2",
+        "score": {
+          "abstained": true,
+          "abstention_error": 0,
+          "answer": "unknown",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": false,
+            "id": 7,
+            "retired_at_probe": false,
+            "retirement_events": [],
+            "source_turn": 8,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-2 value is Basalt-813.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      },
+      "r3": {
+        "answer": "Not in memory: no stored record matches c7-fresh-2.",
+        "checkpoint": "artifacts/grm_c7/r3/cells/A-257-264/checkpoint",
+        "excluded_live_ids": [
+          235,
+          236
+        ],
+        "identified": [],
+        "identifier_tokens": [
+          "c7-fresh-2"
+        ],
+        "mechanism": "accepted folds retired ASCII raw sources; Unicode-dash digest fails own-text identifier binding; deterministic admission refusal before generation",
+        "mounted_ids": [],
+        "policy_branch": "ambiguous_zero_identifier_hits_k3",
+        "ranking": [
+          16,
+          89,
+          22,
+          99,
+          10,
+          26
+        ],
+        "receipt": "artifacts/grm_c7/r3/cells/A-257-264/probes.jsonl:2",
+        "score": {
+          "abstained": true,
+          "abstention_error": 0,
+          "answer": "Not in memory: no stored record matches c7-fresh-2.",
+          "exact_answer_error": 1,
+          "exact_correct": false,
+          "unsupported_answer_error": 0,
+          "wrong_value_error": 0
+        },
+        "served_from_node_ids": [],
+        "sources": [
+          {
+            "checkpoint_retired": true,
+            "id": 8,
+            "retired_at_probe": true,
+            "retirement_events": [
+              {
+                "receipt": "artifacts/grm_c7/r3/cells/A-017-023/folds/018-7384d606b7e8423288aac67b8c457da9/result.json",
+                "turn": 18
+              }
+            ],
+            "source_turn": 8,
+            "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-Fresh-2 value is Basalt-813.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+          }
+        ]
+      }
+    }
+  }
+]

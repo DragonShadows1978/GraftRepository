@@ -1,0 +1,41 @@
+{
+  "expert_mode": "resident_packed_mxfp4",
+  "framework": "tensor_cuda GptOss20B_TC",
+  "full_attention_layers": [
+    1,
+    3,
+    5,
+    7,
+    9,
+    11,
+    13,
+    15,
+    17,
+    19,
+    21,
+    23
+  ],
+  "head_dim": 64,
+  "hidden_dim": 2880,
+  "layers": 24,
+  "loaded": "GPT-OSS-20B (resident_packed_mxfp4)",
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "num_heads": 64,
+  "num_kv_heads": 8,
+  "repository": "openai/gpt-oss-20b",
+  "revision": "6cee5e81ee83917806bbde320786a8fb61efebee",
+  "sliding_attention_layers": [
+    0,
+    2,
+    4,
+    6,
+    8,
+    10,
+    12,
+    14,
+    16,
+    18,
+    20,
+    22
+  ]
+}

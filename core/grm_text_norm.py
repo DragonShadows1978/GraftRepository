@@ -12,20 +12,33 @@ U+2011 (non-breaking hyphen) and ``_rare_tokens``' character class
 shatters into ``{"8"}`` while the mounted node's ASCII "Quartz-8-Jade"
 tokenizes whole, so ``content <= have`` is False on a CORRECT answer.
 
-``normalize_glyphs`` folds EXACTLY the two glyph classes DET1.4 registered
-and nothing else.  It is deliberately not a second definition of them: the
-test suite pins ``normalize_glyphs(s).casefold() == normalize_value_text(s)``
-over a corpus covering both classes, so the two functions cannot drift.
+FIX-8 extends this existing projection with NFKC and the Unicode Dash
+property for routing, admission and lexical scans. The DET1.4 corpus remains
+compatible; the frozen answer scorer is unchanged.
 """
 
 from __future__ import annotations
 
 import re
+import unicodedata
 
 #: DET1.4 class 1 -- Unicode hyphen presentation.  U+2010 HYPHEN and U+2011
 #: NON-BREAKING HYPHEN are the ASCII hyphen rendered; the model emits U+2011
 #: inside identifier-shaped values and the stored node text carries U+002D.
 UNICODE_HYPHENS = ("‐", "‑")
+
+# Prior art: Unicode Consortium, UAX #15 / UCD 17.0 (2025), NFKC and
+# PropList Dash (31 code points, including non-Pd minus signs).
+# https://www.unicode.org/Public/17.0.0/ucd/PropList.txt
+# https://www.unicode.org/reports/tr15/
+# GRM SC1.1/DET1.4 (GRM contributors, 2026) supplies the existing projection.
+# FIX-8 reuses it at missed identifier boundaries; no new matching algorithm.
+UNICODE_DASHES = (
+    "-\u058a\u05be\u1400\u1806\u2010\u2011\u2012\u2013\u2014\u2015"
+    "\u2053\u207b\u208b\u2212\u2e17\u2e1a\u2e3a\u2e3b\u2e40\u2e5d"
+    "\u301c\u3030\u30a0\ufe31\ufe32\ufe58\ufe63\uff0d\U00010d6e\U00010ead"
+)
+_DASH_TRANSLATION = str.maketrans({glyph: "-" for glyph in UNICODE_DASHES})
 
 #: DET1.4 class 2 -- Markdown emphasis delimiters.  Paired, same-line, and
 #: iterated to a fixed point so nested bold/italic is projected too.  The
@@ -34,10 +47,10 @@ _EMPHASIS = re.compile(r"(\*\*|__|\*|_)([^\n]+?)\1")
 
 
 def normalize_glyphs(text: str) -> str:
-    """Project the two REGISTERED glyph classes; fold nothing else.
+    """Shared FIX-8 NFKC/dash projection, retaining SC1.1 emphasis handling.
 
-    Folded (and only these):
-      1. ``U+2010``/``U+2011`` -> ``"-"``.
+    Folded:
+      1. NFKC, then Unicode 17.0 Dash -> ``"-"``.
       2. Paired Markdown emphasis delimiters (``**``, ``__``, ``*``, ``_``)
          around a same-line payload, iterated to a fixed point.
 
@@ -61,9 +74,7 @@ def normalize_glyphs(text: str) -> str:
     already lowercase the tokens they EMIT, so case survives exactly as far
     as it does today and no further.
     """
-    out = str(text)
-    for glyph in UNICODE_HYPHENS:
-        out = out.replace(glyph, "-")
+    out = unicodedata.normalize("NFKC", str(text)).translate(_DASH_TRANSLATION)
     previous = None
     while previous != out:
         previous = out

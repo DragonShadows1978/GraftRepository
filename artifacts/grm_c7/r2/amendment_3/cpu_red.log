@@ -1,0 +1,114 @@
+FFF.....                                                                 [100%]
+=================================== FAILURES ===================================
+_____________ test_fake_attention_surface_matches_real_constructor _____________
+
+    def test_fake_attention_surface_matches_real_constructor():
+        real = real_attention()
+        fake = Model(Codec()).layers[0].self_attn
+        # Enumerate the real class/instance, rather than maintaining a hand list.
+>       assert set(vars(fake)) == set(vars(real))
+E       AssertionError: assert {'live_shift'} == {'attention_m...ead_dim', ...}
+E         
+E         Extra items in the left set:
+E         'live_shift'
+E         Extra items in the right set:
+E         'scaling'
+E         'v_proj'
+E         'o_proj'...
+E         
+E         ...Full output truncated (19 lines hidden), use '-vv' to show
+
+tests/test_grm_c7_amendment3.py:29: AssertionError
+________ test_real_attention_without_live_shift_oracle_restores_absence ________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-929/test_real_attention_without_li0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7d6f5e2bfa40>
+
+    def test_real_attention_without_live_shift_oracle_restores_absence(tmp_path, monkeypatch):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        a = repo.arena
+        att = real_attention()
+        a.m.layers[0].self_attn = att
+        before = (a.caches, a.pos, list(a.live_segs), list(a.cur_mounts), a.cur_mount_n)
+        try:
+>           result = c7.oracle(a, read(FIX)['probes'][0], 32)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_c7_amendment3.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arena = <scripts.grm_c7_diagnose.CPUArena object at 0x7d6f5e2bf9b0>
+probe = {'answerable': True, 'class': 'fresh', 'distance': 5, 'entity': 'C7-Fresh-0', ...}
+ngen = 32
+
+    def oracle(arena, probe, ngen):
+        # Prior art: RS3 C5 / RS4 live-band ceiling (GRM, 2026). Taken: exact
+        # source in live input, no mounts, production _attempt. C7 includes ALL
+        # relevant revisions in chronological order; no expected-answer hints.
+        prompt = 'Exact source records, in chronological order:\n' + '\n'.join(
+            f'[turn {t}] {text}' for t, text in zip(probe['source_turns'], probe['oracle_source_texts']))
+        question = effective_question(probe['question'])
+        prompt += '\nUse only those records.\n' + question
+        saved = (arena.caches, arena.pos, list(arena.live_segs), list(arena.cur_mounts), arena.cur_mount_n)
+>       shifts = [layer.self_attn.live_shift for layer in arena.m.layers]
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'GptOssAttentionTC' object has no attribute 'live_shift'
+
+scripts/grm_c7_run.py:137: AttributeError
+_________ test_oracle_restores_optional_shift_after_exception[absent] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-929/test_oracle_restores_optional_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7d6f5e312390>
+previous = 'absent'
+
+    @pytest.mark.parametrize('previous', ['absent', None, 991])
+    def test_oracle_restores_optional_shift_after_exception(tmp_path, monkeypatch, previous):
+        repo = repository(tmp_path/'repo', monkeypatch)
+        a = repo.arena
+        att = real_attention()
+        a.m.layers[0].self_attn = att
+        if previous != 'absent':
+            att.live_shift = previous
+        def fail(*args, **kwargs):
+            assert att.live_shift == a.live_shift
+            raise RuntimeError('registered oracle fault')
+        monkeypatch.setattr(a, '_attempt', fail)
+        try:
+            with pytest.raises(RuntimeError, match='registered oracle fault'):
+>               c7.oracle(a, read(FIX)['probes'][0], 32)
+
+tests/test_grm_c7_amendment3.py:67: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arena = <scripts.grm_c7_diagnose.CPUArena object at 0x7d6f5e3124e0>
+probe = {'answerable': True, 'class': 'fresh', 'distance': 5, 'entity': 'C7-Fresh-0', ...}
+ngen = 32
+
+    def oracle(arena, probe, ngen):
+        # Prior art: RS3 C5 / RS4 live-band ceiling (GRM, 2026). Taken: exact
+        # source in live input, no mounts, production _attempt. C7 includes ALL
+        # relevant revisions in chronological order; no expected-answer hints.
+        prompt = 'Exact source records, in chronological order:\n' + '\n'.join(
+            f'[turn {t}] {text}' for t, text in zip(probe['source_turns'], probe['oracle_source_texts']))
+        question = effective_question(probe['question'])
+        prompt += '\nUse only those records.\n' + question
+        saved = (arena.caches, arena.pos, list(arena.live_segs), list(arena.cur_mounts), arena.cur_mount_n)
+>       shifts = [layer.self_attn.live_shift for layer in arena.m.layers]
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'GptOssAttentionTC' object has no attribute 'live_shift'
+
+scripts/grm_c7_run.py:137: AttributeError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_grm_c7_amendment3.py::test_fake_attention_surface_matches_real_constructor
+FAILED tests/test_grm_c7_amendment3.py::test_real_attention_without_live_shift_oracle_restores_absence
+FAILED tests/test_grm_c7_amendment3.py::test_oracle_restores_optional_shift_after_exception[absent]
+3 failed, 5 passed, 2 warnings in 5.22s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

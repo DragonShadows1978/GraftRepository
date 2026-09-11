@@ -1,0 +1,100 @@
+[
+  {
+    "coverage": 0.0,
+    "path": "artifacts/grm_c7/cells/A-001-008/folds/008-230997aa79504f2ebd570d5cbc000ee5/result.json",
+    "recorded_qc": false,
+    "replayed_qc": false,
+    "text": "For the archive: the ………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………"
+  },
+  {
+    "coverage": 0.0,
+    "path": "artifacts/grm_c7/cells/A-001-008/folds/008-230997aa79504f2ebd570d5cbc000ee5/result.json",
+    "recorded_qc": true,
+    "replayed_qc": true,
+    "text": "ARCHIVE NOTE — The conversation established that the  “……………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………"
+  },
+  {
+    "coverage": 0.0,
+    "path": "artifacts/grm_c7/cells/A-017-023/folds/017-e58dd8fb4e514839bd7681f72827546f/result.json",
+    "recorded_qc": true,
+    "replayed_qc": true,
+    "text": "For the archive: the  conversation has recorded a fact that “……………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………"
+  },
+  {
+    "coverage": 0.0,
+    "path": "artifacts/grm_c7/cells/A-024-031/folds/026-4f13fe3daf6546478af55dbaca89ef40/result.json",
+    "recorded_qc": true,
+    "replayed_qc": true,
+    "text": "For the archive: the  conversation has recorded a list of references: ...? The…...…………………………………………………………………………………………………………………………?………………………………………………………………………………………………………………………………………………………………"
+  },
+  {
+    "coverage": 0.125,
+    "path": "artifacts/grm_c7/cells/A-024-031/folds/026-4f13fe3daf6546478af55dbaca89ef40/result.json",
+    "recorded_qc": true,
+    "replayed_qc": true,
+    "text": "ARCHIVE NOTE — The conversation established that the  alias “C7-Signal-2” refers to “C7-AliasBase-‑1” and that “Onyx‑………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………"
+  },
+  {
+    "coverage": 0.0,
+    "path": "artifacts/grm_c7/cells/A-048-055/folds/055-e8e93a5dfe2141ce8c78ea0eff872f37/result.json",
+    "recorded_qc": true,
+    "replayed_qc": true,
+    "text": "For the archive: the ………………………………………………………………………………………………………………………………………………... The…………………………………………………………………………………………………………………………………………………………………………"
+  },
+  {
+    "coverage": 0.0,
+    "path": "artifacts/grm_c7/cells/A-094-100/folds/095-9c9f656ac72c432a9407ae3bdd641ca2/result.json",
+    "recorded_qc": false,
+    "replayed_qc": false,
+    "text": "For the archive: the  “…”………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………"
+  },
+  {
+    "coverage": 0.3333333333333333,
+    "path": "artifacts/grm_c7/cells/A-094-100/folds/095-9c9f656ac72c432a9407ae3bdd641ca2/result.json",
+    "recorded_qc": true,
+    "replayed_qc": true,
+    "text": "ARCHIVE NOTE — The conversation established that the  current value of the C7‑Outpost‑12 is Slate‑1212. The user also noted that the C7‑Handle‑11 is an alias for the same out‑post. The system’s “‑”‑… (the rest is omitted).<|return|> The conversation recorded that **C7‑Outpost‑12** …………………………………………………………………………………………………………………………………………"
+  },
+  {
+    "coverage": 0.0,
+    "path": "artifacts/grm_c7/cells/A-094-100/folds/099-d57ff85cc205427e846ebe160d9e9d05/result.json",
+    "recorded_qc": false,
+    "replayed_qc": false,
+    "text": "For the archive: the  “…”………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………"
+  },
+  {
+    "coverage": 0.25,
+    "path": "artifacts/grm_c7/cells/A-094-100/folds/099-d57ff85cc205427e846ebe160d9e9d05/result.json",
+    "recorded_qc": true,
+    "replayed_qc": true,
+    "text": "ARCHIVE NOTE — The conversation established that the  current value of the C7‑Outpost‑17 is Slate‑1218. The user’s statement “The current C7‑Outpost‑17 value is Slate‑1218” was noted and the system’s response was “Recorded.”<|return|> The user’s statement “The current … …” was recorded.<|return|> The conversation recorded that **C7‑Outpost‑17** is **Slate‑1218**. The **“………………………………………………………………………………"
+  },
+  {
+    "coverage": 0.0,
+    "path": "artifacts/grm_c7/cells/A-101-108/folds/103-a2cab5d7dda04ce585276279ddc0aada/result.json",
+    "recorded_qc": false,
+    "replayed_qc": false,
+    "text": "For the archive: the ………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………"
+  },
+  {
+    "coverage": 0.0,
+    "path": "artifacts/grm_c7/cells/A-101-108/folds/107-669469d0a01a41279d17313e282199fc/result.json",
+    "recorded_qc": false,
+    "replayed_qc": false,
+    "text": "For the archive: the ………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………"
+  },
+  {
+    "coverage": 0.0,
+    "path": "artifacts/grm_c7/cells/A-101-108/folds/107-669469d0a01a41279d17313e282199fc/result.json",
+    "recorded_qc": true,
+    "replayed_qc": true,
+    "text": "ARCHIVE NOTE — The conversation established that the  “…”………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………………"
+  },
+  {
+    "coverage": 0.25,
+    "path": "artifacts/grm_c7/cells/A-109-116/folds/111-6000d2c67f2e45f1bb15ac26f83828e8/result.json",
+    "recorded_qc": true,
+    "replayed_qc": true,
+    "text": "ARCHIVE NOTE — The conversation established that the  current value of the C7‑Outpost‑27 is Slate‑1228. The user’s statement “Slate‑1228” is the value. The “Slate” part is “Slate” and “1228” is “…………………….” The “……………………………………………………………………………………………………………………………………………………………………"
+  }
+]

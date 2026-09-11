@@ -1,0 +1,55 @@
+--- before/scripts/grm_c7_diagnose.py
++++ scripts/grm_c7_diagnose.py
+@@ -64,7 +64,13 @@
+ 
+     def __init__(self, codec):
+         self.codec = codec
+-        self.layers = [SimpleNamespace(self_attn=SimpleNamespace(live_shift=None))]
++        # Prior art: GptOssAttentionTC constructor (GRM contributors, 2026).
++        # Use the real metadata-only constructor as the CPU double's surface;
++        # numerical forwards remain stubbed. No weights or GPU allocation.
++        # In particular, live_shift does NOT exist until the arena sets it.
++        from core.gpt_oss20b_tc import GptOss20BConfig, GptOssAttentionTC
++        cfg = GptOss20BConfig(layer_types=('full_attention',))
++        self.layers = [SimpleNamespace(self_attn=GptOssAttentionTC(cfg, 0))]
+         self.calls = []
+         self.injected = ''
+         self.remaining = []
+@@ -87,7 +93,7 @@
+             self.remaining = self.codec.encode(answer)
+         token = self.remaining.pop(0) if self.remaining else self.codec.encode('…')[0]
+         self.calls.append({'input': text, 'position_offset': position_offset,
+-                           'live_shift': self.layers[0].self_attn.live_shift,
++                           'live_shift': getattr(self.layers[0].self_attn, 'live_shift', None),
+                            'initial': kv_caches is None, 'output_token': token,
+                            'injected': self.injected})
+         logits = np.zeros((1, 1, len(self.codec.words)), dtype=np.float32)
+--- before/scripts/grm_c7_run.py
++++ scripts/grm_c7_run.py
+@@ -134,7 +134,13 @@
+     question = effective_question(probe['question'])
+     prompt += '\nUse only those records.\n' + question
+     saved = (arena.caches, arena.pos, list(arena.live_segs), list(arena.cur_mounts), arena.cur_mount_n)
+-    shifts = [layer.self_attn.live_shift for layer in arena.m.layers]
++    # Prior art: ArenaCache._capture_geometry and GptOssAttentionTC
++    # (GRM contributors, 2026): live_shift is optional, read with getattr and
++    # set dynamically. Reuse that contract; our sentinel also restores ABSENCE
++    # on a fresh real attention object. No new positioning algorithm.
++    missing_shift = object()
++    shifts = [getattr(layer.self_attn, 'live_shift', missing_shift)
++              for layer in arena.m.layers]
+     arena.reset_live_cache()
+     try:
+         # Prior art: EB1 _probe_ladder_chat layer-position setup (GRM, 2026).
+@@ -154,7 +160,10 @@
+         arena.reset_live_cache()
+         arena.caches, arena.pos, arena.live_segs, arena.cur_mounts, arena.cur_mount_n = saved
+         for layer, shift in zip(arena.m.layers, shifts):
+-            layer.self_attn.live_shift = shift
++            if shift is missing_shift:
++                delattr(layer.self_attn, 'live_shift')
++            else:
++                layer.self_attn.live_shift = shift
+ 
+ 
+ def install_observers(repo, directory, context, state=None):

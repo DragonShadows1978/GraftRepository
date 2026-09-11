@@ -1,0 +1,341 @@
+FFFFFFFFFFFF.............                                                [100%]
+=================================== FAILURES ===================================
+_____________ test_fold_harmony_wrapper_and_stop[<|return|>-turn] ______________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-906/test_fold_harmony_wrapper_and_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7233cb84cc80>
+kind = 'turn', stop = '<|return|>'
+
+    @pytest.mark.parametrize('kind', ['turn', 'digest', 'era'])
+    @pytest.mark.parametrize('stop', HARMONY_STOPS)
+    def test_fold_harmony_wrapper_and_stop(tmp_path, monkeypatch, kind, stop):
+        repo = repository(tmp_path / 'repo', monkeypatch)
+        try:
+            a = repo.arena
+            idx = repo.add_document(SOURCE)
+            a.grafts[idx]['kind'] = kind
+            a.m.fold_output = SOURCE + stop + ' LEAK'
+            assert repo._fold_once(jobs=[('digest', [idx])])
+            first = a.m.calls[0]['input']
+            raw = (a.DIGEST_PROMPTS if kind == 'turn' else a.ERA_PROMPTS)[0]
+            user, primer = raw.removeprefix('User: ').rsplit('\nAssistant:', 1)
+>           assert first == harmony_turn(user, None) + primer
+E           AssertionError: assert 'User: For th... archive: the' == '<|start|>sys... archive: the'
+E             
+E             - <|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.<|end|><|start|>assistant<|channel|>final<|message|> For the archive: the
+E             + User: For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.
+E             + Assistant: For the archive: the
+
+tests/test_grm_scout_fix3.py:28: AssertionError
+____________ test_fold_harmony_wrapper_and_stop[<|return|>-digest] _____________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-906/test_fold_harmony_wrapper_and_1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7233be8a7830>
+kind = 'digest', stop = '<|return|>'
+
+    @pytest.mark.parametrize('kind', ['turn', 'digest', 'era'])
+    @pytest.mark.parametrize('stop', HARMONY_STOPS)
+    def test_fold_harmony_wrapper_and_stop(tmp_path, monkeypatch, kind, stop):
+        repo = repository(tmp_path / 'repo', monkeypatch)
+        try:
+            a = repo.arena
+            idx = repo.add_document(SOURCE)
+            a.grafts[idx]['kind'] = kind
+            a.m.fold_output = SOURCE + stop + ' LEAK'
+            assert repo._fold_once(jobs=[('digest', [idx])])
+            first = a.m.calls[0]['input']
+            raw = (a.DIGEST_PROMPTS if kind == 'turn' else a.ERA_PROMPTS)[0]
+            user, primer = raw.removeprefix('User: ').rsplit('\nAssistant:', 1)
+>           assert first == harmony_turn(user, None) + primer
+E           AssertionError: assert 'User: Rewrit... this period,' == '<|start|>sys... this period,'
+E             
+E             - <|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Rewrite the archive notes above as one brief chronicle in complete sentences, keeping every name, code, number, and time verbatim and stating what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> CHRONICLE — In this period,
+E             + User: Rewrite the archive notes above as one brief chronicle in complete sentences, keeping every name, code, number, and time verbatim and stating what each one refers to.
+E             + Assistant: CHRONICLE — In this period,
+
+tests/test_grm_scout_fix3.py:28: AssertionError
+______________ test_fold_harmony_wrapper_and_stop[<|return|>-era] ______________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-906/test_fold_harmony_wrapper_and_2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7233be8dd850>
+kind = 'era', stop = '<|return|>'
+
+    @pytest.mark.parametrize('kind', ['turn', 'digest', 'era'])
+    @pytest.mark.parametrize('stop', HARMONY_STOPS)
+    def test_fold_harmony_wrapper_and_stop(tmp_path, monkeypatch, kind, stop):
+        repo = repository(tmp_path / 'repo', monkeypatch)
+        try:
+            a = repo.arena
+            idx = repo.add_document(SOURCE)
+            a.grafts[idx]['kind'] = kind
+            a.m.fold_output = SOURCE + stop + ' LEAK'
+            assert repo._fold_once(jobs=[('digest', [idx])])
+            first = a.m.calls[0]['input']
+            raw = (a.DIGEST_PROMPTS if kind == 'turn' else a.ERA_PROMPTS)[0]
+            user, primer = raw.removeprefix('User: ').rsplit('\nAssistant:', 1)
+>           assert first == harmony_turn(user, None) + primer
+E           AssertionError: assert 'User: Rewrit... this period,' == '<|start|>sys... this period,'
+E             
+E             - <|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Rewrite the archive notes above as one brief chronicle in complete sentences, keeping every name, code, number, and time verbatim and stating what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> CHRONICLE — In this period,
+E             + User: Rewrite the archive notes above as one brief chronicle in complete sentences, keeping every name, code, number, and time verbatim and stating what each one refers to.
+E             + Assistant: CHRONICLE — In this period,
+
+tests/test_grm_scout_fix3.py:28: AssertionError
+_______________ test_fold_harmony_wrapper_and_stop[<|end|>-turn] _______________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-906/test_fold_harmony_wrapper_and_3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7233be8de810>
+kind = 'turn', stop = '<|end|>'
+
+    @pytest.mark.parametrize('kind', ['turn', 'digest', 'era'])
+    @pytest.mark.parametrize('stop', HARMONY_STOPS)
+    def test_fold_harmony_wrapper_and_stop(tmp_path, monkeypatch, kind, stop):
+        repo = repository(tmp_path / 'repo', monkeypatch)
+        try:
+            a = repo.arena
+            idx = repo.add_document(SOURCE)
+            a.grafts[idx]['kind'] = kind
+            a.m.fold_output = SOURCE + stop + ' LEAK'
+            assert repo._fold_once(jobs=[('digest', [idx])])
+            first = a.m.calls[0]['input']
+            raw = (a.DIGEST_PROMPTS if kind == 'turn' else a.ERA_PROMPTS)[0]
+            user, primer = raw.removeprefix('User: ').rsplit('\nAssistant:', 1)
+>           assert first == harmony_turn(user, None) + primer
+E           AssertionError: assert 'User: For th... archive: the' == '<|start|>sys... archive: the'
+E             
+E             - <|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.<|end|><|start|>assistant<|channel|>final<|message|> For the archive: the
+E             + User: For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.
+E             + Assistant: For the archive: the
+
+tests/test_grm_scout_fix3.py:28: AssertionError
+______________ test_fold_harmony_wrapper_and_stop[<|end|>-digest] ______________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-906/test_fold_harmony_wrapper_and_4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7233be8a7320>
+kind = 'digest', stop = '<|end|>'
+
+    @pytest.mark.parametrize('kind', ['turn', 'digest', 'era'])
+    @pytest.mark.parametrize('stop', HARMONY_STOPS)
+    def test_fold_harmony_wrapper_and_stop(tmp_path, monkeypatch, kind, stop):
+        repo = repository(tmp_path / 'repo', monkeypatch)
+        try:
+            a = repo.arena
+            idx = repo.add_document(SOURCE)
+            a.grafts[idx]['kind'] = kind
+            a.m.fold_output = SOURCE + stop + ' LEAK'
+            assert repo._fold_once(jobs=[('digest', [idx])])
+            first = a.m.calls[0]['input']
+            raw = (a.DIGEST_PROMPTS if kind == 'turn' else a.ERA_PROMPTS)[0]
+            user, primer = raw.removeprefix('User: ').rsplit('\nAssistant:', 1)
+>           assert first == harmony_turn(user, None) + primer
+E           AssertionError: assert 'User: Rewrit... this period,' == '<|start|>sys... this period,'
+E             
+E             - <|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Rewrite the archive notes above as one brief chronicle in complete sentences, keeping every name, code, number, and time verbatim and stating what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> CHRONICLE — In this period,
+E             + User: Rewrite the archive notes above as one brief chronicle in complete sentences, keeping every name, code, number, and time verbatim and stating what each one refers to.
+E             + Assistant: CHRONICLE — In this period,
+
+tests/test_grm_scout_fix3.py:28: AssertionError
+_______________ test_fold_harmony_wrapper_and_stop[<|end|>-era] ________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-906/test_fold_harmony_wrapper_and_5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7233bea4f260>
+kind = 'era', stop = '<|end|>'
+
+    @pytest.mark.parametrize('kind', ['turn', 'digest', 'era'])
+    @pytest.mark.parametrize('stop', HARMONY_STOPS)
+    def test_fold_harmony_wrapper_and_stop(tmp_path, monkeypatch, kind, stop):
+        repo = repository(tmp_path / 'repo', monkeypatch)
+        try:
+            a = repo.arena
+            idx = repo.add_document(SOURCE)
+            a.grafts[idx]['kind'] = kind
+            a.m.fold_output = SOURCE + stop + ' LEAK'
+            assert repo._fold_once(jobs=[('digest', [idx])])
+            first = a.m.calls[0]['input']
+            raw = (a.DIGEST_PROMPTS if kind == 'turn' else a.ERA_PROMPTS)[0]
+            user, primer = raw.removeprefix('User: ').rsplit('\nAssistant:', 1)
+>           assert first == harmony_turn(user, None) + primer
+E           AssertionError: assert 'User: Rewrit... this period,' == '<|start|>sys... this period,'
+E             
+E             - <|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Rewrite the archive notes above as one brief chronicle in complete sentences, keeping every name, code, number, and time verbatim and stating what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> CHRONICLE — In this period,
+E             + User: Rewrite the archive notes above as one brief chronicle in complete sentences, keeping every name, code, number, and time verbatim and stating what each one refers to.
+E             + Assistant: CHRONICLE — In this period,
+
+tests/test_grm_scout_fix3.py:28: AssertionError
+____________ test_fold_harmony_wrapper_and_stop[<|start|>user-turn] ____________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-906/test_fold_harmony_wrapper_and_6')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7233bea4f7d0>
+kind = 'turn', stop = '<|start|>user'
+
+    @pytest.mark.parametrize('kind', ['turn', 'digest', 'era'])
+    @pytest.mark.parametrize('stop', HARMONY_STOPS)
+    def test_fold_harmony_wrapper_and_stop(tmp_path, monkeypatch, kind, stop):
+        repo = repository(tmp_path / 'repo', monkeypatch)
+        try:
+            a = repo.arena
+            idx = repo.add_document(SOURCE)
+            a.grafts[idx]['kind'] = kind
+            a.m.fold_output = SOURCE + stop + ' LEAK'
+            assert repo._fold_once(jobs=[('digest', [idx])])
+            first = a.m.calls[0]['input']
+            raw = (a.DIGEST_PROMPTS if kind == 'turn' else a.ERA_PROMPTS)[0]
+            user, primer = raw.removeprefix('User: ').rsplit('\nAssistant:', 1)
+>           assert first == harmony_turn(user, None) + primer
+E           AssertionError: assert 'User: For th... archive: the' == '<|start|>sys... archive: the'
+E             
+E             - <|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.<|end|><|start|>assistant<|channel|>final<|message|> For the archive: the
+E             + User: For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.
+E             + Assistant: For the archive: the
+
+tests/test_grm_scout_fix3.py:28: AssertionError
+___________ test_fold_harmony_wrapper_and_stop[<|start|>user-digest] ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-906/test_fold_harmony_wrapper_and_7')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7233be88cfe0>
+kind = 'digest', stop = '<|start|>user'
+
+    @pytest.mark.parametrize('kind', ['turn', 'digest', 'era'])
+    @pytest.mark.parametrize('stop', HARMONY_STOPS)
+    def test_fold_harmony_wrapper_and_stop(tmp_path, monkeypatch, kind, stop):
+        repo = repository(tmp_path / 'repo', monkeypatch)
+        try:
+            a = repo.arena
+            idx = repo.add_document(SOURCE)
+            a.grafts[idx]['kind'] = kind
+            a.m.fold_output = SOURCE + stop + ' LEAK'
+            assert repo._fold_once(jobs=[('digest', [idx])])
+            first = a.m.calls[0]['input']
+            raw = (a.DIGEST_PROMPTS if kind == 'turn' else a.ERA_PROMPTS)[0]
+            user, primer = raw.removeprefix('User: ').rsplit('\nAssistant:', 1)
+>           assert first == harmony_turn(user, None) + primer
+E           AssertionError: assert 'User: Rewrit... this period,' == '<|start|>sys... this period,'
+E             
+E             - <|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Rewrite the archive notes above as one brief chronicle in complete sentences, keeping every name, code, number, and time verbatim and stating what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> CHRONICLE — In this period,
+E             + User: Rewrite the archive notes above as one brief chronicle in complete sentences, keeping every name, code, number, and time verbatim and stating what each one refers to.
+E             + Assistant: CHRONICLE — In this period,
+
+tests/test_grm_scout_fix3.py:28: AssertionError
+____________ test_fold_harmony_wrapper_and_stop[<|start|>user-era] _____________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-906/test_fold_harmony_wrapper_and_8')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7233be88e330>
+kind = 'era', stop = '<|start|>user'
+
+    @pytest.mark.parametrize('kind', ['turn', 'digest', 'era'])
+    @pytest.mark.parametrize('stop', HARMONY_STOPS)
+    def test_fold_harmony_wrapper_and_stop(tmp_path, monkeypatch, kind, stop):
+        repo = repository(tmp_path / 'repo', monkeypatch)
+        try:
+            a = repo.arena
+            idx = repo.add_document(SOURCE)
+            a.grafts[idx]['kind'] = kind
+            a.m.fold_output = SOURCE + stop + ' LEAK'
+            assert repo._fold_once(jobs=[('digest', [idx])])
+            first = a.m.calls[0]['input']
+            raw = (a.DIGEST_PROMPTS if kind == 'turn' else a.ERA_PROMPTS)[0]
+            user, primer = raw.removeprefix('User: ').rsplit('\nAssistant:', 1)
+>           assert first == harmony_turn(user, None) + primer
+E           AssertionError: assert 'User: Rewrit... this period,' == '<|start|>sys... this period,'
+E             
+E             - <|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Rewrite the archive notes above as one brief chronicle in complete sentences, keeping every name, code, number, and time verbatim and stating what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> CHRONICLE — In this period,
+E             + User: Rewrite the archive notes above as one brief chronicle in complete sentences, keeping every name, code, number, and time verbatim and stating what each one refers to.
+E             + Assistant: CHRONICLE — In this period,
+
+tests/test_grm_scout_fix3.py:28: AssertionError
+_________ test_fold_harmony_wrapper_and_stop[<|start|>assistant-turn] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-906/test_fold_harmony_wrapper_and_9')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7233be8dfb90>
+kind = 'turn', stop = '<|start|>assistant'
+
+    @pytest.mark.parametrize('kind', ['turn', 'digest', 'era'])
+    @pytest.mark.parametrize('stop', HARMONY_STOPS)
+    def test_fold_harmony_wrapper_and_stop(tmp_path, monkeypatch, kind, stop):
+        repo = repository(tmp_path / 'repo', monkeypatch)
+        try:
+            a = repo.arena
+            idx = repo.add_document(SOURCE)
+            a.grafts[idx]['kind'] = kind
+            a.m.fold_output = SOURCE + stop + ' LEAK'
+            assert repo._fold_once(jobs=[('digest', [idx])])
+            first = a.m.calls[0]['input']
+            raw = (a.DIGEST_PROMPTS if kind == 'turn' else a.ERA_PROMPTS)[0]
+            user, primer = raw.removeprefix('User: ').rsplit('\nAssistant:', 1)
+>           assert first == harmony_turn(user, None) + primer
+E           AssertionError: assert 'User: For th... archive: the' == '<|start|>sys... archive: the'
+E             
+E             - <|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.<|end|><|start|>assistant<|channel|>final<|message|> For the archive: the
+E             + User: For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.
+E             + Assistant: For the archive: the
+
+tests/test_grm_scout_fix3.py:28: AssertionError
+________ test_fold_harmony_wrapper_and_stop[<|start|>assistant-digest] _________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-906/test_fold_harmony_wrapper_and_10')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7233be8deb40>
+kind = 'digest', stop = '<|start|>assistant'
+
+    @pytest.mark.parametrize('kind', ['turn', 'digest', 'era'])
+    @pytest.mark.parametrize('stop', HARMONY_STOPS)
+    def test_fold_harmony_wrapper_and_stop(tmp_path, monkeypatch, kind, stop):
+        repo = repository(tmp_path / 'repo', monkeypatch)
+        try:
+            a = repo.arena
+            idx = repo.add_document(SOURCE)
+            a.grafts[idx]['kind'] = kind
+            a.m.fold_output = SOURCE + stop + ' LEAK'
+            assert repo._fold_once(jobs=[('digest', [idx])])
+            first = a.m.calls[0]['input']
+            raw = (a.DIGEST_PROMPTS if kind == 'turn' else a.ERA_PROMPTS)[0]
+            user, primer = raw.removeprefix('User: ').rsplit('\nAssistant:', 1)
+>           assert first == harmony_turn(user, None) + primer
+E           AssertionError: assert 'User: Rewrit... this period,' == '<|start|>sys... this period,'
+E             
+E             - <|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Rewrite the archive notes above as one brief chronicle in complete sentences, keeping every name, code, number, and time verbatim and stating what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> CHRONICLE — In this period,
+E             + User: Rewrite the archive notes above as one brief chronicle in complete sentences, keeping every name, code, number, and time verbatim and stating what each one refers to.
+E             + Assistant: CHRONICLE — In this period,
+
+tests/test_grm_scout_fix3.py:28: AssertionError
+__________ test_fold_harmony_wrapper_and_stop[<|start|>assistant-era] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-906/test_fold_harmony_wrapper_and_11')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7233be8dff80>
+kind = 'era', stop = '<|start|>assistant'
+
+    @pytest.mark.parametrize('kind', ['turn', 'digest', 'era'])
+    @pytest.mark.parametrize('stop', HARMONY_STOPS)
+    def test_fold_harmony_wrapper_and_stop(tmp_path, monkeypatch, kind, stop):
+        repo = repository(tmp_path / 'repo', monkeypatch)
+        try:
+            a = repo.arena
+            idx = repo.add_document(SOURCE)
+            a.grafts[idx]['kind'] = kind
+            a.m.fold_output = SOURCE + stop + ' LEAK'
+            assert repo._fold_once(jobs=[('digest', [idx])])
+            first = a.m.calls[0]['input']
+            raw = (a.DIGEST_PROMPTS if kind == 'turn' else a.ERA_PROMPTS)[0]
+            user, primer = raw.removeprefix('User: ').rsplit('\nAssistant:', 1)
+>           assert first == harmony_turn(user, None) + primer
+E           AssertionError: assert 'User: Rewrit... this period,' == '<|start|>sys... this period,'
+E             
+E             - <|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Rewrite the archive notes above as one brief chronicle in complete sentences, keeping every name, code, number, and time verbatim and stating what each one refers to.<|end|><|start|>assistant<|channel|>final<|message|> CHRONICLE — In this period,
+E             + User: Rewrite the archive notes above as one brief chronicle in complete sentences, keeping every name, code, number, and time verbatim and stating what each one refers to.
+E             + Assistant: CHRONICLE — In this period,
+
+tests/test_grm_scout_fix3.py:28: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_grm_scout_fix3.py::test_fold_harmony_wrapper_and_stop[<|return|>-turn]
+FAILED tests/test_grm_scout_fix3.py::test_fold_harmony_wrapper_and_stop[<|return|>-digest]
+FAILED tests/test_grm_scout_fix3.py::test_fold_harmony_wrapper_and_stop[<|return|>-era]
+FAILED tests/test_grm_scout_fix3.py::test_fold_harmony_wrapper_and_stop[<|end|>-turn]
+FAILED tests/test_grm_scout_fix3.py::test_fold_harmony_wrapper_and_stop[<|end|>-digest]
+FAILED tests/test_grm_scout_fix3.py::test_fold_harmony_wrapper_and_stop[<|end|>-era]
+FAILED tests/test_grm_scout_fix3.py::test_fold_harmony_wrapper_and_stop[<|start|>user-turn]
+FAILED tests/test_grm_scout_fix3.py::test_fold_harmony_wrapper_and_stop[<|start|>user-digest]
+FAILED tests/test_grm_scout_fix3.py::test_fold_harmony_wrapper_and_stop[<|start|>user-era]
+FAILED tests/test_grm_scout_fix3.py::test_fold_harmony_wrapper_and_stop[<|start|>assistant-turn]
+FAILED tests/test_grm_scout_fix3.py::test_fold_harmony_wrapper_and_stop[<|start|>assistant-digest]
+FAILED tests/test_grm_scout_fix3.py::test_fold_harmony_wrapper_and_stop[<|start|>assistant-era]
+12 failed, 13 passed in 4.26s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

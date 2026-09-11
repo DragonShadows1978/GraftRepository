@@ -1,0 +1,45 @@
+{
+  "agent_effort": "high requested; runtime setting not independently exposed",
+  "agent_model": "GPT-6; exact deployment model ID not exposed",
+  "budget_seconds_arm_A": 7200,
+  "charged_seconds_existing": 523.1634768834338,
+  "core_sha256": {
+    "core/gpt_oss20b_tc.py": "da8ca3bc8c961d731d9e32bf4558702ad1b8b10c8ecc37b18326e7df4ade74a1",
+    "core/graft_arena.py": "cf242ddfe0ff29ac2114e98768f5cf66939f0ff46886658e50a4f492fcdb1fa4",
+    "core/graft_repository.py": "fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db",
+    "core/grm_admission.py": "62510861b5b1a33af375a4120d78351d2f880b2618a5462c1776a073f3f2d00f"
+  },
+  "cpu_green_log_sha256": "57b843726fd52875342c9895eaa5cc28effff83eb9b3f4751161bc4fb3830cde",
+  "cpu_mutations_sha256": "0d656d0255b9102d64b24915fac6b2272a8b945d91d5855b630894121738e81a",
+  "cpu_registration_sha256": "1ad182e2ce24e50f87559b31ad0743ee8828483a2be8162d5f40c59bfa91a1bf",
+  "current_inputs": {
+    "artifacts/grm_c7/r2/lead_commands_r2_resume.txt": "2004c6e61a36d400ecb02fef838750993d28ba94ce219ccb945a1e6cf1bf5bef",
+    "scripts/grm_c7_amendment3_mutations.py": "5982872887574bdd5abddf27665e041505bb745cb3ef19e02db012c5edef1112",
+    "scripts/grm_c7_diagnose.py": "4fa4c992969862ab499387cce6c88968963498ef8621654ab5f43bffc0ee1ba2",
+    "scripts/grm_c7_run.py": "5a3a22af491e9438b8edeb46c41a0832e11cb0b785eb76b8704449621aabcdd1",
+    "tests/test_grm_c7_amendment3.py": "a4e87fa9bad4a279f6c3f71ba3c48f8091d5956c2a3bbaf6723dcfb0535e2cdd"
+  },
+  "diagnosis_receipt_sha256": "13f15f8efec07c8a4249f478e6a854ad00c2463318a0c572cc50fb18e731f188",
+  "failed_cell_charge_retained": 280,
+  "gpu_resume_authorized": false,
+  "immutable": true,
+  "model": {
+    "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "repository": "openai/gpt-oss-20b",
+    "revision": "6cee5e81ee83917806bbde320786a8fb61efebee"
+  },
+  "previous_amendment_sha256": "cb20ba62d3fa99ebe5b6dde12cacefbab0126098476f6b4601e3584fb6ca3712",
+  "prior_art": "GRM contributors (2026), ArenaCache capture-position context and GptOssAttentionTC optional live_shift: reuse getattr and dynamic setter; preserve missing attribute explicitly. Real-object CPU doubles and source-copy mutation follow local C7 and HOUSE_RULES (2026). No prior art known to me for this exact repair/test composition.",
+  "quarantined_summary_sha256": "68a24b9a24a3626a1f94a801fa98102b058ff662f46f07359220595aaf9a7b67",
+  "reason": "Core recency/admission exclusion reproduced; mission STOP rail. No executable continuation or source-chain relaxation.",
+  "requested_resume_cell": "A-024-031",
+  "resume_registered": false,
+  "schema": "grm.c7.amendment3.blocked-continuation.v1",
+  "status": "BLOCKED_CORE",
+  "threshold_changes": false,
+  "validity_ruling": {
+    "cells_1_3": "Raw memory/residency/fold/checkpoint receipts remain valid observations of the old registered code. Successful oracle attribute path unchanged by optional-read repair; CPU-only fake not used by workers. No checkpoint rebinding or import is authorized.",
+    "failed_cell_4": "Preserved in place, no retry/overwrite; any successor requires a separately bound attempt namespace and explicit checkpoint compatibility.",
+    "oracle_column": "NOT_MEASURED for all pre-amendment rows per lead; raw answers retained, no +/-15-point comparison allowed. Unknown numerical cause unresolved, not proved caused by the missing-attribute defect."
+  }
+}

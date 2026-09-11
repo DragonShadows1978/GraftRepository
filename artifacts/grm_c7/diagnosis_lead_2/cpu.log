@@ -1,0 +1,38 @@
+...F..                                                                   [100%]
+=================================== FAILURES ===================================
+______ test_fold_uses_core_raw_prompts_120_steps_and_ignores_harmony_stop ______
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-890/test_fold_uses_core_raw_prompt0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7dd998811ee0>
+
+    def test_fold_uses_core_raw_prompts_120_steps_and_ignores_harmony_stop(tmp_path, monkeypatch):
+        repo = repository(tmp_path / 'repo', monkeypatch)
+        try:
+            idx = repo.add_document(fixture()['probes'][0]['oracle_source_texts'][0])
+            repo.arena.m.fold_output = '<|end|> …'
+            assert repo._fold_once(jobs=[('digest', [idx])])
+            calls = repo.arena.m.calls
+            initial = [r for r in calls if r['initial']]
+            record('fold', {'model_calls': calls, 'attempts': repo.arena.last_consolidation_attempts,
+                            'result': repo.arena.last_consolidation_result,
+                            'no_fold': repo.arena.grafts[idx].get('no_fold'),
+                            'configured_stops': list(repo.arena.stop_sequences)})
+>           assert [r['input'] for r in initial] == list(ArenaCache.DIGEST_PROMPTS)
+E           AssertionError: assert ['User: Rewri...archive are:'] == ['User: For t...archive are:']
+E             
+E             At index 0 diff: 'User: Rewrite the archive notes above as one brief chronicle in complete sentences, keeping every name, code, number, and time verbatim and stating what each one refers to.\nAssistant: CHRONICLE — In this period,' != 'User: For the archive, restate every fact from the conversation above as a complete sentence that says what each name, code, number, and time refers to.\nAssistant: For the archive: the'
+E             Use -v to get more diff
+
+tests/test_grm_c7_lead_2_diagnosis.py:111: AssertionError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_grm_c7_lead_2_diagnosis.py::test_fold_uses_core_raw_prompts_120_steps_and_ignores_harmony_stop
+1 failed, 5 passed, 2 warnings in 4.72s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

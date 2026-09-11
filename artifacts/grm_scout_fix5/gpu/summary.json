@@ -1,0 +1,86 @@
+{
+  "accepted": 13,
+  "charged_seconds": 1040,
+  "folds": 13,
+  "rows": [
+    {
+      "accepted": true,
+      "coverage": 0.8,
+      "digest_text": "For the archive: the  current C7-Vesper-0 value is Flint-511, the current C7-Vesper-1 value is Flint-512, the previous Mica values are obsolete, and the outbound tag for C7-Archive-0 is Reed-611 while the outbound tag for C7-Archive-1 is Reed-612.",
+      "turn": 8
+    },
+    {
+      "accepted": true,
+      "coverage": 1.0,
+      "digest_text": "For the archive: the  current C7-AliasBase-0 value is Jasper-711, the current C7-AliasBase-1 value is Jasper-712, the current C7-Fresh-0 value is Basalt-811, the current C7-Fresh-1 value is Basalt-812, and the current C7-Fresh-2 value is Basalt-813.",
+      "turn": 17
+    },
+    {
+      "accepted": true,
+      "coverage": 1.0,
+      "digest_text": "For the archive: the  C7-Signal-0 is an alias for C7-AliasBase-0, the C7-Signal-1 is an alias for C7-AliasBase-1, the C7-Signal-2 is an alias for C7-AliasBase-2, and the current C7-Vesper-0 value is Onyx-911.",
+      "turn": 26
+    },
+    {
+      "accepted": true,
+      "coverage": 1.0,
+      "digest_text": "For the archive: the  current C7-Vesper-1 value is Onyx-912, the current C7-Vesper-2 value is Onyx-913, for C7-Archive-0 the inbound tag is Cedar-1011, and for C7-Archive-1 the inbound tag is Cedar-1012.",
+      "turn": 55
+    },
+    {
+      "accepted": true,
+      "coverage": 1.0,
+      "digest_text": "For the archive: the  inbound tag for C7-Archive-2 is Cedar-1013; the current value for C7-Outpost-00 is Pearl-1200; the current value for C7-Outpost-01 is Pearl-1201; the current value for C7-Outpost-02 is Pearl-1202.",
+      "turn": 74
+    },
+    {
+      "accepted": true,
+      "coverage": 1.0,
+      "digest_text": "For the archive: the  current C7-Outpost-03 value is Pearl-1203, the current C7-Outpost-04 value is Pearl-1204, the current C7-Outpost-05 value is Pearl-1205, the current C7-Outpost-06 value is Slate-1206, and C7-Handle-06 is an alias for C7-Outpost-06.",
+      "turn": 85
+    },
+    {
+      "accepted": true,
+      "coverage": 1.0,
+      "digest_text": "For the archive: the  current C7-Outpost-07 value is Slate-1207, and C7-Handle-07 is an alias for C7-Outpost-07. The current C7-Outpost-08 value is Slate-1208, and C7-Handle-08 is an alias for C7-Outpost-08. The current C7-Outpost-09 value is Slate-1209, and C7-Handle-09 is an alias for C7-Outpost-09. The current C7-Outpost-10 value is Slate-1210, and C7-Handle-10 is an alias for C7-Outpost-10.",
+      "turn": 91
+    },
+    {
+      "accepted": true,
+      "coverage": 1.0,
+      "digest_text": "For the archive: the  current C7-Outpost-11 value is Slate-1211, and C7-Handle-11 is an alias for C7-Outpost-11; the current C7-Outpost-12 value is Slate-1212; the current C7-Outpost-13 value is Slate-1213; the current C7-Outpost-14 value is Slate-1214.",
+      "turn": 95
+    },
+    {
+      "accepted": true,
+      "coverage": 1.0,
+      "digest_text": "For the archive: the  current C7\u2011Outpost\u201115 value is Slate\u20111215, the current C7\u2011Outpost\u201116 value is Slate\u20111216, the current C7\u2011Outpost\u201117 value is Slate\u20111217, and the current C7\u2011Outpost\u201118 value is Slate\u20111218.",
+      "turn": 99
+    },
+    {
+      "accepted": true,
+      "coverage": 1.0,
+      "digest_text": "For the archive: the  current C7\u2011Outpost\u201119 value is Slate\u20111219, the current C7\u2011Outpost\u201120 value is Slate\u20111220, the current C7\u2011Outpost\u201121 value is Slate\u20111221, and the current C7\u2011Outpost\u201122 value is Slate\u20111222.",
+      "turn": 103
+    },
+    {
+      "accepted": true,
+      "coverage": 1.0,
+      "digest_text": "For the archive: the  current C7-Outpost-23 value is Slate-1223, the current C7-Outpost-24 value is Slate-1224, the current C7-Outpost-25 value is Slate-1225, and the current C7-Outpost-26 value is Slate-1226.",
+      "turn": 107
+    },
+    {
+      "accepted": true,
+      "coverage": 1.0,
+      "digest_text": "For the archive: the  current C7\u2011Outpost\u201127 value is Slate\u20111227, the current C7\u2011Outpost\u201128 value is Slate\u20111228, the current C7\u2011Outpost\u201129 value is Slate\u20111229, and the current C7\u2011Outpost\u201130 value is Slate\u20111230.",
+      "turn": 111
+    },
+    {
+      "accepted": true,
+      "coverage": 1.0,
+      "digest_text": "For the archive: the  current C7\u2011Outpost\u201131 value is Slate\u20111231, the current C7\u2011Outpost\u201132 value is Slate\u20111232, the current C7\u2011Outpost\u201133 value is Slate\u20111233, and the current C7\u2011Outpost\u201134 value is Slate\u20111234.",
+      "turn": 115
+    }
+  ],
+  "status": "COMPLETE"
+}

@@ -1,0 +1,536 @@
+{
+  "evidence_class": "source inspection and existing checkpoint metadata inspection; no replay or gate run",
+  "gpu_seconds": 0,
+  "implementation": "not started",
+  "order": "/mnt/ForgeRealm/wt/grm-c7/orders/GRM_C7_AMENDMENT_5_R3.md",
+  "prior_art": "GRM contributors (2026), RD2 metadata projection and input SHA binding; reused for reporting only. No prior art known to me for this exact stop receipt composition.",
+  "r3_registration": "not created",
+  "rows": [
+    {
+      "base": {
+        "id": 4,
+        "metadata": {
+          "active": true,
+          "confidence": 1.0,
+          "durability": "session",
+          "importance": {
+            "s4": {
+              "last_grounded_turn": null,
+              "n_grounded": 0,
+              "n_mounted": 0,
+              "n_routed": 3
+            }
+          },
+          "kind": "turn",
+          "mutability": "ephemeral",
+          "scope": "conversation",
+          "source_grafts": [],
+          "source_turns": [],
+          "supersedes": [],
+          "write_intent": "observed"
+        },
+        "ntok": 61,
+        "retired": false,
+        "sources": [],
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      "checkpoint_manifest": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/checkpoint/repository/manifest.json",
+      "combined_payload_tokens": 110,
+      "edge": {
+        "id": 8,
+        "metadata": {
+          "active": true,
+          "confidence": 1.0,
+          "durability": "session",
+          "importance": {
+            "s4": {
+              "last_grounded_turn": null,
+              "n_grounded": 0,
+              "n_mounted": 0,
+              "n_routed": 3
+            }
+          },
+          "kind": "turn",
+          "mutability": "ephemeral",
+          "scope": "conversation",
+          "source_grafts": [],
+          "source_turns": [],
+          "supersedes": [],
+          "write_intent": "observed"
+        },
+        "ntok": 49,
+        "retired": false,
+        "sources": [],
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-0 is an alias for C7-AliasBase-0.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      "historical_mounted_ids": [
+        8
+      ],
+      "historical_width": 96,
+      "probe_id": "c7_alias_0_d030"
+    },
+    {
+      "base": {
+        "id": 4,
+        "metadata": {
+          "active": true,
+          "confidence": 1.0,
+          "durability": "session",
+          "importance": {
+            "s4": {
+              "last_grounded_turn": null,
+              "n_grounded": 0,
+              "n_mounted": 0,
+              "n_routed": 6
+            }
+          },
+          "kind": "turn",
+          "mutability": "ephemeral",
+          "scope": "conversation",
+          "source_grafts": [],
+          "source_turns": [],
+          "supersedes": [],
+          "write_intent": "observed"
+        },
+        "ntok": 61,
+        "retired": false,
+        "sources": [],
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      "checkpoint_manifest": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/checkpoint/repository/manifest.json",
+      "combined_payload_tokens": 110,
+      "edge": {
+        "id": 9,
+        "metadata": {
+          "active": true,
+          "confidence": 1.0,
+          "durability": "session",
+          "importance": {
+            "s4": {
+              "last_grounded_turn": null,
+              "n_grounded": 0,
+              "n_mounted": 0,
+              "n_routed": 6
+            }
+          },
+          "kind": "turn",
+          "mutability": "ephemeral",
+          "scope": "conversation",
+          "source_grafts": [],
+          "source_turns": [],
+          "supersedes": [],
+          "write_intent": "observed"
+        },
+        "ntok": 49,
+        "retired": false,
+        "sources": [],
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-1 is an alias for C7-AliasBase-1.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      "historical_mounted_ids": [
+        9
+      ],
+      "historical_width": 96,
+      "probe_id": "c7_alias_1_d030"
+    },
+    {
+      "base": {
+        "id": 4,
+        "metadata": {
+          "active": true,
+          "confidence": 1.0,
+          "durability": "session",
+          "importance": {
+            "s4": {
+              "last_grounded_turn": null,
+              "n_grounded": 0,
+              "n_mounted": 0,
+              "n_routed": 11
+            }
+          },
+          "kind": "turn",
+          "mutability": "ephemeral",
+          "scope": "conversation",
+          "source_grafts": [],
+          "source_turns": [],
+          "supersedes": [],
+          "write_intent": "observed"
+        },
+        "ntok": 61,
+        "retired": false,
+        "sources": [],
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      "checkpoint_manifest": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint/repository/manifest.json",
+      "combined_payload_tokens": 110,
+      "edge": {
+        "id": 8,
+        "metadata": {
+          "active": true,
+          "confidence": 1.0,
+          "durability": "session",
+          "importance": {
+            "s4": {
+              "last_grounded_turn": null,
+              "n_grounded": 0,
+              "n_mounted": 0,
+              "n_routed": 11
+            }
+          },
+          "kind": "turn",
+          "mutability": "ephemeral",
+          "scope": "conversation",
+          "source_grafts": [],
+          "source_turns": [],
+          "supersedes": [],
+          "write_intent": "observed"
+        },
+        "ntok": 49,
+        "retired": false,
+        "sources": [],
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-0 is an alias for C7-AliasBase-0.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      "historical_mounted_ids": [
+        8
+      ],
+      "historical_width": 96,
+      "probe_id": "c7_alias_0_d060"
+    },
+    {
+      "base": {
+        "id": 4,
+        "metadata": {
+          "active": true,
+          "confidence": 1.0,
+          "durability": "session",
+          "importance": {
+            "s4": {
+              "last_grounded_turn": null,
+              "n_grounded": 0,
+              "n_mounted": 0,
+              "n_routed": 11
+            }
+          },
+          "kind": "turn",
+          "mutability": "ephemeral",
+          "scope": "conversation",
+          "source_grafts": [],
+          "source_turns": [],
+          "supersedes": [],
+          "write_intent": "observed"
+        },
+        "ntok": 61,
+        "retired": false,
+        "sources": [],
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      "checkpoint_manifest": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint/repository/manifest.json",
+      "combined_payload_tokens": 110,
+      "edge": {
+        "id": 9,
+        "metadata": {
+          "active": true,
+          "confidence": 1.0,
+          "durability": "session",
+          "importance": {
+            "s4": {
+              "last_grounded_turn": null,
+              "n_grounded": 0,
+              "n_mounted": 0,
+              "n_routed": 11
+            }
+          },
+          "kind": "turn",
+          "mutability": "ephemeral",
+          "scope": "conversation",
+          "source_grafts": [],
+          "source_turns": [],
+          "supersedes": [],
+          "write_intent": "observed"
+        },
+        "ntok": 49,
+        "retired": false,
+        "sources": [],
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-1 is an alias for C7-AliasBase-1.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      "historical_mounted_ids": [
+        9
+      ],
+      "historical_width": 96,
+      "probe_id": "c7_alias_1_d060"
+    },
+    {
+      "base": {
+        "id": 4,
+        "metadata": {
+          "active": true,
+          "confidence": 1.0,
+          "durability": "session",
+          "importance": {
+            "s4": {
+              "last_grounded_turn": null,
+              "n_grounded": 0,
+              "n_mounted": 0,
+              "n_routed": 11
+            }
+          },
+          "kind": "turn",
+          "mutability": "ephemeral",
+          "scope": "conversation",
+          "source_grafts": [],
+          "source_turns": [],
+          "supersedes": [],
+          "write_intent": "observed"
+        },
+        "ntok": 61,
+        "retired": false,
+        "sources": [],
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      "checkpoint_manifest": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint/repository/manifest.json",
+      "combined_payload_tokens": 110,
+      "edge": {
+        "id": 8,
+        "metadata": {
+          "active": true,
+          "confidence": 1.0,
+          "durability": "session",
+          "importance": {
+            "s4": {
+              "last_grounded_turn": null,
+              "n_grounded": 0,
+              "n_mounted": 0,
+              "n_routed": 11
+            }
+          },
+          "kind": "turn",
+          "mutability": "ephemeral",
+          "scope": "conversation",
+          "source_grafts": [],
+          "source_turns": [],
+          "supersedes": [],
+          "write_intent": "observed"
+        },
+        "ntok": 49,
+        "retired": false,
+        "sources": [],
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-0 is an alias for C7-AliasBase-0.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      "historical_mounted_ids": [
+        8
+      ],
+      "historical_width": 96,
+      "probe_id": "c7_alias_0_d120"
+    },
+    {
+      "base": {
+        "id": 4,
+        "metadata": {
+          "active": true,
+          "confidence": 1.0,
+          "durability": "session",
+          "importance": {
+            "s4": {
+              "last_grounded_turn": null,
+              "n_grounded": 0,
+              "n_mounted": 0,
+              "n_routed": 11
+            }
+          },
+          "kind": "turn",
+          "mutability": "ephemeral",
+          "scope": "conversation",
+          "source_grafts": [],
+          "source_turns": [],
+          "supersedes": [],
+          "write_intent": "observed"
+        },
+        "ntok": 61,
+        "retired": false,
+        "sources": [],
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      "checkpoint_manifest": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint/repository/manifest.json",
+      "combined_payload_tokens": 110,
+      "edge": {
+        "id": 9,
+        "metadata": {
+          "active": true,
+          "confidence": 1.0,
+          "durability": "session",
+          "importance": {
+            "s4": {
+              "last_grounded_turn": null,
+              "n_grounded": 0,
+              "n_mounted": 0,
+              "n_routed": 11
+            }
+          },
+          "kind": "turn",
+          "mutability": "ephemeral",
+          "scope": "conversation",
+          "source_grafts": [],
+          "source_turns": [],
+          "supersedes": [],
+          "write_intent": "observed"
+        },
+        "ntok": 49,
+        "retired": false,
+        "sources": [],
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-1 is an alias for C7-AliasBase-1.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      "historical_mounted_ids": [
+        9
+      ],
+      "historical_width": 96,
+      "probe_id": "c7_alias_1_d120"
+    },
+    {
+      "base": {
+        "id": 4,
+        "metadata": {
+          "active": true,
+          "confidence": 1.0,
+          "durability": "session",
+          "importance": {
+            "s4": {
+              "last_grounded_turn": null,
+              "n_grounded": 0,
+              "n_mounted": 0,
+              "n_routed": 11
+            }
+          },
+          "kind": "turn",
+          "mutability": "ephemeral",
+          "scope": "conversation",
+          "source_grafts": [],
+          "source_turns": [],
+          "supersedes": [],
+          "write_intent": "observed"
+        },
+        "ntok": 61,
+        "retired": false,
+        "sources": [],
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      "checkpoint_manifest": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-249-256/checkpoint/repository/manifest.json",
+      "combined_payload_tokens": 110,
+      "edge": {
+        "id": 8,
+        "metadata": {
+          "active": true,
+          "confidence": 1.0,
+          "durability": "session",
+          "importance": {
+            "s4": {
+              "last_grounded_turn": null,
+              "n_grounded": 0,
+              "n_mounted": 0,
+              "n_routed": 13
+            }
+          },
+          "kind": "turn",
+          "mutability": "ephemeral",
+          "scope": "conversation",
+          "source_grafts": [],
+          "source_turns": [],
+          "supersedes": [],
+          "write_intent": "observed"
+        },
+        "ntok": 49,
+        "retired": false,
+        "sources": [],
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-0 is an alias for C7-AliasBase-0.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      "historical_mounted_ids": [
+        8
+      ],
+      "historical_width": 96,
+      "probe_id": "c7_alias_0_d250"
+    },
+    {
+      "base": {
+        "id": 4,
+        "metadata": {
+          "active": true,
+          "confidence": 1.0,
+          "durability": "session",
+          "importance": {
+            "s4": {
+              "last_grounded_turn": null,
+              "n_grounded": 0,
+              "n_mounted": 0,
+              "n_routed": 11
+            }
+          },
+          "kind": "turn",
+          "mutability": "ephemeral",
+          "scope": "conversation",
+          "source_grafts": [],
+          "source_turns": [],
+          "supersedes": [],
+          "write_intent": "observed"
+        },
+        "ntok": 61,
+        "retired": false,
+        "sources": [],
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current C7-AliasBase-0 value is Jasper-711. The current C7-AliasBase-1 value is Jasper-712.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      "checkpoint_manifest": "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-249-256/checkpoint/repository/manifest.json",
+      "combined_payload_tokens": 110,
+      "edge": {
+        "id": 9,
+        "metadata": {
+          "active": true,
+          "confidence": 1.0,
+          "durability": "session",
+          "importance": {
+            "s4": {
+              "last_grounded_turn": null,
+              "n_grounded": 0,
+              "n_mounted": 0,
+              "n_routed": 11
+            }
+          },
+          "kind": "turn",
+          "mutability": "ephemeral",
+          "scope": "conversation",
+          "source_grafts": [],
+          "source_turns": [],
+          "supersedes": [],
+          "write_intent": "observed"
+        },
+        "ntok": 49,
+        "retired": false,
+        "sources": [],
+        "text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>C7-Signal-1 is an alias for C7-AliasBase-1.<|end|><|start|>assistant<|channel|>final<|message|>Recorded.<|end|>"
+      },
+      "historical_mounted_ids": [
+        9
+      ],
+      "historical_width": 96,
+      "probe_id": "c7_alias_1_d250"
+    }
+  ],
+  "source_sha256": {
+    "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/fixture.json": "18c4bc891115ac6d96f7c443ad023f3e923ee92ab6aac21a1f1150bd14408ff0",
+    "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/fixture_manifest.json": "182a65d3e5c975b5de83966dce5edb293cbabc342436b3d9f3884e43934fd307",
+    "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-024-031/checkpoint/repository/manifest.json": "0bdb9cee177b3a9bfff752290086a54af783e8374051fccb688cc4e9470bcc85",
+    "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-032-039/checkpoint/repository/manifest.json": "68b770a13906987d1532ed3eb6ea08453eb0d6698964be47de5869762d8889a1",
+    "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-056-062/checkpoint/repository/manifest.json": "2749a13a3c8bfa911acf5e7f17a4c572a45b356dfa995c8940d17a83a0ab032e",
+    "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-117-124/checkpoint/repository/manifest.json": "d421bf5bd159f789eb42c2e94cd786f2361a2a47dddec870fe70d4eb59cd0687",
+    "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r2/fix4_attempt_1/cells/A-249-256/checkpoint/repository/manifest.json": "f3f56ff849695106786d86103b4fb675b7ccb3be2ddb8e1500317cc30958939a",
+    "/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/registration.json": "7bc0a0d1ad4cca02a02ae7653ce4b841a8f2fcd0c1e8e051d46b5f5ed7c70c1c",
+    "/mnt/ForgeRealm/wt/grm-c7/core/graft_arena.py": "67f00ba365dee64b5efc414d2a48c711062658bbfe6dc8c9f30efd1c3b7dc37e",
+    "/mnt/ForgeRealm/wt/grm-c7/core/graft_repository.py": "fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db",
+    "/mnt/ForgeRealm/wt/grm-c7/core/grm_admission.py": "2deb9d91ac5c723e67de06d3c71def9a3d06ba30b72fe1bbeb5eb18710c4cc46",
+    "/mnt/ForgeRealm/wt/grm-c7/orders/GRM_C7_AMENDMENT_5_R3.md": "3294a6339116810362af5dca0f721b7f431f1709cce763f3f8a8e6babb240405",
+    "/mnt/ForgeRealm/wt/grm-c7/scripts/grm_c7_common.py": "839892014a6d1965542c11bea70fed7e3afda7b4755a5a0de150479c6db65250",
+    "/mnt/ForgeRealm/wt/grm-c7/scripts/grm_c7_register.py": "6cd967649461cdd99588865013a3f8b4b99fd99ed6b1d35a93e7ca6639253634",
+    "/mnt/ForgeRealm/wt/grm-c7/scripts/grm_c7_run.py": "04951230efa8f4c047674b1a8cf1f4c71bb0c4276f86cd507892bcaef4b9d77d",
+    "/mnt/ForgeRealm/wt/grm-c7/scripts/grm_e2e_session.py": "f2e8f07027b735b9b0e6ee8749e1c25aa8e7883ca782fa03efb5395e34367506",
+    "/mnt/ForgeRealm/wt/grm-rd1/artifacts/grm_rd2/REPORT.md": "681addde1113d69afd32bd7b1b30494cdae6906e8458cf186433125ca4d87c0f",
+    "/mnt/ForgeRealm/wt/grm-rd1/artifacts/grm_rd2/rows.json": "26d72f3545743ab0f4104826a758feb23d7c171daceec0de402c4d5a026a3971"
+  },
+  "status": "RED_STOP_MISSING_STRUCTURAL_ALIAS_EDGE",
+  "stop_clause": "follow the alias edge L2 already records; if it does not record one, say so and STOP"
+}

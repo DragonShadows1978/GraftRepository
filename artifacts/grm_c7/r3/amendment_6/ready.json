@@ -1,0 +1,13 @@
+{
+  "gpu_executed": false,
+  "model_quality": "NOT_RUN",
+  "receipts": {
+    "artifacts/grm_c7/r3/amendment_6/cpu_legacy_fix4.json": "6e594789fca437c8eefd354e095393e86db42b1030a8c7d53a4d5fa61f74ae25",
+    "artifacts/grm_c7/r3/amendment_6/cpu_legacy_fix4.log": "e3e7da40595beae06fd19a8d3bb6b02a3a0092765c60327c935bdd3a7ef88f6d",
+    "artifacts/grm_c7/r3/amendment_6/cpu_mutations.json": "5a7ee9fe0f81f2a3846f6dfbb6158343de81fb8022b5dfbdaacf610d06940814",
+    "artifacts/grm_c7/r3/amendment_6/cpu_registered.json": "9c5840c0e3dc7e354a0b0177cb6521f3a5eb7ee6e0f9b893b9317333a2ade331",
+    "artifacts/grm_c7/r3/amendment_6/cpu_registered.log": "d37e22185c3864c0ff41a6ad717b26578329623beb38de646a70da1cff905c98"
+  },
+  "registration_sha256": "65c543b1904e6e3bd81d95316dbc092fd72f70ae164044cce036ce8a6ec04b1c",
+  "status": "GREEN_CPU"
+}

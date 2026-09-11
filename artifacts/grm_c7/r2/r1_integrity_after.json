@@ -1,0 +1,7 @@
+{
+  "evidence_class": "SHA256 byte equality against pre-edit inventory",
+  "checked_files": 10833,
+  "changed": [],
+  "pass": true,
+  "wall_seconds": 40.0194493830204
+}
