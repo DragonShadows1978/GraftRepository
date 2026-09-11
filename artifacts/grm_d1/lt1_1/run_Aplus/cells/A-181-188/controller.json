@@ -1,0 +1,39 @@
+{
+  "admission_rule": "margin_first",
+  "binding": {
+    "admission_rule": "margin_first",
+    "alias_fold_merge": true,
+    "amendment1_sha256": "0a5754cd3e5bc91c4c5428228ed4164534c5d281d2aa0c7410e8c7f8b145ce0e",
+    "arm": "A",
+    "campaign_arm": "A+",
+    "fixture_sha256": "470da44b3a570684bd24c9f3b96f434468d7914094222ed5867c1382fbc94d26",
+    "label": "A",
+    "rebound_core_shas": {
+      "core/graft_arena.py": "ee455a6a8b77016f5ad4c9047d9b02376e655eab596b9cb790d7bde7faa1c6da",
+      "core/graft_repository.py": "092cca898f20b0c1350aeb129f364c6fd5e55ecca8a6a796fd030e72efb9b50e",
+      "core/grm_admission.py": "ebdfd84af435a163dfe4a37281d489047acd974bf76190b79622340c29af7ab6",
+      "core/grm_alias_fold.py": "8e3810106d0e93a5da7bcf1c09dc80bcc4c561c5c334b634a96419ce475c97a5",
+      "core/grm_runtime.py": "973addc491a29eda9bac611a9c3f0cc25cd1033395ecc39b84b19c6f1b8f0646",
+      "core/grm_text_norm.py": "e968d68791950adb3a59bc83f43d75a75e31879a2f77c379b44bf711ccecc30a"
+    },
+    "registration_sha256": "02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8"
+  },
+  "cell": {
+    "arm": "A",
+    "cooldown_seconds": 30,
+    "depends": "A-173-180",
+    "estimate_seconds": 143.43608947430485,
+    "id": "A-181-188",
+    "lease_seconds": 285,
+    "outer_seconds": 590,
+    "restart_sentinel_calls": 0,
+    "start": 181,
+    "stop": 188,
+    "worker_seconds": 280
+  },
+  "charged_seconds": 76.25927678961307,
+  "error": null,
+  "execution_amendment_sha256": "cbde1678f65310fec5dbdc0195dd58812b007af3454ab51cc8513013dc839c5d",
+  "outer_seconds_before_cooldown": 76.26038977177814,
+  "status": "COMPLETE"
+}

@@ -1,0 +1,248 @@
+{
+  "amendment": 9,
+  "arms": {
+    "A": {
+      "alias_fold_merge": false,
+      "arm": "A",
+      "budget_gpu_hours": 2.06,
+      "budget_gpu_seconds": 7410,
+      "env_after_environment_flags": {
+        "GRM_ADMISSION_RULE": "margin_first"
+      },
+      "invocation": {
+        "dry_run": "python3 scripts/grm_lt1_1.py --arm A --dry-run",
+        "preflight": "python3 scripts/grm_lt1_1.py --arm A --preflight",
+        "resume": "python3 scripts/grm_lt1_1.py --arm A --resume",
+        "summary": "python3 scripts/grm_lt1_1.py --arm A --summary"
+      },
+      "out_dir": "artifacts/grm_d1/lt1_1/run_A",
+      "predictions": {
+        "aliases": "0/5 wrong rows fixed (recall_7_* stay wrong)",
+        "corrections": "5/5",
+        "fresh": "6/7",
+        "recap": "unpredicted memory-side; oracle 5/5 gated on CPU"
+      },
+      "superseded_budget_gpu_seconds": 6120
+    },
+    "A+": {
+      "alias_fold_merge": true,
+      "arm": "A+",
+      "budget_gpu_hours": 2.06,
+      "budget_gpu_seconds": 7410,
+      "env_after_environment_flags": {
+        "GRM_ADMISSION_RULE": "margin_first",
+        "GRM_ALIAS_FOLD_MERGE": "1"
+      },
+      "invocation": {
+        "dry_run": "python3 scripts/grm_lt1_1.py --arm A+ --dry-run",
+        "preflight": "python3 scripts/grm_lt1_1.py --arm A+ --preflight",
+        "resume": "python3 scripts/grm_lt1_1.py --arm A+ --resume",
+        "summary": "python3 scripts/grm_lt1_1.py --arm A+ --summary"
+      },
+      "out_dir": "artifacts/grm_d1/lt1_1/run_Aplus",
+      "predictions": {
+        "aliases": "4/5 of the wrong rows fixed; the lead proposed >= 3/5 and that bar is also met",
+        "corrections": "5/5",
+        "fresh": "6/7",
+        "prediction_note": "The lead proposed aliases >= 3/5. I register 4/5 and state why: the D1 CPU check (artifacts/grm_d1/alias_cpu_aplus.json) shows the fold firing, the digest naming BOTH names, being ADMITTED and MOUNTED, and serving the right value for 10/10 alias probes at every distance, with a 78-token digest inside the 96 width. The one reservation that keeps me off 5/5 is that the CPU reader is a regex double: the GPU reader must still choose the digest value over the surrounding prose, and LT1 already showed one long-distance ladder drop (recall_3_150) that no lineage change addresses. 4/5 prices exactly one such drop.",
+        "recap": ">= 3/5 memory-side"
+      },
+      "superseded_budget_gpu_seconds": 6120
+    }
+  },
+  "budget_gpu_hours_total": 4.12,
+  "budget_gpu_seconds_per_arm": 7410,
+  "budget_gpu_seconds_total": 14820,
+  "core_rebind": {
+    "attribution_note": "Three of amendment 1's six pins moved. Two are SCOUT-FIX-9 (core/graft_arena.py, core/graft_repository.py); one is A1 amendment 3 (core/grm_alias_fold.py). Every attribution was checked against the source at the named line, not accepted from the merge description. The remaining three pins (core/grm_admission.py, core/grm_runtime.py, core/grm_text_norm.py) are byte-identical to amendment 1 and are recorded as unchanged rather than silently dropped.",
+    "changed": {
+      "core/graft_arena.py": {
+        "after_sha256": "ee455a6a8b77016f5ad4c9047d9b02376e655eab596b9cb790d7bde7faa1c6da",
+        "attribution": "SCOUT-FIX-9 (lead-merged into grm-merge, fast-forwarded into this worktree). Verified at the code site by this seat, not taken on label: width-guard degenerate-split rejection (core/graft_repository.py:1247,1385,1400), cycle-safe child-key rebuild republished to the native store (:5616,:5720), and Python route eligibility requiring a cent (core/graft_arena.py:1453).",
+        "before_sha256": "918f5d0b202b4efabfaa1c37c965cdf3ce8fbd7e6b69045c4dafd985bee820a9"
+      },
+      "core/graft_repository.py": {
+        "after_sha256": "092cca898f20b0c1350aeb129f364c6fd5e55ecca8a6a796fd030e72efb9b50e",
+        "attribution": "SCOUT-FIX-9 (lead-merged into grm-merge, fast-forwarded into this worktree). Verified at the code site by this seat, not taken on label: width-guard degenerate-split rejection (core/graft_repository.py:1247,1385,1400), cycle-safe child-key rebuild republished to the native store (:5616,:5720), and Python route eligibility requiring a cent (core/graft_arena.py:1453).",
+        "before_sha256": "59165723310605d599088718b486066cdfad90e16c15d9af83cf64726a52c2e4"
+      },
+      "core/grm_alias_fold.py": {
+        "after_sha256": "8e3810106d0e93a5da7bcf1c09dc80bcc4c561c5c334b634a96419ce475c97a5",
+        "attribution": "A1 amendment 3. Verified at the code site by this seat: `parse_alias_edge` now scans `normalize_glyphs(alias_scan_text(text))`, so a stored digest written with U+2011 NON-BREAKING HYPHEN no longer shatters into the spurious pair ('0', 'C7'). Same shattering class as SC1.1/FIX-8.",
+        "before_sha256": "147ea9687112e9ccd61aaaf63c16404c5175a08d6733da2df22d4e591f1203e7"
+      }
+    },
+    "new_inputs": {},
+    "source_binding": "artifacts/grm_d1/lt1_1/amendment1.json",
+    "source_binding_sha256": "0a5754cd3e5bc91c4c5428228ed4164534c5d281d2aa0c7410e8c7f8b145ce0e",
+    "supersedes": "amendment1.core_rebind",
+    "unchanged": {
+      "core/grm_admission.py": {
+        "attribution": "unchanged by the fast-forward",
+        "sha256": "ebdfd84af435a163dfe4a37281d489047acd974bf76190b79622340c29af7ab6"
+      },
+      "core/grm_runtime.py": {
+        "attribution": "unchanged by the fast-forward",
+        "sha256": "973addc491a29eda9bac611a9c3f0cc25cd1033395ecc39b84b19c6f1b8f0646"
+      },
+      "core/grm_text_norm.py": {
+        "attribution": "unchanged by the fast-forward",
+        "sha256": "e968d68791950adb3a59bc83f43d75a75e31879a2f77c379b44bf711ccecc30a"
+      }
+    },
+    "unchanged_count": 3
+  },
+  "findings": {
+    "alias_fold_decisions": {
+      "cpu_receipt": {
+        "A_merges": 0,
+        "Aplus_merges": 10,
+        "note": "Same fixture, CPU replay, 164 turns. This is the only place fold decisions are itemized.",
+        "pairs": [
+          "the Hauler=Kestrel",
+          "the Beacon=Lantern",
+          "the Forge=Foundry",
+          "the Cistern=Orchard",
+          "the Lookout=Aster",
+          "the Workshop=Tern",
+          "the Gate=Morrow",
+          "the Needle=Spindle",
+          "the Pit=Quarry",
+          "the Kitchen=Saffron"
+        ],
+        "path": "artifacts/grm_d1/alias_cpu_aplus.json",
+        "sha256": "a680b925943d7ccc4d872b6c95830f1c1b6d693ecaf2a9ca4c334efc27d481ed"
+      },
+      "in_campaign_receipts": "NOT PRESENT. repository.alias_fold_history is never persisted into worker.json, probes.jsonl or the manifest, so the GPU campaign receipts cannot attest individual fold decisions. This is a RECEIPT GAP and is registered here rather than papered over.",
+      "what_is_attested": "binding.alias_fold_merge is True in every A+ cell and False in every A cell, and the two stores differ structurally (209/38/11 vs 199/31/8), so the flag demonstrably did work."
+    },
+    "alias_fold_effect": "MEASURABLE AND STRUCTURAL, but not where the brief expected it. The two arms built different stores: A+ 209 nodes (38 digests, 11 eras), A 199 nodes (31 digests, 8 eras). Alias PROBES score 10/10 in BOTH arms, so on the registered alias column A1 changed nothing. Its measurable effect is on FOLD PROVENANCE: see beacon_capture.",
+    "beacon_capture": "THE substantive finding. In arm A, digest node 24 (sources [13,14,17,18], which INCLUDE turn 18 \"Let's call Lantern 'the Beacon'\") reads: \"the maintenance crew of the Beacon is located at Iona Vale, and the map position of the Beacon is (-31, 48, 12)\". The fold attached Commtower's crew and Breakwater's coordinates to the WRONG ENTITY -- \"the Beacon\", which is an alias for Lantern. Era node 61 inherits the same error. In arm A+, digest 28 (sources [13,14,21,22], no alias turn) reads \"the maintenance crew of the comm tower is named Iona Vale, and the map position of the breakwater is (-31, 48, 12)\" -- correct entities -- and era 64 preserves it. So A+ has an INTACT retrievable record of the Breakwater coordinate and arm A does not: grep for \"Breakwater\" finds 3 nodes in A+ and 1 in A (the retired source turn alone).",
+    "fresh_regression_reading": "A+ 8/15 vs A 10/15 on the registered column (10 vs 13 on column 2): the A+ arm is WORSE on fresh, and the three rows that separate them are recall_1_25 / recall_1_50 (A+ answers \"12 m lantern spacing\", a fabrication; A answers \"9-voxel intervals\", correct content) plus recall_2_100 / recall_2_150 (A+ fabricates a Commtower crew of \"local kids\"; those two rows are not asked of A). Both arms run the SAME production funnel, so this is not prose-feed vs funnel -- that difference was already retired in amendment 7. The remaining difference between the arms is the alias fold itself, which changed the digest/era population (38/11 vs 31/8) and therefore what the ranker had to choose among. Fresh-recall regression under a LARGER digest population is the honest reading, and it is a NEGATIVE result for A1 on this axis.",
+    "source_nodes_are_never_mounted": "Measured across all 80 rows: the probe's own source_ids appear in route_info.mounts in 0 of 28 A+ hits and 0 of 29 A hits. Correct answers are served through fold digests and eras, never by mounting the original turn. So \"source node not mounted\" cannot by itself explain any miss -- that is the NORMAL path for a correct answer too.",
+    "what_arm_A_mounted_for_alias_probes": "Arm A mounted only turn nodes (ids 13 and 62) across its ten alias probes -- NOT a librarian chronicle digest. Arm A+ mounted turn nodes 13, 19, 21, 56. Neither arm needed a fold to answer the alias probes: both score 10/10 by reading the alias turn itself.",
+    "why_both_arms_still_miss_breakwater": "Having the record is not the same as serving it. In EVERY Breakwater miss, in BOTH arms, the mounted node is unrelated to the question (A+ d=150 and recap mount node 153, \"Nacre's ticket price will be 19 credits\"; A d=100 mounts node 42, \"Saffron's galley stock\"; A recap mounts node 125, \"Crag's tug price\"). The correct digest/era was never ranked. This is a ROUTING failure, not a storage failure, and it is the top residual."
+  },
+  "follow_up_instruction": "Amendment 9 binds a SCORING COLUMN and records analysis of receipts that already existed. It runs no new campaign and changes no core pin: amendment 8's core_rebind is restated verbatim and still governs.",
+  "order": "orders/GRM_D1_LT1_RESIDUAL_DIAGNOSIS.md",
+  "order_sha256": "6ae0f52af0059f0a93b66ae37dd442761a32409b5f3f17b027c4b8fa2c0efb46",
+  "previous_amendment": "amendment8.json",
+  "previous_amendment_sha256": "1ea99e96c7fc089d434ed7b0d7aa1371189103c664c6fdf052cbbd3718abe542",
+  "prior_art": {
+    "entity_capture": "The \"Beacon capture\" failure mode -- a summarizing fold rebinding facts onto a coreferent alias -- is the entity/coreference error class known from abstractive summarization faithfulness work (e.g. entity hallucination measures, Maynez et al. 2020). Observed here, not imported. Unverified -- lead to check. Search terms: \"entity hallucination abstractive summarization\", \"coreference error summarization faithfulness\".",
+    "scorer_v2": "SQuAD official normalize_answer (Rajpurkar et al. 2016) for the idea of a declared normalization pipeline applied identically to prediction and reference. MINE: the Unicode-space fold, the optional-parenthesis rule, and the unit singular/plural fold. NOT taken from SQuAD: its strip-all-punctuation step, which would erase the minus signs that distinguish (-31,48,12) from (31,48,12). Unverified -- no network in this sandbox; lead to check. Search terms: \"SQuAD normalize_answer exact match\", \"answer span normalization unicode\", \"numeric answer equivalence QA eval\"."
+  },
+  "process_safety": {
+    "core_writes": "none - core/ read-only to this seat",
+    "foreign_processes": "none killed or signalled",
+    "git": "none - the lead commits",
+    "gpu": "none - analysis only, no lease taken",
+    "scratch": "pytest --basetemp on NVMe, deleted after",
+    "subagents": "none"
+  },
+  "purpose": "Register a SECOND scoring column for LT1.1 and bind it by sha. The registered scorer (scripts/grm_lt1.score) remains the PRIMARY verdict and is not modified. Column 2 is reported beside it, applied identically to A+, A and the archived LT1 parent rows.",
+  "registration": "artifacts/grm_d1/lt1_1/registration.json",
+  "registration_sha256": "02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8",
+  "residuals": [
+    "Breakwater coordinate routing: the correct digest/era exists in A+ and is never ranked. Top residual.",
+    "Arm A fold provenance: \"the Beacon\" captures Commtower/Breakwater facts. A CORRECTNESS defect in the A arm, discovered here.",
+    "alias_fold_history is not persisted to campaign receipts.",
+    "The registered scorer's abstention regex misses \"we're still working on that\" (arm A recall_5_25), so a genuine abstention is counted as wrong_value."
+  ],
+  "results": {
+    "columns": "col1 = registered scorer (PRIMARY); col2 = value_span_glyph_tolerant_v2",
+    "evidence_class": "campaign receipts (GPU), both arms 26/26 cells complete",
+    "lt1_1_A": {
+      "alias": "10/10 -> 10/10",
+      "correction": "9/10 -> 9/10",
+      "fresh": "10/15 -> 13/15",
+      "recap": "4/5 -> 4/5",
+      "total": "33/40 -> 36/40"
+    },
+    "lt1_1_Aplus": {
+      "alias": "10/10 -> 10/10",
+      "correction": "10/10 -> 10/10",
+      "fresh": "8/15 -> 10/15",
+      "recap": "4/5 -> 4/5",
+      "total": "32/40 -> 34/40"
+    },
+    "lt1_parent_arm_A": {
+      "alias": "5/10 -> 5/10",
+      "correction": "5/10 -> 5/10",
+      "fresh": "16/17 -> 16/17",
+      "note": "Rescored by this seat from the archived rows at artifacts/grm_lt1/amendment2/run_margin_first/cells/A-*/probes.jsonl under the LT1.1 fixture class map. The lead reported LT1 as 14/15 fresh and 0/5 recap; the parent fixture has 17 fresh rows and no recap probes, so those two figures are NOT reproduced here and the lead's numbers stand as the campaign record for them. Corrections 5/10 and aliases 5/10 DO reproduce exactly.",
+      "recap": "not in the parent fixture",
+      "total": "26/37 -> 26/37"
+    },
+    "what_column_2_changes": "It moves 5 rows in total, all in LT1.1: 2 in A+ (recall_1_10, recall_3_100) and 3 in A (recall_1_10, recall_1_25, recall_1_50). It moves ZERO rows in the LT1 parent, so it does not flatter the new arms relative to the baseline. It changes NO class verdict except fresh, and it does not change the A-vs-A+ ordering: A leads on fresh in both columns."
+  },
+  "runner": {
+    "change": "governing_core_rebind()/governing_core_pins() added; binding(), lt1_1_preflight() and lt1_lineage() now read the governing rebind instead of amendment 1. No gameplay/tuning literal introduced.",
+    "path": "scripts/grm_lt1_1.py",
+    "sha256": "2c745e2b27194ade4ec2c78c625fa2d70bd7ff0d5f1518e2b64f153708677937",
+    "superseded_sha256": "19e3a895c5e5442f0354fec59fcbe54b7c5dcb783f349b15d7612202bf1c14ec",
+    "tests": [
+      "tests/test_grm_lt1_1_runner.py",
+      "tests/test_grm_lt1_1_resume_route.py",
+      "tests/test_grm_lt1_1_preflight.py",
+      "tests/test_grm_lt1_1_child_spawn.py",
+      "tests/test_grm_lt1_1_idle_wait.py",
+      "tests/test_grm_lt1_1_production_turns.py"
+    ],
+    "tests_sha256": {
+      "tests/test_grm_d1_amendment3.py": "baf381fe0f3aa24e9b0650bf4086c66e67955640f4b39423643ff95512ec5f77",
+      "tests/test_grm_lt1_1_child_spawn.py": "0d696190aa7f5854fe5977a7d43cacfe2b4b7d07f263ec4b7781a99ff5443aea",
+      "tests/test_grm_lt1_1_idle_wait.py": "e22ddcd4d175bf4e8820573b2a648c4e753bb64851d437076be62cac71c509c6",
+      "tests/test_grm_lt1_1_preflight.py": "9ed36f615eba431d4f8085e916086392cbb76d23a6f0abc26543eb40e0c3b326",
+      "tests/test_grm_lt1_1_production_turns.py": "e0a71ad92106739b6cc08ee25ca7b0497e3acab77aa8592a690f6352b0bb8f7e",
+      "tests/test_grm_lt1_1_resume_route.py": "9b86b2ad4f7c3346c51187f8b3d3619e994b86091c08560bf23becbf28adfa9d",
+      "tests/test_grm_lt1_1_runner.py": "e0ab405c367d8fbb0dd9d2716eea140b30858a1c2a97ce49e2caff00f86222a7"
+    },
+    "worker": "scripts/grm_lt1_worker.py",
+    "worker_sha256": "79492eafe9176510a649c5477bf78bf1eb5c129ecaeaf4094221c67e22646c71"
+  },
+  "schema": "grm.lt1_1.amendment7.v1",
+  "scorer_column": {
+    "correction_to_the_brief": "The follow-up brief described the misses as \"U+2011\" glyph misses. For the DASH that is not so: grm_lt1.normalize already NFKC-folds and already maps U+2011 to \"-\", so \"9-voxel\" reaches the span search with an ordinary hyphen. The real unfolded glyph is U+202F (narrow no-break space) inside \"-31, 48, 12\", plus singular/plural and the hyphen-for-space compound. Measured, not assumed: grm_lt1.score(\"...9\\u2011voxel...\", \"9 voxels\") is False AFTER the dash fold, because the text reads \"9-voxel\" and the expected reads \"9 voxels\".",
+    "folds": [
+      "NFKC",
+      "Unicode dashes U+2010..U+2014,U+2212 -> \"-\" (the registered scorer ALREADY does this)",
+      "U+202F NARROW NO-BREAK SPACE and U+00A0 -> \" \" (NEW)",
+      "optional surrounding parentheses on a value (NEW)",
+      "unit singular/plural + hyphen-for-space compound, \"9 voxels\" ~ \"9-voxel\" (NEW)"
+    ],
+    "guarantee": "strict superset of the registered scorer (verified: 0 rows pass column 1 and fail column 2)",
+    "name": "value_span_glyph_tolerant_v2",
+    "never_rescues": [
+      "a wrong number",
+      "a fabricated entity",
+      "an abstention"
+    ],
+    "path": "scripts/grm_d1_scorer_v2.py",
+    "primary_scorer": {
+      "function": "score",
+      "path": "scripts/grm_lt1.py",
+      "sha256": "9577ae63a0394a6f231189085ac5059cf4426cef2e006da1a10c4986846f3234",
+      "unmodified": true
+    },
+    "sha256": "ab199360e9e58dff8ade718882397a6a8bf6d08ee4b5c935bef304fa72da866d",
+    "status": "SECONDARY -- reported beside the registered scorer, never replacing it"
+  },
+  "test_changes": {
+    "scratch_fix": {
+      "file": "tests/test_grm_lt1_1_preflight.py",
+      "what": "_stage() now copies only the FILES in runner.OUT, not the tree.",
+      "why": "runner.OUT also holds run_A/ and run_Aplus/, each carrying a 112 MB native store per cell across 52 cells: 28 GB per copy, for tamper tests that touch 320 KB of JSON. Six of them staged 93 GB and hit ENOSPC on NVMe. Measured after the fix: the whole preflight file runs in 0.35 s using 1.9 MB of scratch, against ~15 min and 53-93 GB before. Same 19 tests, same assertions."
+    },
+    "stale_state_assertions": {
+      "files": [
+        "tests/test_grm_lt1_1_child_spawn.py",
+        "tests/test_grm_lt1_1_idle_wait.py",
+        "tests/test_grm_lt1_1_runner.py"
+      ],
+      "honesty_note": "These are MY test defects surfacing against the lead's newer receipts, not a regression in the campaign. Recorded rather than quietly relaxed.",
+      "what": "Three tests asserted the arms were RE-ARMED (live cell absent, next_cell == 'A-001-008').",
+      "why": "That was the state immediately after the r1 archive was taken. The lead has since run r2 to completion, 26/26 both arms, so the live cells legitimately exist and next_cell is None. The assertions encoded a ONE-TIME state, not an invariant, and went RED on a correct tree. Each now skips (or accepts None) when the arm has been re-run; the archive-integrity assertions they guard are unchanged and still enforced."
+    }
+  }
+}

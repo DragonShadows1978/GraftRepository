@@ -288,6 +288,150 @@ registered as `present_on_tree: false` with the grep as evidence and
 against the source. The lead can pin it if a later merge introduces it;
 LT1.1 must not claim it was applied.
 
+### 3.1 LT1.1 r2 results (lead-run on the shipping core, amendment 9)
+
+Receipts: `artifacts/grm_d1/lt1_1/lead_Aplus_r2_summary.json`,
+`lead_A_r2_summary.json`; per-row causes in
+`artifacts/grm_d1/lt1_1/miss_causes.json`. Both arms **26/26 cells COMPLETE**.
+Binding in every cell carries amendment 8's rebound core shas, so these
+numbers are measured on the core that ships.
+
+**Two columns.** Column 1 is the registered scorer (`scripts/grm_lt1.score`),
+which stays the **primary verdict** and is unmodified. Column 2 is
+`value_span_glyph_tolerant_v2` (`scripts/grm_d1_scorer_v2.py`), registered and
+sha-bound in amendment 9, applied identically to all three row sets. Column 2
+is a verified **strict superset**: 0 rows pass column 1 and fail column 2.
+
+| class | A+ col1 | A+ col2 | A col1 | A col2 | LT1 parent col1 | LT1 parent col2 |
+|---|---|---|---|---|---|---|
+| fresh | 8/15 | **10/15** | 10/15 | **13/15** | 16/17 | 16/17 |
+| correction | 10/10 | 10/10 | 9/10 | 9/10 | 5/10 | 5/10 |
+| alias | 10/10 | 10/10 | 10/10 | 10/10 | 5/10 | 5/10 |
+| recap | 4/5 | 4/5 | 4/5 | 4/5 | n/a | n/a |
+| **total** | **32/40** | **34/40** | **33/40** | **36/40** | 26/37 | 26/37 |
+
+LT1 parent rows were rescored by this seat from
+`artifacts/grm_lt1/amendment2/run_margin_first/cells/A-*/probes.jsonl` under
+the LT1.1 class map. Corrections 5/10 and aliases 5/10 reproduce the lead's
+figures exactly; the parent fixture holds 17 fresh rows and no recap probes,
+so the lead's 14/15 fresh and 0/5 recap are **not** reproduced here and stand
+as the campaign record for those two cells.
+
+**What column 2 changes.** It moves **5 rows, all in LT1.1** (A+:
+`recall_1_10`, `recall_3_100`; A: `recall_1_10`, `recall_1_25`,
+`recall_1_50`) and **0 rows in the LT1 parent** — so it does not flatter the
+new arms against the baseline. It changes no class verdict but fresh, and it
+does not change the A-vs-A+ ordering.
+
+**Correction to the "U+2011" framing.** For the *dash* this is already false:
+`grm_lt1.normalize` NFKC-folds **and** maps U+2010..U+2014/U+2212 to `-`
+before the span search. `9‑voxel` therefore arrives as `9-voxel`. The miss is
+`9-voxel` vs expected `9 voxels` — hyphen-for-space plus singular/plural. The
+genuinely unfolded glyph is **U+202F** (narrow no-break space) inside
+`-31, 48, 12`. Column 2 folds U+202F/U+00A0, optional parentheses, and the
+unit plural; it never rescues a wrong number, a fabricated entity, or an
+abstention.
+
+### 3.2 Per-row cause table (every miss, both arms)
+
+| arm | probe | class | cause | served node actually mounted |
+|---|---|---|---|---|
+| A+ | `recall_1_10` | fresh | glyph/scorer miss, **content correct** | turn 24 (salvage loop) |
+| A+ | `recall_1_25` | fresh | fabrication ("12 m lantern spacing") | turns 13, 29 |
+| A+ | `recall_1_50` | fresh | fabrication ("12 m lantern spacing") | turns 13, 29 |
+| A+ | `recall_2_100` | fresh | fabrication (Commtower crew = "local kids") | turn 65 (Morrow→"the Gate") |
+| A+ | `recall_3_100` | fresh | glyph/scorer miss, **content correct** | turn 65 |
+| A+ | `recall_2_150` | fresh | fabrication (same crew invention) | turn 65 |
+| A+ | `recall_3_150` | fresh | fabrication `(0, 0, 0)` | turn 153 (Nacre ticket price) |
+| A+ | `recap_3` | recap | fabrication `(-9, -44, 71)` | turn 153 |
+| A | `recall_1_10` | fresh | glyph/scorer miss, **content correct** | turn 20 (comm tower silhouette) |
+| A | `recall_1_25` | fresh | glyph/scorer miss, **content correct** | turn 20 |
+| A | `recall_5_25` | correction | **abstention** ("still working on that") | turn 20, fact 28 |
+| A | `recall_1_50` | fresh | glyph/scorer miss, **content correct** | turn 20 |
+| A | `recall_3_100` | fresh | fabrication `(64, -17, 8)` | turn 42 (Saffron galley stock) |
+| A | `recall_3_150` | fresh | fabrication `(-9, -44, 71)` | turn 141 (Fallow steward) |
+| A | `recap_3` | recap | fabrication `(19, 83, -22)` | turn 125 (Crag tug price) |
+
+`recall_5_25` asserts no value; the registered scorer's abstention regex does
+not cover "we're still working on that", so it is counted `wrong_value`. The
+registered category is left exactly as measured — the reclassification lives
+only in `miss_causes.json`.
+
+**Source nodes are never mounted — for hits either.** Across all 80 rows the
+probe's own `source_ids` appear in `route_info.mounts` in **0 of 28** A+ hits
+and **0 of 29** A hits. Correct answers are served through fold digests and
+era nodes, never by mounting the original turn. "Source node not mounted"
+therefore explains nothing on its own: it is the normal path for a correct
+answer too.
+
+### 3.3 Alias attribution — did A1's merge do anything measurable?
+
+**Yes, structurally — but not on the alias column, and not in the direction
+hoped for.**
+
+- Alias probes score **10/10 in both arms**. On that column A1 changed nothing.
+- Arm A mounted only **turn** nodes (13, 62) across its ten alias probes — *not*
+  a librarian chronicle digest. A+ mounted turns 13, 19, 21, 56. Neither arm
+  needed a fold: both answer by reading the alias turn itself.
+- The flag was genuinely live: `binding.alias_fold_merge` is `true` in every
+  A+ cell, `false` in every A cell.
+- The stores diverge: **A+ 209 nodes (38 digests, 11 eras)** vs
+  **A 199 nodes (31 digests, 8 eras)**.
+- **Receipt gap:** `repository.alias_fold_history` is never persisted into
+  `worker.json`, `probes.jsonl` or the manifest, so the GPU receipts cannot
+  itemize fold decisions. The only itemization is the CPU replay
+  `artifacts/grm_d1/alias_cpu_aplus.json`: **A+ 10 merges, A 0**, over the same
+  164 turns — the Hauler=Kestrel, **the Beacon=Lantern**, the Forge=Foundry,
+  the Cistern=Orchard, the Lookout=Aster, the Workshop=Tern, the Gate=Morrow,
+  the Needle=Spindle, the Pit=Quarry, the Kitchen=Saffron.
+
+**The Beacon capture — the substantive finding.** In **arm A**, digest node 24
+folds sources `[13, 14, 17, 18]`, which *include* turn 18 ("Let's call Lantern
+'the Beacon'"), and reads:
+
+> the maintenance crew of **the Beacon** is located at Iona Vale, and the map
+> position of **the Beacon** is (-31, 48, 12).
+
+The fold rebound Commtower's crew and Breakwater's coordinates onto the wrong
+entity — an alias for *Lantern*. Era node 61 inherits the error. In **arm A+**,
+digest 28 folds `[13, 14, 21, 22]` (no alias turn) and reads "the maintenance
+crew of **the comm tower** … the map position of **the breakwater**", and era
+64 preserves it. Consequence: grepping the stores for "Breakwater" finds
+**3 nodes in A+** and **1 in A** (the retired source turn alone). A+ holds an
+intact retrievable record; A does not.
+
+**Why both arms still miss Breakwater anyway.** Holding the record is not
+serving it. In every Breakwater miss, in both arms, the mounted node is
+unrelated to the question — Nacre's ticket price, Saffron's galley stock,
+Crag's tug price. The correct digest/era is never ranked. This is a **routing**
+failure, not a storage failure, and it is the top residual.
+
+### 3.4 The fresh regression
+
+A+ is **worse** on fresh than A: 8/15 vs 10/15 (10 vs 13 on column 2). The
+separating rows are `recall_1_25`/`recall_1_50` (A+ fabricates "12 m lantern
+spacing"; A answers "9-voxel intervals", correct content) and
+`recall_2_100`/`recall_2_150` (A+ fabricates a Commtower crew).
+
+This is **not** prose-feed vs production funnel — that difference was retired
+in amendment 7, and both arms here run the same worker through the same
+funnel. The remaining difference between the arms *is* the alias fold, which
+enlarged the digest/era population (38/11 vs 31/8) and so changed what the
+ranker had to choose among. **Fresh-recall regression under a larger digest
+population is the honest reading, and it is a negative result for A1 on this
+axis** — recorded as such, not smoothed.
+
+### 3.5 Residuals
+
+1. **Breakwater routing** — the correct digest/era exists in A+ and is never
+   ranked. Top residual.
+2. **Arm A fold provenance** — "the Beacon" captures Commtower/Breakwater
+   facts. A correctness defect in the A arm, found here.
+3. **`alias_fold_history` is not persisted** to campaign receipts; only the
+   CPU replay itemizes folds.
+4. **Abstention regex gap** — "we're still working on that" is scored
+   `wrong_value`.
+
 ## 4. The five recap questions
 
 Receipt: `artifacts/grm_d1/recap_battery.json`. Oracle **5/5 PASS**.

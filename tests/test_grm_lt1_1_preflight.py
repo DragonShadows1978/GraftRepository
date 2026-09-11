@@ -61,7 +61,16 @@ def pinned(monkeypatch):
 def _stage(monkeypatch, tmp_path):
     """A writable copy of the LT1.1 document set, for tamper tests."""
     staged = tmp_path / 'lt1_1'
-    shutil.copytree(runner.OUT, staged)
+    # Copy ONLY the documents the preflight reads and these tests tamper
+    # with. `runner.OUT` also holds run_A/ and run_Aplus/, which carry a
+    # 112 MB native store PER CELL across 52 cells -- 28 GB per copy. Six
+    # tamper tests once staged 93 GB of it and filled the disk; the tests
+    # touch nothing but the JSON. Filtering here is the fix, not a bigger
+    # scratch volume.
+    staged.mkdir(parents=True)
+    for item in sorted(runner.OUT.iterdir()):
+        if item.is_file():
+            shutil.copy2(item, staged / item.name)
     monkeypatch.setattr(runner, 'OUT', staged)
     monkeypatch.setattr(runner, 'REGISTRATION', staged / 'registration.json')
     monkeypatch.setattr(runner, 'AMENDMENT1', staged / 'amendment1.json')
