@@ -425,3 +425,565 @@ def test_over_width_digest_takes_the_existing_split_path(tmp_path):
     finally:
         repo.close()
         mp.undo()
+
+
+# =====================================================================
+# AMENDMENT 2 — the three defects the 2026-09-11 lead GPU runs found.
+#
+# All three reached the card because the fake arm diverged from the GPU arm
+# AT THE LOADER. Each test below fails on the PRE-amendment-2 worker.
+# =====================================================================
+
+# ------------------------------------------------- defect 1: lease shape
+
+def test_lease_default_is_under_the_house_cap():
+    """The first worker defaulted to 2400s; gpu_lease refuses anything >590."""
+    from scripts.grm_cmc1_gpu_arms import MAX_LEASE_SECONDS
+
+    assert MAX_LEASE_SECONDS == 590
+    assert W.LEASE_SECONDS <= MAX_LEASE_SECONDS
+    assert W.LEASE_SECONDS == 560, 'the value C7/LT1 use, ~30s of headroom'
+
+
+def test_over_cap_lease_is_rejected_at_argparse():
+    """--lease-seconds 2400 must die at PARSE time, before any flock."""
+    import argparse as _argparse
+
+    with pytest.raises(_argparse.ArgumentTypeError, match='house cap'):
+        W._lease_seconds('2400')
+    with pytest.raises(_argparse.ArgumentTypeError):
+        W._lease_seconds('591')
+    with pytest.raises(_argparse.ArgumentTypeError):
+        W._lease_seconds('0')
+    assert W._lease_seconds('590') == 590
+    assert W._lease_seconds('560') == 560
+
+
+def test_main_rejects_an_over_cap_lease_before_doing_anything(tmp_path,
+                                                              capsys):
+    """SystemExit(2) from argparse — not a mid-run LiveError on the card."""
+    with pytest.raises(SystemExit) as excinfo:
+        W.main(['--registration', str(REGISTRATION),
+                '--out', str(tmp_path / 'o'), '--fake',
+                '--lease-seconds', '2400'])
+    assert excinfo.value.code == 2
+    assert 'house cap' in capsys.readouterr().err
+
+
+def amendment_n(number):
+    """Address an amendment by its NUMBER, never by chain position.
+
+    ``amendments[-1]`` silently retargets every time a new amendment lands —
+    which is exactly what broke this test when amendment 3 arrived.
+    """
+    _, amendments = W.load_amendments(REGISTRATION)
+    for entry in amendments:
+        if entry['amendment'].get('amendment') == number:
+            return entry['amendment']
+    raise AssertionError(f'amendment {number} not in the chain')
+
+
+def test_amendment_2_registers_the_lease_shape():
+    lease = amendment_n(2)['lease']
+    assert lease['house_cap_seconds'] == 590
+    assert lease['per_invocation_seconds'] == W.LEASE_SECONDS
+    assert '--resume' in lease['shape']
+    # The BUDGET is unchanged; only the lease shape moved. Asserted on EVERY
+    # amendment that carries an `unchanged` block, so a later amendment
+    # cannot quietly move the prediction, the budget or the row count.
+    _, amendments = W.load_amendments(REGISTRATION)
+    checked = 0
+    for entry in amendments:
+        unchanged = entry['amendment'].get('unchanged')
+        if not unchanged:
+            continue
+        checked += 1
+        assert unchanged['rows'].startswith('23 unchanged')
+        # Amendment 1 carried the prediction as the registration's own dict;
+        # 2 and 3 restate it as a sentence. Both must still say 5 of 8.
+        prediction = unchanged['registered_prediction']
+        text = (prediction if isinstance(prediction, str)
+                else json.dumps(prediction))
+        assert '5/8' in text or '5 of 8' in text
+        # Amendment 1 spelled the budget as a nested `budget` block;
+        # 2 and 3 use the flat ceiling. Both must still say 0.5 GPU-h.
+        if 'budget_gpu_hours_max' in unchanged:
+            assert unchanged['budget_gpu_hours_max'] == 0.5
+        else:
+            assert unchanged['budget']['gpu_hours_max'] == 0.5
+    assert checked >= 3
+
+
+# --------------------------------- defect 2: undeclared frame / runtime
+
+def test_runtime_frame_and_flags_source_are_declared_and_pinned():
+    reg = W.read(REGISTRATION)
+    _, amendments = W.load_amendments(REGISTRATION)
+    effective = W.effective_registration(reg, amendments)
+    # The registration ALONE never declared these — that is the defect.
+    assert 'runtime_frame' not in reg
+    assert 'c7_r3_registration' not in reg
+    assert 'preconditions' not in reg
+    for block in ('runtime_frame', 'c7_r3_registration'):
+        declared = effective[block]
+        assert Path(declared['path']).is_file()
+        assert declared['sha256'] == W.sha(declared['path'])
+    assert set(effective['preconditions']) == {'native_runtime',
+                                               'model_snapshot'}
+
+
+def test_dry_run_reports_ok_and_takes_no_lease(tmp_path, monkeypatch):
+    """--dry-run checks everything and never reaches a lease or a row."""
+    taken = []
+    monkeypatch.setattr(W, 'plan_rows',
+                        lambda *a: taken.append('planned') or [])
+    assert W.main(['--registration', str(REGISTRATION),
+                   '--out', str(tmp_path / 'o'), '--dry-run']) == 0
+    assert taken == [], 'dry-run must not plan or execute rows'
+
+
+def test_dry_run_is_red_on_a_missing_frame(tmp_path):
+    """The exact stop the lead hit, now caught on CPU with no lease."""
+    reg = W.read(REGISTRATION)
+    _, amendments = W.load_amendments(REGISTRATION)
+    effective = W.effective_registration(reg, amendments)
+    effective['runtime_frame'] = {
+        'path': str(tmp_path / 'absent_frame.json'), 'sha256': 'a' * 64}
+    result = W.check_preconditions(effective)
+    assert result['ok'] is False
+    names = {row['name'] for row in result['missing']}
+    assert 'runtime_frame' in names
+    # ... and loading it raises the NAMED error, not a bare FileNotFoundError.
+    with pytest.raises(W.ContrastError, match='A1_RUNTIME_FRAME_MISSING'):
+        W.load_runtime_frame(effective)
+
+
+def test_dry_run_is_red_on_a_missing_native_runtime(tmp_path):
+    """The OSError the lead hit AFTER the lease, now a pre-lease RED."""
+    reg = W.read(REGISTRATION)
+    _, amendments = W.load_amendments(REGISTRATION)
+    effective = W.effective_registration(reg, amendments)
+    effective['preconditions'] = dict(effective['preconditions'])
+    effective['preconditions']['native_runtime'] = {
+        'path': str(tmp_path / 'libgrm_runtime.so'), 'gpu_only': True}
+    result = W.check_preconditions(effective)
+    assert result['ok'] is False
+    assert {row['name'] for row in result['missing']} == {'native_runtime'}
+    # On --fake the GPU-only precondition is skipped, and says so.
+    fake = W.check_preconditions(effective, fake=True)
+    assert fake['ok'] is True
+    skipped = [r for r in fake['checks'] if r['name'] == 'native_runtime']
+    assert skipped[0]['detail'] == 'skipped on --fake'
+
+
+def test_run_refuses_to_take_a_lease_when_a_precondition_is_missing(
+        tmp_path, monkeypatch):
+    """A1_PRECONDITION_MISSING fires BEFORE gpu_lease is ever imported."""
+    leased = []
+    monkeypatch.setattr(W, 'check_preconditions',
+                        lambda *a, **k: {'checks': [], 'ok': False,
+                                         'missing': [{'name': 'native_runtime',
+                                                      'path': '/nope'}]})
+    monkeypatch.setattr(W, 'plan_rows',
+                        lambda *a: leased.append('planned') or [])
+    with pytest.raises(W.ContrastError, match='A1_PRECONDITION_MISSING'):
+        W.main(['--registration', str(REGISTRATION),
+                '--out', str(tmp_path / 'o'), '--fake'])
+    assert leased == []
+
+
+def test_frame_sha_drift_is_named(tmp_path):
+    reg = W.read(REGISTRATION)
+    _, amendments = W.load_amendments(REGISTRATION)
+    effective = W.effective_registration(reg, amendments)
+    frame = tmp_path / 'frame.json'
+    frame.write_text(json.dumps({'schema': 'x', 'resolved_flags': {}}) + '\n')
+    effective['runtime_frame'] = {'path': str(frame), 'sha256': 'b' * 64}
+    with pytest.raises(W.ContrastError, match='A1_RUNTIME_FRAME_SHA_MISMATCH'):
+        W.load_runtime_frame(effective)
+
+
+# ------------------------------ defect 3: flags shape / environment(flags)
+
+def test_flags_come_from_the_c7_r3_registration_not_the_rs1_frame():
+    """The RS1 frame carries NO C2 frame keys — that was the KeyError."""
+    reg = W.read(REGISTRATION)
+    _, amendments = W.load_amendments(REGISTRATION)
+    effective = W.effective_registration(reg, amendments)
+
+    flags = W.resolve_flags(effective)
+    assert W.ENVIRONMENT_FLAG_KEYS <= set(flags)
+    assert flags['ephemeral'] is True
+    assert flags['arena_width'] == 96
+
+    # The flags are READ from the C7 r3 registration's arm, verbatim.
+    c7 = W.read(effective['c7_r3_registration']['path'])
+    assert flags == c7['arms'][effective['c7_r3_registration']['arm']]['flags']
+
+    # The RS1 frame's own resolved_flags would have raised KeyError.
+    rs1_flags = W.load_runtime_frame(effective)['resolved_flags']
+    assert not W.ENVIRONMENT_FLAG_KEYS <= set(rs1_flags)
+    assert 'ephemeral' not in rs1_flags
+    with pytest.raises(KeyError, match='ephemeral'):
+        W.build_environment(rs1_flags)
+
+
+def test_environment_is_built_from_those_flags_without_raising():
+    reg = W.read(REGISTRATION)
+    _, amendments = W.load_amendments(REGISTRATION)
+    effective = W.effective_registration(reg, amendments)
+    env = W.build_environment(W.resolve_flags(effective))
+    assert env['GRM_PERSISTENT_BOAT'] == '0'   # ephemeral True -> not -> 0
+    assert env['GRM_CAPTURE_PIN'] == 'live'
+    # Still carries NEITHER A1 switch, so the post-pin contract holds.
+    assert W.FLAG_ENV not in env and W.RULE_ENV not in env
+
+
+def test_incomplete_flags_are_a_named_error_not_a_keyerror(tmp_path):
+    """A missing frame key fails HERE, by name, not deep inside a GPU load."""
+    reg = W.read(REGISTRATION)
+    _, amendments = W.load_amendments(REGISTRATION)
+    effective = W.effective_registration(reg, amendments)
+    c7 = W.read(effective['c7_r3_registration']['path'])
+    del c7['arms']['A']['flags']['ephemeral']
+    path = tmp_path / 'c7.json'
+    path.write_text(json.dumps(c7) + '\n')
+    effective['c7_r3_registration'] = {'path': str(path), 'sha256': W.sha(path),
+                                       'arm': 'A'}
+    with pytest.raises(W.ContrastError, match='A1_FLAGS_INCOMPLETE'):
+        W.resolve_flags(effective)
+
+
+def test_fake_arm_uses_the_same_flags_and_environment_as_the_gpu_arm(
+        tmp_path, monkeypatch):
+    """THE regression guard: the fake loader must call the SAME helpers.
+
+    Both defects 2 and 3 survived the first gate because ``_load_fake``
+    returned a hand-made flags dict and ``dict(os.environ)``. If it ever does
+    that again, the spies below see zero calls and this fails.
+    """
+    reg = W.read(REGISTRATION)
+    _, amendments = W.load_amendments(REGISTRATION)
+    effective = W.effective_registration(reg, amendments)
+
+    seen = {'flags': [], 'env': [], 'frame': []}
+    real_flags, real_env, real_frame = (
+        W.resolve_flags, W.build_environment, W.load_runtime_frame)
+    monkeypatch.setattr(W, 'resolve_flags',
+                        lambda r: seen['flags'].append(r) or real_flags(r))
+    monkeypatch.setattr(W, 'build_environment',
+                        lambda f: seen['env'].append(f) or real_env(f))
+    monkeypatch.setattr(W, 'load_runtime_frame',
+                        lambda r: seen['frame'].append(r) or real_frame(r))
+
+    loaded = W._load_fake(None, effective)
+    try:
+        assert len(seen['flags']) == 1 and len(seen['env']) == 1
+        assert len(seen['frame']) == 1, 'the fake arm must READ the frame'
+        # The env handed downstream is environment()'s, not os.environ.
+        assert loaded['environment'] is not os.environ
+        assert loaded['environment']['GRM_CAPTURE_PIN'] == 'live'
+        assert W.ENVIRONMENT_FLAG_KEYS <= set(loaded['flags'])
+    finally:
+        loaded['repo'].close()
+        loaded['monkeypatch'].undo()
+
+
+def test_fake_rows_record_the_real_frame_and_pins(tmp_path):
+    """End to end on --fake: the receipt proves the frame was really read."""
+    out = tmp_path / 'frames'
+    assert W.main(['--registration', str(REGISTRATION), '--out', str(out),
+                   '--fake', '--limit', '2']) == 0
+    rows = [W.read(p) for p in sorted((out / 'rows').glob('*.json'))]
+    assert rows
+    for row in rows:
+        assert row['model']['frame_schema'] == 'grm.det1.runtime_frame.v1'
+        assert row['pins'][W.FLAG_ENV] == '1'
+
+
+# ------------------------------------------------- resumable lease loop
+
+def test_summary_reports_pending_and_lease_state(tmp_path):
+    out = tmp_path / 'pending'
+    rc = W.main(['--registration', str(REGISTRATION), '--out', str(out),
+                 '--fake', '--limit', '3'])
+    assert rc == 0
+    summary = W.read(out / 'summary.json')
+    assert summary['pending'] == 0 and summary['complete'] is True
+    assert summary['lease_expired'] is False
+
+
+# =====================================================================
+# AMENDMENT 3 — the cudaMalloc OOM on a clear card (2026-09-11).
+#
+# The stop was in the MODEL LOAD of row 8, not the mount: the worker rebuilt
+# the 20B model per row and never freed the previous one. Underneath it, a
+# d250 row pinned ~659 MB of node payloads for a mount plan needing 4.5 MB,
+# because vram_budget_mb=None leaves the pager disarmed.
+# =====================================================================
+
+# ------------------------------------------------ the payload accounting
+
+def test_payload_accounting_shows_the_over_pin():
+    """The measured numbers behind the diagnosis, per row class."""
+    acc = W.read(ROOT / 'artifacts/grm_a1/payload_accounting.json')
+    assert acc['arena_width'] == 96
+    rows = acc['rows']
+    assert len(rows) == 23
+    by_class = {}
+    for row in rows:
+        by_class.setdefault(row['class'], []).append(row)
+    assert set(by_class) == {'RD2', 'C7 answerable', 'C7 control'}
+    for name, recs in by_class.items():
+        worst = max(r['all_nodes_device_mb'] for r in recs)
+        plan = recs[0]['mount_plan_max_device_mb']
+        # Every class over-pins by more than 100x at its worst row.
+        assert worst / plan > 100, (name, worst, plan)
+        assert plan == pytest.approx(4.5, abs=0.01)
+    # The d250 rows are the worst case that broke the card.
+    d250 = [r for r in rows if r['cell'] == 'A-257-264']
+    assert d250 and max(r['all_nodes_device_mb'] for r in d250) > 600
+
+
+def test_pager_is_disarmed_without_a_budget_and_armed_with_one(tmp_path,
+                                                               monkeypatch):
+    """The production mechanism the repair relies on, asserted directly."""
+    from scripts import grm_c7_diagnose as diag
+    from _pytest.monkeypatch import MonkeyPatch
+
+    mp = MonkeyPatch()
+    repo = diag.repository(tmp_path / 'repo', mp)
+    try:
+        # As rs1._load_lived_repo builds it: no budget.
+        assert repo.vram_budget is None
+        assert repo._page() == 0, '_page is a NO-OP without a budget'
+        graft = {'ntok': 10_000}
+        # ... and load() would materialise ANY node onto the device.
+        assert repo._load_can_materialize_device(graft, used=2**40) is True
+        # With a budget, the same call refuses past the budget.
+        repo.vram_budget = W.NODE_VRAM_BUDGET_MB * 2**20
+        assert repo._load_can_materialize_device(graft, used=2**40) is False
+        assert repo._load_can_materialize_device(graft, used=0) is True
+    finally:
+        repo.close()
+        mp.undo()
+
+
+def test_node_vram_budget_is_well_above_a_mount_plan():
+    acc = W.read(ROOT / 'artifacts/grm_a1/payload_accounting.json')
+    plan_mb = acc['rows'][0]['mount_plan_max_device_mb']
+    assert W.NODE_VRAM_BUDGET_MB >= 10 * plan_mb
+    # ... and far below what the resident model leaves free (~1.3 GB).
+    assert W.NODE_VRAM_BUDGET_MB <= 256
+
+
+# ------------------------------------------------------------- paging
+
+def test_only_mounted_payloads_stay_resident_after_a_row(tmp_path):
+    """After mount, device residency is the mount plan, not the corpus."""
+    out = tmp_path / 'paging'
+    assert W.main(['--registration', str(REGISTRATION), '--out', str(out),
+                   '--fake', '--limit', '4']) == 0
+    rows = [W.read(p) for p in sorted((out / 'rows').glob('*.json'))]
+    assert rows
+    for row in rows:
+        memory = row['memory']
+        assert memory['node_vram_budget_mb'] == W.NODE_VRAM_BUDGET_MB
+        after_mount = memory['residency_after_mount']
+        mounted = set(row['mounted_ids'])
+        # Never more device-resident payloads than the row has nodes, and the
+        # mount itself is always covered.
+        assert after_mount['payloads_device_resident'] <= after_mount['nodes']
+        assert len(mounted) <= after_mount['payloads_device_resident'] or not mounted
+        # The release between merge and mount actually ran.
+        assert memory['payloads_released_after_merge'] >= 0
+        assert 'residency_after_load' in memory
+
+
+def test_release_payloads_drops_device_copies_but_keeps_ram(tmp_path):
+    """The pager's own idiom: spill, not free. RAM survives for the reload."""
+    from scripts import grm_c7_diagnose as diag
+    from _pytest.monkeypatch import MonkeyPatch
+
+    mp = MonkeyPatch()
+    repo = diag.repository(tmp_path / 'repo', mp)
+    try:
+        for text in ('The current C7-Rel-0 value is Jasper-1.',
+                     'The current C7-Rel-1 value is Jasper-2.',
+                     'The current C7-Rel-2 value is Jasper-3.'):
+            idx = repo.arena.deposit(text)
+            repo.arena.grafts[idx]['kind'] = 'turn'
+        repo._sync_lifecycle()
+        before = W.payload_residency(repo)
+        assert before['payloads_device_resident'] == 3
+
+        released = W.release_payloads(repo, keep=(1,))
+        after = W.payload_residency(repo)
+        assert released == 2
+        assert after['payloads_device_resident'] == 1
+        assert repo.arena.grafts[1]['h'] is not None
+        # RAM copies survive for every RELEASED node — that is what makes the
+        # page-in cheap. The KEPT node still has only its device copy, since
+        # release_payloads never touches it.
+        assert after['payloads_host_resident'] == 2
+        for i in (0, 2):
+            assert repo.arena.grafts[i]['host_payload'] is not None
+
+        # And the arena pages a released node back in on demand.
+        repo.arena._ensure_h([0])
+        assert repo.arena.grafts[0]['h'] is not None
+        assert W.payload_residency(repo)['page_ins'] >= 1
+    finally:
+        repo.close()
+        mp.undo()
+
+
+def test_empty_cache_is_a_noop_on_the_fake_path():
+    assert W.empty_cache(fake=True) is False
+    assert W.device_memory(fake=True) is None
+
+
+# ------------------------------------------------------------ NON_FIT
+
+def test_is_non_fit_recognises_allocation_failures_only():
+    assert W.is_non_fit(RuntimeError('cudaMalloc failed: out of memory'))
+    assert W.is_non_fit(MemoryError())
+    assert W.is_non_fit(RuntimeError('CUDA_ERROR_OUT_OF_MEMORY'))
+    # A real defect must NOT be laundered into a capacity excuse.
+    assert not W.is_non_fit(KeyError('ephemeral'))
+    assert not W.is_non_fit(ValueError('A1_FLAGS_INCOMPLETE'))
+    assert not W.is_non_fit(AssertionError('wrong answer'))
+
+
+def test_non_fit_row_is_receipted_and_the_campaign_continues(tmp_path,
+                                                             monkeypatch):
+    """One row OOMs; the rest still run, and the receipt carries the memory."""
+    out = tmp_path / 'nonfit'
+    registration = W.read(REGISTRATION)
+    real_loader = W._load_fake
+    hit = {'n': 0}
+
+    def flaky(checkpoint, reg, cache=None):
+        hit['n'] += 1
+        if hit['n'] == 2:
+            raise RuntimeError('cudaMalloc failed: out of memory')
+        return real_loader(checkpoint, reg, cache)
+
+    monkeypatch.setattr(W, '_load_fake', flaky)
+    rc = W.main(['--registration', str(REGISTRATION), '--out', str(out),
+                 '--fake', '--limit', '4'])
+    rows = [W.read(p) for p in sorted((out / 'rows').glob('*.json'))]
+    # The campaign CONTINUED: all four rows have receipts.
+    assert len(rows) == 4
+    failed = [r for r in rows if r.get('non_fit')]
+    assert len(failed) == 1
+    record = failed[0]
+    assert record['status'] == 'NON_FIT'
+    assert 'out of memory' in record['error']
+    assert record['traceback']
+    assert record['memory']['node_vram_budget_mb'] == W.NODE_VRAM_BUDGET_MB
+    assert 'device_before' in record['memory']
+    assert record['exact_correct'] is None
+    assert record['control_broken'] is None
+    # And the summary reports it on its OWN line.
+    summary = W.read(out / 'summary.json')
+    assert summary['rows_non_fit'] == 1
+    assert summary['non_fit_row_ids'] == [record['row_id']]
+    assert summary['rows_measured'] == 3
+    assert rc in (0, 5)
+
+
+def test_non_fit_is_out_of_both_numerator_and_denominator(tmp_path):
+    """A capacity failure must never be scored as a wrong answer."""
+    out = tmp_path / 'acct'
+    (out / 'rows').mkdir(parents=True)
+    from scripts.grm_c7_common import create
+
+    create(out / 'rows' / 'a.json', {
+        'row_id': 'rd2::a', 'scored_for_prediction': True, 'answerable': True,
+        'exact_correct': True, 'control_broken': False, 'single_mount': True,
+        'non_fit': False, 'fake': True, 'merge': {'over_width': 0}})
+    create(out / 'rows' / 'b.json', {
+        'row_id': 'rd2::b', 'scored_for_prediction': True, 'answerable': True,
+        'exact_correct': None, 'control_broken': None, 'non_fit': True,
+        'fake': True})
+    summary = W.summarize(out)
+    assert summary['rows'] == 2
+    assert summary['rows_measured'] == 1
+    assert summary['rows_non_fit'] == 1
+    assert summary['scored_rows'] == 1, 'the NON_FIT row left the denominator'
+    assert summary['aliases_exact'] == 1
+    # A scored row went NON_FIT, so the verdict is WITHHELD, not computed.
+    assert summary['prediction_met'] is None
+    assert summary['verdict'] == 'INCOMPLETE_NON_FIT'
+
+
+def test_verdict_is_computed_when_no_scored_row_is_non_fit(tmp_path):
+    out = tmp_path / 'acct2'
+    (out / 'rows').mkdir(parents=True)
+    from scripts.grm_c7_common import create
+
+    for i in range(8):
+        create(out / 'rows' / f'{i}.json', {
+            'row_id': f'rd2::{i}', 'scored_for_prediction': True,
+            'answerable': True, 'exact_correct': i < 6,
+            'control_broken': False, 'single_mount': True,
+            'non_fit': False, 'fake': False, 'merge': {'over_width': 0}})
+    # A NON_FIT CONTROL does not withhold the verdict on the scored rows.
+    create(out / 'rows' / 'ctl.json', {
+        'row_id': 'c7::ctl', 'scored_for_prediction': False,
+        'answerable': False, 'exact_correct': None, 'control_broken': None,
+        'non_fit': True, 'fake': False})
+    summary = W.summarize(out)
+    assert summary['rows_non_fit'] == 1
+    assert summary['aliases_exact'] == 6
+    assert summary['prediction_met'] is True
+    assert summary['verdict'] == 'GREEN'
+
+
+# -------------------------------------------- the U+2011 parser repair
+
+def test_alias_parser_normalizes_unicode_hyphens():
+    """The real stored digest that parsed as ('0', 'C7') before the repair."""
+    from core import grm_alias_fold as af
+
+    stored = ('ARCHIVE NOTE. For the archive: the  current C7‑Fresh‑0 '
+              'value is Basalt‑811, and C7‑Signal‑0 is an alias '
+              'for C7‑AliasBase‑0.\n')
+    assert af.parse_alias_edge(stored) == ('C7-Signal-0', 'C7-AliasBase-0')
+    # The ASCII form is unchanged.
+    ascii_form = 'C7-Signal-0 is an alias for C7-AliasBase-0.'
+    assert af.parse_alias_edge(ascii_form) == ('C7-Signal-0', 'C7-AliasBase-0')
+    # A node asserting NO alias relation still yields None.
+    assert af.parse_alias_edge(
+        'The current C7‑Fresh‑0 value is Basalt‑811.') is None
+
+
+def test_alias_parser_repair_on_the_real_checkpoint_node():
+    """Read the actual C7 r3 node 16 off disk and parse it."""
+    from core import grm_alias_fold as af
+
+    manifest = W.read('/mnt/ForgeRealm/wt/grm-c7/artifacts/grm_c7/r3/cells/'
+                      'A-032-039/checkpoint/repository/manifest.json')
+    node = manifest['nodes'][16]
+    assert '‑' in node['text'], 'the fixture must still carry U+2011'
+    assert af.parse_alias_edge(node['text']) == ('C7-Signal-0',
+                                                 'C7-AliasBase-0')
+
+
+def test_amendment_3_records_the_diagnosis_and_the_checkpoint_finding():
+    a3 = amendment_n(3)
+    diagnosis = a3['diagnosis']
+    assert 'from_pretrained' in diagnosis['where_it_failed']
+    assert 'model load' in diagnosis['where_it_failed'].casefold()
+    per_class = diagnosis['payload_accounting']['per_class']
+    assert set(per_class) == {'RD2', 'C7 answerable', 'C7 control'}
+    for stats in per_class.values():
+        assert stats['over_pin_ratio_max'] > 100
+    # The checkpoint-state finding is REPORTED, not silently fixed.
+    finding = a3['checkpoint_state_finding']
+    assert finding['status'].startswith('REPORTED')
+    assert finding['options_for_the_lead']
+    # And the prediction/budget/rows are still untouched.
+    assert a3['unchanged']['budget_gpu_hours_max'] == 0.5
+    assert a3['unchanged']['rows'].startswith('23 unchanged')
