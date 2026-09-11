@@ -5,6 +5,7 @@ import threading
 import numpy as np
 import pytest
 
+from core.graft_arena import ArenaCache
 from core.graft_repository import GraftRepository
 from core.grm_runtime import GRMRuntime
 from core.grm_native import NativeGraftStore
@@ -90,6 +91,17 @@ class FakeArena:
     @staticmethod
     def _rare_tokens(text):
         return {w.lower() for w in text.split() if any(c.isdigit() for c in w)}
+
+    # GRM-H1: SCOUT-FIX-9's degenerate-split-child guard calls
+    # `self.arena._fact_set(...)` from graft_repository._width_guard_
+    # degenerate_spans().  This double is NOT an ArenaCache subclass, so it
+    # never inherited it and every caller reaching that guard through a Fake
+    # arena died with AttributeError -- a merge-drift fixture gap, not a
+    # campaign receipt.  Borrowed from the REAL ArenaCache (same pattern this
+    # class already uses for _rare_tokens above) rather than re-implemented,
+    # so the fixture measures FIX-9's actual fidelity vocabulary -- including
+    # its _FACT_STOP list -- and cannot drift away from it.
+    _fact_set = ArenaCache._fact_set
 
     def deposit(self, text):
         idx = len(self.grafts)

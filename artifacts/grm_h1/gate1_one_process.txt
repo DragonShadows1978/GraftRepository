@@ -1,4 +1,4 @@
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-2097 passed, 199 skipped, 2 warnings in 542.53s (0:09:02)
+2309 passed, 246 skipped, 2 warnings in 585.77s (0:09:45)
 sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
 RC=0

@@ -79,6 +79,8 @@ def _rearmed_and_completed(tmp_path):
 # THE FIXTURE: RED before amendment 3, GREEN after
 # --------------------------------------------------------------------------
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_3.json')
 def test_completed_rearm_no_longer_blocks_the_next_batch(tmp_path):
     """The lead's exact sequence: R1 re-armed and completed, then R2 runs.
 
@@ -105,6 +107,8 @@ def test_completed_rearm_no_longer_blocks_the_next_batch(tmp_path):
     assert first in complete and second in complete
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_3.json')
 def test_satisfied_scope_records_receipts_and_empties_reissue(tmp_path):
     r, first, ids = _rearmed_and_completed(tmp_path)
     scope = run.resume_scope(run.verify(tmp_path), tmp_path)[first]
@@ -118,6 +122,8 @@ def test_satisfied_scope_records_receipts_and_empties_reissue(tmp_path):
         assert digest == run.sha(d / (cell_id + '.json'))
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_3.json')
 def test_satisfied_scope_is_a_record_not_a_reissue_instruction(tmp_path):
     """A satisfied scope must not push a later batch onto the re-issue path."""
     r, first, _ = _rearmed_and_completed(tmp_path)
@@ -129,6 +135,8 @@ def test_satisfied_scope_is_a_record_not_a_reissue_instruction(tmp_path):
     assert not list(d.glob('reservation_attempt_*.json'))
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_3.json')
 def test_a_completed_rearm_is_not_rerun(tmp_path):
     r, first, _ = _rearmed_and_completed(tmp_path)
     d = tmp_path / 'gpu' / first
@@ -142,6 +150,8 @@ def test_a_completed_rearm_is_not_rerun(tmp_path):
 # what is deliberately NOT relaxed
 # --------------------------------------------------------------------------
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_3.json')
 def test_open_batch_still_stops_on_a_genuine_retain_disagreement(tmp_path):
     """While the batch is OPEN the cross-check is unchanged."""
     r = run.verify(tmp_path)
@@ -160,6 +170,8 @@ def test_open_batch_still_stops_on_a_genuine_retain_disagreement(tmp_path):
         run.resume_scope(run.verify(tmp_path), tmp_path)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_3.json')
 def test_open_batch_still_stops_on_a_genuine_reissue_disagreement(tmp_path):
     r = run.verify(tmp_path)
     first = r['batch_ids'][0]
@@ -176,6 +188,8 @@ def test_open_batch_still_stops_on_a_genuine_reissue_disagreement(tmp_path):
         run.resume_scope(run.verify(tmp_path), tmp_path)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_3.json')
 def test_complete_with_missing_cells_is_a_new_red(tmp_path):
     """'COMPLETE' only satisfies the amendment if the cohort really is done."""
     r, first, ids = _rearmed_and_completed(tmp_path)
@@ -185,6 +199,8 @@ def test_complete_with_missing_cells_is_a_new_red(tmp_path):
         run.resume_scope(run.verify(tmp_path), tmp_path)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_3.json')
 def test_retained_receipt_binding_is_still_checked(tmp_path):
     """Satisfaction never waives the per-receipt binding/parity checks."""
     r, first, ids = _rearmed_and_completed(tmp_path)
@@ -202,6 +218,8 @@ def test_retained_receipt_binding_is_still_checked(tmp_path):
 # the amendment itself
 # --------------------------------------------------------------------------
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_3.json')
 def test_amendment_3_chains_to_amendment_2():
     # amendment() returns the LATEST link; assert link 3's own contents and
     # its place in the chain rather than "latest == 3".
@@ -235,6 +253,8 @@ def test_amendment_3_records_the_completed_rearm():
     assert run.amendment()['rearm']['R1']['retain'] == a['rearm']['R1']['retain']
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_3.json')
 def test_real_campaign_is_open_with_r1_complete():
     """The live receipts: R1 satisfied, campaign no longer self-closed."""
     r = run.verify()

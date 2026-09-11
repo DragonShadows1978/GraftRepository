@@ -51,6 +51,8 @@ def _nodes(cells, cell_id):
     return len(json.loads((root / 'manifest.json').read_text())['nodes'])
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_4.json')
 def test_r4_cells_are_not_larger_than_cells_r3_completed():
     """The evidence for NOT implementing lever 2(a)."""
     cells = {c['id']: c for c in run.cells()}
@@ -190,6 +192,8 @@ def test_non_fit_receipt_is_create_only_and_unmeasured(tmp_path):
         run.write(p, {'overwrite': 'attempt'})
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_4.json')
 def test_batch_continues_past_a_non_fit_cell(tmp_path, monkeypatch):
     """THE RAIL: one unloadable cell no longer fails the whole batch."""
     r = run.verify(tmp_path)
@@ -220,6 +224,8 @@ def test_batch_continues_past_a_non_fit_cell(tmp_path, monkeypatch):
         assert other['off_plan_parity'] is True
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_4.json')
 def test_non_fit_is_unmeasured_never_unchanged(tmp_path, monkeypatch):
     r = run.verify(tmp_path)
     batch_id = r['batch_ids'][0]
@@ -244,6 +250,8 @@ def test_non_fit_is_unmeasured_never_unchanged(tmp_path, monkeypatch):
     assert value['status'] == 'NOT_MEASURED'
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_4.json')
 def test_a_non_oom_error_still_stops_the_campaign(tmp_path, monkeypatch):
     """The rail is narrow: only an OOM is survivable."""
     r = run.verify(tmp_path)
@@ -264,6 +272,8 @@ def test_a_non_oom_error_still_stops_the_campaign(tmp_path, monkeypatch):
     assert controller['status'] == 'FAILED'
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_4.json')
 def test_parity_red_still_stops_and_is_not_swallowed_as_non_fit(tmp_path,
                                                                 monkeypatch):
     r = run.verify(tmp_path)
@@ -285,6 +295,8 @@ def test_parity_red_still_stops_and_is_not_swallowed_as_non_fit(tmp_path,
 # the amendment
 # --------------------------------------------------------------------------
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_4.json')
 def test_amendment_4_chains_to_amendment_3():
     a = run.amendment()
     assert a['amendment'] == 4
@@ -313,6 +325,8 @@ def test_amendment_4_documents_both_defects():
 # re-arm from a FAILED batch with ZERO retained receipts
 # --------------------------------------------------------------------------
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_4.json')
 def test_rearm_from_failed_with_zero_receipts(tmp_path):
     """R4's exact shape: FAILED, 0 cell receipts, every cell to re-issue.
 
@@ -363,6 +377,8 @@ def test_rearm_from_failed_with_zero_receipts(tmp_path):
         assert (d / 'cells' / (cell_id + '.json')).exists()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_4.json')
 def test_real_r4_is_rearmed_with_zero_retained():
     """The live receipts: R4 FAILED with 0 receipts, re-armed for all 8."""
     r = run.verify()
