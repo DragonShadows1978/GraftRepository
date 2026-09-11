@@ -81,7 +81,8 @@ TRANSITIONS = ('unchanged_correct', 'unchanged_wrong', 'correct_to_wrong',
 #: Paths an amendment may bind that the registration could not list, because
 #: they did not exist when it was written.  Strictly the amendment's own
 #: builder: an amendment can never smuggle in a new core or scoring source.
-REBINDABLE_NEW = ('scripts/grm_r1_amend_1.py', 'scripts/grm_r1_amend_2.py')
+REBINDABLE_NEW = ('scripts/grm_r1_amend_1.py', 'scripts/grm_r1_amend_2.py',
+                  'scripts/grm_r1_amend_3.py')
 
 
 # --------------------------------------------------------------------------
@@ -835,9 +836,38 @@ def resume_scope(r, root, a=None):
                 retained.append(cell_id)
             else:
                 missing.append(cell_id)
-        # The amendment states what it expects to find.  If the receipts on
-        # disk disagree with it, that is a RED stop, not a silent re-scope:
-        # the amendment was written against a state that no longer holds.
+        # AMENDMENT-3 FIX.  The retain/reissue cross-check is a PRECONDITION
+        # for re-issuing an OPEN batch: it asks "is the state I am about to
+        # act on still the state this amendment was written against?".  Once
+        # the batch's controller says COMPLETE the re-issue has happened and
+        # the amendment's scope is SATISFIED -- every registered cell now has
+        # a receipt, which is the outcome the amendment existed to produce.
+        # Re-applying the check then compares the finished state against the
+        # pre-re-issue expectation and closes the campaign on its own success
+        # (the lead hit exactly this: R1 COMPLETE with 8/8 receipts,
+        # on_disk=8 vs amendment retain=5, and R2 refused to start).
+        controller = d / 'controller.json'
+        done = controller.exists() and read(controller)['status'] == 'COMPLETE'
+        if done:
+            # Satisfied means satisfied ON THE REGISTERED COHORT: every cell
+            # has a parity-clean, registration-bound receipt.  Anything less
+            # is still a genuine disagreement and still STOPS.
+            need(not missing,
+                 'R1_AMENDMENT_SCOPE_UNSATISFIED: ' + batch_id
+                 + ' controller=COMPLETE but missing=' + str(missing))
+            scope[batch_id] = {
+                'retain': retained, 'reissue': [],
+                'lease_seconds': entry['lease_seconds'],
+                'scope_satisfied': True,
+                'receipts': {cell_id: sha(d / 'cells' / (cell_id + '.json'))
+                             for cell_id in retained},
+                'note': ('re-issue complete; the amendment\'s retain/reissue '
+                         'precondition no longer applies to this batch')}
+            continue
+        # Still OPEN: the amendment states what it expects to find.  If the
+        # receipts on disk disagree, that is a RED stop, not a silent
+        # re-scope -- the amendment was written against a state that no
+        # longer holds, and a new amendment is required.
         need(retained == entry['retain'],
              'R1_AMENDMENT_RETAIN_MISMATCH: ' + batch_id
              + ' on_disk=' + str(retained) + ' amendment=' + str(entry['retain']))
@@ -845,7 +875,8 @@ def resume_scope(r, root, a=None):
              'R1_AMENDMENT_REISSUE_MISMATCH: ' + batch_id
              + ' on_disk=' + str(missing) + ' amendment=' + str(entry['reissue']))
         scope[batch_id] = {'retain': retained, 'reissue': missing,
-                           'lease_seconds': entry['lease_seconds']}
+                           'lease_seconds': entry['lease_seconds'],
+                           'scope_satisfied': False}
     return scope
 
 
@@ -921,6 +952,11 @@ def batch(batch_id, fake=False, root=None):
     need(batch_id in r['batches'], 'R1_UNKNOWN_BATCH: ' + str(batch_id))
     destination = root / 'gpu' / batch_id
     scope = resume_scope(r, root).get(batch_id)
+    # A SATISFIED scope is a record, not a re-issue instruction: the batch it
+    # describes is already COMPLETE, so it must not put this run on the
+    # amendment's re-issue path (archive controllers, narrow the cell list).
+    if scope is not None and scope.get('scope_satisfied'):
+        scope = None
     if (destination / 'controller.json').exists():
         controller = read(destination / 'controller.json')
         if controller['status'] == 'COMPLETE':
@@ -1077,6 +1113,13 @@ def summary(root=None):
                  'R1_RESULT_BINDING_MISMATCH: ' + batch_id)
             complete &= value['status'] == 'COMPLETE'
             charged += float(value['charged_seconds'])
+        # Archived attempts are real GPU time too (amendment 2's accounting
+        # fix, applied here as well so summary and campaign_state agree).
+        for p in sorted(d.glob('controller_attempt_*.json')):
+            archived = read(p)
+            need(archived['registration_sha256'] == sha(REG),
+                 'R1_ARCHIVED_RESULT_BINDING_MISMATCH: ' + batch_id)
+            charged += float(archived['charged_seconds'])
         for cell_id in r['batches'][batch_id]:
             p = d / 'cells' / (cell_id + '.json')
             if not p.exists():

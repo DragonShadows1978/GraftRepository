@@ -1,0 +1,10 @@
+{
+  "charged_seconds": 263.0,
+  "elapsed_seconds": 138.53657949110493,
+  "error": "RuntimeError: turn 22 failed: RuntimeError('cudaMalloc failed: out of memory')",
+  "fake": false,
+  "red": [],
+  "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+  "reservation_seconds": 263,
+  "status": "FAILED"
+}

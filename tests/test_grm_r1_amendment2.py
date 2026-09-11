@@ -22,16 +22,20 @@ import pytest
 from scripts import grm_r1_replay as run
 
 
-def _chain_into(tmp_path, rearm=None):
-    """Copy the real amendment chain into ``tmp_path``, optionally re-scoped."""
-    for index in (1, 2):
+def _chain_into(tmp_path, rearm=None, links=(1, 2, 3)):
+    """Copy the real amendment chain into ``tmp_path``, optionally re-scoped.
+
+    The chain grows as the arc goes on, so this plants EVERY link by default;
+    ``links`` narrows it for tests that deliberately truncate the chain.
+    """
+    for index in links:
         source = run.OUT / f'amendment_{index}.json'
         a = json.loads(source.read_text())
         if rearm is not None:
             a['rearm'] = rearm
-        if index == 2:
+        if index > 1:
             a['previous_amendment_sha256'] = run.sha(
-                tmp_path / 'amendment_1.json')
+                tmp_path / f'amendment_{index - 1}.json')
         run.write(tmp_path / f'amendment_{index}.json', a)
         (tmp_path / f'amendment_{index}.sha256').write_text(
             run.sha(tmp_path / f'amendment_{index}.json')
@@ -233,17 +237,21 @@ def test_both_arms_still_get_their_own_rule_despite_restoration(tmp_path):
 # --------------------------------------------------------------------------
 
 def test_amendment_2_chains_to_amendment_1():
-    a = run.amendment()
-    assert a['amendment'] == 2
-    assert a['registration_sha256'] == run.sha(run.REG)
-    assert a['previous_amendment_sha256'] == run.sha(
+    # amendment() returns the LATEST link, so assert link 2's own contents
+    # and its place in the chain rather than "latest == 2".
+    a2 = run.read(run.OUT / 'amendment_2.json')
+    assert a2['amendment'] == 2
+    assert a2['registration_sha256'] == run.sha(run.REG)
+    assert a2['previous_amendment_sha256'] == run.sha(
         run.OUT / 'amendment_1.json')
-    assert len(a['_chain']) == 2
+    a = run.amendment()
+    assert run.sha(run.OUT / 'amendment_2.json') in a['_chain']
+    assert len(a['_chain']) >= 2
     # Scope and acceptance carry through unchanged.
-    assert a['rearm_unchanged_from_amendment_1'] is True
-    assert len(a['rearm']['R1']['retain']) == 5
-    assert len(a['rearm']['R1']['reissue']) == 3
-    assert a['acceptance_unchanged'] is True
+    assert a2['rearm_unchanged_from_amendment_1'] is True
+    assert len(a2['rearm']['R1']['retain']) == 5
+    assert len(a2['rearm']['R1']['reissue']) == 3
+    assert a2['acceptance_unchanged'] is True
     r = run.verify()
     assert a['prediction'] == r['prediction']
     assert a['verdict_rule'] == r['verdict_rule']
@@ -273,7 +281,7 @@ def test_both_amendments_rebinds_accumulate():
 
 
 def test_amendment_2_documents_both_defects():
-    a = run.amendment()
+    a = run.read(run.OUT / 'amendment_2.json')
     ids = {d['id'] for d in a['defects']}
     assert ids == {'R1-D1-stale-session-collision', 'R1-D2-environment-leak'}
     for defect in a['defects']:

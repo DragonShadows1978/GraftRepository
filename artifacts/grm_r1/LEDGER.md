@@ -350,3 +350,101 @@ A test asserts a re-issue ADDS to the prior charge rather than replacing it.
 
 This one was mine too, introduced by amendment 1's archiving and caught only
 because I re-read the live numbers instead of trusting the passing suite.
+
+---
+
+# Amendment 3 — a satisfied re-arm scope must stop gating (2026-09-11)
+
+## What the lead's run produced first (the good news)
+
+`--batch R1` re-issue COMPLETED: **8/8 cell receipts, parity 8/8, ON plans
+match the registered plans 8/8, every transition `unchanged_correct`,
+0 answers changed**, lease released at 79.1 s. The amendment-1 device fix is
+visible in the receipts it produced: payloads freed per arm (23/23, 14/14,
+17/17) and device memory **flat at 10996 MiB across all three cells** instead
+of climbing. The five older receipts predate the probe and carry `None`.
+
+## The defect
+
+`--batch R2` then refused before running
+(`artifacts/grm_r1/batch_R2_a2.log`):
+
+```
+ValueError: R1_AMENDMENT_RETAIN_MISMATCH: R1 on_disk=[...8 cells...]
+amendment=[...5 cells...]
+```
+
+Mine again. `resume_scope()` re-applied amendment 1's "R1 retains 5 /
+reissues 3" cross-check on EVERY invocation, including from batches with
+nothing to do with R1. That check is a **precondition** — "is the state I am
+about to act on still the state this amendment was written against?" Once
+R1's controller says COMPLETE the re-issue has happened and the scope is
+**satisfied**: all 8 registered cells have receipts, which is exactly the
+outcome the amendment existed to produce. Re-evaluating the precondition
+against the state its own action produced closed the campaign on its own
+success.
+
+Amendment 2 fixed a self-collision on scratch. This is the same family one
+level up.
+
+## Fix
+
+The cross-check now applies only while the re-armed batch's controller is NOT
+COMPLETE. Once complete, `resume_scope()` returns
+`scope_satisfied: true`, an empty `reissue`, and `receipts` mapping every
+cell id to its receipt sha256; `batch()` treats a satisfied scope as a
+RECORD, never a re-issue instruction.
+
+Deliberately NOT relaxed:
+* while the batch is OPEN the cross-check is unchanged
+  (`R1_AMENDMENT_RETAIN_MISMATCH` / `_REISSUE_MISMATCH`);
+* a COMPLETE controller with cells still missing is a NEW red,
+  `R1_AMENDMENT_SCOPE_UNSATISFIED`;
+* per-receipt binding and parity checks still run on satisfied scopes.
+
+## A fifth defect, found while verifying
+
+`summary()` reported **79.1 s** for a campaign `campaign_state()` scored at
+**476.1 s** — amendment 2's accounting fix had been applied to
+`campaign_state` only, so `summary` still ignored
+`controller_attempt_*.json`. Fixed; both now report 476.1 s, and a test
+asserts they agree.
+
+## Commands and results
+
+| # | Command | Result |
+|---|---|---|
+| 1 | read `batch_R2_a2.log`, R1 controller + cells | R1 COMPLETE, 8 receipts, guard raised from R2 |
+| 2 | inspect the 8 R1 receipts | parity 8/8, ON match 8/8, all `unchanged_correct`, device flat at 10996 MiB |
+| 3 | implement the precondition scoping + satisfied record | — |
+| 4 | `python3 scripts/grm_r1_amend_3.py` | amendment 3, chains to a2 |
+| 5 | `resume_scope` / `campaign_state` on live receipts | satisfied True, reissue 0, receipts 8, complete `['R1']` |
+| 6 | R2 precondition check | scope None (normal first run), priors complete, budget 476.1+194=670.1 ≤ 3600 |
+| 7 | RED-before / GREEN-after probe on one state | with a3: OK; with the batch forced back to open: `R1_AMENDMENT_RETAIN_MISMATCH` — the lead's exact stop |
+| 8 | full gate in the leak order | **110 passed** |
+
+## Findings
+
+1. **Every guard needs an explicit answer to "when does this stop applying?"**
+   Three of the five defects in this arc were guards that were correct in the
+   state they were written for and wrong in the state that followed.
+2. **A fix applied to one reader must be applied to every reader of the same
+   fact.** Amendment 2's archived-charge fix went into `campaign_state` and
+   not `summary`, and the two then disagreed by 397 s.
+3. Older test helpers planting a 2-link chain broke once the chain reached 3
+   links, and two a2 tests asserted "latest == 2". Both are expected-shape
+   drift from a growing chain, not new defects; the helpers now plant every
+   link and the a2 tests assert link 2's own contents plus chain membership.
+4. Two a1 tests asserted the live retain-5/reissue-3 state that has since
+   legitimately advanced to satisfied; they now assert the amendment's
+   RECORDED scope plus the current satisfied state, and the two
+   disagreement tests construct an OPEN batch (where the check lives).
+
+## RED items
+
+None outstanding.
+
+## Process safety (amendment 3)
+
+No process killed or signalled. No GPU lease taken, no GPU work run, no model
+loaded. Every Bash call foreground and completed. No git command run.

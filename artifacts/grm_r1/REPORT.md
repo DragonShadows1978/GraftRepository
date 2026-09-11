@@ -406,3 +406,92 @@ A test asserts a re-issue ADDS to the prior charge rather than replacing it.
 
 This one was mine too, introduced by amendment 1's archiving and caught only
 because I re-read the live numbers instead of trusting the passing suite.
+
+---
+
+# Amendment 3 — a satisfied re-arm scope must stop gating the campaign
+
+## First, the result the lead's run actually produced
+
+Batch R1's re-issue **COMPLETED**: 8/8 cell receipts, **parity 8/8**, ON plans
+match the registered margin_first plans **8/8**, every transition
+`unchanged_correct`, **0 answers changed**, lease released at 79.1 s. The
+amendment-1 device fix is confirmed by its own receipts — payloads freed per
+arm (23/23, 14/14, 17/17) and device memory **flat at 10996 MiB across all
+three cells** rather than climbing. That is the first real evidence that the
+OOM mechanism is actually fixed, not merely argued.
+
+Campaign now: **8 of 31 executions measured**, parity clean, `NOT_MEASURED`
+overall (correct — 23 cells remain).
+
+## The defect
+
+`--batch R2` refused before running:
+`R1_AMENDMENT_RETAIN_MISMATCH: R1 on_disk=[8 cells] amendment=[5 cells]`.
+
+`resume_scope()` re-applied amendment 1's retain/reissue cross-check on every
+invocation. That check is a **precondition** — "is the state I am about to act
+on still the state this amendment was written against?" Once R1 completed,
+the scope was **satisfied**: all 8 registered cells had receipts, the exact
+outcome the amendment existed to produce. Re-evaluating a precondition against
+the state its own action produced closed the campaign on its own success.
+
+Amendment 2 fixed a self-collision on scratch; this is the same family one
+level up, and it is mine.
+
+## Fix
+
+The cross-check applies only while the re-armed batch's controller is not
+COMPLETE. Once complete, `resume_scope()` returns `scope_satisfied: true`,
+an empty `reissue`, and `receipts` mapping every cell id to its receipt
+sha256. `batch()` treats a satisfied scope as a record, never a re-issue
+instruction.
+
+**Not relaxed:** an OPEN batch's cross-check is unchanged; a COMPLETE
+controller with cells still missing is a new RED
+(`R1_AMENDMENT_SCOPE_UNSATISFIED`); per-receipt binding and parity checks
+still run on satisfied scopes. Four tests cover those.
+
+## A fifth defect, found while verifying
+
+`summary()` reported **79.1 s** where `campaign_state()` reported **476.1 s**:
+amendment 2's archived-charge fix had gone into `campaign_state` only. Fixed;
+both now report 476.1 s and a test asserts they agree. A fix applied to one
+reader of a fact has to be applied to every reader of it.
+
+## Amendment
+
+`artifacts/grm_r1/amendment_3.json`, sha
+`e23a91c8d267b185a589cc67b71a1df5fb96dd4adca3fd542519fce00448f349`, chained to
+amendment 2, re-binding the worker. R1's re-arm entry is kept verbatim for the
+record and annotated `rearm_status.R1.satisfied: true` with all 8 receipt
+hashes. R2–R5 unchanged; no budget change.
+
+## Gate lines
+
+```
+RED-before / GREEN-after on one state:
+  WITH amendment 3   : resume_scope OK, scope_satisfied = True
+  WITHOUT amendment 3: R1_AMENDMENT_RETAIN_MISMATCH: R1   <-- the lead's stop
+
+live receipts: scope satisfied True, reissue 0, receipts 8, complete ['R1']
+R2 preconditions: scope None (normal first run) | priors complete True
+                  budget 476.1 + 194 = 670.1 <= 3600
+campaign_state 476.1 s == summary 476.1 s (agree)
+summary: NOT_MEASURED, 8/31 measured, parity True
+full gate in the leak order: 110 passed
+```
+
+## Prior art (new in amendment 3)
+
+* **GRM C7/C2 sha-bound amendment chains** (GRM contributors, 2026) — TAKEN
+  verbatim, including chaining to the previous amendment's hash.
+* The **precondition vs postcondition** distinction (a guard checked before an
+  action must not be re-evaluated against the state that action produced) is
+  ordinary defensive-programming practice. **No specific prior art known to
+  me** for this composition, and **no new algorithm**.
+
+## Process safety (amendment 3)
+
+Nothing killed or signalled. No GPU lease taken, no GPU work run, no model
+loaded. Every Bash call foreground and completed. No git command run.

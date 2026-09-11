@@ -8,6 +8,20 @@
 #   sha256     : fef08f656af51ef8e46431090f05e69c8c0ce8c9e13a0afcfd9f944d4a781683
 # Amendment 2  : artifacts/grm_r1/amendment_2.json
 #   sha256     : d62d9a2c43fcb89c7ea8d3ff8a799e9c4691ce706bb32d1e69cf31aaf59da076
+# Amendment 3  : artifacts/grm_r1/amendment_3.json
+#   sha256     : e23a91c8d267b185a589cc67b71a1df5fb96dd4adca3fd542519fce00448f349
+#   chains to amendment 2; re-binds the worker sha; no scope/budget change.
+#
+# WHY AMENDMENT 3: after R1's re-issue COMPLETED (8/8 receipts, 79 s),
+# `--batch R2` refused with R1_AMENDMENT_RETAIN_MISMATCH. resume_scope() was
+# re-applying amendment 1's "R1 retains 5 / reissues 3" cross-check on every
+# invocation -- a PRECONDITION for re-issuing an OPEN batch, re-evaluated
+# against the state the re-issue itself produced, so the guard closed the
+# campaign on its own success. Now the check applies only while the re-armed
+# batch is not COMPLETE; once complete, resume_scope records
+# scope_satisfied: true with the 8 receipt hashes and later batches proceed.
+# STILL RED: a genuine disagreement while the batch is OPEN, and a COMPLETE
+# controller with cells still missing (R1_AMENDMENT_SCOPE_UNSATISFIED).
 #   chains to amendment 1; re-binds the worker sha; R1 scope UNCHANGED
 #   (retain 5 / reissue 3 / lease 134 s), R2-R5 unchanged.
 #
@@ -48,7 +62,15 @@
 python3 scripts/grm_r1_replay.py --dry-run
 # Expect: "status": "READY_FOR_LEAD", "gpu_executed": false.
 
-# --------------------------------------------------- R1 re-issue (3 cells)
+# ---------------------------------------------------------- R1: DONE
+# R1 completed under amendment 2: 8/8 cell receipts, parity 8/8, ON plans
+# match 8/8, all transitions unchanged_correct. `--batch R1` now prints
+# {"status":"ALREADY_COMPLETE"} and does nothing. Nothing to re-run.
+# The amendment-1 device fix is visible in its receipts: payloads freed per
+# arm (23/23, 14/14, 17/17) and device memory FLAT at 10996 MiB across the
+# three cells instead of climbing.
+#
+# (historical, for the record -- do not re-run) ----------------------------
 # Runs ONLY the 3 cells with no receipt:
 #     fix6-replay-defaults-census-restart-1--e2e_t22_mira_seal
 #     fix6-replay-defaults-longhistory-1--lh_t013
@@ -58,9 +80,13 @@ python3 scripts/grm_r1_replay.py --dry-run
 # controller_attempt_1.json / reservation_attempt_1.json, never overwritten.
 # New lease 134 s (measured: max both-arm wall 18.12 s over R1's own retained
 # receipts, x3 cells, + one model load + 60 s headroom).
-python3 scripts/grm_r1_replay.py --batch R1
+# python3 scripts/grm_r1_replay.py --batch R1     # DONE, do not re-run
 
-# ------------------------------------------------------------ R2..R5 (new)
+# ------------------------------------------------------------ R2..R5 (next)
+# R2 is the next command to run. Its preconditions are verified green:
+#   R2 scope from amendment : None  (a normal first run, not a re-issue)
+#   priors ['R1'] complete  : True
+#   budget rail             : 476.1 + 194 = 670.1 <= 3600
 # Unchanged by the amendment: the release fix removes cross-cell accumulation
 # rather than changing per-cell cost, so the registered estimates stand.
 python3 scripts/grm_r1_replay.py --batch R2     # 5 cells, defaults, lease 194 s
@@ -87,12 +113,10 @@ for p in sorted(glob.glob('artifacts/grm_r1/gpu/*/cells/*.json')):
 PY
 
 # ------------------------------------------------------------- BUDGET STATE
-# Charged so far 397 s = 263 s (OOM attempt 1) + 134 s (collision attempt 2).
-# Both are REAL GPU time and neither is refunded; campaign_state now reads
-# archived controller_attempt_*.json too, which it did not before amendment 2
-# (it had been reporting 134 s for a batch that had spent 397 s).
-# Next R1 re-issue adds 134 s -> 531 s; R2-R5 add 794 s -> 1325 s = 0.368
-# GPU-h, under the registered 3600 s = 1.0 GPU-h cap.
+# Charged so far 476.1 s = 263 s (OOM attempt 1) + 134 s (collision attempt 2)
+# + 79.1 s (the successful R1 re-issue). All three are REAL GPU time and none
+# is refunded; campaign_state sums archived controller_attempt_*.json too.
+# R2-R5 add 794 s -> 1270 s = 0.353 GPU-h, under the 3600 s = 1.0 GPU-h cap.
 
 # --------------------------------------------------------------- STOP rules
 # * A checkpoint hash mismatch is RED and is NOT retried.
@@ -112,7 +136,7 @@ PY
 # ------------------------------------------------------- CPU gate (no GPU)
 # R1 runs FIRST on purpose: if the worker ever leaks GRM_ADMISSION_RULE
 # again, the FIX-4 and admission suites after it go red instead of hiding it.
-python3 -m pytest -q tests/test_grm_r1_replay.py tests/test_grm_r1_cpu_gate.py tests/test_grm_r1_amendment1.py tests/test_grm_r1_amendment2.py tests/test_grm_scout_fix4.py tests/test_grm_admission.py
+python3 -m pytest -q tests/test_grm_r1_replay.py tests/test_grm_r1_cpu_gate.py tests/test_grm_r1_amendment1.py tests/test_grm_r1_amendment2.py tests/test_grm_r1_amendment3.py tests/test_grm_scout_fix4.py tests/test_grm_admission.py
 
 # The full battery (order-independent now, but keep R1 first by habit):
 python3 -m pytest -q tests/test_grm_r1*.py tests/test_grm_scout_fix4.py tests/test_grm_admission.py tests/test_grm_scout_fix6*.py
