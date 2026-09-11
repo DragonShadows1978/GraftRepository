@@ -316,3 +316,153 @@ Symlinks: none created. Scratch: every pytest run used
 `--basetemp /mnt/ForgeRealm/wt/grm-f1/artifacts/grm_f1/tmp`, removed
 afterwards. Read-only inputs were read only; `/mnt/ForgeRealm/GraftRepository`
 was never written. Every Bash call ran in the foreground under 10 minutes.
+
+---
+
+# FOLLOW-UP (lead, 2026-09-11): merge resolution + three-arm r3
+
+F1 was verified (249 passed) and committed at d45dee3. Merging `grm-f1` onto
+`lc1-wip` conflicted with F2, so the lead merged `lc1-wip` INTO this worktree
+and left one conflict for this seat. Now also on the tree: F2
+(`core/grm_fold_alias_guard.py`), F5 (`GRM_ROUTE_SOLE_BINDER_INSURANCE` in
+`core/grm_admission.py`), F3's scorer secondary, H2 marks.
+
+## 10. The conflict, and what it actually was
+
+ONE hunk, `core/graft_repository.py:54-59` — **an import conflict, not a
+`_fold_once` conflict**:
+
+    <<<<<<< HEAD
+    from core import grm_fold_retain as _fold_retain
+    =======
+    from core import grm_fold_alias_guard as _fold_guard
+    from core.grm_alias_guard import fold_alias_guard_enabled
+    >>>>>>> lc1-wip
+
+Resolved as a union (3 lines, `:54-56`). Markers removed; `grep -c
+'^<<<<<<<\|^=======\|^>>>>>>>'` returns 0.
+
+Before resolving I verified the composition the lead asked for was
+STRUCTURALLY present rather than assuming it:
+
+* F2's `_guard_fold_windows` is called on **both** `_librarian_jobs` return
+  paths (`:4113-4117` native plan, `:4128` fallback) — window exclusion runs
+  BEFORE job selection.
+* F2's `_fold_attribution_ok` returns `(None, None)` on **both** fold paths
+  (`core/graft_arena.py:2301` era, `:2417` generated) — always BEFORE
+  `_deposit_consolidation`, so an attribution rejection can never leave F1
+  lineage on a node.
+* F1's `_fold_once` retain lifecycle and A1's `retain=False` pins survived
+  the merge intact.
+
+Two annotations added so the composition is stated where it is relied on,
+not inferred:
+* `_fold_once` records F2's attribution receipt on the fold event
+  (`fold_event["attribution"]`), so a reader can tell a COVERAGE abort from
+  an ATTRIBUTION abort without correlating two logs. `None` whenever no hook
+  is installed, so OFF events keep their values.
+* The shared `didx is None` abort branch now states the F1×F2 contract
+  explicitly: one branch absorbs both abort classes and returns before any
+  F1 lineage is written.
+* The F1 lineage block states that `idxs` is already the guarded window, so
+  F1 applies to exactly what F2 let through — no second exclusion pass, no
+  coupling between the flags.
+
+## 11. Gates on the merged core
+
+    tests/test_grm_f1*.py tests/test_grm_f2*.py tests/test_grm_f5*.py
+    tests/test_grm_scout_fix5*.py tests/test_grm_scout_fix9*.py
+    tests/test_grm_a1_alias_fold.py tests/test_grm_s4_fold_order.py
+    tests/test_grm_lt1_1_production_turns.py
+
+**OFF byte-identity re-run on the merged core** (all three flags unset),
+`artifacts/grm_f1/off_identity/merged_core_all_flags_off.json`:
+
+| section | result |
+|---|---|
+| `nodes` | IDENTICAL `aed37af295559e72` |
+| `route_base` | IDENTICAL `95bce61a71a78185` |
+| `correction` | IDENTICAL `913b8117c2b57f74` |
+| `folds` | IDENTICAL `6fb086d658332a43` |
+| `fold_history` minus additive fields | IDENTICAL `7aacff00652464ad` |
+
+The merged-core all-OFF fingerprint hashes to `a1141e67f965419d…` — **the
+exact hash the pre-merge F1 core produced with its flag off**. F2 and F5
+contribute nothing to node state, routing or supersession when OFF.
+
+Two test adjustments, both because a pin generalised rather than because a
+behaviour changed:
+* `test_amendment10_rebinds_every_f1_core_pin` →
+  `test_governing_amendment_rebinds_every_core_pin`, written against
+  `governing_core_rebind()` instead of a hard-coded amendment number (10 was
+  F1's, 11 rebinds the merged tree, a later treatment will add another).
+* `test_lead_commands_dry_run_gated` now exempts `unset` lines as
+  environment lines alongside `export`. A0 must run with
+  `GRM_ALIAS_FOLD_MERGE` ABSENT, not `=0`, to exercise the unset branch.
+
+**One restored receipt, not a code change.** `tests/test_grm_f2_alias_guard
+.py::test_control_flag_contract_is_registered` asserts every repo-relative
+pin in `artifacts/grm_f2/flag_contract.json` exists; `artifacts/grm_d1/lt1_1/
+run_A/cells/A-025-032/session/repository/manifest.json` was absent from this
+worktree (`artifacts/` is gitignored, and only a partial r2 copy had been
+made here). Restored as a byte-identical copy (48 MB, `diff -r` clean) from
+the read-only canonical repo. Nothing in the canonical repo was written.
+
+## 12. Amendment 11 — three arms
+
+`scripts/grm_f1_register_lt11_r3_merged.py`. Chains to amendment 10,
+supersedes its `core_rebind`, and SUPERSEDES its single-arm registration
+(schema `grm.lt1_1_r3.registration.v2`).
+
+Core rebind: **3 changed, 1 new, 4 unchanged**, every sha measured from the
+tree, each with a per-file attribution naming the mechanism at the code site:
+
+| file | before → after | attribution |
+|---|---|---|
+| `core/graft_arena.py` | `7f86633daca7` → `3c97a3ea3afc` | F1 + F2 |
+| `core/graft_repository.py` | `c3aa3c92a203` → `758c62dc49ed` | F1 + F2, merge resolved here |
+| `core/grm_admission.py` | `ebdfd84af435` → `7912f29108f0` | F5 |
+| `core/grm_fold_alias_guard.py` | NEW `45b5640cb6e2` | F2 |
+
+The script raises `F1_UNEXPECTED_CORE_DRIFT` on any pin that moved without a
+registered attribution, `F1_RUNNER_DRIFT` if the runner or worker moved, and
+`F1_AMENDMENT11_FOREIGN` rather than overwriting another order's receipt.
+Amendments 1–10 and every other r2 receipt are untouched.
+
+**Three separately resumable arms**, same frozen conversation, same fixture
+sha, same 26-cell schedule, same worker:
+
+| arm | role | A1 | F1 | F2 | F5 | out_dir |
+|---|---|---|---|---|---|---|
+| `A0` | CONTROL | off | off | off | off | `…/run_A0` |
+| `A'` | treatment | off | **on** | **on** | **on** | `…/run_Aprime` |
+| `A+'` | treatment | **on** | **on** | **on** | **on** | `…/run_Aplusprime` |
+
+**A0 is what makes the treatment arms readable.** Registered explicitly: if
+A0 does not reproduce r2 arm A within ±1 per class, core drift is in play and
+NO movement in A′ or A+′ may be attributed to F1/F2/F5 until that is
+explained. Within an arm three (or four) flags move TOGETHER — a moved column
+belongs to the SET, never to one flag. Both caveats are in the registration
+as `attribution_rule` and per-arm `attribution_caveat`, not left to the
+reader.
+
+Predictions registered per arm, before the run: A0 within ±1 of r2 arm A on
+every class; A′ fresh ≥14/15, corrections ≥9/10 (no-regression, because the
+paraphrasing-digest gap stays open), aliases 10/10 (must not move at all),
+recap ≥4/5, residency bounded with max seats reported; A+′ the same plus
+aliases 10/10 under A1. Falsifiers named for each.
+
+Budget: the lead's decision recorded — each arm reserves r2's 7410 s
+per-arm lease sum, with the 4680 s (1.30 GPU-h) order cap binding on
+MEASURED charged work. `within_budget` and `within_order_cap` both True for
+all three arms.
+
+## 13. Follow-up process safety
+
+No GPU. No process killed or signalled. Git never run. No subagents. No
+symlinks. Core edits confined to the conflict hunk and its three composition
+annotations, all under the existing flags. `/mnt/ForgeRealm/GraftRepository`
+read only — the one copy taken FROM it was verified byte-identical and
+written only into this worktree. Every pytest run used
+`--basetemp /mnt/ForgeRealm/wt/grm-f1/artifacts/grm_f1/tmp`, removed after.
+All Bash calls foreground, under 10 minutes.

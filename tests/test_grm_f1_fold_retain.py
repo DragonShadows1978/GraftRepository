@@ -644,19 +644,20 @@ def test_registration_present_and_shaped():
         assert not reg[key]['path'].startswith('/')
 
 
-def test_amendment10_rebinds_every_f1_core_pin():
+def test_governing_amendment_rebinds_every_core_pin():
     """The rebind is what makes r3 runnable at all: LT1.1's preflight is
-    sha-bound, and F1 moves two pins and adds one. Every sha here is checked
-    against the tree, so the document cannot claim one the tree lacks."""
+    sha-bound, and F1/F2/F5 all move core inputs.
+
+    Written against the GOVERNING amendment (the highest-numbered one
+    carrying a `core_rebind`), not a hard-coded number: amendment 10 was
+    F1's, amendment 11 rebinds the merged tree, and a later treatment will
+    add another. Every sha is checked against the tree, so the document
+    cannot claim one the tree lacks, and the pin set may only GROW.
+    """
     import hashlib
-    amd = json.loads(
-        (ROOT / 'artifacts/grm_f1/lt1_1_r3/amendment10.json').read_text())
-    assert amd['amendment'] == 10
-    assert amd['core_rebind']['supersedes'] == 'amendment8.core_rebind'
-    block = amd['core_rebind']
-    assert set(block['changed']) == {'core/graft_arena.py',
-                                     'core/graft_repository.py'}
-    assert set(block['new_inputs']) == {'core/grm_fold_retain.py'}
+    from scripts import grm_lt1_1 as runner
+    number, block = runner.governing_core_rebind()
+    assert number >= 10
     for name, entry in block['changed'].items():
         on_tree = hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
         assert entry['after_sha256'] == on_tree, name
@@ -664,18 +665,21 @@ def test_amendment10_rebinds_every_f1_core_pin():
     for name, entry in block['new_inputs'].items():
         assert entry['sha256'] == hashlib.sha256(
             (ROOT / name).read_bytes()).hexdigest(), name
-    for name, entry in block['unchanged'].items():
+    for name, entry in block.get('unchanged', {}).items():
         assert entry['sha256'] == hashlib.sha256(
             (ROOT / name).read_bytes()).hexdigest(), name
-    # Nothing is dropped: the pin set only grows.
+    # F1's own input is pinned by the governing rebind, wherever it sits.
+    pins = runner.governing_core_pins()
+    assert 'core/grm_fold_retain.py' in pins
+    assert pins['core/grm_fold_retain.py'] == hashlib.sha256(
+        (ROOT / 'core/grm_fold_retain.py').read_bytes()).hexdigest()
+    # Nothing is dropped: the pin set only grows across the chain.
     prior = json.loads(
         (ROOT / 'artifacts/grm_d1/lt1_1/amendment8.json').read_text())
     before = (set(prior['core_rebind']['changed'])
               | set(prior['core_rebind']['new_inputs'])
               | set(prior['core_rebind'].get('unchanged', {})))
-    after = (set(block['changed']) | set(block['new_inputs'])
-             | set(block['unchanged']))
-    assert before <= after
+    assert before <= set(pins)
 
 
 def test_lead_commands_dry_run_gated():
@@ -689,9 +693,13 @@ def test_lead_commands_dry_run_gated():
     path = ROOT / 'artifacts/grm_f1/lead_commands.txt'
     text = path.read_text()
     joined = re.sub(r'\\\s*\n\s*', ' ', text)
+    # `export` and `unset` are ENVIRONMENT lines, not commands: an arm that
+    # must run with a flag ABSENT (not merely '0') clears it with `unset`,
+    # which is the only way to exercise the "flag unset" resolver branch.
     runnable = [l.strip() for l in joined.splitlines()
                 if l.strip() and not l.strip().startswith('#')
-                and not l.strip().startswith('export')]
+                and not l.strip().startswith('export')
+                and not l.strip().startswith('unset')]
     assert runnable, joined
     for line in runnable:
         assert line.endswith('--dry-run'), line

@@ -1,0 +1,759 @@
+[
+ {
+  "arm": "A",
+  "pid": "recall_3_50",
+  "cell": "A-057-064",
+  "turn": 64,
+  "q": "What did we settle on for Breakwater's map position?",
+  "exp": "(-31, 48, 12)",
+  "cpu_ident_tokens": [
+   "breakwater"
+  ],
+  "cpu_hits": [],
+  "receipt_idcands": [],
+  "match": true,
+  "ranking": [
+   24,
+   41,
+   12,
+   19,
+   31,
+   29
+  ],
+  "margin": 0.07477614576472846,
+  "thr": 0.1385774091529802,
+  "branch": "margin_insurance_k3_identifier_tiebreak",
+  "plan": [
+   24,
+   41,
+   12
+  ],
+  "seated": [
+   24,
+   41
+  ],
+  "mounts": [
+   25,
+   42
+  ],
+  "recency": [
+   44,
+   49
+  ],
+  "excl": [
+   44,
+   49
+  ],
+  "width": 96,
+  "summed_seats": 62,
+  "live_rows": 61,
+  "arena_mount_n": 62,
+  "dropped_width": [
+   12
+  ],
+  "unseatable": [],
+  "valnodes": [
+   [
+    14,
+    "turn",
+    true,
+    false
+   ],
+   [
+    24,
+    "digest",
+    false,
+    false
+   ]
+  ],
+  "cat": "correct",
+  "eligible_n": 20,
+  "nodes_n": 51,
+  "recency_waive": "identifier_query_point_lookup",
+  "answer": "The map position for the Breakwater was set at **(-31, 48, 12)**."
+ },
+ {
+  "arm": "A",
+  "pid": "recall_3_100",
+  "cell": "A-111-118",
+  "turn": 114,
+  "q": "What did we settle on for Breakwater's map position?",
+  "exp": "(-31, 48, 12)",
+  "cpu_ident_tokens": [
+   "breakwater"
+  ],
+  "cpu_hits": [],
+  "receipt_idcands": [],
+  "match": true,
+  "ranking": [
+   61,
+   102,
+   41,
+   92,
+   103,
+   97
+  ],
+  "margin": 0.061503535742831295,
+  "thr": 0.1385774091529802,
+  "branch": "margin_insurance_k3_identifier_tiebreak",
+  "plan": [
+   61,
+   102,
+   41
+  ],
+  "seated": [
+   41
+  ],
+  "mounts": [
+   42
+  ],
+  "recency": [
+   104,
+   105
+  ],
+  "excl": [
+   104,
+   105
+  ],
+  "width": 96,
+  "summed_seats": 23,
+  "live_rows": 61,
+  "arena_mount_n": 23,
+  "dropped_width": [],
+  "unseatable": [],
+  "valnodes": [
+   [
+    14,
+    "turn",
+    true,
+    false
+   ],
+   [
+    24,
+    "digest",
+    true,
+    false
+   ],
+   [
+    61,
+    "era",
+    false,
+    false
+   ]
+  ],
+  "cat": "wrong_value",
+  "eligible_n": 29,
+  "nodes_n": 106,
+  "recency_waive": "identifier_query_point_lookup",
+  "answer": "We settled on **(64,\u202f\u201317,\u202f8)** for Breakwater\u2019s map position."
+ },
+ {
+  "arm": "A",
+  "pid": "recall_3_150",
+  "cell": "A-157-164",
+  "turn": 164,
+  "q": "What did we settle on for Breakwater's map position?",
+  "exp": "(-31, 48, 12)",
+  "cpu_ident_tokens": [
+   "breakwater"
+  ],
+  "cpu_hits": [],
+  "receipt_idcands": [],
+  "match": true,
+  "ranking": [
+   156,
+   140,
+   124,
+   61,
+   155,
+   41
+  ],
+  "margin": 0.013328793936133732,
+  "thr": 0.1385774091529802,
+  "branch": "margin_insurance_k3_identifier_tiebreak",
+  "plan": [
+   156,
+   140,
+   124
+  ],
+  "seated": [
+   140
+  ],
+  "mounts": [
+   141
+  ],
+  "recency": [
+   162,
+   163
+  ],
+  "excl": [
+   162,
+   163
+  ],
+  "width": 96,
+  "summed_seats": 91,
+  "live_rows": 60,
+  "arena_mount_n": 91,
+  "dropped_width": [
+   156,
+   124
+  ],
+  "unseatable": [],
+  "valnodes": [
+   [
+    14,
+    "turn",
+    true,
+    false
+   ],
+   [
+    24,
+    "digest",
+    true,
+    false
+   ],
+   [
+    61,
+    "era",
+    false,
+    false
+   ]
+  ],
+  "cat": "wrong_value",
+  "eligible_n": 31,
+  "nodes_n": 164,
+  "recency_waive": "identifier_query_point_lookup",
+  "answer": "The map position for **Breakwater** is **(-9, -44, 71)**."
+ },
+ {
+  "arm": "A",
+  "pid": "recap_3",
+  "cell": "A-197-200",
+  "turn": 198,
+  "q": "For Breakwater, which map position did we go with?",
+  "exp": "(-31, 48, 12)",
+  "cpu_ident_tokens": [
+   "breakwater"
+  ],
+  "cpu_hits": [],
+  "receipt_idcands": [],
+  "match": true,
+  "ranking": [
+   140,
+   156,
+   172,
+   124,
+   61,
+   177
+  ],
+  "margin": 0.0032475332623862485,
+  "thr": 0.1385774091529802,
+  "branch": "margin_insurance_k3_identifier_tiebreak",
+  "plan": [
+   140,
+   156,
+   172
+  ],
+  "seated": [
+   124
+  ],
+  "mounts": [
+   125
+  ],
+  "recency": [
+   196,
+   198
+  ],
+  "excl": [
+   196,
+   198
+  ],
+  "width": 96,
+  "summed_seats": 91,
+  "live_rows": 60,
+  "arena_mount_n": 91,
+  "dropped_width": [
+   61,
+   177
+  ],
+  "unseatable": [
+   172
+  ],
+  "valnodes": [
+   [
+    14,
+    "turn",
+    true,
+    false
+   ],
+   [
+    24,
+    "digest",
+    true,
+    false
+   ],
+   [
+    61,
+    "era",
+    false,
+    false
+   ]
+  ],
+  "cat": "wrong_value",
+  "eligible_n": 36,
+  "nodes_n": 199,
+  "recency_waive": "identifier_query_point_lookup",
+  "answer": "The map position for **Breakwater** is **(19,\u202f83,\u202f\u201322)**."
+ },
+ {
+  "arm": "A+",
+  "pid": "recall_2_50",
+  "cell": "A-057-064",
+  "turn": 63,
+  "q": "What did we settle on for Commtower's maintenance crew?",
+  "exp": "Iona Vale",
+  "cpu_ident_tokens": [
+   "commtower"
+  ],
+  "cpu_hits": [],
+  "receipt_idcands": [],
+  "match": true,
+  "ranking": [
+   28,
+   18,
+   20,
+   23,
+   12,
+   46
+  ],
+  "margin": 0.4906757492583328,
+  "thr": 0.1385774091529802,
+  "branch": "fit_margin_decisive_rank1",
+  "plan": [
+   28
+  ],
+  "seated": [
+   28
+  ],
+  "mounts": [
+   29
+  ],
+  "recency": [
+   31,
+   51
+  ],
+  "excl": [
+   31,
+   51
+  ],
+  "width": 96,
+  "summed_seats": 40,
+  "live_rows": 56,
+  "arena_mount_n": 40,
+  "dropped_width": [],
+  "unseatable": [],
+  "valnodes": [
+   [
+    13,
+    "turn",
+    true,
+    false
+   ],
+   [
+    28,
+    "digest",
+    false,
+    false
+   ]
+  ],
+  "cat": "correct",
+  "eligible_n": 23,
+  "nodes_n": 53,
+  "recency_waive": "identifier_query_point_lookup",
+  "answer": "The maintenance crew for the comm tower is called **Iona Vale**."
+ },
+ {
+  "arm": "A+",
+  "pid": "recall_2_100",
+  "cell": "A-111-118",
+  "turn": 113,
+  "q": "What did we settle on for Commtower's maintenance crew?",
+  "exp": "Iona Vale",
+  "cpu_ident_tokens": [
+   "commtower"
+  ],
+  "cpu_hits": [],
+  "receipt_idcands": [],
+  "match": true,
+  "ranking": [
+   64,
+   72,
+   116,
+   84,
+   100,
+   55
+  ],
+  "margin": 0.45624290155076175,
+  "thr": 0.1385774091529802,
+  "branch": "fit_margin_decisive_rank1",
+  "plan": [
+   64
+  ],
+  "seated": [
+   64
+  ],
+  "mounts": [
+   65
+  ],
+  "recency": [
+   114,
+   117
+  ],
+  "excl": [
+   114,
+   117
+  ],
+  "width": 96,
+  "summed_seats": 96,
+  "live_rows": 73,
+  "arena_mount_n": 96,
+  "dropped_width": [],
+  "unseatable": [],
+  "valnodes": [
+   [
+    13,
+    "turn",
+    true,
+    false
+   ],
+   [
+    28,
+    "digest",
+    true,
+    false
+   ],
+   [
+    64,
+    "era",
+    false,
+    false
+   ]
+  ],
+  "cat": "wrong_value",
+  "eligible_n": 27,
+  "nodes_n": 118,
+  "recency_waive": "identifier_query_point_lookup",
+  "answer": "We decided that the maintenance crew for the comm tower\u2014known as the \u201cCommtower\u201d in the st"
+ },
+ {
+  "arm": "A+",
+  "pid": "recall_2_150",
+  "cell": "A-157-164",
+  "turn": 163,
+  "q": "What did we settle on for Commtower's maintenance crew?",
+  "exp": "Iona Vale",
+  "cpu_ident_tokens": [
+   "commtower"
+  ],
+  "cpu_hits": [],
+  "receipt_idcands": [],
+  "match": true,
+  "ranking": [
+   64,
+   168,
+   72,
+   132,
+   116,
+   84
+  ],
+  "margin": 0.446044299823684,
+  "thr": 0.1385774091529802,
+  "branch": "fit_margin_decisive_rank1",
+  "plan": [
+   64
+  ],
+  "seated": [
+   64
+  ],
+  "mounts": [
+   65
+  ],
+  "recency": [
+   171,
+   172
+  ],
+  "excl": [
+   171,
+   172
+  ],
+  "width": 96,
+  "summed_seats": 96,
+  "live_rows": 73,
+  "arena_mount_n": 96,
+  "dropped_width": [],
+  "unseatable": [],
+  "valnodes": [
+   [
+    13,
+    "turn",
+    true,
+    false
+   ],
+   [
+    28,
+    "digest",
+    true,
+    false
+   ],
+   [
+    64,
+    "era",
+    false,
+    false
+   ]
+  ],
+  "cat": "wrong_value",
+  "eligible_n": 34,
+  "nodes_n": 174,
+  "recency_waive": "identifier_query_point_lookup",
+  "answer": "We decided that the maintenance crew for the comm tower\u2014known as the \u201cCommtower\u201d in the st"
+ },
+ {
+  "arm": "A+",
+  "pid": "recall_3_50",
+  "cell": "A-057-064",
+  "turn": 64,
+  "q": "What did we settle on for Breakwater's map position?",
+  "exp": "(-31, 48, 12)",
+  "cpu_ident_tokens": [
+   "breakwater"
+  ],
+  "cpu_hits": [
+   28
+  ],
+  "receipt_idcands": [
+   28
+  ],
+  "match": true,
+  "ranking": [
+   28,
+   42,
+   18,
+   20,
+   46,
+   12
+  ],
+  "margin": 0.32210014929976594,
+  "thr": 0.1385774091529802,
+  "branch": "fit_margin_decisive_rank1",
+  "plan": [
+   28
+  ],
+  "seated": [
+   28
+  ],
+  "mounts": [
+   29
+  ],
+  "recency": [
+   31,
+   51
+  ],
+  "excl": [
+   31,
+   51
+  ],
+  "width": 96,
+  "summed_seats": 40,
+  "live_rows": 57,
+  "arena_mount_n": 40,
+  "dropped_width": [],
+  "unseatable": [],
+  "valnodes": [
+   [
+    14,
+    "turn",
+    true,
+    false
+   ],
+   [
+    28,
+    "digest",
+    false,
+    true
+   ]
+  ],
+  "cat": "correct",
+  "eligible_n": 23,
+  "nodes_n": 53,
+  "recency_waive": "identifier_query_point_lookup",
+  "answer": "The breakwater\u2019s coordinates are **(-31,\u202f48,\u202f12)**."
+ },
+ {
+  "arm": "A+",
+  "pid": "recall_3_100",
+  "cell": "A-111-118",
+  "turn": 114,
+  "q": "What did we settle on for Breakwater's map position?",
+  "exp": "(-31, 48, 12)",
+  "cpu_ident_tokens": [
+   "breakwater"
+  ],
+  "cpu_hits": [
+   64
+  ],
+  "receipt_idcands": [
+   64
+  ],
+  "match": true,
+  "ranking": [
+   116,
+   110,
+   42,
+   84,
+   64,
+   55
+  ],
+  "margin": 0.06734233962214775,
+  "thr": 0.1385774091529802,
+  "branch": "margin_insurance_k3_identifier_tiebreak",
+  "plan": [
+   116,
+   110,
+   42
+  ],
+  "seated": [
+   64
+  ],
+  "mounts": [
+   65
+  ],
+  "recency": [
+   114,
+   117
+  ],
+  "excl": [
+   114,
+   117
+  ],
+  "width": 96,
+  "summed_seats": 96,
+  "live_rows": 57,
+  "arena_mount_n": 96,
+  "dropped_width": [
+   84,
+   55
+  ],
+  "unseatable": [],
+  "valnodes": [
+   [
+    14,
+    "turn",
+    true,
+    false
+   ],
+   [
+    28,
+    "digest",
+    true,
+    false
+   ],
+   [
+    64,
+    "era",
+    false,
+    true
+   ]
+  ],
+  "cat": "wrong_value",
+  "eligible_n": 27,
+  "nodes_n": 118,
+  "recency_waive": "identifier_query_point_lookup",
+  "answer": "The breakwater\u2019s coordinates are **\u201131,\u202f48,\u202f12**."
+ },
+ {
+  "arm": "A+",
+  "pid": "recall_3_150",
+  "cell": "A-157-164",
+  "turn": 164,
+  "q": "What did we settle on for Breakwater's map position?",
+  "exp": "(-31, 48, 12)",
+  "cpu_ident_tokens": [
+   "breakwater"
+  ],
+  "cpu_hits": [
+   64
+  ],
+  "receipt_idcands": [
+   64
+  ],
+  "match": true,
+  "ranking": [
+   168,
+   132,
+   116,
+   152,
+   167,
+   42
+  ],
+  "margin": 0.007692198706398479,
+  "thr": 0.1385774091529802,
+  "branch": "margin_insurance_k3_identifier_tiebreak",
+  "plan": [
+   168,
+   132,
+   116
+  ],
+  "seated": [
+   152
+  ],
+  "mounts": [
+   153
+  ],
+  "recency": [
+   171,
+   172
+  ],
+  "excl": [
+   171,
+   172
+  ],
+  "width": 96,
+  "summed_seats": 90,
+  "live_rows": 60,
+  "arena_mount_n": 90,
+  "dropped_width": [
+   167,
+   42
+  ],
+  "unseatable": [
+   132,
+   116
+  ],
+  "valnodes": [
+   [
+    14,
+    "turn",
+    true,
+    false
+   ],
+   [
+    28,
+    "digest",
+    true,
+    false
+   ],
+   [
+    64,
+    "era",
+    false,
+    true
+   ]
+  ],
+  "cat": "wrong_value",
+  "eligible_n": 34,
+  "nodes_n": 174,
+  "recency_waive": "identifier_query_point_lookup",
+  "answer": "The map position for **Breakwater** is **(0,\u202f0,\u202f0)**."
+ }
+]

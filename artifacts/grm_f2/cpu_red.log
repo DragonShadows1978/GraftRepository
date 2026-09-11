@@ -1,0 +1,166 @@
+........FFFFF..F..................                                       [100%]
+=================================== FAILURES ===================================
+________________ test_red_flag_off_deposits_the_rebound_digest _________________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-f2/artifacts/grm_f2/tmp/test_red_flag_off_deposits_the0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7aaee6bd07a0>
+
+    def test_red_flag_off_deposits_the_rebound_digest(tmp_path, monkeypatch):
+        """RED: with the flag OFF the defect reproduces end to end."""
+        monkeypatch.delenv(guard.ENV_NAME, raising=False)
+        repo = repository(tmp_path / 'repo', monkeypatch)
+        repo.arena.m = RecordedDigest24Model(repo.arena.m.codec)
+        try:
+            ids = seed(repo)
+            assert repo._fold_once(jobs=[('digest', list(ids))]) is True
+            event = repo.fold_history[-1]
+            assert event['accepted'] is True
+            didx = event['digest_idx']
+            text = repo.arena.grafts[didx]['text']
+            assert 'the Beacon' in text
+            assert 'Commtower' not in text and 'Breakwater' not in text
+            # And the alias record is destroyed to produce it.
+            assert all(repo.arena.grafts[i]['retired'] for i in ids)
+            assert repo.fold_guard_history == []
+            # The check names exactly what went wrong.
+            violations = guard.attribution_violations(
+                repo.arena._fact_set, SOURCES, text)
+>           assert len(violations) == 5, violations
+E           AssertionError: []
+E           assert 0 == 5
+E            +  where 0 = len([])
+
+tests/test_grm_f2_alias_guard.py:366: AssertionError
+_______________ test_green_flag_on_b_rejects_the_rebound_digest ________________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-f2/artifacts/grm_f2/tmp/test_green_flag_on_b_rejects_t0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7aaee6d77290>
+
+    def test_green_flag_on_b_rejects_the_rebound_digest(tmp_path, monkeypatch):
+        """GREEN (b): the attribution QC aborts the fold; sources survive.
+    
+        The window is handed to ``consolidate`` DIRECTLY (all four sources), so
+        this isolates (b) from (a): even with the alias turn present and the
+        model replaying the defective text, the digest is never deposited.
+        """
+        monkeypatch.setenv(guard.ENV_NAME, '1')
+        repo = repository(tmp_path / 'repo', monkeypatch)
+        repo.arena.m = RecordedDigest24Model(repo.arena.m.codec)
+        try:
+            ids = seed(repo)
+            before = len(repo.arena.grafts)
+            didx, text = repo.arena.consolidate(ids)
+>           assert didx is None and text is None
+E           assert (4 is None)
+
+tests/test_grm_f2_alias_guard.py:391: AssertionError
+________ test_green_flag_on_a_excludes_the_alias_turns_from_the_window _________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-f2/artifacts/grm_f2/tmp/test_green_flag_on_a_excludes_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7aaee6be6630>
+
+    def test_green_flag_on_a_excludes_the_alias_turns_from_the_window(
+            tmp_path, monkeypatch):
+        """GREEN (a): the planner drops the fact-less alias turns.
+    
+        ``_guard_fold_windows`` is the seam both ``_librarian_jobs`` return
+        paths pass through.  The excluded nodes stay ACTIVE and are NOT marked
+        ``no_fold`` — they remain available to A1's alias merge.
+        """
+        monkeypatch.setenv(guard.ENV_NAME, '1')
+        repo = repository(tmp_path / 'repo', monkeypatch)
+        repo.arena.m = FaithfulDigestModel(repo.arena.m.codec)
+        try:
+            ids = seed(repo)
+            jobs = repo._guard_fold_windows([('digest', list(ids))])
+>           assert jobs == [('digest', [ids[0], ids[1]])]
+E           AssertionError: assert [('digest', [0, 1, 2, 3])] == [('digest', [0, 1])]
+E             
+E             At index 0 diff: ('digest', [0, 1, 2, 3]) != ('digest', [0, 1])
+E             Use -v to get more diff
+
+tests/test_grm_f2_alias_guard.py:421: AssertionError
+___________________ test_green_end_to_end_through_fold_once ____________________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-f2/artifacts/grm_f2/tmp/test_green_end_to_end_through_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7aaee6c48290>
+
+    def test_green_end_to_end_through_fold_once(tmp_path, monkeypatch):
+        """(a) and (b) together on the production ``_fold_once`` path.
+    
+        With the guard ON and the recorded double still replaying the defective
+        text, the window is first reduced to ``[13, 14]`` by (a); the model then
+        emits digest 24 anyway, and (b) rejects it.  ``_fold_once`` takes its
+        EXISTING abort branch: sources stay active and are exempted so the
+        planner advances.  Nothing about that branch is new.
+        """
+        monkeypatch.setenv(guard.ENV_NAME, '1')
+        repo = repository(tmp_path / 'repo', monkeypatch)
+        repo.arena.m = RecordedDigest24Model(repo.arena.m.codec)
+        try:
+            ids = seed(repo)
+            jobs = repo._guard_fold_windows([('digest', list(ids))])
+            assert repo._fold_once(jobs=jobs) is True
+            event = repo.fold_history[-1]
+>           assert event['accepted'] is False
+E           assert True is False
+
+tests/test_grm_f2_alias_guard.py:456: AssertionError
+_________________________ test_entity_check_definition _________________________
+
+    def test_entity_check_definition():
+        """The rule, stated as four properties of ``attribution_violations``."""
+        fact_set = ArenaCache._fact_set
+        src = ["Commtower's maintenance crew will be Iona Vale."]
+        # 1. SAME entity -> no violation.
+        assert guard.attribution_violations(
+            fact_set, src,
+            'the maintenance crew of Commtower is Iona Vale.') == []
+        # 2. DIFFERENT entity -> violation.
+        wrong = guard.attribution_violations(
+            fact_set, src, 'the maintenance crew of Breakwater is Iona Vale.')
+>       assert len(wrong) == 2 and {v['value'] for v in wrong} == {'iona', 'vale'}
+E       assert (0 == 2)
+E        +  where 0 = len([])
+
+tests/test_grm_f2_alias_guard.py:488: AssertionError
+________________ test_exclusion_keeps_a_fact_bearing_alias_turn ________________
+
+    def test_exclusion_keeps_a_fact_bearing_alias_turn():
+        """Excluding a turn that carries a fact would LOSE the fact.
+    
+        The exclusion is narrow by construction: both conditions (parses as an
+        alias edge AND contributes nothing to ``_fact_set``) are required.
+        """
+        fact_set = ArenaCache._fact_set
+        factless = "Let's call Lantern 'the Beacon' from now on."
+        bearing = ("Let's call Kestrel 'the Hauler' from now on; "
+                   "its cargo allowance is 37 crates.")
+        plain = "Commtower's maintenance crew will be Iona Vale."
+        assert fact_set([factless]) == set()
+        assert fact_set([bearing])
+>       assert guard.fold_window_excludes(
+            fact_set, [plain, factless, bearing]) == [1]
+E       assert [] == [1]
+E         
+E         Right contains one more item: 1
+E         Use -v to get more diff
+
+tests/test_grm_f2_alias_guard.py:531: AssertionError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_grm_f2_alias_guard.py::test_red_flag_off_deposits_the_rebound_digest
+FAILED tests/test_grm_f2_alias_guard.py::test_green_flag_on_b_rejects_the_rebound_digest
+FAILED tests/test_grm_f2_alias_guard.py::test_green_flag_on_a_excludes_the_alias_turns_from_the_window
+FAILED tests/test_grm_f2_alias_guard.py::test_green_end_to_end_through_fold_once
+FAILED tests/test_grm_f2_alias_guard.py::test_entity_check_definition - asser...
+FAILED tests/test_grm_f2_alias_guard.py::test_exclusion_keeps_a_fact_bearing_alias_turn
+6 failed, 28 passed, 2 warnings in 5.21s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

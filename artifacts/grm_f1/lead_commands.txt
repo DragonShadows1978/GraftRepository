@@ -1,29 +1,52 @@
-# LT1.1 r3 -- arm A only, 26 cells
-# reservation ceiling 7410 s (2.06 GPU-h), r2 unchanged
-# ORDER CAP on MEASURED work: 4680 s (1.30 GPU-h). See
-# registration.budget_conflict -- lead decision requested.
-# registration sha256: bf3711a7ab539c9c876368f67b333c593f5280bf87d98ac3913d840712addd55
-# amendment10  sha256: d1a24b45db241a8cf837250c7b13f9acd1cb098b8e7cc995fcde1dc7188355fc
+# LT1.1 r3 on the MERGED core -- THREE separately resumable arms
+# registration sha256: 2319938cd2039a6c6c51e1ba49e14500c2b0a529c726903ab06edae1a6eab8e4
+# amendment11   sha256: 7e0562f6d65bf0d3e9bb46d8054d23ef0fe1a663c62dbab463e45f1d31e84302
 #
-# THE SINGLE VARIABLE under test:
-#   GRM_FOLD_RETAIN_SOURCES=1  (default OFF; OFF is byte-identical)
+# Per arm: reservation ceiling 7410 s (2.06 GPU-h), r2 unchanged;
+#          ORDER CAP on MEASURED work 4680 s (1.30 GPU-h).
 #
-# OPTIONAL, lead may pin -- if pinned, the columns measure the PAIR:
-#   export GRM_F2_SUPERSEDE_DIGEST_BY_ENTITY=1
-# NOT pinned by default (r2 arm A ran with it false):
-#   export GRM_ALIAS_FOLD_MERGE=1
+# ATTRIBUTION: A0 is the control. If A0 does not reproduce r2 arm A
+# within +/-1 per class, core drift is in play and NO movement in
+# A' or A+' may be attributed to F1/F2/F5 until that is explained.
+# Within an arm the flags move TOGETHER: a moved column belongs to
+# the SET, never to one flag.
 #
-# EVERY line below ends in --dry-run. Removing it is a deliberate
-# act by the lead after reading the registration, never a paste.
+# EVERY runnable line below ends in --dry-run. Removing it is a
+# deliberate act by the lead after reading the registration.
 #
+# ---------- arm A0 (CONTROL) ----------
+# REGISTERED ONLY -- run if the lead decides.
 export GRM_ADMISSION_RULE=margin_first
+export GRM_FOLD_ALIAS_GUARD=0
+export GRM_FOLD_RETAIN_SOURCES=0
 export GRM_PROFILE=eb1_c2
-export GRM_FOLD_RETAIN_SOURCES=1
-#
-# 1. document chain + core pins (amendment 10 must govern):
+export GRM_ROUTE_SOLE_BINDER_INSURANCE=0
+unset GRM_ALIAS_FOLD_MERGE
 python3 -m scripts.grm_lt1_1 --arm A --preflight --dry-run
-# 2. cell schedule and budget:
-python3 -m scripts.grm_lt1_1 --arm A --dry-run
-# 3. the campaign itself -- under flock, operator has right of way:
+python3 -m scripts.grm_lt1_1 --arm A --out artifacts/grm_f1/lt1_1_r3/run_A0 --dry-run
 flock --wait 7200 /var/lock/grm_gpu.lock \
-  python3 -m scripts.grm_lt1_1 --arm A --resume --dry-run
+  python3 -m scripts.grm_lt1_1 --arm A --resume --out artifacts/grm_f1/lt1_1_r3/run_A0 --dry-run
+#
+# ---------- arm A' (TREATMENT) ----------
+export GRM_ADMISSION_RULE=margin_first
+export GRM_FOLD_ALIAS_GUARD=1
+export GRM_FOLD_RETAIN_SOURCES=1
+export GRM_PROFILE=eb1_c2
+export GRM_ROUTE_SOLE_BINDER_INSURANCE=1
+unset GRM_ALIAS_FOLD_MERGE
+python3 -m scripts.grm_lt1_1 --arm A --preflight --dry-run
+python3 -m scripts.grm_lt1_1 --arm A --out artifacts/grm_f1/lt1_1_r3/run_Aprime --dry-run
+flock --wait 7200 /var/lock/grm_gpu.lock \
+  python3 -m scripts.grm_lt1_1 --arm A --resume --out artifacts/grm_f1/lt1_1_r3/run_Aprime --dry-run
+#
+# ---------- arm A+' (TREATMENT) ----------
+export GRM_ADMISSION_RULE=margin_first
+export GRM_ALIAS_FOLD_MERGE=1
+export GRM_FOLD_ALIAS_GUARD=1
+export GRM_FOLD_RETAIN_SOURCES=1
+export GRM_PROFILE=eb1_c2
+export GRM_ROUTE_SOLE_BINDER_INSURANCE=1
+python3 -m scripts.grm_lt1_1 --arm A+ --preflight --dry-run
+python3 -m scripts.grm_lt1_1 --arm A+ --out artifacts/grm_f1/lt1_1_r3/run_Aplusprime --dry-run
+flock --wait 7200 /var/lock/grm_gpu.lock \
+  python3 -m scripts.grm_lt1_1 --arm A+ --resume --out artifacts/grm_f1/lt1_1_r3/run_Aplusprime --dry-run
