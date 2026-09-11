@@ -1,0 +1,72 @@
+# GRM-R1 margin-first regression replay -- LEAD COMMANDS
+# Seat: Opus 5 (opus-max).  The seat did NOT touch the GPU and did NOT run
+# GPT-OSS-20B.  Everything below is for the LEAD to run under the GPU lease.
+#
+# Registration : artifacts/grm_r1/registration.json
+# sha256       : b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5
+# Cohort       : 31 execution cells, 9 distinct C2 question ids
+# Budget       : 1057 s reserved = 0.2936 GPU-h, cap 3600 s = 1.0 GPU-h
+# Lease        : /tmp/forge-gpu.lock, acquired per batch by the worker itself
+#                (scripts/grm_cmc1_gpu_arms.gpu_lease, imported not forked)
+# Cooldown     : 30 s foreground, after the lease releases, inside the worker
+#
+# Run every command from /mnt/ForgeRealm/wt/grm-r1 (the worktree root).
+# Run them FOREGROUND and IN ORDER.  Do not parallelise: the worker enforces
+# one owner (O_EXCL artifacts/grm_r1/replay.active) and refuses to start a
+# batch while an earlier one is incomplete.
+
+# ---------------------------------------------------------------- preflight
+# Verifies the registration, every sha-bound source, all 31 checkpoints and
+# their 614 payload/manifest files.  NO GPU, no model load.
+python3 scripts/grm_r1_replay.py --dry-run
+
+# Expect: "status": "READY_FOR_LEAD", "gpu_executed": false,
+#         31 cells each with off_plan != on_plan and an estimate.
+
+# ------------------------------------------------------------------- batches
+# Each batch loads GPT-OSS-20B ONCE and runs both arms of each of its cells.
+# The worker acquires the GPU lease itself (wait=0: it fails fast if the lock
+# is held -- re-run it later, never clear another process's lock).
+python3 scripts/grm_r1_replay.py --batch R1     # 8 cells, defaults, lease 263 s
+python3 scripts/grm_r1_replay.py --batch R2     # 5 cells, defaults, lease 194 s
+python3 scripts/grm_r1_replay.py --batch R3     # 8 cells, profile,  lease 238 s
+python3 scripts/grm_r1_replay.py --batch R4     # 8 cells, profile,  lease 238 s
+python3 scripts/grm_r1_replay.py --batch R5     # 2 cells, profile,  lease 124 s
+
+# ------------------------------------------------------------------- resume
+# Resume is the SAME command.  A batch whose controller says COMPLETE prints
+# {"status":"ALREADY_COMPLETE"} and does nothing -- it is never re-executed.
+# A batch that died between its reservation and its controller leaves an
+# ORPHAN RESERVATION and the campaign STOPS (R1_ORPHAN_RESERVATION_STOP):
+# that is deliberate.  Do NOT delete the reservation to get moving; a killed
+# batch is a result.  Report it, and the lead decides on an amendment.
+python3 scripts/grm_r1_replay.py --batch <ID>   # re-issue the interrupted id
+
+# ------------------------------------------------------------------ summary
+python3 scripts/grm_r1_replay.py --summary
+
+# Reads every receipt and applies the REGISTERED verdict rule verbatim:
+#   adopt  iff  complete AND off_plan_parity AND answers_measured
+#               AND correct_to_wrong on sup == 0
+#               AND correct_to_wrong elsewhere <= 1
+# status is one of:
+#   NOT_MEASURED  -- incomplete, or no measured answers (e.g. a --fake run)
+#   RED           -- a cell's arm-OFF plan did not reproduce the recorded plan
+#   ADOPT         -- the registered verdict rule is satisfied
+#   DO_NOT_ADOPT  -- complete and parity-clean, but the rule is not satisfied
+# "prediction_held" separately records the plan's <=2-changed / 0-sup-regression
+# prediction.  It is an HONESTY RECORD, not the adoption gate.
+
+# --------------------------------------------------------------- STOP rules
+# * A checkpoint hash mismatch is RED and is NOT retried.
+# * Arm OFF must reproduce the FIX-6 recorded off_plan byte for byte.  If it
+#   does not, the cell receipt is written with off_plan_parity=false and the
+#   run STOPS (R1_OFF_PLAN_PARITY_RED_STOP).  Do not re-bless the plan.
+# * A FAILED controller stops every later batch (R1_FAILED_CAMPAIGN_STOP).
+# * Never kill or signal a process this campaign did not start; wait on the
+#   flock, never clear it.
+
+# ------------------------------------------------------- CPU gate (no GPU)
+# What the seat actually ran.  Reproducible by the lead at any time; it
+# measures PLANS only and can never produce an adoption verdict.
+python3 -m pytest -q tests/test_grm_admission.py tests/test_grm_scout_fix4.py tests/test_grm_scout_fix6*.py tests/test_grm_r1*.py
