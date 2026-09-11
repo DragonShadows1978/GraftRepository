@@ -1,0 +1,211 @@
+{
+  "amendment": 4,
+  "apply4_finding": {
+    "answer": "NO \u2014 it passes unchanged on this tree",
+    "check": "grm_lt1_amendment4.apply: a['protocol_binding'] != lt.binding('CPU')",
+    "consequence": "no second ruling is needed for amendment 4; it never gated on drifted core. LT1.1 stamps its own protocol binding through worker.bind, and the amendment-4 recorded binding is reported as parent lineage.",
+    "left_untouched": true,
+    "question": "does apply4's protocol-binding check compare against drifted core?",
+    "recorded_equals_live": true,
+    "why": "`lt.binding` reports the core shas RECORDED in LT1 amendment 3, not live ones, so it is already immune to core drift. The whole of lt.verify() failure on this tree was its final input loop (INPUT_SHA_MISMATCH: core/graft_arena.py), which is exactly the re-validation the ruling removes."
+  },
+  "arms": {
+    "A": {
+      "alias_fold_merge": false,
+      "arm": "A",
+      "budget_gpu_hours": 2.06,
+      "budget_gpu_seconds": 7410,
+      "env_after_environment_flags": {
+        "GRM_ADMISSION_RULE": "margin_first"
+      },
+      "invocation": {
+        "dry_run": "python3 scripts/grm_lt1_1.py --arm A --dry-run",
+        "preflight": "python3 scripts/grm_lt1_1.py --arm A --preflight",
+        "resume": "python3 scripts/grm_lt1_1.py --arm A --resume",
+        "summary": "python3 scripts/grm_lt1_1.py --arm A --summary"
+      },
+      "out_dir": "artifacts/grm_d1/lt1_1/run_A",
+      "predictions": {
+        "aliases": "0/5 wrong rows fixed (recall_7_* stay wrong)",
+        "corrections": "5/5",
+        "fresh": "6/7",
+        "recap": "unpredicted memory-side; oracle 5/5 gated on CPU"
+      },
+      "superseded_budget_gpu_seconds": 6120
+    },
+    "A+": {
+      "alias_fold_merge": true,
+      "arm": "A+",
+      "budget_gpu_hours": 2.06,
+      "budget_gpu_seconds": 7410,
+      "env_after_environment_flags": {
+        "GRM_ADMISSION_RULE": "margin_first",
+        "GRM_ALIAS_FOLD_MERGE": "1"
+      },
+      "invocation": {
+        "dry_run": "python3 scripts/grm_lt1_1.py --arm A+ --dry-run",
+        "preflight": "python3 scripts/grm_lt1_1.py --arm A+ --preflight",
+        "resume": "python3 scripts/grm_lt1_1.py --arm A+ --resume",
+        "summary": "python3 scripts/grm_lt1_1.py --arm A+ --summary"
+      },
+      "out_dir": "artifacts/grm_d1/lt1_1/run_Aplus",
+      "predictions": {
+        "aliases": "4/5 of the wrong rows fixed; the lead proposed >= 3/5 and that bar is also met",
+        "corrections": "5/5",
+        "fresh": "6/7",
+        "prediction_note": "The lead proposed aliases >= 3/5. I register 4/5 and state why: the D1 CPU check (artifacts/grm_d1/alias_cpu_aplus.json) shows the fold firing, the digest naming BOTH names, being ADMITTED and MOUNTED, and serving the right value for 10/10 alias probes at every distance, with a 78-token digest inside the 96 width. The one reservation that keeps me off 5/5 is that the CPU reader is a regex double: the GPU reader must still choose the digest value over the surrounding prose, and LT1 already showed one long-distance ladder drop (recall_3_150) that no lineage change addresses. 4/5 prices exactly one such drop.",
+        "recap": ">= 3/5 memory-side"
+      },
+      "superseded_budget_gpu_seconds": 6120
+    }
+  },
+  "budget_gpu_hours_total": 4.12,
+  "budget_gpu_seconds_per_arm": 7410,
+  "budget_gpu_seconds_total": 14820,
+  "follow_up_instruction": "Lead follow-up 4 to GRM-D1 (2026-09-11): replace the lt.preflight() host gate with lt1_1_preflight() verifying LT1.1's own chain; say whether apply4's protocol-binding check still passes on this tree; gate both arms green with no INPUT_SHA_MISMATCH, plant a drifted core sha in LT1.1's own amendment and assert the preflight goes RED; retire or invert test_the_host_blocker_claim_is_true_right_now with the receipt; amendment 4 chained to 3 recording the ruling verbatim and the parent-lineage table.",
+  "order": "orders/GRM_D1_LT1_RESIDUAL_DIAGNOSIS.md",
+  "order_sha256": "6ae0f52af0059f0a93b66ae37dd442761a32409b5f3f17b027c4b8fa2c0efb46",
+  "parent_lineage": {
+    "drift_table": [
+      {
+        "attribution": "pre-A1 drift on grm-merge, not attributable to A1",
+        "input": "core/graft_arena.py",
+        "lt1_1_rebound": "918f5d0b202b4efabfaa1c37c965cdf3ce8fbd7e6b69045c4dafd985bee820a9",
+        "lt1_recorded": "83a2d4a2bc0ed2c8e0fc06f937f59d94f48ca5a70a65a96c33b1ba6eaa2e6aed",
+        "on_tree_now": "918f5d0b202b4efabfaa1c37c965cdf3ce8fbd7e6b69045c4dafd985bee820a9"
+      },
+      {
+        "attribution": "A1 (alias fold-merge hooks)",
+        "input": "core/graft_repository.py",
+        "lt1_1_rebound": "59165723310605d599088718b486066cdfad90e16c15d9af83cf64726a52c2e4",
+        "lt1_recorded": "fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db",
+        "on_tree_now": "59165723310605d599088718b486066cdfad90e16c15d9af83cf64726a52c2e4"
+      },
+      {
+        "attribution": "pre-A1 drift on grm-merge, not attributable to A1",
+        "input": "core/grm_admission.py",
+        "lt1_1_rebound": "ebdfd84af435a163dfe4a37281d489047acd974bf76190b79622340c29af7ab6",
+        "lt1_recorded": "d1afc26a68b4b1c8236fc01c7db62065ab49173a89d7f2853989eedfadb48fe0",
+        "on_tree_now": "ebdfd84af435a163dfe4a37281d489047acd974bf76190b79622340c29af7ab6"
+      },
+      {
+        "attribution": "A1 (alias fold-merge hooks)",
+        "input": "core/grm_runtime.py",
+        "lt1_1_rebound": "973addc491a29eda9bac611a9c3f0cc25cd1033395ecc39b84b19c6f1b8f0646",
+        "lt1_recorded": "39f823cbdb98e32528fb5240777cb8c0144f3be77fa86466a67f1f636505c13e",
+        "on_tree_now": "973addc491a29eda9bac611a9c3f0cc25cd1033395ecc39b84b19c6f1b8f0646"
+      },
+      {
+        "attribution": "pre-A1 drift on grm-merge, not attributable to A1",
+        "input": "core/grm_text_norm.py",
+        "lt1_1_rebound": "e968d68791950adb3a59bc83f43d75a75e31879a2f77c379b44bf711ccecc30a",
+        "lt1_recorded": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8",
+        "on_tree_now": "e968d68791950adb3a59bc83f43d75a75e31879a2f77c379b44bf711ccecc30a"
+      },
+      {
+        "attribution": "A1 (new module; did not exist at the LT1 run)",
+        "input": "core/grm_alias_fold.py",
+        "lt1_1_rebound": "147ea9687112e9ccd61aaaf63c16404c5175a08d6733da2df22d4e591f1203e7",
+        "lt1_recorded": null,
+        "on_tree_now": "147ea9687112e9ccd61aaaf63c16404c5175a08d6733da2df22d4e591f1203e7"
+      }
+    ],
+    "lt1_amendment4_protocol_binding": {
+      "admission_rule": "margin_first",
+      "amendment_sha256": "809f906c5e7d057f8cffcf067d4eee7ec990a996f62a05f789916d2f8d47e193",
+      "arm": "CPU",
+      "core_shas": {
+        "core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "core/deepseek_v2_lite_tc.py": "96e371754496eb2ca467ad199bebed07c354cf5eae4b0a08daf571c6f04f0d07",
+        "core/gemma4_tc.py": "c9a8cc1d01c30bb2b20e9c2e477d4bedf21072d0b1b6b157f3ba75c78a271d8b",
+        "core/gpt_oss20b_tc.py": "da8ca3bc8c961d731d9e32bf4558702ad1b8b10c8ecc37b18326e7df4ade74a1",
+        "core/graft_arena.py": "83a2d4a2bc0ed2c8e0fc06f937f59d94f48ca5a70a65a96c33b1ba6eaa2e6aed",
+        "core/graft_quant.py": "ebe40790286a719db38de403210aa20e17e7e4d2699f7b7dae452e014f4fa130",
+        "core/graft_repository.py": "fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db",
+        "core/grm_admission.py": "d1afc26a68b4b1c8236fc01c7db62065ab49173a89d7f2853989eedfadb48fe0",
+        "core/grm_cuda_router.py": "8dfd7a6ff5395eb846996c67b1570c9fb0e8b26dd78e84f28059f1b291766ce5",
+        "core/grm_demand.py": "daf787a95abbfd206638f5fbf74de2ee57efaaa54b4eac39509402e1386650e0",
+        "core/grm_frame.py": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2",
+        "core/grm_native.py": "1f5a69716d751c670f37328cf012544b800f86226ad4549a0781bac654aaf3df",
+        "core/grm_runtime.py": "39f823cbdb98e32528fb5240777cb8c0144f3be77fa86466a67f1f636505c13e",
+        "core/grm_supersession.py": "c8e9baf7c69e41ebdcf05fda84a2895ed7d2b6f7ff67903fdb655924510fdd5e",
+        "core/grm_text_norm.py": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8",
+        "core/grm_three_pass.py": "312f4bc0e4922449b9231ea2d9c3e6fff3a116aef6d0a48712f530d9c419742f",
+        "core/kv_graft.py": "d8d44d032c5398c4606b1b6f1b547a94baa2415e36225cb04dd6ef313622ef2d",
+        "core/minicpm3_tc.py": "3d19734f51d28eb48dc20a62658f2bfc250fdac4fce2cb906116d034b1371a69",
+        "core/mistral7b_tc.py": "49430e5920508d740a2f8be7b6ba0caadd0442c7798454cf6fa2a808204bf1c4",
+        "core/paging_telemetry.py": "4eb484b1f6b512962b18d08cb714dd61346980a8af550c1fd814bcbad474097c",
+        "core/qwen35_tc.py": "3f84f8e99f5cf8932440e5d6ff29df41cbf3fdaf13d27f3bbe8fb1dc3a7ec41b",
+        "core/qwen35_translation_poc.py": "5a7f364aa7a4ff24bb9299671fc945626037cff44595f0b80364ebe9d1cfa3d1",
+        "core/qwen38_tc.py": "39875f97f09906ccdfcdf6f510c9ed2f7cad01e85007363a8d7ad00869f9d67e",
+        "core/qwen3_1p7b_tc.py": "1a563f502753a86b57abff8710440ae0e1921ed083481dee8232872704093c0f",
+        "core/qwen3_tc.py": "ba0e2d9ab68716922b9f942bc4bb8cd2c4a791abe2a2fabd42a65799212d95aa",
+        "core/qwen_tc.py": "1353e44f727fc24d1638e4e238d160619fea561602c921259b010af5f63478e3"
+      },
+      "fixture_sha256": "ad61c9488f722ae7ce248aee34cda688c13a5f0d3ec47b62954da2a3c146855c",
+      "registration_sha256": "e1913b144087ea79e6eea4a0b8eceae0bedd2a4853cd931db5f24c795488300c"
+    },
+    "lt1_core_binding": "artifacts/grm_lt1/amendment3/registration_amendment_r3.json",
+    "lt1_core_binding_sha256": "809f906c5e7d057f8cffcf067d4eee7ec990a996f62a05f789916d2f8d47e193",
+    "lt1_recorded_core_pins": 26,
+    "lt1_registration": "artifacts/grm_lt1/registration.json",
+    "lt1_registration_sha256": "e1913b144087ea79e6eea4a0b8eceae0bedd2a4853cd931db5f24c795488300c",
+    "status": "RECORDED as parent lineage, not gated (see RULING)"
+  },
+  "preflight": {
+    "function": "scripts/grm_lt1_1.py:lt1_1_preflight",
+    "not_checked": [
+      "LT1 day-of core pins -- frozen receipt, see parent_lineage (this is the ruling)"
+    ],
+    "supersedes": "lt.preflight() (LT1 own chain, re-validated against today core -- failed with INPUT_SHA_MISMATCH: core/graft_arena.py)",
+    "teeth": "tests/test_grm_lt1_1_preflight.py plants a drifted core sha in LT1.1 OWN amendment 1 and requires the preflight to report INPUT_SHA_MISMATCH",
+    "verification_classes": [
+      "sha-bound documents: registration + amendments 1-4 vs sidecars",
+      "chain continuity: each amendment names its parent sha",
+      "sha-bound inputs: every rebound core pin + the bound runner vs the file on disk",
+      "fixture sha: dialogue.json vs the registered digest",
+      "cell schedule: 26 arm-A cells matching the amendment",
+      "budget: reservation sum within the registered ceiling",
+      "host readiness: free space, pinned admission rule"
+    ]
+  },
+  "previous_amendment": "artifacts/grm_d1/lt1_1/amendment3.json",
+  "previous_amendment_sha256": "09680a0567d2d74f0a9a491823cc627c1a8d609451fdf165b36384dc97e89a08",
+  "prior_art": [
+    "Verification classes reused in kind from scripts/grm_lt1.py verify/preflight (GRM contributors, 2026); no new verification algorithm",
+    "SHA-chained amendment contract: scripts/grm_lt1.py:verify and C7 r3 (GRM contributors, 2026)",
+    "Parent-lineage record (report a frozen receipt beside a live chain instead of gating on it), and the drift table that makes the distinction auditable: no prior art known to me"
+  ],
+  "process_safety": {
+    "arms": "A and A+ never run concurrently on the same GPU",
+    "git": "lead commits; the seat never runs git",
+    "gpu": "only `--resume` without `--dry-lease` takes the shared lease, through LT1 own run_cell (flock + nvidia-smi idle check + no-kill child wait). --preflight / --dry-run / --summary / --fake / --resume --dry-lease never do."
+  },
+  "purpose": "Point LT1.1 host preflight at LT1.1 own chain per the lead ruling, and carry LT1 identity as parent lineage.",
+  "registration": "artifacts/grm_d1/lt1_1/registration.json",
+  "registration_sha256": "02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8",
+  "resolves": {
+    "blocker": "amendment 3 host_blocker (INPUT_SHA_MISMATCH: core/graft_arena.py)",
+    "how": "the LT1.1 chain preflight replaces the LT1 chain preflight; both arms reach the lease boundary with no INPUT_SHA_MISMATCH",
+    "receipt": "artifacts/grm_d1/lt1_1/proof/resume_dry_lease_*.json",
+    "status": "RESOLVED by ruling"
+  },
+  "ruling": "LT1's original registration is a frozen receipt of its day; it is NOT re-validated against today's core. LT1.1's host preflight must validate LT1.1's own chain \u2014 registration 02b44d02 + amendments 1\u20133, whose core pins were rebound to this tree with attribution \u2014 using the same verification functions (`grm_lt1.verify`-class checks: sha-bound inputs, fixture sha, cell schedule, budget) but pointed at LT1.1's registration/amendment set. LT1's registration sha and its recorded core pins are carried as `parent` lineage in the LT1.1 receipt (recorded, with the drift table you already attributed), not as a gate.",
+  "ruling_source": "lead, 2026-09-11, GRM-D1 follow-up 4",
+  "runner": {
+    "path": "scripts/grm_lt1_1.py",
+    "sha256": "29c916601d4a3775d761742a453eccf71e9e7a67aab1cf7c6d8afee9f6610ad1",
+    "superseded_sha256": "17f1577006e0449465a3ee0c19ce39a38ccdfbf6c6483f63fd42ec30ae1b1778",
+    "tests": [
+      "tests/test_grm_lt1_1_runner.py",
+      "tests/test_grm_lt1_1_resume_route.py",
+      "tests/test_grm_lt1_1_preflight.py"
+    ],
+    "tests_sha256": {
+      "tests/test_grm_lt1_1_preflight.py": "8a60976f0c1f92757ee22e28af9cba44cf35f08baaf67f9e2acb3df4f8254114",
+      "tests/test_grm_lt1_1_resume_route.py": "9b86b2ad4f7c3346c51187f8b3d3619e994b86091c08560bf23becbf28adfa9d",
+      "tests/test_grm_lt1_1_runner.py": "60c0eaf9849f11079d75ea9b558bd3f52f1af301d8bbc10e3e250d0244868ae3"
+    }
+  },
+  "schema": "grm.lt1_1.amendment4.v1"
+}

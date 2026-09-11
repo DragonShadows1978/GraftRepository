@@ -727,6 +727,86 @@ def report():
         add('RED items. Consequence: %s' % blocker['consequence'])
         add('')
 
+    # ------------------------------------------- follow-up 4: the ruling
+    amend4_path = OUT / 'lt1_1/amendment4.json'
+    if amend4_path.exists():
+        a4 = json.loads(amend4_path.read_text())
+        a4_sha = (OUT / 'lt1_1/amendment4.sha256').read_text().split()[0]
+        add('## 5e. Follow-up 4: LT1.1 validates its own chain (the ruling)')
+        add('')
+        add('**The ruling** (lead, 2026-09-11), recorded verbatim in the')
+        add('amendment and in the runner:')
+        add('')
+        add('> %s' % a4['ruling'])
+        add('')
+        add('**What changed.** `scripts/grm_lt1_1.py` replaced its')
+        add('`lt.preflight()` call with `lt1_1_preflight(arm)`, which applies')
+        add("the same verification classes to LT1.1's documents:")
+        add('')
+        for item in a4['preflight']['verification_classes']:
+            add('- %s' % item)
+        add('')
+        add('Not checked, by the ruling: %s'
+            % a4['preflight']['not_checked'][0])
+        add('')
+        add('**The `apply4` question you asked — measured, not assumed.**')
+        add('`grm_lt1_amendment4.apply`\'s protocol-binding check')
+        add('(`a[\'protocol_binding\'] != lt.binding(\'CPU\')`) **passes on this')
+        add('tree, unchanged and untouched** — recorded equals live: %s.'
+            % a4['apply4_finding']['recorded_equals_live'])
+        add('%s' % a4['apply4_finding']['why'])
+        add('So no second ruling is needed: amendment 4 never gated on drifted')
+        add('core. Its recorded binding is reported as parent lineage, and')
+        add('LT1.1 stamps its own through `worker.bind`.')
+        add('')
+        add('**Parent lineage, recorded not gated.** LT1 registration')
+        add('`%s…`, %d recorded core pins. Drift table:'
+            % (a4['parent_lineage']['lt1_registration_sha256'][:16],
+               a4['parent_lineage']['lt1_recorded_core_pins']))
+        add('')
+        add('| input | LT1 recorded | LT1.1 rebound = on tree now | attribution |')
+        add('|---|---|---|---|')
+        for row in a4['parent_lineage']['drift_table']:
+            add('| `%s` | %s | `%s…` | %s |'
+                % (row['input'],
+                   ('`%s…`' % row['lt1_recorded'][:12]) if row['lt1_recorded']
+                   else '— (new)',
+                   row['lt1_1_rebound'][:12], row['attribution']))
+        add('')
+        add('**The gate still has teeth.** The risk in "stop checking X" is')
+        add('that it becomes "stop checking".')
+        add('`test_a_planted_drift_in_our_own_amendment_goes_red` plants a bad')
+        add("core sha in LT1.1's OWN amendment 1 — sidecar kept consistent, so")
+        add('the failure is the input check and not a document mismatch — and')
+        add('requires `INPUT_SHA_MISMATCH` for that input. Five more tamper')
+        add('tests cover the new-input branch, chain continuity, a tampered')
+        add('document, a tampered fixture and an unpinned admission rule.')
+        add('')
+        add('**Both arms, host gate ON, no escape hatch:**')
+        add('')
+        for name, arm in (('A', 'A'), ('Aplus', 'A+')):
+            path = OUT / ('lt1_1/proof/resume_dry_lease_%s.json' % name)
+            if path.exists():
+                v = json.loads(path.read_text())
+                add('- `--arm %s --resume --dry-lease` -> rc 0, '
+                    'host_preflight **%s**, status %s, next `%s`, stopped at '
+                    '%s, alias pin %s — **no INPUT_SHA_MISMATCH**'
+                    % (arm, v['host_preflight'], v['status'], v['next_cell'],
+                       v['stopped_at'], v['pinned']['alias_fold_merge']))
+        add('')
+        add('**Amendment 3\'s blocker is resolved, and the test is inverted')
+        add('with its receipt.** `test_the_host_blocker_claim_is_true_right_now`')
+        add('became `test_the_host_blocker_claim_was_true_and_is_now_resolved`,')
+        add('which asserts BOTH halves: LT1\'s own gate still refuses (the drift')
+        add('is real and we did not paper over it) AND LT1.1\'s gate is READY.')
+        add('Amendment 3 stays as written; amendment 4 records the resolution.')
+        add('')
+        add('**Amendment 4** — `artifacts/grm_d1/lt1_1/amendment4.json`, sha256')
+        add('`%s`, chained to amendment 3' % a4_sha)
+        add('`%s…`. Runner rebound `%s…`.'
+            % (a4['previous_amendment_sha256'][:16], a4['runner']['sha256'][:16]))
+        add('')
+
     add('## 6. Deviations, RED items, process safety')
     add('')
     add('**Deviations from the order**')

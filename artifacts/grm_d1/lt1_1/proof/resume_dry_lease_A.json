@@ -8,7 +8,7 @@
     "admission_rule": "margin_first",
     "alias_fold_merge": false
   },
-  "host_preflight": "SKIPPED",
+  "host_preflight": "READY",
   "next_cell": "A-001-008",
   "selected": [
     "A-001-008"

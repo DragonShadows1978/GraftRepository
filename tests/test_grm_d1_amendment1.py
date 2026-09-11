@@ -201,7 +201,11 @@ def test_amendment1_no_longer_owns_lead_commands():
     cannot quietly come back.
     """
     text = (am.OUT / 'lead_commands.txt').read_text()
-    assert 'amendment 2' in text
+    # Whichever amendment currently owns the file, it is not amendment 1.
+    latest = max(int(p.stem.replace('amendment', ''))
+                 for p in am.OUT.glob('amendment[0-9]*.json'))
+    assert 'amendment %d' % latest in text
+    assert latest >= 2
     assert 'scripts/grm_lt1_1.py' in text
     # The broken shape must be gone.
     assert '--registration' not in text

@@ -581,12 +581,12 @@ def lt1_1_preflight(arm='A'):
     the problem; only that final input loop was.
     """
     reasons = []
-    documents = {
-        'registration.json': (REGISTRATION, OUT / 'registration.sha256'),
-        'amendment1.json': (AMENDMENT1, OUT / 'amendment1.sha256'),
-        'amendment2.json': (OUT / 'amendment2.json', OUT / 'amendment2.sha256'),
-        'amendment3.json': (OUT / 'amendment3.json', OUT / 'amendment3.sha256'),
-    }
+    # Every amendment present on disk is verified, so a new one is covered the
+    # moment it is emitted rather than when someone remembers to list it.
+    documents = {'registration.json': (REGISTRATION,
+                                       OUT / 'registration.sha256')}
+    for path in sorted(OUT.glob('amendment[0-9]*.json')):
+        documents[path.name] = (path, path.with_suffix('.sha256'))
     shas = {}
     for name, (path, sidecar) in documents.items():
         if not path.exists():
@@ -601,17 +601,24 @@ def lt1_1_preflight(arm='A'):
         return dict(status='BLOCKED', reasons=reasons, arm=arm,
                     gpu_executed=False, ruling=RULING)
 
-    a1 = json.loads(AMENDMENT1.read_text())
-    a2 = json.loads((OUT / 'amendment2.json').read_text())
-    a3 = json.loads((OUT / 'amendment3.json').read_text())
+    loaded = {name: json.loads(path.read_text())
+              for name, (path, _) in documents.items()
+              if name != 'registration.json'}
+    a1 = loaded['amendment1.json']
 
-    # chain continuity
+    # chain continuity: amendment 1 names the registration; every later
+    # amendment names its immediate parent.
     if a1['registration_sha256'] != shas['registration.json']:
         reasons.append('AMENDMENT1_CHAIN_MISMATCH')
-    if a2['previous_amendment_sha256'] != shas['amendment1.json']:
-        reasons.append('AMENDMENT2_CHAIN_MISMATCH')
-    if a3['previous_amendment_sha256'] != shas['amendment2.json']:
-        reasons.append('AMENDMENT3_CHAIN_MISMATCH')
+    ordered = sorted(loaded, key=lambda n: loaded[n]['amendment'])
+    for previous, name in zip(ordered, ordered[1:]):
+        if loaded[name].get('previous_amendment_sha256') != shas[previous]:
+            reasons.append('AMENDMENT%d_CHAIN_MISMATCH'
+                           % loaded[name]['amendment'])
+
+    # The LATEST amendment governs the runner binding and the budget.
+    latest = loaded[ordered[-1]]
+    a2 = json.loads((OUT / 'amendment2.json').read_text())
 
     # sha-bound inputs: LT1.1's OWN rebound core pins, checked against the tree
     checked_inputs = 0
@@ -623,8 +630,8 @@ def lt1_1_preflight(arm='A'):
         checked_inputs += 1
         if sha(ROOT / name) != entry['sha256']:
             reasons.append('INPUT_SHA_MISMATCH: ' + name)
-    # ... and the runner amendment 3 bound.
-    runner = a3['runner']
+    # ... and the runner the LATEST amendment bound.
+    runner = latest['runner']
     checked_inputs += 1
     if sha(ROOT / runner['path']) != runner['sha256']:
         reasons.append('RUNNER_SHA_MISMATCH: ' + runner['path'])
@@ -679,18 +686,22 @@ def resume(arm, *, root=None, dry_lease=False, host_gate=True):
     rehearsal. It is how `--resume --dry-lease` reproduces on CPU the failure
     the lead hit on the card.
 
-    `host_gate=False` skips LT1's host preflight only. It exists because that
-    gate answers a question about the HOST tree (green CPU receipt, idle GPU,
-    LT1's own SHA chain), and on a tree whose core has drifted past LT1's
-    pinned SHAs it fails for reasons that have nothing to do with the LT1.1
-    route under test. The GPU path always runs it.
+    `host_gate=False` skips the chain preflight. Since the lead's ruling that
+    gate is `lt1_1_preflight` -- LT1.1's OWN chain, which passes on this tree
+    -- so the escape hatch is no longer needed to get a green route and is
+    kept only for isolating the route from its documents in tests. The GPU
+    path always runs the gate.
     """
     reg = registration(arm)
     root = Path(root) if root else out_dir(arm)
-    # LT1's host preflight runs OUTSIDE the seams (see host_preflight), and
-    # LT1.1's document chain was already checked by `registration(arm)`.
-    gate = (lt1_1_preflight(arm) if host_gate
-            else dict(status='SKIPPED', reasons=['host_gate=False']))
+    # The chain preflight runs OUTSIDE the seams -- `lt1_1_preflight` hashes
+    # documents directly and must not see redirected module state -- but
+    # INSIDE the arm pin, because one of its checks is that the registered
+    # admission rule is actually in force. LT1's `preflight` reads the same
+    # variable for the same reason.
+    with pinned_arm(arm):
+        gate = (lt1_1_preflight(arm) if host_gate
+                else dict(status='SKIPPED', reasons=['host_gate=False']))
     if host_gate and gate['status'] != 'READY':
         raise ValueError(json.dumps(gate))
     with lt1_1_seams(arm), pinned_arm(arm) as pin:

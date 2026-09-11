@@ -181,7 +181,7 @@ finding.
 | `tests/test_grm_d1_alias_cpu.py` | 14 tests |
 | `tests/test_grm_d1_amendment1.py` | 17 tests |
 | `tests/test_grm_d1_amendment2.py` | 18 tests |
-| `tests/test_grm_d1_amendment3.py` | 17 tests |
+| `tests/test_grm_d1_amendment3.py` | 18 tests |
 | `tests/test_grm_d1_cause_table.py` | 12 tests |
 | `tests/test_grm_d1_recap.py` | 10 tests |
 | `tests/test_grm_d1_registration.py` | 18 tests |
@@ -580,6 +580,73 @@ T.his worktree forks grm-merge, whose core has drifted past the SHAs the LT1 reg
 LT1.1 redirection, so this is not something the runner introduced —
 it is the same pre-existing core drift this report records in its
 RED items. Consequence: the GPU campaign cannot start on this tree until the lead decides how the LT1 core pins are rebound for the host preflight. The LT1.1 route itself is proven green up to the lease boundary.
+
+## 5e. Follow-up 4: LT1.1 validates its own chain (the ruling)
+
+**The ruling** (lead, 2026-09-11), recorded verbatim in the
+amendment and in the runner:
+
+> LT1's original registration is a frozen receipt of its day; it is NOT re-validated against today's core. LT1.1's host preflight must validate LT1.1's own chain — registration 02b44d02 + amendments 1–3, whose core pins were rebound to this tree with attribution — using the same verification functions (`grm_lt1.verify`-class checks: sha-bound inputs, fixture sha, cell schedule, budget) but pointed at LT1.1's registration/amendment set. LT1's registration sha and its recorded core pins are carried as `parent` lineage in the LT1.1 receipt (recorded, with the drift table you already attributed), not as a gate.
+
+**What changed.** `scripts/grm_lt1_1.py` replaced its
+`lt.preflight()` call with `lt1_1_preflight(arm)`, which applies
+the same verification classes to LT1.1's documents:
+
+- sha-bound documents: registration + amendments 1-4 vs sidecars
+- chain continuity: each amendment names its parent sha
+- sha-bound inputs: every rebound core pin + the bound runner vs the file on disk
+- fixture sha: dialogue.json vs the registered digest
+- cell schedule: 26 arm-A cells matching the amendment
+- budget: reservation sum within the registered ceiling
+- host readiness: free space, pinned admission rule
+
+Not checked, by the ruling: LT1 day-of core pins -- frozen receipt, see parent_lineage (this is the ruling)
+
+**The `apply4` question you asked — measured, not assumed.**
+`grm_lt1_amendment4.apply`'s protocol-binding check
+(`a['protocol_binding'] != lt.binding('CPU')`) **passes on this
+tree, unchanged and untouched** — recorded equals live: True.
+`lt.binding` reports the core shas RECORDED in LT1 amendment 3, not live ones, so it is already immune to core drift. The whole of lt.verify() failure on this tree was its final input loop (INPUT_SHA_MISMATCH: core/graft_arena.py), which is exactly the re-validation the ruling removes.
+So no second ruling is needed: amendment 4 never gated on drifted
+core. Its recorded binding is reported as parent lineage, and
+LT1.1 stamps its own through `worker.bind`.
+
+**Parent lineage, recorded not gated.** LT1 registration
+`e1913b144087ea79…`, 26 recorded core pins. Drift table:
+
+| input | LT1 recorded | LT1.1 rebound = on tree now | attribution |
+|---|---|---|---|
+| `core/graft_arena.py` | `83a2d4a2bc0e…` | `918f5d0b202b…` | pre-A1 drift on grm-merge, not attributable to A1 |
+| `core/graft_repository.py` | `fc6b9448efb4…` | `591657233106…` | A1 (alias fold-merge hooks) |
+| `core/grm_admission.py` | `d1afc26a68b4…` | `ebdfd84af435…` | pre-A1 drift on grm-merge, not attributable to A1 |
+| `core/grm_runtime.py` | `39f823cbdb98…` | `973addc491a2…` | A1 (alias fold-merge hooks) |
+| `core/grm_text_norm.py` | `c4e496848b01…` | `e968d6879195…` | pre-A1 drift on grm-merge, not attributable to A1 |
+| `core/grm_alias_fold.py` | — (new) | `147ea9687112…` | A1 (new module; did not exist at the LT1 run) |
+
+**The gate still has teeth.** The risk in "stop checking X" is
+that it becomes "stop checking".
+`test_a_planted_drift_in_our_own_amendment_goes_red` plants a bad
+core sha in LT1.1's OWN amendment 1 — sidecar kept consistent, so
+the failure is the input check and not a document mismatch — and
+requires `INPUT_SHA_MISMATCH` for that input. Five more tamper
+tests cover the new-input branch, chain continuity, a tampered
+document, a tampered fixture and an unpinned admission rule.
+
+**Both arms, host gate ON, no escape hatch:**
+
+- `--arm A --resume --dry-lease` -> rc 0, host_preflight **READY**, status PASS, next `A-001-008`, stopped at worker.run_cell (lease boundary), alias pin False — **no INPUT_SHA_MISMATCH**
+- `--arm A+ --resume --dry-lease` -> rc 0, host_preflight **READY**, status PASS, next `A-001-008`, stopped at worker.run_cell (lease boundary), alias pin True — **no INPUT_SHA_MISMATCH**
+
+**Amendment 3's blocker is resolved, and the test is inverted
+with its receipt.** `test_the_host_blocker_claim_is_true_right_now`
+became `test_the_host_blocker_claim_was_true_and_is_now_resolved`,
+which asserts BOTH halves: LT1's own gate still refuses (the drift
+is real and we did not paper over it) AND LT1.1's gate is READY.
+Amendment 3 stays as written; amendment 4 records the resolution.
+
+**Amendment 4** — `artifacts/grm_d1/lt1_1/amendment4.json`, sha256
+`0b5da2387791e871759cf1d11c5ad27c4e4559642d81200a01bb2d9e7c85659d`, chained to amendment 3
+`09680a0567d2d74f…`. Runner rebound `29c916601d4a3775…`.
 
 ## 6. Deviations, RED items, process safety
 

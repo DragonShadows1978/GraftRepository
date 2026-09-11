@@ -165,14 +165,44 @@ def test_the_open_host_blocker_is_recorded_not_hidden(doc):
     assert 'pre-existing' in blocker['status']
 
 
-def test_the_host_blocker_claim_is_true_right_now():
-    """It must fail identically with and without the LT1.1 redirection."""
+def test_the_host_blocker_claim_was_true_and_is_now_resolved():
+    """INVERTED by the lead's ruling of 2026-09-11, with the receipt.
+
+    This test used to be `test_the_host_blocker_claim_is_true_right_now` and
+    asserted that `r.host_preflight()` raised `INPUT_SHA_MISMATCH`. The ruling
+    resolved that: LT1's registration is a frozen receipt, so LT1.1 validates
+    its OWN chain. Both halves are still asserted, because the honest claim is
+    not "the drift went away" -- it did not:
+
+      1. the underlying LT1 condition is UNCHANGED (its gate still refuses);
+      2. LT1.1's gate, which is the one that governs, is READY.
+
+    Amendment 3's recorded blocker therefore stands as a true statement about
+    its day, and amendment 4 records its resolution.
+    """
     from scripts import grm_lt1 as lt
     from scripts import grm_lt1_1 as r
+    # 1. Untouched: we did not paper over the drift.
     with pytest.raises(ValueError, match='INPUT_SHA_MISMATCH'):
         lt.preflight()
-    with pytest.raises(ValueError, match='INPUT_SHA_MISMATCH'):
-        r.host_preflight()
+    # 2. Resolved: the governing gate passes.
+    with r.pinned_arm('A+'):
+        gate = r.host_preflight('A+')
+    assert gate['status'] == 'READY', gate['reasons']
+    assert not any('INPUT_SHA_MISMATCH' in reason for reason in gate['reasons'])
+
+
+def test_amendment3_blocker_is_superseded_by_amendment4(doc):
+    """Amendment 3 stays as written; amendment 4 records the resolution."""
+    assert doc['host_blocker']['status'].startswith('OPEN')
+    amendment4 = am3.OUT / 'amendment4.json'
+    if not amendment4.exists():
+        pytest.skip('amendment 4 not emitted yet')
+    later = json.loads(amendment4.read_text())
+    assert later['previous_amendment_sha256'] == am3.sha_path(
+        am3.OUT / 'amendment3.json')
+    assert later['resolves']['status'] == 'RESOLVED by ruling'
+    assert 'INPUT_SHA_MISMATCH' in later['resolves']['blocker']
 
 
 def test_the_blocker_does_not_stop_the_route_gate(tmp_path):
