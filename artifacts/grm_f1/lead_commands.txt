@@ -1,0 +1,52 @@
+# LT1.1 r3 on the MERGED core -- THREE separately resumable arms
+# registration sha256: 2319938cd2039a6c6c51e1ba49e14500c2b0a529c726903ab06edae1a6eab8e4
+# amendment11   sha256: 7e0562f6d65bf0d3e9bb46d8054d23ef0fe1a663c62dbab463e45f1d31e84302
+#
+# Per arm: reservation ceiling 7410 s (2.06 GPU-h), r2 unchanged;
+#          ORDER CAP on MEASURED work 4680 s (1.30 GPU-h).
+#
+# ATTRIBUTION: A0 is the control. If A0 does not reproduce r2 arm A
+# within +/-1 per class, core drift is in play and NO movement in
+# A' or A+' may be attributed to F1/F2/F5 until that is explained.
+# Within an arm the flags move TOGETHER: a moved column belongs to
+# the SET, never to one flag.
+#
+# EVERY runnable line below ends in --dry-run. Removing it is a
+# deliberate act by the lead after reading the registration.
+#
+# ---------- arm A0 (CONTROL) ----------
+# REGISTERED ONLY -- run if the lead decides.
+export GRM_ADMISSION_RULE=margin_first
+export GRM_FOLD_ALIAS_GUARD=0
+export GRM_FOLD_RETAIN_SOURCES=0
+export GRM_PROFILE=eb1_c2
+export GRM_ROUTE_SOLE_BINDER_INSURANCE=0
+unset GRM_ALIAS_FOLD_MERGE
+python3 -m scripts.grm_lt1_1 --arm A --preflight --dry-run
+python3 -m scripts.grm_lt1_1 --arm A --out artifacts/grm_f1/lt1_1_r3/run_A0 --dry-run
+flock --wait 7200 /var/lock/grm_gpu.lock \
+  python3 -m scripts.grm_lt1_1 --arm A --resume --out artifacts/grm_f1/lt1_1_r3/run_A0 --dry-run
+#
+# ---------- arm A' (TREATMENT) ----------
+export GRM_ADMISSION_RULE=margin_first
+export GRM_FOLD_ALIAS_GUARD=1
+export GRM_FOLD_RETAIN_SOURCES=1
+export GRM_PROFILE=eb1_c2
+export GRM_ROUTE_SOLE_BINDER_INSURANCE=1
+unset GRM_ALIAS_FOLD_MERGE
+python3 -m scripts.grm_lt1_1 --arm A --preflight --dry-run
+python3 -m scripts.grm_lt1_1 --arm A --out artifacts/grm_f1/lt1_1_r3/run_Aprime --dry-run
+flock --wait 7200 /var/lock/grm_gpu.lock \
+  python3 -m scripts.grm_lt1_1 --arm A --resume --out artifacts/grm_f1/lt1_1_r3/run_Aprime --dry-run
+#
+# ---------- arm A+' (TREATMENT) ----------
+export GRM_ADMISSION_RULE=margin_first
+export GRM_ALIAS_FOLD_MERGE=1
+export GRM_FOLD_ALIAS_GUARD=1
+export GRM_FOLD_RETAIN_SOURCES=1
+export GRM_PROFILE=eb1_c2
+export GRM_ROUTE_SOLE_BINDER_INSURANCE=1
+python3 -m scripts.grm_lt1_1 --arm A+ --preflight --dry-run
+python3 -m scripts.grm_lt1_1 --arm A+ --out artifacts/grm_f1/lt1_1_r3/run_Aplusprime --dry-run
+flock --wait 7200 /var/lock/grm_gpu.lock \
+  python3 -m scripts.grm_lt1_1 --arm A+ --resume --out artifacts/grm_f1/lt1_1_r3/run_Aplusprime --dry-run

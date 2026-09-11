@@ -51,6 +51,7 @@ from core.graft_quant import (
 from core.grm_admission import mountable_budget
 from core import grm_alias_fold as _alias_fold
 from core.grm_alias_fold import alias_fold_enabled
+from core import grm_fold_retain as _fold_retain
 from core import grm_fold_alias_guard as _fold_guard
 from core.grm_fold_alias_guard import fold_alias_guard_enabled
 from core.grm_runtime import GRMRuntime
@@ -3693,15 +3694,24 @@ class GraftRepository:
         every exit path.
         """
         arena = self.arena
+        # GRM-F1: the alias merge PINS source retirement ON regardless of
+        # `GRM_FOLD_RETAIN_SOURCES`. `_alias_fold_once` decides this pair's
+        # lineage itself, immediately below, and its first rule is that the
+        # EDGE is always superseded — leaving a bare active alias edge is the
+        # RD2 defect A1 exists to fix. A window-fold retention policy must
+        # not reach in here and reinstate it. The base's own retire/un-retire
+        # is likewise A1's explicit decision (`coverage_proves_base_survives`),
+        # taken after this call returns, so pinning False here leaves A1's end
+        # state byte-identical whatever the F1 flag says.
         if not relation_span:
-            return arena.consolidate([edge_idx, base_idx])
+            return arena.consolidate([edge_idx, base_idx], retain=False)
         edge = arena.grafts[int(edge_idx)]
         if self._alias_span_enumerable(edge.get("text", ""),
                                        [edge_idx, base_idx]):
             # The edge's own text already asserts the relation in a span
             # FIX-5 WILL enumerate (the C7 case: "C7-Signal-0", digit-bearing,
             # is a `_fact_set` fact). Change nothing.
-            return arena.consolidate([edge_idx, base_idx])
+            return arena.consolidate([edge_idx, base_idx], retain=False)
         # The relation is attached to the BASE's span, not the edge's: a span
         # reaches the enumeration only when its own `_fact_set` intersects the
         # fold's `need`, and the base's span is the one that HAS a need fact
@@ -3712,7 +3722,7 @@ class GraftRepository:
         original = base.get("text", "")
         try:
             base["text"] = self._alias_augment_text(original, relation_span)
-            return arena.consolidate([edge_idx, base_idx])
+            return arena.consolidate([edge_idx, base_idx], retain=False)
         finally:
             base["text"] = original
 
@@ -4250,20 +4260,78 @@ class GraftRepository:
             "attempts": [dict(a) for a in getattr(
                 self.arena, "last_consolidation_attempts", [])],
         }
+        # GRM-F2 receipt, carried on the fold event so a reader of
+        # `fold_history` can tell a COVERAGE abort from an ATTRIBUTION abort
+        # without correlating two logs. Absent (None) whenever no attribution
+        # hook is installed, which is every pre-F2 caller and every
+        # flag-OFF run, so the OFF event keeps its pre-F2 keys' values.
+        fold_event["attribution"] = dict(getattr(
+            self.arena, "last_consolidation_result", {}) or {}).get(
+                "attribution")
         self.fold_history.append(fold_event)
         if didx is None:
             # fidelity abort: keep these sources unfolded (clean readers and
             # routers), exempt them so the planner moves to another window.
+            #
+            # GRM-F1 x GRM-F2 COMPOSITION, stated because it is load-bearing:
+            # this ONE branch absorbs both a coverage/QC abort and F2's
+            # attribution rejection — `consolidate` returns (None, None) for
+            # either — and it returns BEFORE any F1 lineage is written. So a
+            # digest F2 rejected can never leave `metadata.digest_of` on a
+            # source or `retained_sources` on a node that was never
+            # deposited, whatever `GRM_FOLD_RETAIN_SOURCES` says. The sources
+            # stay ACTIVE here in both flag states, which is also exactly
+            # what F1's retention wants for them.
             self.folds_aborted = getattr(self, "folds_aborted", 0) + 1
             for i in idxs:
                 self.arena.grafts[i]["no_fold"] = True
             return True
         self.arena.grafts[didx]["kind"] = kind
+        # GRM-F1: when the fold RETAINED its sources, the lifecycle change is
+        # metadata, not retirement, and the repository owns the persisted
+        # metadata schema — so complete and mark dirty here, where every
+        # other lineage write in this class lives. `_ensure_lifecycle` merges
+        # `_default_metadata` UNDER the arena's bare `{digest_of: …}` /
+        # `{retained_sources: …}` dicts, so nothing the arena wrote is lost
+        # and every default field a persisted node needs is present.
+        # `fold_event` records which of the two lifecycles ran, so a reader of
+        # `fold_history` never has to infer it from node state.
+        #
+        # `idxs` here is ALREADY the window F2 handed us: `_librarian_jobs`
+        # runs `_guard_fold_windows` on both of its return paths, so when the
+        # alias guard is ON the fact-less alias/rename turns were dropped
+        # from this window before selection and are neither folded nor
+        # retained. F1's lifecycle therefore applies to exactly what the
+        # guarded window folded — no second exclusion pass, and no coupling
+        # between the two flags.
+        retained = [int(i) for i in idxs
+                    if not self.arena.grafts[int(i)].get("retired")]
+        fold_event["retained_sources"] = retained
+        fold_event["fold_lineage"] = (
+            _fold_retain.LINEAGE_SOURCES_RETAINED if retained
+            else _fold_retain.LINEAGE_SOURCES_RETIRED)
+        # STRICTLY gated on `retained`. Completing the digest's metadata
+        # unconditionally is NOT byte-identical with the flag OFF: it
+        # normalizes `metadata.active` on a digest the pre-F1 path left
+        # untouched, and `correct_memory` selects its targets by
+        # `meta.get("active", True)` — so an OFF-arm correction started
+        # superseding an extra already-retired digest. Measured against
+        # baseline core in artifacts/grm_f1/off_identity/ (supersedes
+        # [0, 10] -> [0, 8, 10]) and fixed here, not papered over.
+        if retained:
+            for i in retained + [didx]:
+                g = self.arena.grafts[int(i)]
+                self._ensure_lifecycle(int(i), g)
+                self._mark_dirty(int(i), payload=False, metadata=True)
         # arena.consolidate() already bumped for child_cents/retired on the
         # digest + sources; this "kind" overwrite runs after that bump
         # returned, so it needs its own (signature field, no _mark_mutations
         # in this call path).
         self._bump_cuda_route_epoch()
+        # `_free_retired` is a no-op for a retained source (it only pages out
+        # nodes whose `retired` flag is set), so the ON path keeps its
+        # payloads exactly as an ordinary unfolded turn does. Called
+        # unconditionally so the OFF path's bytes do not move.
         self._free_retired()
         return True
 

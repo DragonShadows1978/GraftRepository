@@ -20,6 +20,7 @@ import uuid
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts.grm_c7_common import (ROOT, OUT as BASE, FIX, REG, DISTANCES, CLASSES, create,
     read, sha, hashes, verify, score, table, checkpoint, validate_checkpoint, folded_evidence)
+from core import grm_fold_retain as _fold_retain
 
 # Prior art: C7 immutable receipt directories (GRM contributors, 2026).
 # r2 is a fresh campaign namespace; original registration/fixture stay in BASE.
@@ -118,9 +119,19 @@ def seats(arena, info=None):
         raise ValueError('DUPLICATE_MOUNT')
     rec = set((info or {}).get('recency_mounted_ids',
               getattr(arena, '_eb1_recency_mounted_ids', []))) & set(mounts)
+    # GRM-F1: retained-source seats are reported SEPARATELY, never folded into
+    # the existing totals. A residency bound that moves under
+    # GRM_FOLD_RETAIN_SOURCES must be readable as "which of these seats are
+    # sources a fold kept alive"; with the flag OFF no node carries
+    # `metadata.digest_of`, so both fields are empty/0 and every pre-F1 field
+    # keeps its bytes. Prior art: the C7 per-attempt summed residency (GRM,
+    # 2026), unchanged — this only adds a split of the same mount list.
+    retained = set(_fold_retain.retained_source_indices(arena.grafts)) & set(mounts)
     return {'mounted_ids': mounts,
             'summed_token_seats': sum(int(arena.grafts[i]['ntok']) for i in mounts),
             'actual_recency_token_seats': sum(int(arena.grafts[i]['ntok']) for i in rec),
+            'retained_source_mounted_ids': sorted(retained),
+            'retained_source_token_seats': sum(int(arena.grafts[i]['ntok']) for i in sorted(retained)),
             'arena_cur_mount_n': int(arena.cur_mount_n),
             'width': int(arena.width), 'live_token_rows': sum(int(n) for _, n in arena.live_segs)}
 

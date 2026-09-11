@@ -1,0 +1,258 @@
+{
+  "correction": {
+    "new": 11,
+    "supersedes": [
+      0,
+      10
+    ]
+  },
+  "folds": [
+    true,
+    true,
+    true
+  ],
+  "history": [
+    {
+      "accepted": true,
+      "digest_idx": 8,
+      "kind": "digest",
+      "lineage": null,
+      "retained": null,
+      "sources": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "accepted": true,
+      "digest_idx": 9,
+      "kind": "digest",
+      "lineage": null,
+      "retained": null,
+      "sources": [
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "accepted": true,
+      "digest_idx": 10,
+      "kind": "era",
+      "lineage": null,
+      "retained": null,
+      "sources": [
+        8,
+        9
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "active": false,
+      "digest_of": null,
+      "fold_lineage": null,
+      "i": 0,
+      "kind": null,
+      "no_fold": false,
+      "ntok": 21,
+      "retained_sources": null,
+      "retired": true,
+      "sources": [],
+      "superseded_by": [
+        11
+      ],
+      "supersedes": [],
+      "text": "The Breakwater beacon sits at grid BX-44 on the northern arc."
+    },
+    {
+      "active": false,
+      "digest_of": null,
+      "fold_lineage": null,
+      "i": 1,
+      "kind": null,
+      "no_fold": false,
+      "ntok": 21,
+      "retained_sources": null,
+      "retired": true,
+      "sources": [],
+      "superseded_by": null,
+      "supersedes": [],
+      "text": "Promenade lamp spacing was settled at 9 voxels end to end."
+    },
+    {
+      "active": false,
+      "digest_of": null,
+      "fold_lineage": null,
+      "i": 2,
+      "kind": null,
+      "no_fold": false,
+      "ntok": 21,
+      "retained_sources": null,
+      "retired": true,
+      "sources": [],
+      "superseded_by": null,
+      "supersedes": [],
+      "text": "The Commtower maintenance lead is Iona Vale as of this quarter."
+    },
+    {
+      "active": false,
+      "digest_of": null,
+      "fold_lineage": null,
+      "i": 3,
+      "kind": null,
+      "no_fold": false,
+      "ntok": 19,
+      "retained_sources": null,
+      "retired": true,
+      "sources": [],
+      "superseded_by": null,
+      "supersedes": [],
+      "text": "Hull-1 plating is the silver alloy, not the matte one."
+    },
+    {
+      "active": false,
+      "digest_of": null,
+      "fold_lineage": null,
+      "i": 4,
+      "kind": null,
+      "no_fold": false,
+      "ntok": 15,
+      "retained_sources": null,
+      "retired": true,
+      "sources": [],
+      "superseded_by": null,
+      "supersedes": [],
+      "text": "The Orion pin is Auric-4-Alpha for this cycle."
+    },
+    {
+      "active": false,
+      "digest_of": null,
+      "fold_lineage": null,
+      "i": 5,
+      "kind": null,
+      "no_fold": false,
+      "ntok": 15,
+      "retained_sources": null,
+      "retired": true,
+      "sources": [],
+      "superseded_by": null,
+      "supersedes": [],
+      "text": "Nadir-1-Delta is the current Hub value on record."
+    },
+    {
+      "active": false,
+      "digest_of": null,
+      "fold_lineage": null,
+      "i": 6,
+      "kind": null,
+      "no_fold": false,
+      "ntok": 15,
+      "retained_sources": null,
+      "retired": true,
+      "sources": [],
+      "superseded_by": null,
+      "supersedes": [],
+      "text": "Terra port value reads Harbor-8-Golf at the gate."
+    },
+    {
+      "active": false,
+      "digest_of": null,
+      "fold_lineage": null,
+      "i": 7,
+      "kind": null,
+      "no_fold": false,
+      "ntok": 17,
+      "retained_sources": null,
+      "retired": true,
+      "sources": [],
+      "superseded_by": null,
+      "supersedes": [],
+      "text": "Lake Arrowhead hosts the summer archive at 7,400 units."
+    },
+    {
+      "active": false,
+      "digest_of": null,
+      "fold_lineage": null,
+      "i": 8,
+      "kind": "digest",
+      "no_fold": false,
+      "ntok": 44,
+      "retained_sources": null,
+      "retired": true,
+      "sources": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "superseded_by": null,
+      "supersedes": [],
+      "text": "ARCHIVE NOTE. For the archive: the retained identifiers in the archival record include BX-44, Hull-1, Breakwater, Commtower, Hull, Iona, Promenade, The, Vale.\n"
+    },
+    {
+      "active": false,
+      "digest_of": null,
+      "fold_lineage": null,
+      "i": 9,
+      "kind": "digest",
+      "no_fold": false,
+      "ntok": 56,
+      "retained_sources": null,
+      "retired": true,
+      "sources": [
+        4,
+        5,
+        6,
+        7
+      ],
+      "superseded_by": null,
+      "supersedes": [],
+      "text": "ARCHIVE NOTE. For the archive: the retained identifiers in the archival record include Auric-4-Alpha, Harbor-8-Golf, Nadir-1-Delta, Alpha, Arrowhead, Auric, Delta, Golf, Harbor, Hub, Lake, Nadir, Orion, Terra, The.\n"
+    },
+    {
+      "active": false,
+      "digest_of": null,
+      "fold_lineage": null,
+      "i": 10,
+      "kind": "era",
+      "no_fold": false,
+      "ntok": 76,
+      "retained_sources": null,
+      "retired": true,
+      "sources": [
+        8,
+        9
+      ],
+      "superseded_by": [
+        11
+      ],
+      "supersedes": [],
+      "text": "ARCHIVE NOTE. CHRONICLE \u2014 In this period, retained identifiers in the archival record include Auric-4-Alpha, BX-44, Harbor-8-Golf, Hull-1, Nadir-1-Delta, Alpha, Arrowhead, Auric, Breakwater, Commtower, Delta, For, Golf, Harbor, Hub, Hull, Iona, Lake, Nadir, Orion, Promenade, Terra, The, Vale.\n"
+    },
+    {
+      "active": true,
+      "digest_of": null,
+      "fold_lineage": null,
+      "i": 11,
+      "kind": "fact",
+      "no_fold": false,
+      "ntok": 9,
+      "retained_sources": null,
+      "retired": false,
+      "sources": [],
+      "superseded_by": null,
+      "supersedes": [
+        0,
+        10
+      ],
+      "text": "Breakwater beacon now reads CX-97."
+    }
+  ],
+  "route_base": [
+    11
+  ]
+}

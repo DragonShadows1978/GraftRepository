@@ -1,0 +1,39 @@
+{
+  "delta": {
+    "active_nodes": 12,
+    "exact_correct": 0,
+    "max_seats": 8,
+    "probes_with_source_node_mounted": 2
+  },
+  "evidence_class": "CPU fake worker through the REAL scripts/grm_lt1_1.py --fake path (4 cells, turns 1-32). Receipt plumbing and ROUTING TOPOLOGY only; NOT a language-model quality measurement.",
+  "off": {
+    "active_nodes": 12,
+    "digests_with_retained_sources": 0,
+    "exact_correct": 5,
+    "max_retained_source_seats": 0,
+    "max_summed_token_seats": 86,
+    "nodes_with_digest_of": 0,
+    "probes": 7,
+    "probes_with_retained_source_mounted": 0,
+    "probes_with_source_node_mounted": 4,
+    "residency_rows": 48,
+    "residency_rows_with_retained_mount": 0,
+    "total_nodes": 28,
+    "width": 96
+  },
+  "on": {
+    "active_nodes": 24,
+    "digests_with_retained_sources": 3,
+    "exact_correct": 5,
+    "max_retained_source_seats": 94,
+    "max_summed_token_seats": 94,
+    "nodes_with_digest_of": 12,
+    "probes": 7,
+    "probes_with_retained_source_mounted": 2,
+    "probes_with_source_node_mounted": 6,
+    "residency_rows": 52,
+    "residency_rows_with_retained_mount": 12,
+    "total_nodes": 28,
+    "width": 96
+  }
+}
