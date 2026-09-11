@@ -1,0 +1,1072 @@
+{
+  "attempt_history": [
+    {
+      "attempts": [
+        {
+          "attempt": 1,
+          "served_answer_correct": true,
+          "spec": "e2e-1",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 2,
+          "served_answer_correct": true,
+          "spec": "e2e-1",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 3,
+          "served_answer_correct": true,
+          "spec": "e2e-1",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 4,
+          "served_answer_correct": true,
+          "spec": "e2e-1",
+          "status": "LAWFUL_LIVED_TARGET"
+        }
+      ],
+      "probe_id": "e2e_t05_orion_pin",
+      "status_changed_across_attempts": false
+    },
+    {
+      "attempts": [
+        {
+          "attempt": 2,
+          "served_answer_correct": true,
+          "spec": "e2e-cal",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 3,
+          "served_answer_correct": true,
+          "spec": "e2e-cal",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 4,
+          "served_answer_correct": true,
+          "spec": "e2e-cal",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 5,
+          "served_answer_correct": true,
+          "spec": "e2e-cal",
+          "status": "LAWFUL_LIVED_TARGET"
+        }
+      ],
+      "probe_id": "e2e_t09_cypher_bridge",
+      "status_changed_across_attempts": false
+    },
+    {
+      "attempts": [
+        {
+          "attempt": 1,
+          "served_answer_correct": true,
+          "spec": "e2e-2",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 2,
+          "served_answer_correct": true,
+          "spec": "e2e-2",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 3,
+          "served_answer_correct": true,
+          "spec": "e2e-2",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 4,
+          "served_answer_correct": true,
+          "spec": "e2e-2",
+          "status": "LAWFUL_LIVED_TARGET"
+        }
+      ],
+      "probe_id": "e2e_t13_orion_pin",
+      "status_changed_across_attempts": false
+    },
+    {
+      "attempts": [
+        {
+          "attempt": 2,
+          "served_answer_correct": true,
+          "spec": "e2e-cal",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 3,
+          "served_answer_correct": true,
+          "spec": "e2e-cal",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 4,
+          "served_answer_correct": true,
+          "spec": "e2e-cal",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 5,
+          "served_answer_correct": true,
+          "spec": "e2e-cal",
+          "status": "LAWFUL_LIVED_TARGET"
+        }
+      ],
+      "probe_id": "e2e_t16_lyra_dock",
+      "status_changed_across_attempts": false
+    },
+    {
+      "attempts": [
+        {
+          "attempt": 1,
+          "served_answer_correct": true,
+          "spec": "e2e-3",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 2,
+          "served_answer_correct": true,
+          "spec": "e2e-3",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 3,
+          "served_answer_correct": true,
+          "spec": "e2e-3",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 4,
+          "served_answer_correct": true,
+          "spec": "e2e-3",
+          "status": "LAWFUL_LIVED_TARGET"
+        }
+      ],
+      "probe_id": "e2e_t19_nova_key",
+      "status_changed_across_attempts": false
+    },
+    {
+      "attempts": [
+        {
+          "attempt": 1,
+          "served_answer_correct": true,
+          "spec": "e2e-3",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 2,
+          "served_answer_correct": true,
+          "spec": "e2e-3",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 3,
+          "served_answer_correct": true,
+          "spec": "e2e-3",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 4,
+          "served_answer_correct": true,
+          "spec": "e2e-3",
+          "status": "LAWFUL_LIVED_TARGET"
+        }
+      ],
+      "probe_id": "e2e_t22_mira_seal",
+      "status_changed_across_attempts": false
+    },
+    {
+      "attempts": [
+        {
+          "attempt": 1,
+          "served_answer_correct": true,
+          "spec": "e2e-3",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 2,
+          "served_answer_correct": true,
+          "spec": "e2e-3",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 3,
+          "served_answer_correct": true,
+          "spec": "e2e-3",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 4,
+          "served_answer_correct": true,
+          "spec": "e2e-3",
+          "status": "LAWFUL_LIVED_TARGET"
+        }
+      ],
+      "probe_id": "e2e_t24_terra_port",
+      "status_changed_across_attempts": false
+    },
+    {
+      "attempts": [
+        {
+          "attempt": 1,
+          "served_answer_correct": true,
+          "spec": "e2e-4",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 2,
+          "served_answer_correct": true,
+          "spec": "e2e-4",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 3,
+          "served_answer_correct": true,
+          "spec": "e2e-4",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 4,
+          "served_answer_correct": true,
+          "spec": "e2e-4",
+          "status": "LAWFUL_LIVED_TARGET"
+        }
+      ],
+      "probe_id": "e2e_t26_ember_code",
+      "status_changed_across_attempts": false
+    },
+    {
+      "attempts": [
+        {
+          "attempt": 1,
+          "served_answer_correct": false,
+          "spec": "e2e-4",
+          "status": "UNPLANTABLE"
+        },
+        {
+          "attempt": 2,
+          "served_answer_correct": false,
+          "spec": "e2e-4",
+          "status": "UNPLANTABLE"
+        },
+        {
+          "attempt": 3,
+          "served_answer_correct": true,
+          "spec": "e2e-4",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 4,
+          "served_answer_correct": true,
+          "spec": "e2e-4",
+          "status": "LAWFUL_LIVED_TARGET"
+        }
+      ],
+      "probe_id": "e2e_t30_atlas_tone",
+      "status_changed_across_attempts": true
+    },
+    {
+      "attempts": [
+        {
+          "attempt": 1,
+          "served_answer_correct": false,
+          "spec": "e2e-4",
+          "status": "UNPLANTABLE"
+        },
+        {
+          "attempt": 2,
+          "served_answer_correct": false,
+          "spec": "e2e-4",
+          "status": "UNPLANTABLE"
+        },
+        {
+          "attempt": 3,
+          "served_answer_correct": false,
+          "spec": "e2e-4",
+          "status": "UNPLANTABLE"
+        },
+        {
+          "attempt": 4,
+          "served_answer_correct": false,
+          "spec": "e2e-4",
+          "status": "UNPLANTABLE"
+        }
+      ],
+      "probe_id": "e2e_t33_polaris_mark",
+      "status_changed_across_attempts": false
+    },
+    {
+      "attempts": [
+        {
+          "attempt": 1,
+          "served_answer_correct": true,
+          "spec": "sup-1",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 2,
+          "served_answer_correct": true,
+          "spec": "sup-1",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 3,
+          "served_answer_correct": true,
+          "spec": "sup-1",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 4,
+          "served_answer_correct": true,
+          "spec": "sup-1",
+          "status": "LAWFUL_LIVED_TARGET"
+        }
+      ],
+      "probe_id": "sup_harbor_restatement",
+      "status_changed_across_attempts": false
+    },
+    {
+      "attempts": [
+        {
+          "attempt": 1,
+          "served_answer_correct": false,
+          "spec": "sup-3",
+          "status": "UNPLANTABLE"
+        },
+        {
+          "attempt": 2,
+          "served_answer_correct": false,
+          "spec": "sup-3",
+          "status": "UNPLANTABLE"
+        },
+        {
+          "attempt": 3,
+          "served_answer_correct": false,
+          "spec": "sup-3",
+          "status": "UNPLANTABLE"
+        },
+        {
+          "attempt": 4,
+          "served_answer_correct": false,
+          "spec": "sup-3",
+          "status": "UNPLANTABLE"
+        }
+      ],
+      "probe_id": "sup_lumen_head",
+      "status_changed_across_attempts": false
+    },
+    {
+      "attempts": [
+        {
+          "attempt": 1,
+          "served_answer_correct": false,
+          "spec": "sup-4",
+          "status": "UNPLANTABLE"
+        },
+        {
+          "attempt": 2,
+          "served_answer_correct": false,
+          "spec": "sup-4",
+          "status": "UNPLANTABLE"
+        },
+        {
+          "attempt": 3,
+          "served_answer_correct": false,
+          "spec": "sup-4",
+          "status": "UNPLANTABLE"
+        },
+        {
+          "attempt": 4,
+          "served_answer_correct": false,
+          "spec": "sup-4",
+          "status": "UNPLANTABLE"
+        }
+      ],
+      "probe_id": "sup_orion_current",
+      "status_changed_across_attempts": false
+    },
+    {
+      "attempts": [
+        {
+          "attempt": 1,
+          "served_answer_correct": true,
+          "spec": "sup-2",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 2,
+          "served_answer_correct": true,
+          "spec": "sup-2",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 3,
+          "served_answer_correct": true,
+          "spec": "sup-2",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 4,
+          "served_answer_correct": true,
+          "spec": "sup-2",
+          "status": "LAWFUL_LIVED_TARGET"
+        }
+      ],
+      "probe_id": "sup_praxis_fresh",
+      "status_changed_across_attempts": false
+    },
+    {
+      "attempts": [
+        {
+          "attempt": 2,
+          "served_answer_correct": false,
+          "spec": "sup-4",
+          "status": "UNPLANTABLE"
+        },
+        {
+          "attempt": 3,
+          "served_answer_correct": false,
+          "spec": "sup-4",
+          "status": "UNPLANTABLE"
+        },
+        {
+          "attempt": 4,
+          "served_answer_correct": false,
+          "spec": "sup-4",
+          "status": "UNPLANTABLE"
+        }
+      ],
+      "probe_id": "sup_reserve_falcon_registry",
+      "status_changed_across_attempts": false
+    },
+    {
+      "attempts": [
+        {
+          "attempt": 2,
+          "served_answer_correct": false,
+          "spec": "sup-1",
+          "status": "UNPLANTABLE"
+        },
+        {
+          "attempt": 3,
+          "served_answer_correct": false,
+          "spec": "sup-1",
+          "status": "UNPLANTABLE"
+        },
+        {
+          "attempt": 4,
+          "served_answer_correct": false,
+          "spec": "sup-1",
+          "status": "UNPLANTABLE"
+        }
+      ],
+      "probe_id": "sup_reserve_juniper_pass",
+      "status_changed_across_attempts": false
+    },
+    {
+      "attempts": [
+        {
+          "attempt": 2,
+          "served_answer_correct": false,
+          "spec": "sup-3",
+          "status": "UNPLANTABLE"
+        },
+        {
+          "attempt": 3,
+          "served_answer_correct": false,
+          "spec": "sup-3",
+          "status": "UNPLANTABLE"
+        },
+        {
+          "attempt": 4,
+          "served_answer_correct": false,
+          "spec": "sup-3",
+          "status": "UNPLANTABLE"
+        }
+      ],
+      "probe_id": "sup_reserve_meridian_docket",
+      "status_changed_across_attempts": false
+    },
+    {
+      "attempts": [
+        {
+          "attempt": 2,
+          "served_answer_correct": false,
+          "spec": "sup-2",
+          "status": "UNPLANTABLE"
+        },
+        {
+          "attempt": 3,
+          "served_answer_correct": false,
+          "spec": "sup-2",
+          "status": "UNPLANTABLE"
+        },
+        {
+          "attempt": 4,
+          "served_answer_correct": false,
+          "spec": "sup-2",
+          "status": "UNPLANTABLE"
+        }
+      ],
+      "probe_id": "sup_reserve_tundra_ledger",
+      "status_changed_across_attempts": false
+    },
+    {
+      "attempts": [
+        {
+          "attempt": 1,
+          "served_answer_correct": true,
+          "spec": "sup-2",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 2,
+          "served_answer_correct": true,
+          "spec": "sup-2",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 3,
+          "served_answer_correct": true,
+          "spec": "sup-2",
+          "status": "LAWFUL_LIVED_TARGET"
+        },
+        {
+          "attempt": 4,
+          "served_answer_correct": true,
+          "spec": "sup-2",
+          "status": "LAWFUL_LIVED_TARGET"
+        }
+      ],
+      "probe_id": "sup_solace_fresh",
+      "status_changed_across_attempts": false
+    }
+  ],
+  "cause_investigated": false,
+  "counts": {
+    "lawful": 12,
+    "lawful_exact": 11,
+    "lawful_separator_artifact_rescued": 1,
+    "probes_total": 19,
+    "registered_slots": 14,
+    "registered_slots_lawful": 12,
+    "reserves": 5,
+    "reserves_lawful": 0,
+    "unlawful": 7,
+    "unlawful_rate": 0.3684,
+    "unlawful_refusal": 1,
+    "unlawful_wrong_value": 6,
+    "wrong_value_with_correct_single_mount": 6
+  },
+  "created_utc": "2026-09-01T06:25:12.401016Z",
+  "defect_class_note": "The WRONG_VALUE class is distinct from co-mount blending: each such probe served a confident value with its CORRECT single graft mounted, so no competing mount was present to blend with.",
+  "generation": 2,
+  "markdown": "# GRM lived-serving reliability census\n\nRun `run_20260831T160525Z_2` \u2014 every lived-collected probe in the DET1 race campaign: registered plant slots (calibration and evaluation) and DET1.9 cross-session reserves alike.\n\nReceipts only.  This census records WHAT each lived served control returned and how it classifies.  It does not investigate WHY, propose a mechanism, or recommend a remedy; the DET1.11 order reserves cause analysis for the successor investigation.\n\n## Counts\n\n| Class | Probes |\n|---|---:|\n| Lawful | 12 |\n| \u2014 exact match | 11 |\n| \u2014 separator-artifact rescued (DET1.10) | 1 |\n| Unlawful (LIVED_SERVED_CONTROL_INCORRECT_OR_REFUSAL) | 7 |\n| \u2014 refusal | 1 |\n| \u2014 wrong value | 6 |\n| **Total probes** | **19** |\n\nUnlawful rate: 7/19 (36.8%). Registered slots lawful: 12/14. Reserves lawful: 0/5.\n\nWrong values served with a correct SINGLE mount: 6. The WRONG_VALUE class is distinct from co-mount blending: each such probe served a confident value with its CORRECT single graft mounted, so no competing mount was present to blend with.\n\n## Per-probe\n\n| Probe | Role | Split | Class | Mounts | Expected | Served answer |\n|---|---|---|---|---:|---|---|\n| `e2e_t09_cypher_bridge` | registered_slot | calibration | LAWFUL | 1 | `Vortex-3-Sierra` | Vortex-3-Sierra |\n| `e2e_t16_lyra_dock` | registered_slot | calibration | LAWFUL | 1 | `Zenith-2-Echo` | Zenith-2-Echo |\n| `e2e_t05_orion_pin` | registered_slot | eval | LAWFUL | 1 | `Auric-4-Alpha` | The current orion pin value is Auric-4-Alpha. |\n| `e2e_t13_orion_pin` | registered_slot | eval | LAWFUL | 1 | `Kestrel-9-Tango` | Kestrel-9-Tango. |\n| `e2e_t19_nova_key` | registered_slot | eval | LAWFUL | 1 | `Quartz-5-Bravo` | Quartz-5-Bravo |\n| `e2e_t22_mira_seal` | registered_slot | eval | LAWFUL | 1 | `Gold-7-Foxtrot` | Gold-7-Foxtrot. |\n| `e2e_t24_terra_port` | registered_slot | eval | LAWFUL | 1 | `Harbor-8-Golf` | Harbor-8-Golf |\n| `e2e_t26_ember_code` | registered_slot | eval | LAWFUL | 1 | `Violet-2-Hotel` | Violet-2-Hotel |\n| `e2e_t30_atlas_tone` | registered_slot | eval | LAWFUL (separator_variant) | 1 | `Cobalt-1-India` | Cobalt 1 India |\n| `sup_harbor_restatement` | registered_slot | eval | LAWFUL | 1 | `nacre-6-blue` | The current Harbor token value is **Nacre\u20116\u2011Blue**. |\n| `sup_lumen_head` | registered_slot | eval | WRONG_VALUE | 1 | `cobalt-3-comet` | Birch-2-Beacon. |\n| `sup_orion_current` | registered_slot | eval | WRONG_VALUE | 1 | `kestrel-9-tango` | The current Orion pin value is **Auric\u20114\u2011Alpha**. |\n| `sup_praxis_fresh` | registered_slot | eval | LAWFUL | 1 | `quartz-8-jade` | The current Praxis dock value is **Quartz\u20118\u2011Jade**. |\n| `sup_solace_fresh` | registered_slot | eval | LAWFUL | 1 | `raven-9-ivory` | The current Solace key value is **Raven\u20119\u2011Ivory**. |\n| `e2e_t33_polaris_mark` | reserve | eval | REFUSAL | 1 | `Marble-4-Juliet` | I\u2019m sorry, but I don\u2019t have that information. |\n| `sup_reserve_falcon_registry` | reserve | eval | WRONG_VALUE | 1 | `Vortex-3-Sierra` | The Falcon registry value is 42. |\n| `sup_reserve_juniper_pass` | reserve | eval | WRONG_VALUE | 1 | `Opal-7-Green` | The Juniper pass value is currently 0. |\n| `sup_reserve_meridian_docket` | reserve | eval | WRONG_VALUE | 1 | `Delta-4-Drift` | The current Meridian seal is **Cobalt\u20113\u2011Comet**. |\n| `sup_reserve_tundra_ledger` | reserve | eval | WRONG_VALUE | 1 | `Sable-0-Copper` | The current Tundra ledger value is **\u201cTundra\u201142\u2011Eagle\u2011Blue\u2011Sapphire\u201d**. |",
+  "order": "GRM-DET1.11",
+  "order_record": {
+    "bytes": 3405,
+    "path": "orders/GRM_DET1_11_ACHIEVED_COUNT.md",
+    "sha256": "dce40c65b21e26512f2269083f1bd7af5218ed27b46deb7bcceeacd4f63d183e"
+  },
+  "registration": {
+    "bytes": 21406,
+    "path": "artifacts/grm_det1/run_20260831T160525Z_2/registration_62cb6c09cbec211d.json",
+    "sha256": "62cb6c09cbec211d8cf897b1e67975ff7cbcd30f6d949f2c0b7d65dcc121fcc7"
+  },
+  "rows": [
+    {
+      "attempt": 5,
+      "census_class": "LAWFUL",
+      "census_subclass": "exact",
+      "expected_values": [
+        "Vortex-3-Sierra"
+      ],
+      "mount_count": 1,
+      "mounted_ids": [
+        4
+      ],
+      "probe_id": "e2e_t09_cypher_bridge",
+      "role": "registered_slot",
+      "selected_target_id": 4,
+      "separator_artifact_rescued": false,
+      "served_answer": "Vortex-3-Sierra",
+      "served_answer_correct": true,
+      "single_mount": true,
+      "slot_fixture_id": "e2e_t09_cypher_bridge",
+      "source_family": "certified_34_turn",
+      "spec": "e2e-cal",
+      "split": "calibration",
+      "status": "LAWFUL_LIVED_TARGET",
+      "unplantable_reason": null
+    },
+    {
+      "attempt": 5,
+      "census_class": "LAWFUL",
+      "census_subclass": "exact",
+      "expected_values": [
+        "Zenith-2-Echo"
+      ],
+      "mount_count": 1,
+      "mounted_ids": [
+        12
+      ],
+      "probe_id": "e2e_t16_lyra_dock",
+      "role": "registered_slot",
+      "selected_target_id": 12,
+      "separator_artifact_rescued": false,
+      "served_answer": "Zenith-2-Echo",
+      "served_answer_correct": true,
+      "single_mount": true,
+      "slot_fixture_id": "e2e_t16_lyra_dock",
+      "source_family": "certified_34_turn",
+      "spec": "e2e-cal",
+      "split": "calibration",
+      "status": "LAWFUL_LIVED_TARGET",
+      "unplantable_reason": null
+    },
+    {
+      "attempt": 4,
+      "census_class": "LAWFUL",
+      "census_subclass": "exact",
+      "expected_values": [
+        "Auric-4-Alpha"
+      ],
+      "mount_count": 1,
+      "mounted_ids": [
+        0
+      ],
+      "probe_id": "e2e_t05_orion_pin",
+      "role": "registered_slot",
+      "selected_target_id": 0,
+      "separator_artifact_rescued": false,
+      "served_answer": "The current orion pin value is Auric-4-Alpha.",
+      "served_answer_correct": true,
+      "single_mount": true,
+      "slot_fixture_id": "e2e_t05_orion_pin",
+      "source_family": "certified_34_turn",
+      "spec": "e2e-1",
+      "split": "eval",
+      "status": "LAWFUL_LIVED_TARGET",
+      "unplantable_reason": null
+    },
+    {
+      "attempt": 4,
+      "census_class": "LAWFUL",
+      "census_subclass": "exact",
+      "expected_values": [
+        "Kestrel-9-Tango"
+      ],
+      "mount_count": 1,
+      "mounted_ids": [
+        6
+      ],
+      "probe_id": "e2e_t13_orion_pin",
+      "role": "registered_slot",
+      "selected_target_id": 6,
+      "separator_artifact_rescued": false,
+      "served_answer": "Kestrel-9-Tango.",
+      "served_answer_correct": true,
+      "single_mount": true,
+      "slot_fixture_id": "e2e_t13_orion_pin",
+      "source_family": "certified_34_turn",
+      "spec": "e2e-2",
+      "split": "eval",
+      "status": "LAWFUL_LIVED_TARGET",
+      "unplantable_reason": null
+    },
+    {
+      "attempt": 4,
+      "census_class": "LAWFUL",
+      "census_subclass": "exact",
+      "expected_values": [
+        "Quartz-5-Bravo"
+      ],
+      "mount_count": 1,
+      "mounted_ids": [
+        8
+      ],
+      "probe_id": "e2e_t19_nova_key",
+      "role": "registered_slot",
+      "selected_target_id": 8,
+      "separator_artifact_rescued": false,
+      "served_answer": "Quartz-5-Bravo",
+      "served_answer_correct": true,
+      "single_mount": true,
+      "slot_fixture_id": "e2e_t19_nova_key",
+      "source_family": "certified_34_turn",
+      "spec": "e2e-3",
+      "split": "eval",
+      "status": "LAWFUL_LIVED_TARGET",
+      "unplantable_reason": null
+    },
+    {
+      "attempt": 4,
+      "census_class": "LAWFUL",
+      "census_subclass": "exact",
+      "expected_values": [
+        "Gold-7-Foxtrot"
+      ],
+      "mount_count": 1,
+      "mounted_ids": [
+        19
+      ],
+      "probe_id": "e2e_t22_mira_seal",
+      "role": "registered_slot",
+      "selected_target_id": 19,
+      "separator_artifact_rescued": false,
+      "served_answer": "Gold-7-Foxtrot.",
+      "served_answer_correct": true,
+      "single_mount": true,
+      "slot_fixture_id": "e2e_t22_mira_seal",
+      "source_family": "certified_34_turn",
+      "spec": "e2e-3",
+      "split": "eval",
+      "status": "LAWFUL_LIVED_TARGET",
+      "unplantable_reason": null
+    },
+    {
+      "attempt": 4,
+      "census_class": "LAWFUL",
+      "census_subclass": "exact",
+      "expected_values": [
+        "Harbor-8-Golf"
+      ],
+      "mount_count": 1,
+      "mounted_ids": [
+        16
+      ],
+      "probe_id": "e2e_t24_terra_port",
+      "role": "registered_slot",
+      "selected_target_id": 16,
+      "separator_artifact_rescued": false,
+      "served_answer": "Harbor-8-Golf",
+      "served_answer_correct": true,
+      "single_mount": true,
+      "slot_fixture_id": "e2e_t24_terra_port",
+      "source_family": "certified_34_turn",
+      "spec": "e2e-3",
+      "split": "eval",
+      "status": "LAWFUL_LIVED_TARGET",
+      "unplantable_reason": null
+    },
+    {
+      "attempt": 4,
+      "census_class": "LAWFUL",
+      "census_subclass": "exact",
+      "expected_values": [
+        "Violet-2-Hotel"
+      ],
+      "mount_count": 1,
+      "mounted_ids": [
+        23
+      ],
+      "probe_id": "e2e_t26_ember_code",
+      "role": "registered_slot",
+      "selected_target_id": 23,
+      "separator_artifact_rescued": false,
+      "served_answer": "Violet-2-Hotel",
+      "served_answer_correct": true,
+      "single_mount": true,
+      "slot_fixture_id": "e2e_t26_ember_code",
+      "source_family": "certified_34_turn",
+      "spec": "e2e-4",
+      "split": "eval",
+      "status": "LAWFUL_LIVED_TARGET",
+      "unplantable_reason": null
+    },
+    {
+      "attempt": 4,
+      "census_class": "LAWFUL",
+      "census_subclass": "separator_variant",
+      "expected_values": [
+        "Cobalt-1-India"
+      ],
+      "mount_count": 1,
+      "mounted_ids": [
+        30
+      ],
+      "probe_id": "e2e_t30_atlas_tone",
+      "role": "registered_slot",
+      "selected_target_id": 30,
+      "separator_artifact_rescued": true,
+      "served_answer": "Cobalt 1 India",
+      "served_answer_correct": true,
+      "single_mount": true,
+      "slot_fixture_id": "e2e_t30_atlas_tone",
+      "source_family": "certified_34_turn",
+      "spec": "e2e-4",
+      "split": "eval",
+      "status": "LAWFUL_LIVED_TARGET",
+      "unplantable_reason": null
+    },
+    {
+      "attempt": 4,
+      "census_class": "LAWFUL",
+      "census_subclass": "exact",
+      "expected_values": [
+        "nacre-6-blue"
+      ],
+      "mount_count": 1,
+      "mounted_ids": [
+        1
+      ],
+      "probe_id": "sup_harbor_restatement",
+      "role": "registered_slot",
+      "selected_target_id": 1,
+      "separator_artifact_rescued": false,
+      "served_answer": "The current Harbor token value is **Nacre\u20116\u2011Blue**.",
+      "served_answer_correct": true,
+      "single_mount": true,
+      "slot_fixture_id": "sup_harbor_restatement",
+      "source_family": "supersession_battery_on_gpt_oss",
+      "spec": "sup-1",
+      "split": "eval",
+      "status": "LAWFUL_LIVED_TARGET",
+      "unplantable_reason": null
+    },
+    {
+      "attempt": 4,
+      "census_class": "WRONG_VALUE",
+      "census_subclass": "asserted_a_confident_incorrect_value",
+      "expected_values": [
+        "cobalt-3-comet"
+      ],
+      "mount_count": 1,
+      "mounted_ids": [
+        1
+      ],
+      "probe_id": "sup_lumen_head",
+      "role": "registered_slot",
+      "selected_target_id": null,
+      "separator_artifact_rescued": false,
+      "served_answer": "Birch-2-Beacon.",
+      "served_answer_correct": false,
+      "single_mount": true,
+      "slot_fixture_id": "sup_lumen_head",
+      "source_family": "supersession_battery_on_gpt_oss",
+      "spec": "sup-3",
+      "split": "eval",
+      "status": "UNPLANTABLE",
+      "unplantable_reason": "LIVED_SERVED_CONTROL_INCORRECT_OR_REFUSAL"
+    },
+    {
+      "attempt": 4,
+      "census_class": "WRONG_VALUE",
+      "census_subclass": "asserted_a_confident_incorrect_value",
+      "expected_values": [
+        "kestrel-9-tango"
+      ],
+      "mount_count": 1,
+      "mounted_ids": [
+        0
+      ],
+      "probe_id": "sup_orion_current",
+      "role": "registered_slot",
+      "selected_target_id": null,
+      "separator_artifact_rescued": false,
+      "served_answer": "The current Orion pin value is **Auric\u20114\u2011Alpha**.",
+      "served_answer_correct": false,
+      "single_mount": true,
+      "slot_fixture_id": "sup_orion_current",
+      "source_family": "supersession_battery_on_gpt_oss",
+      "spec": "sup-4",
+      "split": "eval",
+      "status": "UNPLANTABLE",
+      "unplantable_reason": "LIVED_SERVED_CONTROL_INCORRECT_OR_REFUSAL"
+    },
+    {
+      "attempt": 4,
+      "census_class": "LAWFUL",
+      "census_subclass": "exact",
+      "expected_values": [
+        "quartz-8-jade"
+      ],
+      "mount_count": 1,
+      "mounted_ids": [
+        0
+      ],
+      "probe_id": "sup_praxis_fresh",
+      "role": "registered_slot",
+      "selected_target_id": 0,
+      "separator_artifact_rescued": false,
+      "served_answer": "The current Praxis dock value is **Quartz\u20118\u2011Jade**.",
+      "served_answer_correct": true,
+      "single_mount": true,
+      "slot_fixture_id": "sup_praxis_fresh",
+      "source_family": "supersession_battery_on_gpt_oss",
+      "spec": "sup-2",
+      "split": "eval",
+      "status": "LAWFUL_LIVED_TARGET",
+      "unplantable_reason": null
+    },
+    {
+      "attempt": 4,
+      "census_class": "LAWFUL",
+      "census_subclass": "exact",
+      "expected_values": [
+        "raven-9-ivory"
+      ],
+      "mount_count": 1,
+      "mounted_ids": [
+        1
+      ],
+      "probe_id": "sup_solace_fresh",
+      "role": "registered_slot",
+      "selected_target_id": 1,
+      "separator_artifact_rescued": false,
+      "served_answer": "The current Solace key value is **Raven\u20119\u2011Ivory**.",
+      "served_answer_correct": true,
+      "single_mount": true,
+      "slot_fixture_id": "sup_solace_fresh",
+      "source_family": "supersession_battery_on_gpt_oss",
+      "spec": "sup-2",
+      "split": "eval",
+      "status": "LAWFUL_LIVED_TARGET",
+      "unplantable_reason": null
+    },
+    {
+      "attempt": 4,
+      "census_class": "REFUSAL",
+      "census_subclass": "declined_to_assert_a_value",
+      "expected_values": [
+        "Marble-4-Juliet"
+      ],
+      "mount_count": 1,
+      "mounted_ids": [
+        4
+      ],
+      "probe_id": "e2e_t33_polaris_mark",
+      "role": "reserve",
+      "selected_target_id": null,
+      "separator_artifact_rescued": false,
+      "served_answer": "I\u2019m sorry, but I don\u2019t have that information.",
+      "served_answer_correct": false,
+      "single_mount": true,
+      "slot_fixture_id": "e2e_t33_polaris_mark",
+      "source_family": "certified_34_turn",
+      "spec": "e2e-4",
+      "split": "eval",
+      "status": "UNPLANTABLE",
+      "unplantable_reason": "LIVED_SERVED_CONTROL_INCORRECT_OR_REFUSAL"
+    },
+    {
+      "attempt": 4,
+      "census_class": "WRONG_VALUE",
+      "census_subclass": "asserted_a_confident_incorrect_value",
+      "expected_values": [
+        "Vortex-3-Sierra"
+      ],
+      "mount_count": 1,
+      "mounted_ids": [
+        1
+      ],
+      "probe_id": "sup_reserve_falcon_registry",
+      "role": "reserve",
+      "selected_target_id": null,
+      "separator_artifact_rescued": false,
+      "served_answer": "The Falcon registry value is 42.",
+      "served_answer_correct": false,
+      "single_mount": true,
+      "slot_fixture_id": "sup_reserve_falcon_registry",
+      "source_family": "supersession_battery_on_gpt_oss",
+      "spec": "sup-4",
+      "split": "eval",
+      "status": "UNPLANTABLE",
+      "unplantable_reason": "LIVED_SERVED_CONTROL_INCORRECT_OR_REFUSAL"
+    },
+    {
+      "attempt": 4,
+      "census_class": "WRONG_VALUE",
+      "census_subclass": "asserted_a_confident_incorrect_value",
+      "expected_values": [
+        "Opal-7-Green"
+      ],
+      "mount_count": 1,
+      "mounted_ids": [
+        2
+      ],
+      "probe_id": "sup_reserve_juniper_pass",
+      "role": "reserve",
+      "selected_target_id": null,
+      "separator_artifact_rescued": false,
+      "served_answer": "The Juniper pass value is currently 0.",
+      "served_answer_correct": false,
+      "single_mount": true,
+      "slot_fixture_id": "sup_reserve_juniper_pass",
+      "source_family": "supersession_battery_on_gpt_oss",
+      "spec": "sup-1",
+      "split": "eval",
+      "status": "UNPLANTABLE",
+      "unplantable_reason": "LIVED_SERVED_CONTROL_INCORRECT_OR_REFUSAL"
+    },
+    {
+      "attempt": 4,
+      "census_class": "WRONG_VALUE",
+      "census_subclass": "asserted_a_confident_incorrect_value",
+      "expected_values": [
+        "Delta-4-Drift"
+      ],
+      "mount_count": 1,
+      "mounted_ids": [
+        2
+      ],
+      "probe_id": "sup_reserve_meridian_docket",
+      "role": "reserve",
+      "selected_target_id": null,
+      "separator_artifact_rescued": false,
+      "served_answer": "The current Meridian seal is **Cobalt\u20113\u2011Comet**.",
+      "served_answer_correct": false,
+      "single_mount": true,
+      "slot_fixture_id": "sup_reserve_meridian_docket",
+      "source_family": "supersession_battery_on_gpt_oss",
+      "spec": "sup-3",
+      "split": "eval",
+      "status": "UNPLANTABLE",
+      "unplantable_reason": "LIVED_SERVED_CONTROL_INCORRECT_OR_REFUSAL"
+    },
+    {
+      "attempt": 4,
+      "census_class": "WRONG_VALUE",
+      "census_subclass": "asserted_a_confident_incorrect_value",
+      "expected_values": [
+        "Sable-0-Copper"
+      ],
+      "mount_count": 1,
+      "mounted_ids": [
+        1
+      ],
+      "probe_id": "sup_reserve_tundra_ledger",
+      "role": "reserve",
+      "selected_target_id": null,
+      "separator_artifact_rescued": false,
+      "served_answer": "The current Tundra ledger value is **\u201cTundra\u201142\u2011Eagle\u2011Blue\u2011Sapphire\u201d**.",
+      "served_answer_correct": false,
+      "single_mount": true,
+      "slot_fixture_id": "sup_reserve_tundra_ledger",
+      "source_family": "supersession_battery_on_gpt_oss",
+      "spec": "sup-2",
+      "split": "eval",
+      "status": "UNPLANTABLE",
+      "unplantable_reason": "LIVED_SERVED_CONTROL_INCORRECT_OR_REFUSAL"
+    }
+  ],
+  "run_id": "run_20260831T160525Z_2",
+  "schema": "grm.det1_11.lived_serving_reliability_census.v1",
+  "scope_note": "Receipts only.  This census records WHAT each lived served control returned and how it classifies.  It does not investigate WHY, propose a mechanism, or recommend a remedy; the DET1.11 order reserves cause analysis for the successor investigation.",
+  "status": "RECEIPTS_ONLY_CAUSE_NOT_INVESTIGATED",
+  "superseded_evidence_fields": [
+    "rows",
+    "attempt_history"
+  ],
+  "supersedes": {
+    "bytes": 29797,
+    "path": "artifacts/grm_det1/run_20260831T160525Z_2/det1_11/census/lived_serving_census_b6dfcd0fe727ef9c.json",
+    "sha256": "b6dfcd0fe727ef9c0630b45be3fc135343dd122b9677bee7a9021a342a1bdf00"
+  },
+  "title": "GRM lived-serving reliability census"
+}

@@ -1,0 +1,15 @@
+{
+  "files": {
+    "scripts/grm_c2_cells.py": "4a083a05069423e8a06d5019cbfa2d59381f9278317d6c9e418b885872964839",
+    "tests/test_grm_c2_capture.py": "7eec0a8b382075d1874eec38b371823eb37a92a21e1121d88ce73b1e46c99f04"
+  },
+  "gates": [
+    "off pin incomplete/wrong geometry RED",
+    "cache slice explicitly graded, source span preserved, invalid span RED"
+  ],
+  "old_driver_preserved": "artifacts/grm_c2/driver_A2.py",
+  "reason": "Static review: RS3 deposit_from_cache records capture_pin_moves_payload=False; distinguish it from pinned harvest. Require complete registered geometry also on unpinned default payloads. No new harvest or product edit.",
+  "registration_sha256": "8a3a27302c41f2980f883666657f7d871c5ad01d195953e017804717d3644eb0",
+  "scope": "Receipt validation only; original registration, prediction, acceptance, budgets and production sources unchanged.",
+  "supersedes_driver_sha256": "a743704a2cb5501822e26b4630d684f7f59fd2b3ad35d0b7b51b1e30452e1205"
+}

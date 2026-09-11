@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Dispatch 2: amendment_lead_5_r2.json, cap read by a5/resume.py at runtime.
+# Prior art: C2 amendments1/3 and CMC1 (project contributors, 2026), inspected.
+# Reuse foreground scheduler; A5 adds a SHA-bound cap and one-time RED exception.
+# No prior art known to me beyond these local systems for this adapter.
+set -euo pipefail
+cd /mnt/ForgeRealm/wt/grm-c2
+export PYTHONDONTWRITEBYTECODE=1
+if [[ $# -ne 1 || ( "$1" != --resume && "$1" != --dry-run ) ]]; then
+    echo 'Usage: bash artifacts/grm_c2/lead_commands.txt --dry-run|--resume' >&2
+    exit 2
+fi
+python artifacts/grm_c2/a5/resume.py --dry-run
+if [[ $1 == --dry-run ]]; then exit 0; fi
+# Same epoch: preserve 42 COMPLETE; archive the named zero-charge reservation-only
+# RED once under the campaign mutex, then start its first worker and the 9 others.
+# A later COMPLETE/RED/orphan is never reset. New RED stops. Old score REDs persist.
+# Unchanged lease285 / worker280 / outer585+5 / cooldown30 / lock-wait240 seconds.
+set +e
+python artifacts/grm_c2/a5/resume.py --run --resume
+run_status=$?
+python artifacts/grm_c2/a5/resume.py summary
+summary_status=$?
+if [[ $run_status -ne 0 ]]; then exit "$run_status"; fi
+exit "$summary_status"

@@ -1,0 +1,81 @@
+{
+  "caveats": [
+    "Historical WC1 levers ON at both widths; not measured defaults OFF",
+    "Historical timings may include contention as WC1 results document",
+    "C2 adds checkpoint disk IO, metadata validation and model/repository reload costs",
+    "Initial3140s heuristic is optimistic against this evidence; preserve immutable estimate and report this amendment"
+  ],
+  "evidence_class": "archived E2E receipt timing, CPU-only read; not a new benchmark or certified lower bound",
+  "input_sha256": {
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/census_session/arm1/e2e-1/session/instrumentation.jsonl": "f01ff64dcaa9e2d7b8d624c199aa935e8fb97314d206851891f42b432c2d1863",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/census_session/arm1/e2e-2/session/instrumentation.jsonl": "c768dffc8d4788ca964b76de2c50ef0dd8e263489537efdcf85468f5fcda940b",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/census_session/arm1/e2e-3/session/instrumentation.jsonl": "88909051e9395df6b9127654201ccd4fa14e9167261d6ae0f83db2a821a37592",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/census_session/arm1/e2e-4/session/instrumentation.jsonl": "272ae34d55ba0fc4763ad45ca6138002c9f669176f01ff2187b97cf15c87aba2",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-1/session/instrumentation.jsonl": "6992eb86d540d6d0b9c181fd14ec67440df37fbb3ee58daf0d33c299faba40b2",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-2/session/instrumentation.jsonl": "c55594da08dc304f6c034c3cd594203805ece87670ddf6c361e0284ae4d1a4fb",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-3/session/instrumentation.jsonl": "de336fbad887d55966e202bd9434a11dc712dbe1a16cebac46a178f86f4a8560",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-4/session/instrumentation.jsonl": "6abc4187493f9edb90b5d3f9e1c31b36979f02ac15fa07518e6729bd8509ca77",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/lh_session/lh-5/session/instrumentation.jsonl": "48be76d0313a4c808cfa514a1b0108d29762d552cbc8efbfaeb5ba0d5e6748c3",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/sup_correction_then_restatement_1a51eb65f7f9ac67.json": "1a51eb65f7f9ac6765417a748b95c2b63967c1fbdbb56f525a77d04a443e16b6",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/sup_fresh_fact_controls_e8a3027bf20c1029.json": "e8a3027bf20c1029b6d2c7b927a33ffa1665cad788799b5f352203a3f5761942",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/sup_multi_hop_a_b_c_ac288c1bf57b6777.json": "ac288c1bf57b67775c4fa5672ee4f6ce1036485085714c5b7e2f589325b2be9e",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w256/sup_short_correction_long_competitor_592e95da353ad025.json": "592e95da353ad0251317b1fdb8bb9117a55f0615df8659abd56830115902a04b",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_session/arm1/e2e-1/session/instrumentation.jsonl": "ff3e1675aa8ef76c50a270a39003129df6abdb57f04d8925d07ec9818bc66d7a",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_session/arm1/e2e-2/session/instrumentation.jsonl": "5853dbf178ffc10a5eae71ea758fdb1c6604fe4eb3e72928ff635adbfce69917",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_session/arm1/e2e-3/session/instrumentation.jsonl": "305d5c29287f5953322bff842a5cc3444d251fd8dfb2603b34299831912ab989",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/census_session/arm1/e2e-4/session/instrumentation.jsonl": "ddc229a3c4af72bb3ccb530f8673086a35b2f92df5ba8a938f63905150e32291",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-1/session/instrumentation.jsonl": "c6cf2b947b8488b9140cfb6bd8c0b425f03be66137eca1d9ae241e6316d6a579",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-2/session/instrumentation.jsonl": "4746dc3b50b73bb1d86ae802ee53533f312526165be82b9a39d77bb14818e016",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-3/session/instrumentation.jsonl": "c644401fb8d0fe2d753a13e20a40b0e3d0e5c1496816f930919427fd671d20fb",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-4/session/instrumentation.jsonl": "bd78b36f3222dbc412823ead3d50202eb765df5e341363190b10dc0563f5fb1b",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/lh_session/lh-5/session/instrumentation.jsonl": "cc473c240d7b8364b70747d3c9e25fc3bd0c7438ab617a2c352392633403b178",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_correction_then_restatement_ad61a11154fbabfd.json": "ad61a11154fbabfd2394fdcd297d71a3b96e7a38687c6dae09bb5ea4e860b400",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_fresh_fact_controls_5ed53221b0012dcc.json": "5ed53221b0012dcc80afe5d5092e169f29513d404791d27e62a098cea357c659",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_multi_hop_a_b_c_7621d7746e2ca835.json": "7621d7746e2ca8358c0b0a9e3a737ad7eccc16e8060eb160045319d65b2ed5cd",
+    "/mnt/ForgeRealm/GraftRepository/artifacts/grm_wc1_opus/runs/w96/sup_short_correction_long_competitor_c4a9170fef1de770.json": "c4a9170fef1de770894fc381e1a1cbf2b1e0f9e69e3bfc4e8b45c1ed06eba559"
+  },
+  "registration_sha256": "8a3a27302c41f2980f883666657f7d871c5ad01d195953e017804717d3644eb0",
+  "rows": [
+    {
+      "battery": "sup",
+      "fixture_elapsed_seconds": 243.51198345422745,
+      "probe_seconds": 63.679953896,
+      "width": 96
+    },
+    {
+      "all_turn_seconds": 201.83638047147542,
+      "battery": "census_session",
+      "probe_count": 10,
+      "probe_seconds": 73.26999916275963,
+      "width": 96
+    },
+    {
+      "all_turn_seconds": 933.5984014193527,
+      "battery": "lh_session",
+      "probe_count": 14,
+      "probe_seconds": 101.20557415019721,
+      "width": 96
+    },
+    {
+      "battery": "sup",
+      "fixture_elapsed_seconds": 208.96639827871695,
+      "probe_seconds": 54.642194782000004,
+      "width": 256
+    },
+    {
+      "all_turn_seconds": 260.2183632119559,
+      "battery": "census_session",
+      "probe_count": 10,
+      "probe_seconds": 113.0156738110818,
+      "width": 256
+    },
+    {
+      "all_turn_seconds": 1174.3499803976156,
+      "battery": "lh_session",
+      "probe_count": 14,
+      "probe_seconds": 160.69163520727307,
+      "width": 256
+    }
+  ],
+  "verdict": "NON_FIT_REMAINS; do not lower initial estimates to force fit"
+}

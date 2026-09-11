@@ -1,0 +1,1687 @@
+{
+  "additional_existing_failures": 37,
+  "device_unavailable_failures": 10,
+  "evidence_class": "unmodified existing suite, CPU-selected collection; ten inadvertent real-device probes failed before computation",
+  "files": 66,
+  "known_calibration_failures": 11,
+  "known_calibration_logs": [
+    "cpu/051.log",
+    "cpu/052.log"
+  ],
+  "new_c2_tests": {
+    "log": "new_cpu_A6.log",
+    "passed": 21
+  },
+  "rows": [
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_apamq_fc_ppl.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 1,
+        "passed": 5,
+        "skipped": 0
+      },
+      "error_examples": [
+        "E               FileNotFoundError: missing apa_gemm receipt: /tmp/pytest-of-vader/pytest-808/test_summary_is_paired_and_con0/apa_gemm.json"
+      ],
+      "failure_nodeids": [
+        "FAILED tests/test_apamq_fc_ppl.py::test_summary_is_paired_and_contains_no_verdict"
+      ],
+      "file": "tests/test_apamq_fc_ppl.py",
+      "log": "artifacts/grm_c2/cpu/000.log",
+      "returncode": 1,
+      "seconds": 0.7669240431860089,
+      "sha256": "af1c5b6285d3e3645348359ce06a936b858ed6ea3864a09cbde36cab6fff02dc",
+      "summary_line": "1 failed, 5 passed in 0.22s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_deepseek_grm_hooks_static.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 4,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_deepseek_grm_hooks_static.py",
+      "log": "artifacts/grm_c2/cpu/001.log",
+      "returncode": 0,
+      "seconds": 0.8657023361884058,
+      "sha256": "d2910ba2c87cb4d457d78f20445cd32ee3a02b4df400acf4e6641580d8190340",
+      "summary_line": "4 passed, 2 warnings in 0.25s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_gpt_oss20b_e14_backend_fix.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 3,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_gpt_oss20b_e14_backend_fix.py",
+      "log": "artifacts/grm_c2/cpu/002.log",
+      "returncode": 0,
+      "seconds": 0.7666195980273187,
+      "sha256": "77d92cd56cd64a1a5b65adac4e344cc7fd9699faace17014c0a319c92f46082d",
+      "summary_line": "3 passed in 0.25s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_gpt_oss20b_grm_output_eval.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 11,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_gpt_oss20b_grm_output_eval.py",
+      "log": "artifacts/grm_c2/cpu/003.log",
+      "returncode": 0,
+      "seconds": 0.46519805025309324,
+      "sha256": "6a840c9afb8c0e0e613d2f47dddba1dbba0efc79f3d678114250febb27d74362",
+      "summary_line": "11 passed in 0.06s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_gpt_oss20b_realtext_ppl_gate.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 4,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_gpt_oss20b_realtext_ppl_gate.py",
+      "log": "artifacts/grm_c2/cpu/004.log",
+      "returncode": 0,
+      "seconds": 0.46490105893462896,
+      "sha256": "a00d95dfbc084b6eb22229f4a5b545b4452162a59797c0faa121535a79212580",
+      "summary_line": "4 passed in 0.04s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_graft_quant_format.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 5,
+        "passed": 17,
+        "skipped": 0
+      },
+      "error_examples": [
+        "E       RuntimeError: cudaMalloc failed: no CUDA-capable device is detected"
+      ],
+      "failure_nodeids": [
+        "FAILED tests/test_graft_quant_format.py::test_pack_node_default_path_unchanged",
+        "FAILED tests/test_graft_quant_format.py::test_pack_node_opt_in_produces_packed_payload",
+        "FAILED tests/test_graft_quant_format.py::test_unpack_node_roundtrips_default_and_packed",
+        "FAILED tests/test_graft_quant_format.py::test_unpack_node_fails_closed_on_unknown_format_version",
+        "FAILED tests/test_graft_quant_format.py::test_pack_node_save_load_npz_cycle_with_storage_bits"
+      ],
+      "file": "tests/test_graft_quant_format.py",
+      "log": "artifacts/grm_c2/cpu/005.log",
+      "returncode": 1,
+      "seconds": 0.7655814359895885,
+      "sha256": "d37e5f09d586b141b05d9299eb63622883f0f50fedf9b07b30d9c3e2f470cb6e",
+      "summary_line": "5 failed, 17 passed, 2 warnings in 0.35s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_adm1_3_dual_frame.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 9,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_adm1_3_dual_frame.py",
+      "log": "artifacts/grm_c2/cpu/006.log",
+      "returncode": 0,
+      "seconds": 0.5650553810410202,
+      "sha256": "6a88340df7ab23c5857910f29d31410e9b129dd341122a57f37e55fc89ea03c9",
+      "summary_line": "9 passed in 0.16s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_adm1_probe_adjudication.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 1,
+        "passed": 1,
+        "skipped": 0
+      },
+      "error_examples": [
+        "E       AssertionError: assert False"
+      ],
+      "failure_nodeids": [
+        "FAILED tests/test_grm_adm1_probe_adjudication.py::test_completed_diag_capture_is_exact_anchor_and_l2_noop"
+      ],
+      "file": "tests/test_grm_adm1_probe_adjudication.py",
+      "log": "artifacts/grm_c2/cpu/007.log",
+      "returncode": 1,
+      "seconds": 0.5154539230279624,
+      "sha256": "88f7328c60ba7dff1e8a0ec0346cc6e71de09f37b570c646e51b8ccab6735c1e",
+      "summary_line": "1 failed, 1 passed in 0.12s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_adm1_snapshot.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 1,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_adm1_snapshot.py",
+      "log": "artifacts/grm_c2/cpu/008.log",
+      "returncode": 0,
+      "seconds": 0.6172199593856931,
+      "sha256": "30a7201378444831ac4bd0d21db8db079adbeb11c6e7f9e26a35224b4317ed93",
+      "summary_line": "1 passed, 2 warnings in 0.20s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_admission.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 11,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_admission.py",
+      "log": "artifacts/grm_c2/cpu/009.log",
+      "returncode": 0,
+      "seconds": 0.6156390928663313,
+      "sha256": "aba605cf547b7e3cc6427e3345756860e9b4b514b806a3239a8dad64ae218bdc",
+      "summary_line": "11 passed, 2 warnings in 0.19s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_arena_step_rollback.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 2,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_arena_step_rollback.py",
+      "log": "artifacts/grm_c2/cpu/010.log",
+      "returncode": 0,
+      "seconds": 0.5650035217404366,
+      "sha256": "8402c03bc56ddf3d05a870f4b6c726a8c8da3c5d9b2b2bfe86d344bed4ad73de",
+      "summary_line": "2 passed, 2 warnings in 0.17s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_det1_11_achieved.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 41,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_det1_11_achieved.py",
+      "log": "artifacts/grm_c2/cpu/011.log",
+      "returncode": 0,
+      "seconds": 0.5150795052759349,
+      "sha256": "f0c01b771d4132ac9df2bcf1819965720246f49f9e91316a9256b62b86a93eed",
+      "summary_line": "41 passed in 0.16s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_det1_11_census.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 10,
+        "passed": 8,
+        "skipped": 0
+      },
+      "error_examples": [
+        "E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_det1/run_20260831T160525Z_2/registration_62cb6c09cbec211d.json'"
+      ],
+      "failure_nodeids": [
+        "FAILED tests/test_grm_det1_11_census.py::test_census_partitions_and_counts_the_population",
+        "FAILED tests/test_grm_det1_11_census.py::test_wrong_value_with_multiple_mounts_is_not_counted_as_single_mount",
+        "FAILED tests/test_grm_det1_11_census.py::test_writing_twice_keeps_exactly_one_receipt",
+        "FAILED tests/test_grm_det1_11_census.py::test_changed_evidence_authors_a_successor_naming_its_predecessor",
+        "FAILED tests/test_grm_det1_11_census.py::test_a_successor_is_authored_only_when_evidence_actually_drifted",
+        "FAILED tests/test_grm_det1_11_census.py::test_lineage_extends_across_several_drifts",
+        "FAILED tests/test_grm_det1_11_census.py::test_lineage_rejects_a_receipt_outside_the_chain",
+        "FAILED tests/test_grm_det1_11_census.py::test_lineage_rejects_two_originals",
+        "FAILED tests/test_grm_det1_11_census.py::test_lineage_rejects_a_fork - FileNo...",
+        "FAILED tests/test_grm_det1_11_census.py::test_census_receipt_is_titled_and_scoped_to_receipts_only"
+      ],
+      "file": "tests/test_grm_det1_11_census.py",
+      "log": "artifacts/grm_c2/cpu/012.log",
+      "returncode": 1,
+      "seconds": 1.0161065366119146,
+      "sha256": "5bace88ba2c2dc6a120e5cda5e4295ee4cf8e94616023616fd0d00fc9e305af5",
+      "summary_line": "10 failed, 8 passed in 0.61s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_det1_11_envelope_lineage.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 4,
+        "passed": 19,
+        "skipped": 2
+      },
+      "error_examples": [
+        "E       AssertionError: expected an append-only series of envelopes",
+        "E       IndexError: list index out of range"
+      ],
+      "failure_nodeids": [
+        "FAILED tests/test_grm_det1_11_envelope_lineage.py::test_lineage_contains_every_authored_envelope",
+        "FAILED tests/test_grm_det1_11_envelope_lineage.py::test_current_envelope_is_the_newest_lineage_member",
+        "FAILED tests/test_grm_det1_11_envelope_lineage.py::test_every_superseded_envelope_is_still_accepted",
+        "FAILED tests/test_grm_det1_11_envelope_lineage.py::test_a_tampered_record_for_a_real_member_is_rejected"
+      ],
+      "file": "tests/test_grm_det1_11_envelope_lineage.py",
+      "log": "artifacts/grm_c2/cpu/013.log",
+      "returncode": 1,
+      "seconds": 0.5679451171308756,
+      "sha256": "7fd80a9f183b627f5b39a63eebdae3fc2600b38fb0bdcb95f5f9dac9bdf0338e",
+      "summary_line": "4 failed, 19 passed, 2 skipped in 0.17s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_det1_3_snapshot.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 39,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_det1_3_snapshot.py",
+      "log": "artifacts/grm_c2/cpu/014.log",
+      "returncode": 0,
+      "seconds": 1.5195653107948601,
+      "sha256": "657649506c64256be0b417b1b45c81bb7dff8c51fc20879437dbb434afe00beb",
+      "summary_line": "39 passed in 1.12s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_det1_5_campaign.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 63,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_det1_5_campaign.py",
+      "log": "artifacts/grm_c2/cpu/015.log",
+      "returncode": 0,
+      "seconds": 0.6157181807793677,
+      "sha256": "c0eeaa8ebbfe6f9cb519de06726e0746a660ac45943b70db5af51437c88014e7",
+      "summary_line": "63 passed in 0.20s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_det1_7_registry.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 23,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_det1_7_registry.py",
+      "log": "artifacts/grm_c2/cpu/016.log",
+      "returncode": 0,
+      "seconds": 0.7667653891257942,
+      "sha256": "02fefd51666fb50475f546676e652a782df633ba5db9348e2f8c3dcddaa2826d",
+      "summary_line": "23 passed in 0.37s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_det1_7_source_auth.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 6,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_det1_7_source_auth.py",
+      "log": "artifacts/grm_c2/cpu/017.log",
+      "returncode": 0,
+      "seconds": 0.5649981433525681,
+      "sha256": "90938eb99f6e9883d2cea26507b9cf7d10939651a834da1233047d54adfdb5a4",
+      "summary_line": "6 passed in 0.14s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_det1_8_source_auth.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 6,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_det1_8_source_auth.py",
+      "log": "artifacts/grm_c2/cpu/018.log",
+      "returncode": 0,
+      "seconds": 0.615559842903167,
+      "sha256": "bfb71ff885b655792c7c90000cbed5d04bcd9a434d347321bd152b7dda72f67e",
+      "summary_line": "6 passed in 0.23s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_det1_9_findings.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 5,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_det1_9_findings.py",
+      "log": "artifacts/grm_c2/cpu/019.log",
+      "returncode": 0,
+      "seconds": 0.6172839803621173,
+      "sha256": "f40dc4889a5251e74fd5c12a6f6381b5832ccec301af19e7358daf1a4ed3a52b",
+      "summary_line": "5 passed in 0.20s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_det1_9_source_auth.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 7,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_det1_9_source_auth.py",
+      "log": "artifacts/grm_c2/cpu/020.log",
+      "returncode": 0,
+      "seconds": 0.7153237159363925,
+      "sha256": "4aafbc5ca95f67cbeae74d395cc35b529399cc131f8a7f47c2031a58cc637af8",
+      "summary_line": "7 passed in 0.31s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_det1_baseline_registry.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 7,
+        "passed": 1,
+        "skipped": 0
+      },
+      "error_examples": [
+        "E           scripts.grm_det1_baseline_registry.BaselineRegistryError: active registration receipt hash/size record does not validate"
+      ],
+      "failure_nodeids": [
+        "FAILED tests/test_grm_det1_baseline_registry.py::test_live_harbor_registration_is_post_adm2",
+        "FAILED tests/test_grm_det1_baseline_registry.py::test_served_comparison_distinguishes_live_retired_and_leak",
+        "FAILED tests/test_grm_det1_baseline_registry.py::test_orion_cross_model_uses_det_fixture_semantics_not_producer_bytes",
+        "FAILED tests/test_grm_det1_baseline_registry.py::test_cross_model_value_semantics_normalize_emphasis_and_hyphen_glyphs",
+        "FAILED tests/test_grm_det1_baseline_registry.py::test_same_model_e2e_contract_remains_exact_bytes_and_ordered_mounts",
+        "FAILED tests/test_grm_det1_baseline_registry.py::test_registry_source_hash_drift_fails_closed",
+        "FAILED tests/test_grm_det1_baseline_registry.py::test_comparator_and_fixture_identity_tamper_fail_closed"
+      ],
+      "file": "tests/test_grm_det1_baseline_registry.py",
+      "log": "artifacts/grm_c2/cpu/021.log",
+      "returncode": 1,
+      "seconds": 0.767313492950052,
+      "sha256": "70e04b67799c40ae01e9e2ce9bf88107ca1df84423c294184c3704223513473c",
+      "summary_line": "7 failed, 1 passed in 0.29s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_eb1_ephemeral_frame.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 44,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_eb1_ephemeral_frame.py",
+      "log": "artifacts/grm_c2/cpu/022.log",
+      "returncode": 0,
+      "seconds": 6.8356489930301905,
+      "sha256": "9183b4e0fedc9a3548d6d83df4726bac864da7c5503920a1941559f18fd502ab",
+      "summary_line": "44 passed, 2 warnings in 4.74s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_ensure_h_error.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 3,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_ensure_h_error.py",
+      "log": "artifacts/grm_c2/cpu/023.log",
+      "returncode": 0,
+      "seconds": 0.6695942291989923,
+      "sha256": "3d427f1578e97dce6b13a8a9783cf30e8e344d220eae3f5ecfef9e8d3b698b3d",
+      "summary_line": "3 passed, 2 warnings in 0.19s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_fold_recovered_guard.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 11,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_fold_recovered_guard.py",
+      "log": "artifacts/grm_c2/cpu/024.log",
+      "returncode": 0,
+      "seconds": 0.8208589958958328,
+      "sha256": "00e950db99bbf24fe26239c701571016280cdba7eaafb5929c1ffb31b8226f23",
+      "summary_line": "11 passed, 2 warnings in 0.31s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_importance_counterfactual.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 15,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_importance_counterfactual.py",
+      "log": "artifacts/grm_c2/cpu/025.log",
+      "returncode": 0,
+      "seconds": 0.7220753352157772,
+      "sha256": "3505b1c4057954c7b899990d26c3bcdf5c6a1192ff677524c8c1d21a2047d4f7",
+      "summary_line": "15 passed in 0.16s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_importance_g1g2.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 56,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_importance_g1g2.py",
+      "log": "artifacts/grm_c2/cpu/026.log",
+      "returncode": 0,
+      "seconds": 0.715399534907192,
+      "sha256": "d9d26014f20e7a44bc6b0ab0f5b46661d9890ca756b2786f0d38f8eb2063df10",
+      "summary_line": "56 passed in 0.25s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_importance_salience.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 29,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_importance_salience.py",
+      "log": "artifacts/grm_c2/cpu/027.log",
+      "returncode": 0,
+      "seconds": 0.6671724547632039,
+      "sha256": "314cfdb5203e95f5ca1accbd01f2fb7407dbc0ad30523fbf81f5445c042fd036",
+      "summary_line": "29 passed, 2 warnings in 0.25s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_importance_telemetry.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 5,
+        "passed": 7,
+        "skipped": 0
+      },
+      "error_examples": [
+        "E       RuntimeError: cudaMalloc failed: no CUDA-capable device is detected"
+      ],
+      "failure_nodeids": [
+        "FAILED tests/test_grm_importance_telemetry.py::test_telemetry_flag_defaults_off_and_accumulator_starts_none",
+        "FAILED tests/test_grm_importance_telemetry.py::test_reset_telemetry_clears_accumulator",
+        "FAILED tests/test_grm_importance_telemetry.py::test_accumulate_telemetry_grows_without_copying_stale_tail",
+        "FAILED tests/test_grm_importance_telemetry.py::test_accumulate_telemetry_shrink_restarts_clean_no_crash",
+        "FAILED tests/test_grm_importance_telemetry.py::test_accumulate_telemetry_shrink_then_grow_sequence"
+      ],
+      "file": "tests/test_grm_importance_telemetry.py",
+      "log": "artifacts/grm_c2/cpu/028.log",
+      "returncode": 1,
+      "seconds": 0.8160824333317578,
+      "sha256": "67c32cc38ca01af30640c853c5e906f46271105ff1e6320ac23297ea034845ea",
+      "summary_line": "5 failed, 7 passed, 2 warnings in 0.40s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_lsr_p2a_fit_honesty.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 20,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_lsr_p2a_fit_honesty.py",
+      "log": "artifacts/grm_c2/cpu/029.log",
+      "returncode": 0,
+      "seconds": 0.6161409257911146,
+      "sha256": "800c1c0c3e9ef7915e631f41f733a4e735b6a6c72d5e18ec17bacc9569af1419",
+      "summary_line": "20 passed, 2 warnings in 0.19s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_lsr_p2a_probe_path.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 9,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_lsr_p2a_probe_path.py",
+      "log": "artifacts/grm_c2/cpu/030.log",
+      "returncode": 0,
+      "seconds": 5.926711221691221,
+      "sha256": "c4b0a11fd399bfda4e3f728629e918acfabcf4b3125a9010a74dfd2de12e9096",
+      "summary_line": "9 passed, 2 warnings in 4.23s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_lsr_p2b_e2e_fixture.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 5,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_lsr_p2b_e2e_fixture.py",
+      "log": "artifacts/grm_c2/cpu/031.log",
+      "returncode": 0,
+      "seconds": 6.077251183334738,
+      "sha256": "70332fa4146b9229132987a7ca99c97216a759320f9b450a8a98a045bd4929ab",
+      "summary_line": "5 passed, 2 warnings in 4.29s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_lsr_p2b_route_receipt.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 14,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_lsr_p2b_route_receipt.py",
+      "log": "artifacts/grm_c2/cpu/032.log",
+      "returncode": 0,
+      "seconds": 0.7674187840893865,
+      "sha256": "f9fe4eaa3427012b04cf0d0dd69dd1d23fdc9eca3fc4dcc644224b610e97147c",
+      "summary_line": "14 passed, 2 warnings in 0.26s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_lsr_p2c_split_descent.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 39,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_lsr_p2c_split_descent.py",
+      "log": "artifacts/grm_c2/cpu/033.log",
+      "returncode": 0,
+      "seconds": 6.932768905069679,
+      "sha256": "574bb2a600caaacd3b0d8464c8d3d00f54987665743210efd97aeb21dcdcd2c2",
+      "summary_line": "39 passed, 2 warnings in 4.86s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_native_runtime.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 121,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_native_runtime.py",
+      "log": "artifacts/grm_c2/cpu/034.log",
+      "returncode": 0,
+      "seconds": 280.84537322074175,
+      "sha256": "ca92a2d7c560af83a26b4cb8d03a0ecbf38e2c98e1009c1509ef99c705a7232b",
+      "summary_line": "121 passed, 2 warnings in 280.19s (0:04:40)"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_probe_ladder.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 15,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_probe_ladder.py",
+      "log": "artifacts/grm_c2/cpu/035.log",
+      "returncode": 0,
+      "seconds": 0.46494785882532597,
+      "sha256": "854be6b5f038a885da628bd4b089fcd4e10a1c1288488c7b13fd5363f0ce3251",
+      "summary_line": "15 passed in 0.05s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_route_seams_gate.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 2,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_route_seams_gate.py",
+      "log": "artifacts/grm_c2/cpu/036.log",
+      "returncode": 0,
+      "seconds": 0.4649122799746692,
+      "sha256": "fa9cd0e25dcc1e230610463c80c04cc48c6c326debe3521403b94a8e7f25f4ae",
+      "summary_line": "2 passed in 0.04s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_router_baseline.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 21,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_router_baseline.py",
+      "log": "artifacts/grm_c2/cpu/037.log",
+      "returncode": 0,
+      "seconds": 84.54646323807538,
+      "sha256": "c7f00ebe786028d65e3197ef2b1215ece855dabe76372d7d4a336f9b26b35f78",
+      "summary_line": "21 passed in 84.11s (0:01:24)"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_rs1_read_strength.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 0,
+        "skipped": 34
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_rs1_read_strength.py",
+      "log": "artifacts/grm_c2/cpu/038.log",
+      "returncode": 0,
+      "seconds": 0.5650548259727657,
+      "sha256": "72b4506eb6ef0acf4782142f0940401c621b9d3fea19bf868c30ccc5462ab317",
+      "summary_line": "34 skipped in 0.15s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_rs2_mount_read.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 0,
+        "skipped": 32
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_rs2_mount_read.py",
+      "log": "artifacts/grm_c2/cpu/039.log",
+      "returncode": 0,
+      "seconds": 0.665672168135643,
+      "sha256": "b76f3d59b448ef10634bc6b474b5a2fe4d58de784548a6f6f39fe533d2e3a6d3",
+      "summary_line": "32 skipped in 0.21s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_rs3_capture_pin_seat.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 64,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_rs3_capture_pin_seat.py",
+      "log": "artifacts/grm_c2/cpu/040.log",
+      "returncode": 0,
+      "seconds": 0.7658803169615567,
+      "sha256": "70bef384fbcf6880a04f878ab8e74a01e288a0572df1a5435566dbd967400fda",
+      "summary_line": "64 passed, 2 warnings in 0.28s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_rs3_tables.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 0,
+        "skipped": 24
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_rs3_tables.py",
+      "log": "artifacts/grm_c2/cpu/041.log",
+      "returncode": 0,
+      "seconds": 0.6683188960887492,
+      "sha256": "ad6cb070450eed4e9a68d6340855552acad8852f443ffb5d1689b4d3d275d03d",
+      "summary_line": "24 skipped in 0.16s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_rs4_baseline_and_gates.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 2,
+        "passed": 18,
+        "skipped": 5
+      },
+      "error_examples": [
+        "E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_rs3/registration.json'"
+      ],
+      "failure_nodeids": [
+        "FAILED tests/test_grm_rs4_baseline_and_gates.py::test_residual_table_reports_both_framings",
+        "FAILED tests/test_grm_rs4_baseline_and_gates.py::test_residual_table_ignores_non_registered_rows"
+      ],
+      "file": "tests/test_grm_rs4_baseline_and_gates.py",
+      "log": "artifacts/grm_c2/cpu/042.log",
+      "returncode": 1,
+      "seconds": 0.7173251332715154,
+      "sha256": "894a34bfdc033535fca470887ca1d8fea0944f7bb809f4ffcd612be9f85049fa",
+      "summary_line": "2 failed, 18 passed, 5 skipped in 0.26s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_rs4_row_split.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 27,
+        "skipped": 5
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_rs4_row_split.py",
+      "log": "artifacts/grm_c2/cpu/043.log",
+      "returncode": 0,
+      "seconds": 0.615720686968416,
+      "sha256": "eb875977b17c6fedc05cf325dfe2496bf9539f35f0a78b3a88c833284fad7018",
+      "summary_line": "27 passed, 5 skipped in 0.17s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_rt1_split_child_routing.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 38,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_rt1_split_child_routing.py",
+      "log": "artifacts/grm_c2/cpu/044.log",
+      "returncode": 0,
+      "seconds": 0.7190959369763732,
+      "sha256": "0c96e01dafd32fc275aaf2dfad1184fa8b967bc95a9e86d8373c755d2f0f3d5f",
+      "summary_line": "38 passed, 2 warnings in 0.25s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_runtime_lifecycle.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 101,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_runtime_lifecycle.py",
+      "log": "artifacts/grm_c2/cpu/045.log",
+      "returncode": 0,
+      "seconds": 133.51352326292545,
+      "sha256": "3f8fc766ef433b00ec955bc833d97c1bc3f3a7dbb5cbaf94cdfd8dddb051058e",
+      "summary_line": "101 passed, 2 warnings in 133.05s (0:02:13)"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_s4_demotion.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 16,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_s4_demotion.py",
+      "log": "artifacts/grm_c2/cpu/046.log",
+      "returncode": 0,
+      "seconds": 0.6657175882719457,
+      "sha256": "2611f3db65a6f03113f52d884a342c5deb66f820c6bd32147cbd3b2e36f2c2f0",
+      "summary_line": "16 passed, 2 warnings in 0.21s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_s4_fold_order.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 15,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_s4_fold_order.py",
+      "log": "artifacts/grm_c2/cpu/047.log",
+      "returncode": 0,
+      "seconds": 0.765346119645983,
+      "sha256": "3d0f96def457db5b086ee7ee77360237cda4a4a9e2985ee272e6eab580d44da1",
+      "summary_line": "15 passed, 2 warnings in 0.23s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_s4_ledger.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 23,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_s4_ledger.py",
+      "log": "artifacts/grm_c2/cpu/048.log",
+      "returncode": 0,
+      "seconds": 0.7659182599745691,
+      "sha256": "5161edf2e28295313ba817548c2d7a160dde255e38439fbe4977815252578247",
+      "summary_line": "23 passed, 2 warnings in 0.29s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_sc1_1_grounding_glyphs.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 164,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_sc1_1_grounding_glyphs.py",
+      "log": "artifacts/grm_c2/cpu/049.log",
+      "returncode": 0,
+      "seconds": 6.934441267047077,
+      "sha256": "5018ebb8de544b0dfe8334d5b0479153191cccf6436c86a1cdc00e6535ba6548",
+      "summary_line": "164 passed, 2 warnings in 4.82s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_sc1_2_e2e_pairs.py"
+      ],
+      "counts": {
+        "errors": 20,
+        "failed": 12,
+        "passed": 15,
+        "skipped": 0
+      },
+      "error_examples": [
+        "E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-4/attempt_001/session/instrumentation.jsonl'",
+        "E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_shards/e2e-1/attempt_001/session/repository/manifest.json'",
+        "E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/eval/mechanistic_rows.jsonl'",
+        "E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_sc1_1/sc1_1_g2_summary_c1baaea3f682e7cc.json'",
+        "E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_sc1_2/registration.json'"
+      ],
+      "failure_nodeids": [
+        "FAILED tests/test_grm_sc1_2_e2e_pairs.py::test_every_pair_has_both_arms_in_the_frozen_rows",
+        "FAILED tests/test_grm_sc1_2_e2e_pairs.py::test_pair_selection_requires_node_counts_and_never_guesses_them",
+        "FAILED tests/test_grm_sc1_2_e2e_pairs.py::test_sc1_1_rows_carry_into_the_table_unchanged",
+        "FAILED tests/test_grm_sc1_2_e2e_pairs.py::test_sc1_1_unmeasurable_arm_is_excluded_not_counted_as_a_miss",
+        "FAILED tests/test_grm_sc1_2_e2e_pairs.py::test_ten_pair_table_has_ten_rows_when_all_seven_are_measured",
+        "FAILED tests/test_grm_sc1_2_e2e_pairs.py::test_an_unreproduced_pair_is_excluded_from_numerator_and_denominator",
+        "FAILED tests/test_grm_sc1_2_e2e_pairs.py::test_the_floor_rule_never_pads_the_denominator_to_ten",
+        "FAILED tests/test_grm_sc1_2_e2e_pairs.py::test_pass_rule_is_recall_ge_0_9_and_fp_le_1",
+        "FAILED tests/test_grm_sc1_2_e2e_pairs.py::test_recovery_is_reported_never_gated",
+        "FAILED tests/test_grm_sc1_2_e2e_pairs.py::test_table_names_the_two_instruments_rather_than_blending_them",
+        "FAILED tests/test_grm_sc1_2_e2e_pairs.py::test_registration_exists_and_carries_the_race_threshold",
+        "FAILED tests/test_grm_sc1_2_e2e_pairs.py::test_registration_names_the_cross_process_weakening",
+        "ERROR tests/test_grm_sc1_2_e2e_pairs.py::test_seven_e2e_pairs_are_selected_and_all_certified",
+        "ERROR tests/test_grm_sc1_2_e2e_pairs.py::test_pair_selection_refuses_a_missing_arm",
+        "ERROR tests/test_grm_sc1_2_e2e_pairs.py::test_pair_selection_refuses_a_non_certified_family",
+        "ERROR tests/test_grm_sc1_2_e2e_pairs.py::test_pair_selection_refuses_a_planted_miss_that_is_not_a_positive",
+        "ERROR tests/test_grm_sc1_2_e2e_pairs.py::test_pair_selection_refuses_a_plant_alias_outside_its_prefix",
+        "ERROR tests/test_grm_sc1_2_e2e_pairs.py::test_probe_node_counts_match_the_hand_derived_values",
+        "ERROR tests/test_grm_sc1_2_e2e_pairs.py::test_fixture_id_number_is_NOT_the_node_index",
+        "ERROR tests/test_grm_sc1_2_e2e_pairs.py::test_every_plant_alias_lies_inside_its_own_prefix",
+        "ERROR tests/test_grm_sc1_2_e2e_pairs.py::test_every_lived_ranking_lies_inside_its_own_prefix",
+        "ERROR tests/test_grm_sc1_2_e2e_pairs.py::test_lineage_derivation_reproduces_every_frozen_manifest",
+        "ERROR tests/test_grm_sc1_2_e2e_pairs.py::test_lineage_derivation_is_prefix_sensitive",
+        "ERROR tests/test_grm_sc1_2_e2e_pairs.py::test_supersedes_is_deposit_final_across_every_frozen_shard",
+        "ERROR tests/test_grm_sc1_2_e2e_pairs.py::test_truncated_manifest_keeps_the_prefix_and_rebuilds_the_back_edges",
+        "ERROR tests/test_grm_sc1_2_e2e_pairs.py::test_truncated_manifest_drops_the_native_checkpoint",
+        "ERROR tests/test_grm_sc1_2_e2e_pairs.py::test_truncated_manifest_refuses_a_prefix_longer_than_its_source",
+        "ERROR tests/test_grm_sc1_2_e2e_pairs.py::test_truncated_manifest_applies_the_no_fold_pins",
+        "ERROR tests/test_grm_sc1_2_e2e_pairs.py::test_unpinned_no_fold_pairs_are_named",
+        "ERROR tests/test_grm_sc1_2_e2e_pairs.py::test_snapshot_manifests_for_all_seven_pairs_exist_and_are_lived",
+        "ERROR tests/test_grm_sc1_2_e2e_pairs.py::test_lived_rows_match_the_snapshot_the_pair_forks_from",
+        "ERROR tests/test_grm_sc1_2_e2e_pairs.py::test_planted_miss_arms_are_all_single_mount_withholdings"
+      ],
+      "file": "tests/test_grm_sc1_2_e2e_pairs.py",
+      "log": "artifacts/grm_c2/cpu/050.log",
+      "returncode": 1,
+      "seconds": 2.120791289024055,
+      "sha256": "9a99dcc3c0be71cd724819dbe6978ff11c0dd0714512aebdf0194810b8bbc7e6",
+      "summary_line": "12 failed, 15 passed, 20 errors in 1.59s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_sc1_demand_loop.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 1,
+        "passed": 50,
+        "skipped": 0
+      },
+      "error_examples": [
+        "E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json'"
+      ],
+      "failure_nodeids": [
+        "FAILED tests/test_grm_sc1_demand_loop.py::test_registered_threshold_is_the_race_constant_not_a_refit"
+      ],
+      "file": "tests/test_grm_sc1_demand_loop.py",
+      "log": "artifacts/grm_c2/cpu/051.log",
+      "returncode": 1,
+      "seconds": 6.076365818735212,
+      "sha256": "4dacfb720228218e5e9aa0f4e5ecb29e48f1c9792bc85eab9b3e0a2d58464ee3",
+      "summary_line": "1 failed, 50 passed, 2 warnings in 4.36s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_sc2_calibration_early_abort.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 10,
+        "passed": 53,
+        "skipped": 0
+      },
+      "error_examples": [
+        "E           scripts.grm_sc2_calibration.CalibrationError: missing persisted rows: /mnt/ForgeRealm/wt/grm-c2/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/mechanistic_rows.jsonl",
+        "E           scripts.grm_sc2_calibration.CalibrationError: missing persisted receipt: /mnt/ForgeRealm/wt/grm-c2/artifacts/grm_det1/run_20260831T160525Z_2/det1_4/campaign/calibration/thresholds_2149a44b6136fd1b.json",
+        "E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-c2/artifacts/grm_sc2/registration.json'"
+      ],
+      "failure_nodeids": [
+        "FAILED tests/test_grm_sc2_calibration_early_abort.py::test_envelope_rule_reproduces_the_frozen_det1_threshold_exactly",
+        "FAILED tests/test_grm_sc2_calibration_early_abort.py::test_minima_verdict_equals_detector_decision_on_every_frozen_row",
+        "FAILED tests/test_grm_sc2_calibration_early_abort.py::test_fire_index_matches_first_strictly_below_on_frozen_rows",
+        "FAILED tests/test_grm_sc2_calibration_early_abort.py::test_registered_split_is_deterministic_across_repeated_runs",
+        "FAILED tests/test_grm_sc2_calibration_early_abort.py::test_split_sets_are_non_empty_and_match_the_registration",
+        "FAILED tests/test_grm_sc2_calibration_early_abort.py::test_held_out_contains_the_current_false_fire",
+        "FAILED tests/test_grm_sc2_calibration_early_abort.py::test_sc1_2_arm0_rows_fold_into_the_race_rows_losslessly",
+        "FAILED tests/test_grm_sc2_calibration_early_abort.py::test_the_solace_instrument_disagreement_is_carried_not_collapsed",
+        "FAILED tests/test_grm_sc2_calibration_early_abort.py::test_planted_rows_are_all_exactly_zero_mass",
+        "FAILED tests/test_grm_sc2_calibration_early_abort.py::test_the_candidate_is_the_envelope_over_the_calibration_set"
+      ],
+      "file": "tests/test_grm_sc2_calibration_early_abort.py",
+      "log": "artifacts/grm_c2/cpu/052.log",
+      "returncode": 1,
+      "seconds": 1.0209084623493254,
+      "sha256": "dafde93be10da96e799dcb972515a8775dffc65b20f3eeedada76b3aac56796d",
+      "summary_line": "10 failed, 53 passed, 2 warnings in 0.57s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_scout_fix1_demand.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 12,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_scout_fix1_demand.py",
+      "log": "artifacts/grm_c2/cpu/053.log",
+      "returncode": 0,
+      "seconds": 0.6159682082943618,
+      "sha256": "9e21a08a152d11699f40bfd5d46d6f2e945a59a605ef1cdab4054cc88a6011c5",
+      "summary_line": "12 passed, 2 warnings in 0.20s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_scout_fix1_manifest.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 4,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_scout_fix1_manifest.py",
+      "log": "artifacts/grm_c2/cpu/054.log",
+      "returncode": 0,
+      "seconds": 0.6662426376715302,
+      "sha256": "e8c3683ded8ca592ed17007f96e34d3529da0a6fd78be3fd95c688e8307d422e",
+      "summary_line": "4 passed, 2 warnings in 0.24s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_scout_fix1_receipt.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 3,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_scout_fix1_receipt.py",
+      "log": "artifacts/grm_c2/cpu/055.log",
+      "returncode": 0,
+      "seconds": 0.41458339570090175,
+      "sha256": "86288ee89a493b657a4f02c2118272c4f6a9a7afa049f10741e60f3a564db934",
+      "summary_line": "3 passed in 0.04s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_scout_fix1_wc1.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 4,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_scout_fix1_wc1.py",
+      "log": "artifacts/grm_c2/cpu/056.log",
+      "returncode": 0,
+      "seconds": 0.565136895980686,
+      "sha256": "566b533769efda184c621fadcbb3499a3de7b732897627c27b430e8565082bbb",
+      "summary_line": "4 passed in 0.14s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_supersession_battery.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 21,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_supersession_battery.py",
+      "log": "artifacts/grm_c2/cpu/057.log",
+      "returncode": 0,
+      "seconds": 0.7155126198194921,
+      "sha256": "94aa2628e5dcc206bdadd2f42ec948ea27ea138d086490fa58fd7dea7ab1a51a",
+      "summary_line": "21 passed, 2 warnings in 0.25s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_three_pass.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 7,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_three_pass.py",
+      "log": "artifacts/grm_c2/cpu/058.log",
+      "returncode": 0,
+      "seconds": 0.6155262528918684,
+      "sha256": "402de0ed9a3e1e4a88d967bb2cbc6e407215bff314480031a33e9148bbc1f5cf",
+      "summary_line": "7 passed, 2 warnings in 0.20s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_grm_wc1_sweep.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 39,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_grm_wc1_sweep.py",
+      "log": "artifacts/grm_c2/cpu/059.log",
+      "returncode": 0,
+      "seconds": 0.41492143413051963,
+      "sha256": "6a1e34b05ed4242bd648f92a87741fa224da4cb15e2a98f9ff1b8ec8d0f6e6a8",
+      "summary_line": "39 passed in 0.07s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_lsr_p2c_1_census.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 0,
+        "skipped": 46
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_lsr_p2c_1_census.py",
+      "log": "artifacts/grm_c2/cpu/060.log",
+      "returncode": 0,
+      "seconds": 0.4646684783510864,
+      "sha256": "7b89e09d565d3dd4993460b2e89a3447f024fbd78b7bed5e48907fe1c106dc79",
+      "summary_line": "46 skipped in 0.11s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_qwen38_cpu.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 38,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_qwen38_cpu.py",
+      "log": "artifacts/grm_c2/cpu/061.log",
+      "returncode": 0,
+      "seconds": 2.619837428908795,
+      "sha256": "965380009fed8656735632fa408a3565c9d19eb267b392f574ca159045c1569a",
+      "summary_line": "38 passed, 2 warnings in 1.55s"
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_gpt_oss20b_context_ladder.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 6,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_gpt_oss20b_context_ladder.py",
+      "log": "artifacts/grm_c2/cpu/062.log",
+      "returncode": 0,
+      "seconds": 0.4647293076850474,
+      "sha256": "efb4cc1ce219481f3402d2af55e9136236d8c64373d15989442ebcea41df9cb3",
+      "summary_line": "6 passed in 0.07s",
+      "targets": [
+        "tests/test_gpt_oss20b_context_ladder.py"
+      ]
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_gqa_ragged_cuda_bank.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 20,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_gqa_ragged_cuda_bank.py",
+      "log": "artifacts/grm_c2/cpu/063.log",
+      "returncode": 0,
+      "seconds": 0.7152206026948988,
+      "sha256": "69ab16d3921de98ed80a0b42322e5eaeed9995b0e8af6580324047d5c55e2a03",
+      "summary_line": "20 passed, 2 warnings in 0.25s",
+      "targets": [
+        "tests/test_gqa_ragged_cuda_bank.py"
+      ]
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_qwen35_translation_poc.py"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 39,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_qwen35_translation_poc.py",
+      "log": "artifacts/grm_c2/cpu/064.log",
+      "returncode": 0,
+      "seconds": 0.9163843127898872,
+      "sha256": "4babb103166528cc3865bdd89f5c99dbf62a24521b5fdb2952a8c96a0524447b",
+      "summary_line": "39 passed, 2 warnings in 0.51s",
+      "targets": [
+        "tests/test_qwen35_translation_poc.py"
+      ]
+    },
+    {
+      "command": [
+        "/usr/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_gpt_oss20b_scaffold.py::test_gpt_oss_config_parses_pinned_metadata",
+        "tests/test_gpt_oss20b_scaffold.py::test_resolve_gpt_oss_attention_mode_scopes_apa_to_full_layers",
+        "tests/test_gpt_oss20b_scaffold.py::test_gpt_oss_grm_dialect_uses_native_gqa_remount_profile",
+        "tests/test_gpt_oss20b_scaffold.py::test_mxfp4_dequantize_blocks_matches_reference_layout",
+        "tests/test_gpt_oss20b_scaffold.py::test_gpt_oss_expert_activation_np_matches_formula",
+        "tests/test_gpt_oss20b_scaffold.py::test_gpt_oss_20b_tc_dialect_kwargs_key_off_type_name"
+      ],
+      "counts": {
+        "errors": 0,
+        "failed": 0,
+        "passed": 6,
+        "skipped": 0
+      },
+      "error_examples": [],
+      "failure_nodeids": [],
+      "file": "tests/test_gpt_oss20b_scaffold.py",
+      "log": "artifacts/grm_c2/cpu/065.log",
+      "returncode": 0,
+      "seconds": 0.6658777398988605,
+      "sha256": "68803e7bd8496a55b6f28a2917b7b4d5c2ee6b171774609e15e3d075a2ec7904",
+      "summary_line": "6 passed, 2 warnings in 0.21s",
+      "targets": [
+        "tests/test_gpt_oss20b_scaffold.py::test_gpt_oss_config_parses_pinned_metadata",
+        "tests/test_gpt_oss20b_scaffold.py::test_resolve_gpt_oss_attention_mode_scopes_apa_to_full_layers",
+        "tests/test_gpt_oss20b_scaffold.py::test_gpt_oss_grm_dialect_uses_native_gqa_remount_profile",
+        "tests/test_gpt_oss20b_scaffold.py::test_mxfp4_dequantize_blocks_matches_reference_layout",
+        "tests/test_gpt_oss20b_scaffold.py::test_gpt_oss_expert_activation_np_matches_formula",
+        "tests/test_gpt_oss20b_scaffold.py::test_gpt_oss_20b_tc_dialect_kwargs_key_off_type_name"
+      ]
+    }
+  ],
+  "scout_fix1_tests": {
+    "passed": 23
+  },
+  "skips": "existing test logic only; not counted as passes; some RS1/RS2/RS3/LSR lanes checked zero cases because their reference artifacts are absent",
+  "source_hashes_unchanged": true,
+  "timeouts": [],
+  "totals": {
+    "errors": 20,
+    "failed": 58,
+    "passed": 1480,
+    "skipped": 148
+  }
+}

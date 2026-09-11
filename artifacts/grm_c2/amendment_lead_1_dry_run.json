@@ -1,0 +1,808 @@
+{
+  "status": "READY_FOR_LEAD",
+  "measurement_status": "NOT_RUN",
+  "gpu_executed": false,
+  "cell_count": 52,
+  "cells": [
+    {
+      "battery": "sup",
+      "depends": [],
+      "estimate_seconds": 45,
+      "id": "profile-sup-correction_then_restatement",
+      "phase": "fresh",
+      "session": "correction_then_restatement",
+      "side": "profile"
+    },
+    {
+      "battery": "sup",
+      "depends": [],
+      "estimate_seconds": 45,
+      "id": "defaults-sup-correction_then_restatement",
+      "phase": "fresh",
+      "session": "correction_then_restatement",
+      "side": "defaults"
+    },
+    {
+      "battery": "sup",
+      "depends": [],
+      "estimate_seconds": 45,
+      "id": "profile-sup-fresh_fact_controls",
+      "phase": "fresh",
+      "session": "fresh_fact_controls",
+      "side": "profile"
+    },
+    {
+      "battery": "sup",
+      "depends": [],
+      "estimate_seconds": 45,
+      "id": "defaults-sup-fresh_fact_controls",
+      "phase": "fresh",
+      "session": "fresh_fact_controls",
+      "side": "defaults"
+    },
+    {
+      "battery": "sup",
+      "depends": [],
+      "estimate_seconds": 45,
+      "id": "profile-sup-multi_hop_a_b_c",
+      "phase": "fresh",
+      "session": "multi_hop_a_b_c",
+      "side": "profile"
+    },
+    {
+      "battery": "sup",
+      "depends": [],
+      "estimate_seconds": 45,
+      "id": "defaults-sup-multi_hop_a_b_c",
+      "phase": "fresh",
+      "session": "multi_hop_a_b_c",
+      "side": "defaults"
+    },
+    {
+      "battery": "sup",
+      "depends": [],
+      "estimate_seconds": 45,
+      "id": "profile-sup-short_correction_long_competitor",
+      "phase": "fresh",
+      "session": "short_correction_long_competitor",
+      "side": "profile"
+    },
+    {
+      "battery": "sup",
+      "depends": [],
+      "estimate_seconds": 45,
+      "id": "defaults-sup-short_correction_long_competitor",
+      "phase": "fresh",
+      "session": "short_correction_long_competitor",
+      "side": "defaults"
+    },
+    {
+      "battery": "sup",
+      "depends": [
+        "profile-sup-correction_then_restatement",
+        "profile-sup-fresh_fact_controls",
+        "profile-sup-multi_hop_a_b_c",
+        "profile-sup-short_correction_long_competitor"
+      ],
+      "estimate_seconds": 55,
+      "id": "profile-sup-restart-0",
+      "phase": "restart",
+      "probes": [
+        "sup_harbor_restatement",
+        "sup_reserve_juniper_pass",
+        "sup_praxis_fresh",
+        "sup_solace_fresh"
+      ],
+      "side": "profile"
+    },
+    {
+      "battery": "sup",
+      "depends": [
+        "defaults-sup-correction_then_restatement",
+        "defaults-sup-fresh_fact_controls",
+        "defaults-sup-multi_hop_a_b_c",
+        "defaults-sup-short_correction_long_competitor"
+      ],
+      "estimate_seconds": 55,
+      "id": "defaults-sup-restart-0",
+      "phase": "restart",
+      "probes": [
+        "sup_harbor_restatement",
+        "sup_reserve_juniper_pass",
+        "sup_praxis_fresh",
+        "sup_solace_fresh"
+      ],
+      "side": "defaults"
+    },
+    {
+      "battery": "sup",
+      "depends": [
+        "profile-sup-correction_then_restatement",
+        "profile-sup-fresh_fact_controls",
+        "profile-sup-multi_hop_a_b_c",
+        "profile-sup-short_correction_long_competitor"
+      ],
+      "estimate_seconds": 55,
+      "id": "profile-sup-restart-1",
+      "phase": "restart",
+      "probes": [
+        "sup_reserve_tundra_ledger",
+        "sup_lumen_head",
+        "sup_reserve_meridian_docket",
+        "sup_orion_current"
+      ],
+      "side": "profile"
+    },
+    {
+      "battery": "sup",
+      "depends": [
+        "defaults-sup-correction_then_restatement",
+        "defaults-sup-fresh_fact_controls",
+        "defaults-sup-multi_hop_a_b_c",
+        "defaults-sup-short_correction_long_competitor"
+      ],
+      "estimate_seconds": 55,
+      "id": "defaults-sup-restart-1",
+      "phase": "restart",
+      "probes": [
+        "sup_reserve_tundra_ledger",
+        "sup_lumen_head",
+        "sup_reserve_meridian_docket",
+        "sup_orion_current"
+      ],
+      "side": "defaults"
+    },
+    {
+      "battery": "sup",
+      "depends": [
+        "profile-sup-correction_then_restatement",
+        "profile-sup-fresh_fact_controls",
+        "profile-sup-multi_hop_a_b_c",
+        "profile-sup-short_correction_long_competitor"
+      ],
+      "estimate_seconds": 55,
+      "id": "profile-sup-restart-2",
+      "phase": "restart",
+      "probes": [
+        "sup_reserve_falcon_registry"
+      ],
+      "side": "profile"
+    },
+    {
+      "battery": "sup",
+      "depends": [
+        "defaults-sup-correction_then_restatement",
+        "defaults-sup-fresh_fact_controls",
+        "defaults-sup-multi_hop_a_b_c",
+        "defaults-sup-short_correction_long_competitor"
+      ],
+      "estimate_seconds": 55,
+      "id": "defaults-sup-restart-2",
+      "phase": "restart",
+      "probes": [
+        "sup_reserve_falcon_registry"
+      ],
+      "side": "defaults"
+    },
+    {
+      "battery": "census",
+      "depends": [],
+      "estimate_seconds": 55,
+      "id": "profile-census-0",
+      "index": 0,
+      "phase": "fresh",
+      "side": "profile",
+      "start": 0,
+      "stop": 8
+    },
+    {
+      "battery": "census",
+      "depends": [],
+      "estimate_seconds": 55,
+      "id": "defaults-census-0",
+      "index": 0,
+      "phase": "fresh",
+      "side": "defaults",
+      "start": 0,
+      "stop": 8
+    },
+    {
+      "battery": "census",
+      "depends": [
+        "profile-census-0"
+      ],
+      "estimate_seconds": 55,
+      "id": "profile-census-1",
+      "index": 1,
+      "phase": "fresh",
+      "side": "profile",
+      "start": 8,
+      "stop": 17
+    },
+    {
+      "battery": "census",
+      "depends": [
+        "defaults-census-0"
+      ],
+      "estimate_seconds": 55,
+      "id": "defaults-census-1",
+      "index": 1,
+      "phase": "fresh",
+      "side": "defaults",
+      "start": 8,
+      "stop": 17
+    },
+    {
+      "battery": "census",
+      "depends": [
+        "profile-census-1"
+      ],
+      "estimate_seconds": 55,
+      "id": "profile-census-2",
+      "index": 2,
+      "phase": "fresh",
+      "side": "profile",
+      "start": 17,
+      "stop": 25
+    },
+    {
+      "battery": "census",
+      "depends": [
+        "defaults-census-1"
+      ],
+      "estimate_seconds": 55,
+      "id": "defaults-census-2",
+      "index": 2,
+      "phase": "fresh",
+      "side": "defaults",
+      "start": 17,
+      "stop": 25
+    },
+    {
+      "battery": "census",
+      "depends": [
+        "profile-census-2"
+      ],
+      "estimate_seconds": 55,
+      "id": "profile-census-3",
+      "index": 3,
+      "phase": "fresh",
+      "side": "profile",
+      "start": 25,
+      "stop": 34
+    },
+    {
+      "battery": "census",
+      "depends": [
+        "defaults-census-2"
+      ],
+      "estimate_seconds": 55,
+      "id": "defaults-census-3",
+      "index": 3,
+      "phase": "fresh",
+      "side": "defaults",
+      "start": 25,
+      "stop": 34
+    },
+    {
+      "battery": "census",
+      "depends": [
+        "profile-census-0",
+        "profile-census-1",
+        "profile-census-2",
+        "profile-census-3"
+      ],
+      "estimate_seconds": 55,
+      "id": "profile-census-restart-0",
+      "phase": "restart",
+      "probes": [
+        "e2e_t05_orion_pin",
+        "e2e_t09_cypher_bridge",
+        "e2e_t13_orion_pin",
+        "e2e_t16_lyra_dock"
+      ],
+      "side": "profile"
+    },
+    {
+      "battery": "census",
+      "depends": [
+        "defaults-census-0",
+        "defaults-census-1",
+        "defaults-census-2",
+        "defaults-census-3"
+      ],
+      "estimate_seconds": 55,
+      "id": "defaults-census-restart-0",
+      "phase": "restart",
+      "probes": [
+        "e2e_t05_orion_pin",
+        "e2e_t09_cypher_bridge",
+        "e2e_t13_orion_pin",
+        "e2e_t16_lyra_dock"
+      ],
+      "side": "defaults"
+    },
+    {
+      "battery": "census",
+      "depends": [
+        "profile-census-0",
+        "profile-census-1",
+        "profile-census-2",
+        "profile-census-3"
+      ],
+      "estimate_seconds": 55,
+      "id": "profile-census-restart-1",
+      "phase": "restart",
+      "probes": [
+        "e2e_t19_nova_key",
+        "e2e_t22_mira_seal",
+        "e2e_t24_terra_port",
+        "e2e_t26_ember_code"
+      ],
+      "side": "profile"
+    },
+    {
+      "battery": "census",
+      "depends": [
+        "defaults-census-0",
+        "defaults-census-1",
+        "defaults-census-2",
+        "defaults-census-3"
+      ],
+      "estimate_seconds": 55,
+      "id": "defaults-census-restart-1",
+      "phase": "restart",
+      "probes": [
+        "e2e_t19_nova_key",
+        "e2e_t22_mira_seal",
+        "e2e_t24_terra_port",
+        "e2e_t26_ember_code"
+      ],
+      "side": "defaults"
+    },
+    {
+      "battery": "census",
+      "depends": [
+        "profile-census-0",
+        "profile-census-1",
+        "profile-census-2",
+        "profile-census-3"
+      ],
+      "estimate_seconds": 55,
+      "id": "profile-census-restart-2",
+      "phase": "restart",
+      "probes": [
+        "e2e_t30_atlas_tone",
+        "e2e_t33_polaris_mark"
+      ],
+      "side": "profile"
+    },
+    {
+      "battery": "census",
+      "depends": [
+        "defaults-census-0",
+        "defaults-census-1",
+        "defaults-census-2",
+        "defaults-census-3"
+      ],
+      "estimate_seconds": 55,
+      "id": "defaults-census-restart-2",
+      "phase": "restart",
+      "probes": [
+        "e2e_t30_atlas_tone",
+        "e2e_t33_polaris_mark"
+      ],
+      "side": "defaults"
+    },
+    {
+      "battery": "longhistory",
+      "depends": [],
+      "estimate_seconds": 55,
+      "id": "profile-longhistory-0",
+      "index": 0,
+      "phase": "fresh",
+      "side": "profile",
+      "start": 0,
+      "stop": 8
+    },
+    {
+      "battery": "longhistory",
+      "depends": [],
+      "estimate_seconds": 55,
+      "id": "defaults-longhistory-0",
+      "index": 0,
+      "phase": "fresh",
+      "side": "defaults",
+      "start": 0,
+      "stop": 8
+    },
+    {
+      "battery": "longhistory",
+      "depends": [
+        "profile-longhistory-0"
+      ],
+      "estimate_seconds": 55,
+      "id": "profile-longhistory-1",
+      "index": 1,
+      "phase": "fresh",
+      "side": "profile",
+      "start": 8,
+      "stop": 17
+    },
+    {
+      "battery": "longhistory",
+      "depends": [
+        "defaults-longhistory-0"
+      ],
+      "estimate_seconds": 55,
+      "id": "defaults-longhistory-1",
+      "index": 1,
+      "phase": "fresh",
+      "side": "defaults",
+      "start": 8,
+      "stop": 17
+    },
+    {
+      "battery": "longhistory",
+      "depends": [
+        "profile-longhistory-1"
+      ],
+      "estimate_seconds": 55,
+      "id": "profile-longhistory-2",
+      "index": 2,
+      "phase": "fresh",
+      "side": "profile",
+      "start": 17,
+      "stop": 25
+    },
+    {
+      "battery": "longhistory",
+      "depends": [
+        "defaults-longhistory-1"
+      ],
+      "estimate_seconds": 55,
+      "id": "defaults-longhistory-2",
+      "index": 2,
+      "phase": "fresh",
+      "side": "defaults",
+      "start": 17,
+      "stop": 25
+    },
+    {
+      "battery": "longhistory",
+      "depends": [
+        "profile-longhistory-2"
+      ],
+      "estimate_seconds": 55,
+      "id": "profile-longhistory-3",
+      "index": 3,
+      "phase": "fresh",
+      "side": "profile",
+      "start": 25,
+      "stop": 34
+    },
+    {
+      "battery": "longhistory",
+      "depends": [
+        "defaults-longhistory-2"
+      ],
+      "estimate_seconds": 55,
+      "id": "defaults-longhistory-3",
+      "index": 3,
+      "phase": "fresh",
+      "side": "defaults",
+      "start": 25,
+      "stop": 34
+    },
+    {
+      "battery": "longhistory",
+      "depends": [
+        "profile-longhistory-3"
+      ],
+      "estimate_seconds": 100,
+      "id": "profile-longhistory-4",
+      "index": 4,
+      "phase": "fresh",
+      "side": "profile",
+      "start": 34,
+      "stop": 52
+    },
+    {
+      "battery": "longhistory",
+      "depends": [
+        "defaults-longhistory-3"
+      ],
+      "estimate_seconds": 100,
+      "id": "defaults-longhistory-4",
+      "index": 4,
+      "phase": "fresh",
+      "side": "defaults",
+      "start": 34,
+      "stop": 52
+    },
+    {
+      "battery": "longhistory",
+      "depends": [
+        "profile-longhistory-4"
+      ],
+      "estimate_seconds": 100,
+      "id": "profile-longhistory-5",
+      "index": 5,
+      "phase": "fresh",
+      "side": "profile",
+      "start": 52,
+      "stop": 71
+    },
+    {
+      "battery": "longhistory",
+      "depends": [
+        "defaults-longhistory-4"
+      ],
+      "estimate_seconds": 100,
+      "id": "defaults-longhistory-5",
+      "index": 5,
+      "phase": "fresh",
+      "side": "defaults",
+      "start": 52,
+      "stop": 71
+    },
+    {
+      "battery": "longhistory",
+      "depends": [
+        "profile-longhistory-5"
+      ],
+      "estimate_seconds": 100,
+      "id": "profile-longhistory-6",
+      "index": 6,
+      "phase": "fresh",
+      "side": "profile",
+      "start": 71,
+      "stop": 91
+    },
+    {
+      "battery": "longhistory",
+      "depends": [
+        "defaults-longhistory-5"
+      ],
+      "estimate_seconds": 100,
+      "id": "defaults-longhistory-6",
+      "index": 6,
+      "phase": "fresh",
+      "side": "defaults",
+      "start": 71,
+      "stop": 91
+    },
+    {
+      "battery": "longhistory",
+      "depends": [
+        "profile-longhistory-6"
+      ],
+      "estimate_seconds": 100,
+      "id": "profile-longhistory-7",
+      "index": 7,
+      "phase": "fresh",
+      "side": "profile",
+      "start": 91,
+      "stop": 104
+    },
+    {
+      "battery": "longhistory",
+      "depends": [
+        "defaults-longhistory-6"
+      ],
+      "estimate_seconds": 100,
+      "id": "defaults-longhistory-7",
+      "index": 7,
+      "phase": "fresh",
+      "side": "defaults",
+      "start": 91,
+      "stop": 104
+    },
+    {
+      "battery": "longhistory",
+      "depends": [
+        "profile-longhistory-0",
+        "profile-longhistory-1",
+        "profile-longhistory-2",
+        "profile-longhistory-3",
+        "profile-longhistory-4",
+        "profile-longhistory-5",
+        "profile-longhistory-6",
+        "profile-longhistory-7"
+      ],
+      "estimate_seconds": 55,
+      "id": "profile-longhistory-restart-0",
+      "phase": "restart",
+      "probes": [
+        "lh_t005",
+        "lh_t009",
+        "lh_t013",
+        "lh_t016"
+      ],
+      "side": "profile"
+    },
+    {
+      "battery": "longhistory",
+      "depends": [
+        "defaults-longhistory-0",
+        "defaults-longhistory-1",
+        "defaults-longhistory-2",
+        "defaults-longhistory-3",
+        "defaults-longhistory-4",
+        "defaults-longhistory-5",
+        "defaults-longhistory-6",
+        "defaults-longhistory-7"
+      ],
+      "estimate_seconds": 55,
+      "id": "defaults-longhistory-restart-0",
+      "phase": "restart",
+      "probes": [
+        "lh_t005",
+        "lh_t009",
+        "lh_t013",
+        "lh_t016"
+      ],
+      "side": "defaults"
+    },
+    {
+      "battery": "longhistory",
+      "depends": [
+        "profile-longhistory-0",
+        "profile-longhistory-1",
+        "profile-longhistory-2",
+        "profile-longhistory-3",
+        "profile-longhistory-4",
+        "profile-longhistory-5",
+        "profile-longhistory-6",
+        "profile-longhistory-7"
+      ],
+      "estimate_seconds": 55,
+      "id": "profile-longhistory-restart-1",
+      "phase": "restart",
+      "probes": [
+        "lh_t019",
+        "lh_t022",
+        "lh_t024",
+        "lh_t026"
+      ],
+      "side": "profile"
+    },
+    {
+      "battery": "longhistory",
+      "depends": [
+        "defaults-longhistory-0",
+        "defaults-longhistory-1",
+        "defaults-longhistory-2",
+        "defaults-longhistory-3",
+        "defaults-longhistory-4",
+        "defaults-longhistory-5",
+        "defaults-longhistory-6",
+        "defaults-longhistory-7"
+      ],
+      "estimate_seconds": 55,
+      "id": "defaults-longhistory-restart-1",
+      "phase": "restart",
+      "probes": [
+        "lh_t019",
+        "lh_t022",
+        "lh_t024",
+        "lh_t026"
+      ],
+      "side": "defaults"
+    },
+    {
+      "battery": "longhistory",
+      "depends": [
+        "profile-longhistory-0",
+        "profile-longhistory-1",
+        "profile-longhistory-2",
+        "profile-longhistory-3",
+        "profile-longhistory-4",
+        "profile-longhistory-5",
+        "profile-longhistory-6",
+        "profile-longhistory-7"
+      ],
+      "estimate_seconds": 55,
+      "id": "profile-longhistory-restart-2",
+      "phase": "restart",
+      "probes": [
+        "lh_t030",
+        "lh_t033",
+        "lh_t070",
+        "lh_t080"
+      ],
+      "side": "profile"
+    },
+    {
+      "battery": "longhistory",
+      "depends": [
+        "defaults-longhistory-0",
+        "defaults-longhistory-1",
+        "defaults-longhistory-2",
+        "defaults-longhistory-3",
+        "defaults-longhistory-4",
+        "defaults-longhistory-5",
+        "defaults-longhistory-6",
+        "defaults-longhistory-7"
+      ],
+      "estimate_seconds": 55,
+      "id": "defaults-longhistory-restart-2",
+      "phase": "restart",
+      "probes": [
+        "lh_t030",
+        "lh_t033",
+        "lh_t070",
+        "lh_t080"
+      ],
+      "side": "defaults"
+    },
+    {
+      "battery": "longhistory",
+      "depends": [
+        "profile-longhistory-0",
+        "profile-longhistory-1",
+        "profile-longhistory-2",
+        "profile-longhistory-3",
+        "profile-longhistory-4",
+        "profile-longhistory-5",
+        "profile-longhistory-6",
+        "profile-longhistory-7"
+      ],
+      "estimate_seconds": 55,
+      "id": "profile-longhistory-restart-3",
+      "phase": "restart",
+      "probes": [
+        "lh_t090",
+        "lh_t100"
+      ],
+      "side": "profile"
+    },
+    {
+      "battery": "longhistory",
+      "depends": [
+        "defaults-longhistory-0",
+        "defaults-longhistory-1",
+        "defaults-longhistory-2",
+        "defaults-longhistory-3",
+        "defaults-longhistory-4",
+        "defaults-longhistory-5",
+        "defaults-longhistory-6",
+        "defaults-longhistory-7"
+      ],
+      "estimate_seconds": 55,
+      "id": "defaults-longhistory-restart-3",
+      "phase": "restart",
+      "probes": [
+        "lh_t090",
+        "lh_t100"
+      ],
+      "side": "defaults"
+    }
+  ],
+  "estimated_seconds": 3140,
+  "budget_seconds": 3600,
+  "worker_seconds": 285,
+  "outer_seconds": 590,
+  "cooldown_seconds": 30,
+  "lock_wait_seconds": 240,
+  "amendment_sha256": "91df018adaa90e9db3fd32981ad72a5564cee2cc8360b462775248945859807c",
+  "registration_sha256": "8a3a27302c41f2980f883666657f7d871c5ad01d195953e017804717d3644eb0",
+  "width_comparison": "shipped defaults vs proposed profile: defaults width 256, profile width 96; this is not a width-matched pair.",
+  "defaults96": {
+    "basis": "Duplicate the complete defaults arm at width96, preserving r1 cells/probes/restarts and estimates; no unmeasured width speedup credit. Remaining headroom 460s.",
+    "extra_cells": 26,
+    "extra_estimated_seconds": 1570,
+    "flags": {
+      "arena_width": 96,
+      "capture_pin": "off",
+      "rt1_rule": true,
+      "seat_near_live": false
+    },
+    "over_cap_seconds": 1110,
+    "status": "NON_FIT",
+    "total_cells": 78,
+    "total_estimated_seconds": 4710
+  },
+  "accounting": "GPU budget is cumulative measured lease worker wall time; reserve 285s before each cell, charge unfinished reservation 285s. Lock waiting, CPU scoring, fingerprinting after lease and 30s inter-cell cooldown do not consume GPU budget. Full plan estimate 3140s plus 51 cooldowns (1530s) gives at least 4670s estimated foreground wall time excluding lock waits and CPU overhead. The 3140s heuristic is not a completion guarantee; A3 timing caveat remains.",
+  "resume_rule": "Explicit --resume only: next unstarted cell in battery order; COMPLETE, RED and STARTED_UNFINISHED cells never retried. Unfinished cells remain charged 285s. An unmet persist dependency makes the next cell RED without a worker, never recapture. First newly observed RED stops. Previously recorded RED scores remain immutable on resume; final summary remains RED. A campaign mutex prevents concurrent controllers."
+}
