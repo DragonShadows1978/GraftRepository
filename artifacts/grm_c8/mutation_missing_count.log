@@ -1,0 +1,57 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+_______________________ test_missing_turns_never_pass[0] _______________________
+
+count = 0
+
+    @pytest.mark.parametrize('count', [0, 1, 29])
+    def test_missing_turns_never_pass(count):
+>       assert p.summarize(rows_with_fraction(.1, count))['decision'] is None
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_c8_profiler.py:211: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+rows = []
+
+    def summarize(rows, *, minimum=30):
+        if len(rows) < minimum or any(r['status'] != 'COMPLETE' for r in rows):
+            return {'status': 'NOT_MEASURED_OR_INCOMPLETE', 'turns': len(rows),
+                    'decode_fraction': None, 'nondecode_fraction': None, 'decision': None}
+        for row in rows:
+            vals = [row['turn_wall_ms']] + [row['stages'][s]['wall_ms'] for s in STAGES]
+            if any(not math.isfinite(v) or v < 0 for v in vals) or vals[0] <= 0:
+                raise ValueError('invalid timing')
+            if not math.isclose(sum(vals[1:]), vals[0], abs_tol=1e-5):
+                raise ValueError('stage wall does not conserve turn wall')
+        wall = sum(r['turn_wall_ms'] for r in rows)
+>       fraction = sum(r['stages']['decode']['wall_ms'] for r in rows) / wall
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ZeroDivisionError: division by zero
+
+scripts/grm_c8_profiler.py:264: ZeroDivisionError
+_______________________ test_missing_turns_never_pass[1] _______________________
+
+count = 1
+
+    @pytest.mark.parametrize('count', [0, 1, 29])
+    def test_missing_turns_never_pass(count):
+>       assert p.summarize(rows_with_fraction(.1, count))['decision'] is None
+E       AssertionError: assert 'session routing/admission wins' is None
+
+tests/test_grm_c8_profiler.py:211: AssertionError
+______________________ test_missing_turns_never_pass[29] _______________________
+
+count = 29
+
+    @pytest.mark.parametrize('count', [0, 1, 29])
+    def test_missing_turns_never_pass(count):
+>       assert p.summarize(rows_with_fraction(.1, count))['decision'] is None
+E       AssertionError: assert 'session routing/admission wins' is None
+
+tests/test_grm_c8_profiler.py:211: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_grm_c8_profiler.py::test_missing_turns_never_pass[0] - Zero...
+FAILED tests/test_grm_c8_profiler.py::test_missing_turns_never_pass[1] - Asse...
+FAILED tests/test_grm_c8_profiler.py::test_missing_turns_never_pass[29] - Ass...
+3 failed in 0.11s

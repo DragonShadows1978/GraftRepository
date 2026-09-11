@@ -1,0 +1,27 @@
+{
+  "all_original_cells_unchanged": true,
+  "allocation_decision": null,
+  "amendment_bound_inputs_verified": 4,
+  "amendment_mutants": "5/5 valid and killed",
+  "amendment_sha256": "91d080971bde54bf2c35ae20dc9955e533e9d112c20e915926c1aee296ca4a60",
+  "campaign_cells_or_reservations_exist": false,
+  "cap_seconds": 2700,
+  "cpu_baseline": "113 passed, 2 warnings in 10.02s",
+  "estimated_seconds": 2591,
+  "evidence_class": "source and artifact integrity checks",
+  "expected_modified_existing_files": [
+    "scripts/grm_c8_cells.py",
+    "artifacts/grm_c8/lead_commands.txt",
+    "artifacts/grm_c8/REPORT.md",
+    "artifacts/grm_c8/LEDGER.md"
+  ],
+  "gpu_executed": false,
+  "gpu_results": "NOT_MEASURED",
+  "original_bound_inputs_verified": 247,
+  "original_command_bytes_archived": true,
+  "original_demand_registration_sha256": "1d5d65642e47d19644c512a63c0b9d76ab958499dc9ec08fcf7a2f3ffe62467e",
+  "original_order_sha256": "6d4dbfd879d9e245cdc1acefa81746a3b990713e53721d6aec502c19a0dfc788",
+  "original_registration_sha256": "264ccd493f9f73fd157c47a7fa0ded3be60e0b3530e0ad3b42fae13d872d8345",
+  "process_safety": "No git, subagents, GPU, services, detached jobs, foreign-process signals or kills.",
+  "status": "PASS_CPU_ONLY"
+}

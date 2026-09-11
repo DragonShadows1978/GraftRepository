@@ -1,0 +1,106 @@
+.FFF                                                                     [100%]
+=================================== FAILURES ===================================
+__________ test_resume_skips_all_started_states_without_launch[RED-1] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-855/test_resume_skips_all_started_1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x740f17ca2ae0>
+capsys = <_pytest.capture.CaptureFixture object at 0x740f17ca21e0>
+state = 'RED', expected = 1
+
+    @pytest.mark.parametrize('state,expected', [('COMPLETE', 0), ('RED', 1), ('unfinished', 1), ('empty', 1)])
+    def test_resume_skips_all_started_states_without_launch(tmp_path, monkeypatch, capsys, state, expected):
+        r = c.effective_registration()
+        cell = r['cells'][0]
+        monkeypatch.setattr(c, 'OUT', tmp_path)
+        directory = tmp_path / 'cells' / cell['id']
+        if state in ('COMPLETE', 'RED'):
+            make_receipt(cell, status=state)
+        elif state == 'unfinished':
+            c.create(directory / 'reservation.json', {'cell': cell})
+        else:
+            directory.mkdir(parents=True)
+        before = {str(x): x.read_bytes() for x in directory.rglob('*') if x.is_file()}
+        def forbidden(*a, **kw):
+            pytest.fail('started cell reached launch, cooldown, or new reservation')
+        monkeypatch.setattr(c.subprocess, 'run', forbidden)
+        monkeypatch.setattr(c.time, 'sleep', forbidden)
+        monkeypatch.setattr(c, 'create', forbidden)
+>       assert c.run_cell(r, cell, resume=True) == expected
+E       AssertionError: assert 0 == 1
+E        +  where 0 = <function run_cell at 0x740f18b63c40>({'acceptance': ['CPU author tests all pass without tolerances relaxed', 'GPU identity mandatory before allocation verd...eipts'], 'agent_effort': 'high', 'agent_model': 'GPT-6 (exact deployment id not exposed)', 'budget_seconds': 2700, ...}, {'battery': 'identity', 'demand_on': False, 'depends': [], 'estimate_seconds': 120, ...}, resume=True)
+E        +    where <function run_cell at 0x740f18b63c40> = c.run_cell
+
+tests/test_grm_c8_amendment.py:135: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{"cell": "gpu-identity", "status": "SKIPPED_STARTED_RED_OR_UNFINISHED", "error": "dependency RED: gpu-identity", "retry": false}
+______ test_resume_skips_all_started_states_without_launch[unfinished-1] _______
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-855/test_resume_skips_all_started_2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x740f17ca0dd0>
+capsys = <_pytest.capture.CaptureFixture object at 0x740f17ca2300>
+state = 'unfinished', expected = 1
+
+    @pytest.mark.parametrize('state,expected', [('COMPLETE', 0), ('RED', 1), ('unfinished', 1), ('empty', 1)])
+    def test_resume_skips_all_started_states_without_launch(tmp_path, monkeypatch, capsys, state, expected):
+        r = c.effective_registration()
+        cell = r['cells'][0]
+        monkeypatch.setattr(c, 'OUT', tmp_path)
+        directory = tmp_path / 'cells' / cell['id']
+        if state in ('COMPLETE', 'RED'):
+            make_receipt(cell, status=state)
+        elif state == 'unfinished':
+            c.create(directory / 'reservation.json', {'cell': cell})
+        else:
+            directory.mkdir(parents=True)
+        before = {str(x): x.read_bytes() for x in directory.rglob('*') if x.is_file()}
+        def forbidden(*a, **kw):
+            pytest.fail('started cell reached launch, cooldown, or new reservation')
+        monkeypatch.setattr(c.subprocess, 'run', forbidden)
+        monkeypatch.setattr(c.time, 'sleep', forbidden)
+        monkeypatch.setattr(c, 'create', forbidden)
+>       assert c.run_cell(r, cell, resume=True) == expected
+E       AssertionError: assert 0 == 1
+E        +  where 0 = <function run_cell at 0x740f18b63c40>({'acceptance': ['CPU author tests all pass without tolerances relaxed', 'GPU identity mandatory before allocation verd...eipts'], 'agent_effort': 'high', 'agent_model': 'GPT-6 (exact deployment id not exposed)', 'budget_seconds': 2700, ...}, {'battery': 'identity', 'demand_on': False, 'depends': [], 'estimate_seconds': 120, ...}, resume=True)
+E        +    where <function run_cell at 0x740f18b63c40> = c.run_cell
+
+tests/test_grm_c8_amendment.py:135: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{"cell": "gpu-identity", "status": "SKIPPED_STARTED_RED_OR_UNFINISHED", "error": "[Errno 2] No such file or directory: '/tmp/pytest-of-vader/pytest-855/test_resume_skips_all_started_2/cells/gpu-identity/controller.json'", "retry": false}
+_________ test_resume_skips_all_started_states_without_launch[empty-1] _________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-855/test_resume_skips_all_started_3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x740f17cb4890>
+capsys = <_pytest.capture.CaptureFixture object at 0x740f17cb4ad0>
+state = 'empty', expected = 1
+
+    @pytest.mark.parametrize('state,expected', [('COMPLETE', 0), ('RED', 1), ('unfinished', 1), ('empty', 1)])
+    def test_resume_skips_all_started_states_without_launch(tmp_path, monkeypatch, capsys, state, expected):
+        r = c.effective_registration()
+        cell = r['cells'][0]
+        monkeypatch.setattr(c, 'OUT', tmp_path)
+        directory = tmp_path / 'cells' / cell['id']
+        if state in ('COMPLETE', 'RED'):
+            make_receipt(cell, status=state)
+        elif state == 'unfinished':
+            c.create(directory / 'reservation.json', {'cell': cell})
+        else:
+            directory.mkdir(parents=True)
+        before = {str(x): x.read_bytes() for x in directory.rglob('*') if x.is_file()}
+        def forbidden(*a, **kw):
+            pytest.fail('started cell reached launch, cooldown, or new reservation')
+        monkeypatch.setattr(c.subprocess, 'run', forbidden)
+        monkeypatch.setattr(c.time, 'sleep', forbidden)
+        monkeypatch.setattr(c, 'create', forbidden)
+>       assert c.run_cell(r, cell, resume=True) == expected
+E       AssertionError: assert 0 == 1
+E        +  where 0 = <function run_cell at 0x740f18b63c40>({'acceptance': ['CPU author tests all pass without tolerances relaxed', 'GPU identity mandatory before allocation verd...eipts'], 'agent_effort': 'high', 'agent_model': 'GPT-6 (exact deployment id not exposed)', 'budget_seconds': 2700, ...}, {'battery': 'identity', 'demand_on': False, 'depends': [], 'estimate_seconds': 120, ...}, resume=True)
+E        +    where <function run_cell at 0x740f18b63c40> = c.run_cell
+
+tests/test_grm_c8_amendment.py:135: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{"cell": "gpu-identity", "status": "SKIPPED_STARTED_RED_OR_UNFINISHED", "error": "[Errno 2] No such file or directory: '/tmp/pytest-of-vader/pytest-855/test_resume_skips_all_started_3/cells/gpu-identity/controller.json'", "retry": false}
+=========================== short test summary info ============================
+FAILED tests/test_grm_c8_amendment.py::test_resume_skips_all_started_states_without_launch[RED-1]
+FAILED tests/test_grm_c8_amendment.py::test_resume_skips_all_started_states_without_launch[unfinished-1]
+FAILED tests/test_grm_c8_amendment.py::test_resume_skips_all_started_states_without_launch[empty-1]
+3 failed, 1 passed in 0.29s

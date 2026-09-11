@@ -1,0 +1,23 @@
+{
+  "cell": {
+    "battery": "demand",
+    "demand_on": true,
+    "depends": [
+      "gpu-identity",
+      "longhistory-032-040"
+    ],
+    "estimate_seconds": 60,
+    "id": "demand-lh033",
+    "start": 33,
+    "stop": 34,
+    "turns": 1
+  },
+  "demand_off_elsewhere": true,
+  "early_abort": false,
+  "no_trip_policy": "RED_DEMAND_TRIP_NOT_OBSERVED; never search another prompt or retry",
+  "pass_criterion": "demand_fired==True and demand_trip_taken==True, complete turn accounting",
+  "registration_sha256": "264ccd493f9f73fd157c47a7fa0ded3be60e0b3530e0ad3b42fae13d872d8345",
+  "schema": "grm.c8.demand.v1",
+  "threshold_policy": "carried unchanged; no refit",
+  "threshold_source": "config/grm_demand_registered.json"
+}

@@ -1,0 +1,22 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______________ test_nested_work_not_double_counted_or_mislabeled _______________
+
+    def test_nested_work_not_double_counted_or_mislabeled():
+        def decode():
+            time.sleep(.002)
+        def deposit():
+            decode()
+        def fold():
+            deposit()
+        mapping = {**spec(decode, 'decode'), **spec(deposit, 'deposit_harvest'), **spec(fold, 'fold')}
+        profiler = p.TurnProfiler(enabled=True, mapping=mapping)
+        profiler.run(fold)
+        assert profiler.receipt['stages']['decode']['wall_ms'] == 0
+>       assert profiler.receipt['stages']['deposit_harvest']['wall_ms'] == 0
+E       assert 2.06907 == 0
+
+tests/test_grm_c8_profiler.py:104: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_grm_c8_profiler.py::test_nested_work_not_double_counted_or_mislabeled
+1 failed in 0.09s

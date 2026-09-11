@@ -1,0 +1,26 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______________ test_default_off_exact_object_no_instrumentation _______________
+
+    def test_default_off_exact_object_no_instrumentation():
+        value = object(); before = dict(os.environ)
+        profiler = p.TurnProfiler(meter=ForbiddenMeter())
+>       assert profiler.run(lambda: value) is value
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_c8_profiler.py:33: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_c8_profiler.py:217: in run
+    self.meter.begin()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_grm_c8_profiler.ForbiddenMeter object at 0x7dbe27763da0>
+
+    def begin(self):
+>       raise AssertionError('OFF touched instrumentation')
+E       AssertionError: OFF touched instrumentation
+
+tests/test_grm_c8_profiler.py:26: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_grm_c8_profiler.py::test_default_off_exact_object_no_instrumentation
+1 failed in 0.29s

@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/mnt/ForgeRealm/wt/grm-c8/scripts/grm_c8_cells.py", line 372, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/mnt/ForgeRealm/wt/grm-c8/scripts/grm_c8_cells.py", line 362, in main
+    fit(r); return 0
+    ^^^^^^
+  File "/mnt/ForgeRealm/wt/grm-c8/scripts/grm_c8_cells.py", line 95, in fit
+    raise ValueError(f'NON_FIT_BUDGET: {r["estimated_seconds"]}s > {r["budget_seconds"]}s; never execute/retry this plan')
+ValueError: NON_FIT_BUDGET: 2591s > 1800s; never execute/retry this plan

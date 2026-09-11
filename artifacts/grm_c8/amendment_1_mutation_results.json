@@ -1,0 +1,58 @@
+{
+  "baseline_sha256": "157ee888df474728d1df6d267fffbda9ddcc15e580da05f895fd641d3b103aae",
+  "evidence_class": "author mutation baseline, not blind verification",
+  "harness_sha256": "6b236e32495538e35341b9409aa39ad0a981ff17eb6a5758f92f88cc1c4c1174",
+  "kill_fraction": 1.0,
+  "killed_mutants": 5,
+  "mutation_registration_sha256": "217a21786258227502476b9183cfb396708d2dbca44be2fa4f9f00aa06392405",
+  "original_source_unchanged": true,
+  "pass": true,
+  "results": [
+    {
+      "killed": true,
+      "log": "artifacts/grm_c8/amendment_1_mutation_ignore_cap.log",
+      "log_sha256": "5046c1558628ce501affbbed05309208a495cea1ee2485ad6d1a96ba9f418e98",
+      "mutated_source_sha256": "33b66b4f75fe2a4bf215e5f87bfe9ed2a881290aabf8161428d74e6cd80966b8",
+      "name": "ignore_cap",
+      "returncode": 1,
+      "valid": true
+    },
+    {
+      "killed": true,
+      "log": "artifacts/grm_c8/amendment_1_mutation_retry_complete.log",
+      "log_sha256": "baf9dee55617327094d4be6fb11b3d7aa00c07b5149ac0f830aa1878489ffc51",
+      "mutated_source_sha256": "3fd3faca063d3843567699385e9d515ec7e6cb8d307f73ce0259bed48049cfbe",
+      "name": "retry_complete",
+      "returncode": 1,
+      "valid": true
+    },
+    {
+      "killed": true,
+      "log": "artifacts/grm_c8/amendment_1_mutation_red_skip_success.log",
+      "log_sha256": "fad32a6ceb47c5cce82a802a2dacf835fe3a9a73fd35c094ae20c3ee3e3e2234",
+      "mutated_source_sha256": "2285f38dff9b5f1c28f6d123c17137bf4c7fcb9281c1a6adfc05e6d840898b76",
+      "name": "red_skip_success",
+      "returncode": 1,
+      "valid": true
+    },
+    {
+      "killed": true,
+      "log": "artifacts/grm_c8/amendment_1_mutation_unclipped_reservation.log",
+      "log_sha256": "cd4e62eafe831d75c8b5518c6e2c58f60b5d17d2bcabed1cf441294eb5b33d92",
+      "mutated_source_sha256": "3cf2b2fc63d0b791cf6351032156dbc702139f6a42fa5c7f281d03cb0fa68f04",
+      "name": "unclipped_reservation",
+      "returncode": 1,
+      "valid": true
+    },
+    {
+      "killed": true,
+      "log": "artifacts/grm_c8/amendment_1_mutation_ignore_incomplete_allocation.log",
+      "log_sha256": "9fd2f6e027d39e6d6aa5d884869c7372909660930bc16a36171953ccc114978b",
+      "mutated_source_sha256": "6a17d0930408e8792c29c5710ffaf04a8bbe8d3fde062ba9e1a159dc123dfe23",
+      "name": "ignore_incomplete_allocation",
+      "returncode": 1,
+      "valid": true
+    }
+  ],
+  "valid_mutants": 5
+}

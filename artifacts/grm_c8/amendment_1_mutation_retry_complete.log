@@ -1,0 +1,53 @@
+F...                                                                     [100%]
+=================================== FAILURES ===================================
+_______ test_resume_skips_all_started_states_without_launch[COMPLETE-0] ________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-854/test_resume_skips_all_started_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x70ce032e9d90>
+capsys = <_pytest.capture.CaptureFixture object at 0x70ce032ea870>
+state = 'COMPLETE', expected = 0
+
+    @pytest.mark.parametrize('state,expected', [('COMPLETE', 0), ('RED', 1), ('unfinished', 1), ('empty', 1)])
+    def test_resume_skips_all_started_states_without_launch(tmp_path, monkeypatch, capsys, state, expected):
+        r = c.effective_registration()
+        cell = r['cells'][0]
+        monkeypatch.setattr(c, 'OUT', tmp_path)
+        directory = tmp_path / 'cells' / cell['id']
+        if state in ('COMPLETE', 'RED'):
+            make_receipt(cell, status=state)
+        elif state == 'unfinished':
+            c.create(directory / 'reservation.json', {'cell': cell})
+        else:
+            directory.mkdir(parents=True)
+        before = {str(x): x.read_bytes() for x in directory.rglob('*') if x.is_file()}
+        def forbidden(*a, **kw):
+            pytest.fail('started cell reached launch, cooldown, or new reservation')
+        monkeypatch.setattr(c.subprocess, 'run', forbidden)
+        monkeypatch.setattr(c.time, 'sleep', forbidden)
+        monkeypatch.setattr(c, 'create', forbidden)
+>       assert c.run_cell(r, cell, resume=True) == expected
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_c8_amendment.py:135: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_c8_cells.py:368: in run_cell
+    directory.mkdir(parents=True, exist_ok=False)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/tmp/pytest-of-vader/pytest-854/test_resume_skips_all_started_0/cells/gpu-identity')
+mode = 511, parents = True, exist_ok = False
+
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        """
+        Create a new directory at this given path.
+        """
+        try:
+>           os.mkdir(self, mode)
+E           FileExistsError: [Errno 17] File exists: '/tmp/pytest-of-vader/pytest-854/test_resume_skips_all_started_0/cells/gpu-identity'
+
+/usr/lib/python3.12/pathlib.py:1313: FileExistsError
+----------------------------- Captured stdout call -----------------------------
+{"cell": "gpu-identity", "status": "SKIPPED_COMPLETE", "retry": false}
+=========================== short test summary info ============================
+FAILED tests/test_grm_c8_amendment.py::test_resume_skips_all_started_states_without_launch[COMPLETE-0]
+1 failed, 3 passed in 0.35s

@@ -1,0 +1,17 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________________________ test_quantiles_hand_computed _________________________
+
+    def test_quantiles_hand_computed():
+>       assert p.stats(list(range(1, 31))) == {'mean': 15.5, 'p50': 15, 'p95': 29}
+E       AssertionError: assert {'mean': 15.5...15, 'p95': 28} == {'mean': 15.5...15, 'p95': 29}
+E         
+E         Omitting 2 identical items, use -vv to show
+E         Differing items:
+E         {'p95': 28} != {'p95': 29}
+E         Use -v to get more diff
+
+tests/test_grm_c8_profiler.py:197: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_grm_c8_profiler.py::test_quantiles_hand_computed - Assertio...
+1 failed in 0.09s
