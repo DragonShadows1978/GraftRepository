@@ -1,0 +1,85 @@
+{
+  "correction_turns": [
+    {
+      "assistant": "All right, I'll keep that in mind as we work through the layout.",
+      "attribute": "docking fee",
+      "entity": "Vega",
+      "kind": "fact",
+      "turn": 1,
+      "user": "Vega's docking fee will be 17 credits.",
+      "value": "17 credits"
+    },
+    {
+      "assistant": "Understood; I'll use the revised choice.",
+      "attribute": "docking fee",
+      "entity": "Vega",
+      "kind": "correction",
+      "previous_turn": 1,
+      "turn": 3,
+      "user": "Actually, Vega's docking fee will be 23 credits, replacing the earlier choice.",
+      "value": "23 credits"
+    },
+    {
+      "assistant": "Understood; I'll use the revised choice.",
+      "attribute": "docking fee",
+      "entity": "Vega",
+      "kind": "correction",
+      "previous_turn": 3,
+      "turn": 15,
+      "user": "Actually, Vega's docking fee will be 29 credits, replacing the earlier choice.",
+      "value": "29 credits"
+    }
+  ],
+  "evidence_class": "CPU lineage fixture (no model quality claim)",
+  "feed_only": {
+    "current_node": 2,
+    "family_nodes": [
+      0,
+      1,
+      2
+    ],
+    "ranking": [
+      0,
+      1,
+      2
+    ],
+    "retired_nodes": [],
+    "route_cand_base": [
+      0,
+      1,
+      2
+    ],
+    "stale_still_reachable": [
+      "17 credits",
+      "23 credits"
+    ]
+  },
+  "probe": "What did we settle on for Vega's docking fee?",
+  "supersede": {
+    "current_node": 2,
+    "family_nodes": [
+      0,
+      1,
+      2
+    ],
+    "ranking": [
+      2
+    ],
+    "retired_nodes": [
+      0,
+      1
+    ],
+    "route_cand_base": [
+      2
+    ],
+    "stale_still_reachable": [],
+    "superseded_by": {
+      "0": [
+        1
+      ],
+      "1": [
+        2
+      ]
+    }
+  }
+}

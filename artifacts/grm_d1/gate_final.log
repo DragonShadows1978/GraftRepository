@@ -1,0 +1,1096 @@
+......F....FFFF...................FF...........FF..........FF..FFFFF.... [ 60%]
+.FF.F...........................................                         [100%]
+=================================== FAILURES ===================================
+_____ test_fixture_only_assistant_fact_changes_and_effective_registration ______
+
+    def test_fixture_only_assistant_fact_changes_and_effective_registration():
+>       r=lt.verify();f=lt.read(lt.FIX)
+          ^^^^^^^^^^^
+
+tests/test_grm_lt1_amendment1.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        if sha(REG)!=REG.with_suffix('.sha256').read_text().split()[0]: raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r=read(REG)
+        # Prior art: C7 SHA-bound amendments (GRM, 2026), unchanged original plan.
+        inputs=dict(r['immutable_inputs'])
+        if AMEND.exists():
+            if sha(AMEND)!=AMEND.with_suffix('.sha256').read_text().split()[0]:raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a=read(AMEND)
+            if a['registration_sha256']!=sha(REG):raise ValueError('AMENDMENT_CHAIN_MISMATCH')
+            for name,change in a['overrides'].items():
+                if name.startswith('core/'):raise ValueError('CORE_OVERRIDE_FORBIDDEN')
+                if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[name]=change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['status']='FIT_ESTIMATE';r['projection']['budget_seconds']=10800
+            for arm in r['arms'].values():arm['status']='FIT_ESTIMATE'
+            r['effective_admission_rule']=0
+        # Prior art: C7/C2 SHA-chain amendments (GRM, 2026). FIX6 alone authorizes
+        # these core overrides; preserve both preceding registrations byte-for-byte.
+        if sha(AMEND2)!=AMEND2.with_suffix('.sha256').read_text().split()[0]:
+            raise ValueError('AMENDMENT2_SHA_MISMATCH')
+        a2=read(AMEND2)
+        if a2['previous_amendment_sha256']!=sha(AMEND) or a2['registration_sha256']!=sha(REG):
+            raise ValueError('AMENDMENT2_CHAIN_MISMATCH')
+        if a2['admission_rule']!='margin_first' or a2['budget_gpu_seconds']!=10800 or a2['cells']!=r['cells']:
+            raise ValueError('AMENDMENT2_PROTOCOL_MISMATCH')
+        for name,change in a2['overrides'].items():
+            if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                raise ValueError('AMENDMENT2_BEFORE_MISMATCH')
+            inputs[name]=change['after_sha256']
+        inputs.update(a2['new_inputs'])
+        # Prior art: LT1/C7 SHA-chain source amendments (GRM, 2026), reused.
+        from scripts.grm_lt1_amendment3 import apply
+        apply(sys.modules[__name__], inputs, a2)
+        from scripts.grm_lt1_amendment4 import apply as apply4
+        apply4(sys.modules[__name__], inputs)
+        r['effective_admission_rule']='margin_first'
+        for arm in r['arms'].values():arm['admission_rule']='margin_first'
+        for name,digest in inputs.items():
+>           if sha(ROOT/name)!=digest: raise ValueError('INPUT_SHA_MISMATCH: '+name)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_lt1.py:101: ValueError
+__________________ test_empty_summary_does_not_claim_quality ___________________
+
+    def test_empty_summary_does_not_claim_quality():
+        for arm in ('A','B'):
+>           s=lt.summary(arm)
+              ^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_amendment1.py:99: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_lt1.py:139: in summary
+    r=verify(); f=read(FIX); ps={p['id']:p for p in f['probes']}
+      ^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        if sha(REG)!=REG.with_suffix('.sha256').read_text().split()[0]: raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r=read(REG)
+        # Prior art: C7 SHA-bound amendments (GRM, 2026), unchanged original plan.
+        inputs=dict(r['immutable_inputs'])
+        if AMEND.exists():
+            if sha(AMEND)!=AMEND.with_suffix('.sha256').read_text().split()[0]:raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a=read(AMEND)
+            if a['registration_sha256']!=sha(REG):raise ValueError('AMENDMENT_CHAIN_MISMATCH')
+            for name,change in a['overrides'].items():
+                if name.startswith('core/'):raise ValueError('CORE_OVERRIDE_FORBIDDEN')
+                if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[name]=change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['status']='FIT_ESTIMATE';r['projection']['budget_seconds']=10800
+            for arm in r['arms'].values():arm['status']='FIT_ESTIMATE'
+            r['effective_admission_rule']=0
+        # Prior art: C7/C2 SHA-chain amendments (GRM, 2026). FIX6 alone authorizes
+        # these core overrides; preserve both preceding registrations byte-for-byte.
+        if sha(AMEND2)!=AMEND2.with_suffix('.sha256').read_text().split()[0]:
+            raise ValueError('AMENDMENT2_SHA_MISMATCH')
+        a2=read(AMEND2)
+        if a2['previous_amendment_sha256']!=sha(AMEND) or a2['registration_sha256']!=sha(REG):
+            raise ValueError('AMENDMENT2_CHAIN_MISMATCH')
+        if a2['admission_rule']!='margin_first' or a2['budget_gpu_seconds']!=10800 or a2['cells']!=r['cells']:
+            raise ValueError('AMENDMENT2_PROTOCOL_MISMATCH')
+        for name,change in a2['overrides'].items():
+            if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                raise ValueError('AMENDMENT2_BEFORE_MISMATCH')
+            inputs[name]=change['after_sha256']
+        inputs.update(a2['new_inputs'])
+        # Prior art: LT1/C7 SHA-chain source amendments (GRM, 2026), reused.
+        from scripts.grm_lt1_amendment3 import apply
+        apply(sys.modules[__name__], inputs, a2)
+        from scripts.grm_lt1_amendment4 import apply as apply4
+        apply4(sys.modules[__name__], inputs)
+        r['effective_admission_rule']='margin_first'
+        for arm in r['arms'].values():arm['admission_rule']='margin_first'
+        for name,digest in inputs.items():
+>           if sha(ROOT/name)!=digest: raise ValueError('INPUT_SHA_MISMATCH: '+name)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_lt1.py:101: ValueError
+________ test_worker_all_8_turn_cells_resume_and_designated_restarts[A] ________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-1090/test_worker_all_8_turn_cells_r0')
+arm = 'A'
+
+    @pytest.mark.parametrize('arm',['A','B'])
+    def test_worker_all_8_turn_cells_resume_and_designated_restarts(tmp_path,arm):
+        # Shared GPU worker body, fresh CPU process for EVERY registered cell.
+>       r=lt.verify();run=tmp_path/'cells';run.mkdir()
+          ^^^^^^^^^^^
+
+tests/test_grm_lt1_amendment1.py:107: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        if sha(REG)!=REG.with_suffix('.sha256').read_text().split()[0]: raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r=read(REG)
+        # Prior art: C7 SHA-bound amendments (GRM, 2026), unchanged original plan.
+        inputs=dict(r['immutable_inputs'])
+        if AMEND.exists():
+            if sha(AMEND)!=AMEND.with_suffix('.sha256').read_text().split()[0]:raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a=read(AMEND)
+            if a['registration_sha256']!=sha(REG):raise ValueError('AMENDMENT_CHAIN_MISMATCH')
+            for name,change in a['overrides'].items():
+                if name.startswith('core/'):raise ValueError('CORE_OVERRIDE_FORBIDDEN')
+                if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[name]=change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['status']='FIT_ESTIMATE';r['projection']['budget_seconds']=10800
+            for arm in r['arms'].values():arm['status']='FIT_ESTIMATE'
+            r['effective_admission_rule']=0
+        # Prior art: C7/C2 SHA-chain amendments (GRM, 2026). FIX6 alone authorizes
+        # these core overrides; preserve both preceding registrations byte-for-byte.
+        if sha(AMEND2)!=AMEND2.with_suffix('.sha256').read_text().split()[0]:
+            raise ValueError('AMENDMENT2_SHA_MISMATCH')
+        a2=read(AMEND2)
+        if a2['previous_amendment_sha256']!=sha(AMEND) or a2['registration_sha256']!=sha(REG):
+            raise ValueError('AMENDMENT2_CHAIN_MISMATCH')
+        if a2['admission_rule']!='margin_first' or a2['budget_gpu_seconds']!=10800 or a2['cells']!=r['cells']:
+            raise ValueError('AMENDMENT2_PROTOCOL_MISMATCH')
+        for name,change in a2['overrides'].items():
+            if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                raise ValueError('AMENDMENT2_BEFORE_MISMATCH')
+            inputs[name]=change['after_sha256']
+        inputs.update(a2['new_inputs'])
+        # Prior art: LT1/C7 SHA-chain source amendments (GRM, 2026), reused.
+        from scripts.grm_lt1_amendment3 import apply
+        apply(sys.modules[__name__], inputs, a2)
+        from scripts.grm_lt1_amendment4 import apply as apply4
+        apply4(sys.modules[__name__], inputs)
+        r['effective_admission_rule']='margin_first'
+        for arm in r['arms'].values():arm['admission_rule']='margin_first'
+        for name,digest in inputs.items():
+>           if sha(ROOT/name)!=digest: raise ValueError('INPUT_SHA_MISMATCH: '+name)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_lt1.py:101: ValueError
+________ test_worker_all_8_turn_cells_resume_and_designated_restarts[B] ________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-1090/test_worker_all_8_turn_cells_r1')
+arm = 'B'
+
+    @pytest.mark.parametrize('arm',['A','B'])
+    def test_worker_all_8_turn_cells_resume_and_designated_restarts(tmp_path,arm):
+        # Shared GPU worker body, fresh CPU process for EVERY registered cell.
+>       r=lt.verify();run=tmp_path/'cells';run.mkdir()
+          ^^^^^^^^^^^
+
+tests/test_grm_lt1_amendment1.py:107: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        if sha(REG)!=REG.with_suffix('.sha256').read_text().split()[0]: raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r=read(REG)
+        # Prior art: C7 SHA-bound amendments (GRM, 2026), unchanged original plan.
+        inputs=dict(r['immutable_inputs'])
+        if AMEND.exists():
+            if sha(AMEND)!=AMEND.with_suffix('.sha256').read_text().split()[0]:raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a=read(AMEND)
+            if a['registration_sha256']!=sha(REG):raise ValueError('AMENDMENT_CHAIN_MISMATCH')
+            for name,change in a['overrides'].items():
+                if name.startswith('core/'):raise ValueError('CORE_OVERRIDE_FORBIDDEN')
+                if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[name]=change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['status']='FIT_ESTIMATE';r['projection']['budget_seconds']=10800
+            for arm in r['arms'].values():arm['status']='FIT_ESTIMATE'
+            r['effective_admission_rule']=0
+        # Prior art: C7/C2 SHA-chain amendments (GRM, 2026). FIX6 alone authorizes
+        # these core overrides; preserve both preceding registrations byte-for-byte.
+        if sha(AMEND2)!=AMEND2.with_suffix('.sha256').read_text().split()[0]:
+            raise ValueError('AMENDMENT2_SHA_MISMATCH')
+        a2=read(AMEND2)
+        if a2['previous_amendment_sha256']!=sha(AMEND) or a2['registration_sha256']!=sha(REG):
+            raise ValueError('AMENDMENT2_CHAIN_MISMATCH')
+        if a2['admission_rule']!='margin_first' or a2['budget_gpu_seconds']!=10800 or a2['cells']!=r['cells']:
+            raise ValueError('AMENDMENT2_PROTOCOL_MISMATCH')
+        for name,change in a2['overrides'].items():
+            if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                raise ValueError('AMENDMENT2_BEFORE_MISMATCH')
+            inputs[name]=change['after_sha256']
+        inputs.update(a2['new_inputs'])
+        # Prior art: LT1/C7 SHA-chain source amendments (GRM, 2026), reused.
+        from scripts.grm_lt1_amendment3 import apply
+        apply(sys.modules[__name__], inputs, a2)
+        from scripts.grm_lt1_amendment4 import apply as apply4
+        apply4(sys.modules[__name__], inputs)
+        r['effective_admission_rule']='margin_first'
+        for arm in r['arms'].values():arm['admission_rule']='margin_first'
+        for name,digest in inputs.items():
+>           if sha(ROOT/name)!=digest: raise ValueError('INPUT_SHA_MISMATCH: '+name)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_lt1.py:101: ValueError
+____________ test_amendment3_preserves_protocol_and_binds_all_core _____________
+
+    def test_amendment3_preserves_protocol_and_binds_all_core():
+>       r = lt.verify(); a = lt.read(lt.AMEND3); previous = lt.read(lt.AMEND2)
+            ^^^^^^^^^^^
+
+tests/test_grm_lt1_amendment3.py:25: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        if sha(REG)!=REG.with_suffix('.sha256').read_text().split()[0]: raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r=read(REG)
+        # Prior art: C7 SHA-bound amendments (GRM, 2026), unchanged original plan.
+        inputs=dict(r['immutable_inputs'])
+        if AMEND.exists():
+            if sha(AMEND)!=AMEND.with_suffix('.sha256').read_text().split()[0]:raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a=read(AMEND)
+            if a['registration_sha256']!=sha(REG):raise ValueError('AMENDMENT_CHAIN_MISMATCH')
+            for name,change in a['overrides'].items():
+                if name.startswith('core/'):raise ValueError('CORE_OVERRIDE_FORBIDDEN')
+                if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[name]=change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['status']='FIT_ESTIMATE';r['projection']['budget_seconds']=10800
+            for arm in r['arms'].values():arm['status']='FIT_ESTIMATE'
+            r['effective_admission_rule']=0
+        # Prior art: C7/C2 SHA-chain amendments (GRM, 2026). FIX6 alone authorizes
+        # these core overrides; preserve both preceding registrations byte-for-byte.
+        if sha(AMEND2)!=AMEND2.with_suffix('.sha256').read_text().split()[0]:
+            raise ValueError('AMENDMENT2_SHA_MISMATCH')
+        a2=read(AMEND2)
+        if a2['previous_amendment_sha256']!=sha(AMEND) or a2['registration_sha256']!=sha(REG):
+            raise ValueError('AMENDMENT2_CHAIN_MISMATCH')
+        if a2['admission_rule']!='margin_first' or a2['budget_gpu_seconds']!=10800 or a2['cells']!=r['cells']:
+            raise ValueError('AMENDMENT2_PROTOCOL_MISMATCH')
+        for name,change in a2['overrides'].items():
+            if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                raise ValueError('AMENDMENT2_BEFORE_MISMATCH')
+            inputs[name]=change['after_sha256']
+        inputs.update(a2['new_inputs'])
+        # Prior art: LT1/C7 SHA-chain source amendments (GRM, 2026), reused.
+        from scripts.grm_lt1_amendment3 import apply
+        apply(sys.modules[__name__], inputs, a2)
+        from scripts.grm_lt1_amendment4 import apply as apply4
+        apply4(sys.modules[__name__], inputs)
+        r['effective_admission_rule']='margin_first'
+        for arm in r['arms'].values():arm['admission_rule']='margin_first'
+        for name,digest in inputs.items():
+>           if sha(ROOT/name)!=digest: raise ValueError('INPUT_SHA_MISMATCH: '+name)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_lt1.py:101: ValueError
+_______________ test_preflight_requires_current_receipt_and_fix4 _______________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-1090/test_preflight_requires_curren0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7a707073a840>
+
+    def test_preflight_requires_current_receipt_and_fix4(tmp_path, monkeypatch):
+        realout=lt.OUT; monkeypatch.setenv('GRM_ADMISSION_RULE','margin_first')
+        # Only receipt lookup moves; registration and all source paths stay real.
+        monkeypatch.setattr(lt, 'OUT', tmp_path)
+        p=tmp_path/'amendment3/r3/cpu_receipt.json'
+>       assert 'CPU_GATES_NOT_GREEN' in lt.preflight()['reasons']
+                                        ^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_amendment3.py:103: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_lt1.py:189: in preflight
+    r=verify(); free=shutil.disk_usage(ROOT).free
+      ^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        if sha(REG)!=REG.with_suffix('.sha256').read_text().split()[0]: raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r=read(REG)
+        # Prior art: C7 SHA-bound amendments (GRM, 2026), unchanged original plan.
+        inputs=dict(r['immutable_inputs'])
+        if AMEND.exists():
+            if sha(AMEND)!=AMEND.with_suffix('.sha256').read_text().split()[0]:raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a=read(AMEND)
+            if a['registration_sha256']!=sha(REG):raise ValueError('AMENDMENT_CHAIN_MISMATCH')
+            for name,change in a['overrides'].items():
+                if name.startswith('core/'):raise ValueError('CORE_OVERRIDE_FORBIDDEN')
+                if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[name]=change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['status']='FIT_ESTIMATE';r['projection']['budget_seconds']=10800
+            for arm in r['arms'].values():arm['status']='FIT_ESTIMATE'
+            r['effective_admission_rule']=0
+        # Prior art: C7/C2 SHA-chain amendments (GRM, 2026). FIX6 alone authorizes
+        # these core overrides; preserve both preceding registrations byte-for-byte.
+        if sha(AMEND2)!=AMEND2.with_suffix('.sha256').read_text().split()[0]:
+            raise ValueError('AMENDMENT2_SHA_MISMATCH')
+        a2=read(AMEND2)
+        if a2['previous_amendment_sha256']!=sha(AMEND) or a2['registration_sha256']!=sha(REG):
+            raise ValueError('AMENDMENT2_CHAIN_MISMATCH')
+        if a2['admission_rule']!='margin_first' or a2['budget_gpu_seconds']!=10800 or a2['cells']!=r['cells']:
+            raise ValueError('AMENDMENT2_PROTOCOL_MISMATCH')
+        for name,change in a2['overrides'].items():
+            if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                raise ValueError('AMENDMENT2_BEFORE_MISMATCH')
+            inputs[name]=change['after_sha256']
+        inputs.update(a2['new_inputs'])
+        # Prior art: LT1/C7 SHA-chain source amendments (GRM, 2026), reused.
+        from scripts.grm_lt1_amendment3 import apply
+        apply(sys.modules[__name__], inputs, a2)
+        from scripts.grm_lt1_amendment4 import apply as apply4
+        apply4(sys.modules[__name__], inputs)
+        r['effective_admission_rule']='margin_first'
+        for arm in r['arms'].values():arm['admission_rule']='margin_first'
+        for name,digest in inputs.items():
+>           if sha(ROOT/name)!=digest: raise ValueError('INPUT_SHA_MISMATCH: '+name)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_lt1.py:101: ValueError
+_______________________ test_dry_run_never_enters_worker _______________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7a707073ac90>
+capsys = <_pytest.capture.CaptureFixture object at 0x7a707073b4a0>
+
+    def test_dry_run_never_enters_worker(monkeypatch, capsys):
+        monkeypatch.setattr(lt, 'preflight', lambda:dict(status='READY'))
+        monkeypatch.setattr(worker, 'resume', lambda:pytest.fail('GPU worker entered'))
+        monkeypatch.setattr(lt.sys, 'argv', ['lt1','--dry-run'])
+>       assert lt.main()==0
+               ^^^^^^^^^
+
+tests/test_grm_lt1_amendment3.py:117: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_lt1.py:220: in main
+    r=verify()
+      ^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        if sha(REG)!=REG.with_suffix('.sha256').read_text().split()[0]: raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r=read(REG)
+        # Prior art: C7 SHA-bound amendments (GRM, 2026), unchanged original plan.
+        inputs=dict(r['immutable_inputs'])
+        if AMEND.exists():
+            if sha(AMEND)!=AMEND.with_suffix('.sha256').read_text().split()[0]:raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a=read(AMEND)
+            if a['registration_sha256']!=sha(REG):raise ValueError('AMENDMENT_CHAIN_MISMATCH')
+            for name,change in a['overrides'].items():
+                if name.startswith('core/'):raise ValueError('CORE_OVERRIDE_FORBIDDEN')
+                if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[name]=change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['status']='FIT_ESTIMATE';r['projection']['budget_seconds']=10800
+            for arm in r['arms'].values():arm['status']='FIT_ESTIMATE'
+            r['effective_admission_rule']=0
+        # Prior art: C7/C2 SHA-chain amendments (GRM, 2026). FIX6 alone authorizes
+        # these core overrides; preserve both preceding registrations byte-for-byte.
+        if sha(AMEND2)!=AMEND2.with_suffix('.sha256').read_text().split()[0]:
+            raise ValueError('AMENDMENT2_SHA_MISMATCH')
+        a2=read(AMEND2)
+        if a2['previous_amendment_sha256']!=sha(AMEND) or a2['registration_sha256']!=sha(REG):
+            raise ValueError('AMENDMENT2_CHAIN_MISMATCH')
+        if a2['admission_rule']!='margin_first' or a2['budget_gpu_seconds']!=10800 or a2['cells']!=r['cells']:
+            raise ValueError('AMENDMENT2_PROTOCOL_MISMATCH')
+        for name,change in a2['overrides'].items():
+            if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                raise ValueError('AMENDMENT2_BEFORE_MISMATCH')
+            inputs[name]=change['after_sha256']
+        inputs.update(a2['new_inputs'])
+        # Prior art: LT1/C7 SHA-chain source amendments (GRM, 2026), reused.
+        from scripts.grm_lt1_amendment3 import apply
+        apply(sys.modules[__name__], inputs, a2)
+        from scripts.grm_lt1_amendment4 import apply as apply4
+        apply4(sys.modules[__name__], inputs)
+        r['effective_admission_rule']='margin_first'
+        for arm in r['arms'].values():arm['admission_rule']='margin_first'
+        for name,digest in inputs.items():
+>           if sha(ROOT/name)!=digest: raise ValueError('INPUT_SHA_MISMATCH: '+name)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_lt1.py:101: ValueError
+----------------------------- Captured stdout call -----------------------------
+{
+  "status": "READY"
+}
+______________ test_resume_starts_at_failed_cell_and_keeps_charge ______________
+
+    def test_resume_starts_at_failed_cell_and_keeps_charge():
+        from scripts import grm_lt1_amendment4 as a4
+>       r = lt.verify()
+            ^^^^^^^^^^^
+
+tests/test_grm_lt1_amendment4.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        if sha(REG)!=REG.with_suffix('.sha256').read_text().split()[0]: raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r=read(REG)
+        # Prior art: C7 SHA-bound amendments (GRM, 2026), unchanged original plan.
+        inputs=dict(r['immutable_inputs'])
+        if AMEND.exists():
+            if sha(AMEND)!=AMEND.with_suffix('.sha256').read_text().split()[0]:raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a=read(AMEND)
+            if a['registration_sha256']!=sha(REG):raise ValueError('AMENDMENT_CHAIN_MISMATCH')
+            for name,change in a['overrides'].items():
+                if name.startswith('core/'):raise ValueError('CORE_OVERRIDE_FORBIDDEN')
+                if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[name]=change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['status']='FIT_ESTIMATE';r['projection']['budget_seconds']=10800
+            for arm in r['arms'].values():arm['status']='FIT_ESTIMATE'
+            r['effective_admission_rule']=0
+        # Prior art: C7/C2 SHA-chain amendments (GRM, 2026). FIX6 alone authorizes
+        # these core overrides; preserve both preceding registrations byte-for-byte.
+        if sha(AMEND2)!=AMEND2.with_suffix('.sha256').read_text().split()[0]:
+            raise ValueError('AMENDMENT2_SHA_MISMATCH')
+        a2=read(AMEND2)
+        if a2['previous_amendment_sha256']!=sha(AMEND) or a2['registration_sha256']!=sha(REG):
+            raise ValueError('AMENDMENT2_CHAIN_MISMATCH')
+        if a2['admission_rule']!='margin_first' or a2['budget_gpu_seconds']!=10800 or a2['cells']!=r['cells']:
+            raise ValueError('AMENDMENT2_PROTOCOL_MISMATCH')
+        for name,change in a2['overrides'].items():
+            if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                raise ValueError('AMENDMENT2_BEFORE_MISMATCH')
+            inputs[name]=change['after_sha256']
+        inputs.update(a2['new_inputs'])
+        # Prior art: LT1/C7 SHA-chain source amendments (GRM, 2026), reused.
+        from scripts.grm_lt1_amendment3 import apply
+        apply(sys.modules[__name__], inputs, a2)
+        from scripts.grm_lt1_amendment4 import apply as apply4
+        apply4(sys.modules[__name__], inputs)
+        r['effective_admission_rule']='margin_first'
+        for arm in r['arms'].values():arm['admission_rule']='margin_first'
+        for name,digest in inputs.items():
+>           if sha(ROOT/name)!=digest: raise ValueError('INPUT_SHA_MISMATCH: '+name)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_lt1.py:101: ValueError
+__________________ test_partial_failed_probes_are_not_scored ___________________
+
+    def test_partial_failed_probes_are_not_scored():
+>       result = lt.summary('A')
+                 ^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_amendment4.py:101: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_lt1.py:139: in summary
+    r=verify(); f=read(FIX); ps={p['id']:p for p in f['probes']}
+      ^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        if sha(REG)!=REG.with_suffix('.sha256').read_text().split()[0]: raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r=read(REG)
+        # Prior art: C7 SHA-bound amendments (GRM, 2026), unchanged original plan.
+        inputs=dict(r['immutable_inputs'])
+        if AMEND.exists():
+            if sha(AMEND)!=AMEND.with_suffix('.sha256').read_text().split()[0]:raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a=read(AMEND)
+            if a['registration_sha256']!=sha(REG):raise ValueError('AMENDMENT_CHAIN_MISMATCH')
+            for name,change in a['overrides'].items():
+                if name.startswith('core/'):raise ValueError('CORE_OVERRIDE_FORBIDDEN')
+                if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[name]=change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['status']='FIT_ESTIMATE';r['projection']['budget_seconds']=10800
+            for arm in r['arms'].values():arm['status']='FIT_ESTIMATE'
+            r['effective_admission_rule']=0
+        # Prior art: C7/C2 SHA-chain amendments (GRM, 2026). FIX6 alone authorizes
+        # these core overrides; preserve both preceding registrations byte-for-byte.
+        if sha(AMEND2)!=AMEND2.with_suffix('.sha256').read_text().split()[0]:
+            raise ValueError('AMENDMENT2_SHA_MISMATCH')
+        a2=read(AMEND2)
+        if a2['previous_amendment_sha256']!=sha(AMEND) or a2['registration_sha256']!=sha(REG):
+            raise ValueError('AMENDMENT2_CHAIN_MISMATCH')
+        if a2['admission_rule']!='margin_first' or a2['budget_gpu_seconds']!=10800 or a2['cells']!=r['cells']:
+            raise ValueError('AMENDMENT2_PROTOCOL_MISMATCH')
+        for name,change in a2['overrides'].items():
+            if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                raise ValueError('AMENDMENT2_BEFORE_MISMATCH')
+            inputs[name]=change['after_sha256']
+        inputs.update(a2['new_inputs'])
+        # Prior art: LT1/C7 SHA-chain source amendments (GRM, 2026), reused.
+        from scripts.grm_lt1_amendment3 import apply
+        apply(sys.modules[__name__], inputs, a2)
+        from scripts.grm_lt1_amendment4 import apply as apply4
+        apply4(sys.modules[__name__], inputs)
+        r['effective_admission_rule']='margin_first'
+        for arm in r['arms'].values():arm['admission_rule']='margin_first'
+        for name,digest in inputs.items():
+>           if sha(ROOT/name)!=digest: raise ValueError('INPUT_SHA_MISMATCH: '+name)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_lt1.py:101: ValueError
+____________ test_combined_budget_reserves_full_lease_before_start _____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7a7070417f50>
+
+    def test_combined_budget_reserves_full_lease_before_start(monkeypatch):
+>       r=lt.verify();cell=r['cells'][0]
+          ^^^^^^^^^^^
+
+tests/test_grm_lt1_controller.py:13: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        if sha(REG)!=REG.with_suffix('.sha256').read_text().split()[0]: raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r=read(REG)
+        # Prior art: C7 SHA-bound amendments (GRM, 2026), unchanged original plan.
+        inputs=dict(r['immutable_inputs'])
+        if AMEND.exists():
+            if sha(AMEND)!=AMEND.with_suffix('.sha256').read_text().split()[0]:raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a=read(AMEND)
+            if a['registration_sha256']!=sha(REG):raise ValueError('AMENDMENT_CHAIN_MISMATCH')
+            for name,change in a['overrides'].items():
+                if name.startswith('core/'):raise ValueError('CORE_OVERRIDE_FORBIDDEN')
+                if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[name]=change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['status']='FIT_ESTIMATE';r['projection']['budget_seconds']=10800
+            for arm in r['arms'].values():arm['status']='FIT_ESTIMATE'
+            r['effective_admission_rule']=0
+        # Prior art: C7/C2 SHA-chain amendments (GRM, 2026). FIX6 alone authorizes
+        # these core overrides; preserve both preceding registrations byte-for-byte.
+        if sha(AMEND2)!=AMEND2.with_suffix('.sha256').read_text().split()[0]:
+            raise ValueError('AMENDMENT2_SHA_MISMATCH')
+        a2=read(AMEND2)
+        if a2['previous_amendment_sha256']!=sha(AMEND) or a2['registration_sha256']!=sha(REG):
+            raise ValueError('AMENDMENT2_CHAIN_MISMATCH')
+        if a2['admission_rule']!='margin_first' or a2['budget_gpu_seconds']!=10800 or a2['cells']!=r['cells']:
+            raise ValueError('AMENDMENT2_PROTOCOL_MISMATCH')
+        for name,change in a2['overrides'].items():
+            if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                raise ValueError('AMENDMENT2_BEFORE_MISMATCH')
+            inputs[name]=change['after_sha256']
+        inputs.update(a2['new_inputs'])
+        # Prior art: LT1/C7 SHA-chain source amendments (GRM, 2026), reused.
+        from scripts.grm_lt1_amendment3 import apply
+        apply(sys.modules[__name__], inputs, a2)
+        from scripts.grm_lt1_amendment4 import apply as apply4
+        apply4(sys.modules[__name__], inputs)
+        r['effective_admission_rule']='margin_first'
+        for arm in r['arms'].values():arm['admission_rule']='margin_first'
+        for name,digest in inputs.items():
+>           if sha(ROOT/name)!=digest: raise ValueError('INPUT_SHA_MISMATCH: '+name)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_lt1.py:101: ValueError
+_________ test_resume_validates_completed_checkpoint_then_interleaves __________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-1090/test_resume_validates_complete0')
+
+    def test_resume_validates_completed_checkpoint_then_interleaves(tmp_path):
+>       r=lt.verify();cell=r['cells'][0]
+          ^^^^^^^^^^^
+
+tests/test_grm_lt1_controller.py:20: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        if sha(REG)!=REG.with_suffix('.sha256').read_text().split()[0]: raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r=read(REG)
+        # Prior art: C7 SHA-bound amendments (GRM, 2026), unchanged original plan.
+        inputs=dict(r['immutable_inputs'])
+        if AMEND.exists():
+            if sha(AMEND)!=AMEND.with_suffix('.sha256').read_text().split()[0]:raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a=read(AMEND)
+            if a['registration_sha256']!=sha(REG):raise ValueError('AMENDMENT_CHAIN_MISMATCH')
+            for name,change in a['overrides'].items():
+                if name.startswith('core/'):raise ValueError('CORE_OVERRIDE_FORBIDDEN')
+                if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[name]=change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['status']='FIT_ESTIMATE';r['projection']['budget_seconds']=10800
+            for arm in r['arms'].values():arm['status']='FIT_ESTIMATE'
+            r['effective_admission_rule']=0
+        # Prior art: C7/C2 SHA-chain amendments (GRM, 2026). FIX6 alone authorizes
+        # these core overrides; preserve both preceding registrations byte-for-byte.
+        if sha(AMEND2)!=AMEND2.with_suffix('.sha256').read_text().split()[0]:
+            raise ValueError('AMENDMENT2_SHA_MISMATCH')
+        a2=read(AMEND2)
+        if a2['previous_amendment_sha256']!=sha(AMEND) or a2['registration_sha256']!=sha(REG):
+            raise ValueError('AMENDMENT2_CHAIN_MISMATCH')
+        if a2['admission_rule']!='margin_first' or a2['budget_gpu_seconds']!=10800 or a2['cells']!=r['cells']:
+            raise ValueError('AMENDMENT2_PROTOCOL_MISMATCH')
+        for name,change in a2['overrides'].items():
+            if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                raise ValueError('AMENDMENT2_BEFORE_MISMATCH')
+            inputs[name]=change['after_sha256']
+        inputs.update(a2['new_inputs'])
+        # Prior art: LT1/C7 SHA-chain source amendments (GRM, 2026), reused.
+        from scripts.grm_lt1_amendment3 import apply
+        apply(sys.modules[__name__], inputs, a2)
+        from scripts.grm_lt1_amendment4 import apply as apply4
+        apply4(sys.modules[__name__], inputs)
+        r['effective_admission_rule']='margin_first'
+        for arm in r['arms'].values():arm['admission_rule']='margin_first'
+        for name,digest in inputs.items():
+>           if sha(ROOT/name)!=digest: raise ValueError('INPUT_SHA_MISMATCH: '+name)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_lt1.py:101: ValueError
+__________________ test_amendment_and_preflight_enforce_flag ___________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7a7070402720>
+
+    def test_amendment_and_preflight_enforce_flag(monkeypatch):
+>       r=lt.verify()
+          ^^^^^^^^^^^
+
+tests/test_grm_lt1_fix6.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        if sha(REG)!=REG.with_suffix('.sha256').read_text().split()[0]: raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r=read(REG)
+        # Prior art: C7 SHA-bound amendments (GRM, 2026), unchanged original plan.
+        inputs=dict(r['immutable_inputs'])
+        if AMEND.exists():
+            if sha(AMEND)!=AMEND.with_suffix('.sha256').read_text().split()[0]:raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a=read(AMEND)
+            if a['registration_sha256']!=sha(REG):raise ValueError('AMENDMENT_CHAIN_MISMATCH')
+            for name,change in a['overrides'].items():
+                if name.startswith('core/'):raise ValueError('CORE_OVERRIDE_FORBIDDEN')
+                if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[name]=change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['status']='FIT_ESTIMATE';r['projection']['budget_seconds']=10800
+            for arm in r['arms'].values():arm['status']='FIT_ESTIMATE'
+            r['effective_admission_rule']=0
+        # Prior art: C7/C2 SHA-chain amendments (GRM, 2026). FIX6 alone authorizes
+        # these core overrides; preserve both preceding registrations byte-for-byte.
+        if sha(AMEND2)!=AMEND2.with_suffix('.sha256').read_text().split()[0]:
+            raise ValueError('AMENDMENT2_SHA_MISMATCH')
+        a2=read(AMEND2)
+        if a2['previous_amendment_sha256']!=sha(AMEND) or a2['registration_sha256']!=sha(REG):
+            raise ValueError('AMENDMENT2_CHAIN_MISMATCH')
+        if a2['admission_rule']!='margin_first' or a2['budget_gpu_seconds']!=10800 or a2['cells']!=r['cells']:
+            raise ValueError('AMENDMENT2_PROTOCOL_MISMATCH')
+        for name,change in a2['overrides'].items():
+            if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                raise ValueError('AMENDMENT2_BEFORE_MISMATCH')
+            inputs[name]=change['after_sha256']
+        inputs.update(a2['new_inputs'])
+        # Prior art: LT1/C7 SHA-chain source amendments (GRM, 2026), reused.
+        from scripts.grm_lt1_amendment3 import apply
+        apply(sys.modules[__name__], inputs, a2)
+        from scripts.grm_lt1_amendment4 import apply as apply4
+        apply4(sys.modules[__name__], inputs)
+        r['effective_admission_rule']='margin_first'
+        for arm in r['arms'].values():arm['admission_rule']='margin_first'
+        for name,digest in inputs.items():
+>           if sha(ROOT/name)!=digest: raise ValueError('INPUT_SHA_MISMATCH: '+name)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_lt1.py:101: ValueError
+____________________ test_worker_rejects_unregistered_rule _____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-1090/test_worker_rejects_unregister0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7a7070403a70>
+
+    def test_worker_rejects_unregistered_rule(tmp_path,monkeypatch):
+>       r=lt.verify();monkeypatch.delenv('GRM_ADMISSION_RULE',raising=False)
+          ^^^^^^^^^^^
+
+tests/test_grm_lt1_fix6.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        if sha(REG)!=REG.with_suffix('.sha256').read_text().split()[0]: raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r=read(REG)
+        # Prior art: C7 SHA-bound amendments (GRM, 2026), unchanged original plan.
+        inputs=dict(r['immutable_inputs'])
+        if AMEND.exists():
+            if sha(AMEND)!=AMEND.with_suffix('.sha256').read_text().split()[0]:raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a=read(AMEND)
+            if a['registration_sha256']!=sha(REG):raise ValueError('AMENDMENT_CHAIN_MISMATCH')
+            for name,change in a['overrides'].items():
+                if name.startswith('core/'):raise ValueError('CORE_OVERRIDE_FORBIDDEN')
+                if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[name]=change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['status']='FIT_ESTIMATE';r['projection']['budget_seconds']=10800
+            for arm in r['arms'].values():arm['status']='FIT_ESTIMATE'
+            r['effective_admission_rule']=0
+        # Prior art: C7/C2 SHA-chain amendments (GRM, 2026). FIX6 alone authorizes
+        # these core overrides; preserve both preceding registrations byte-for-byte.
+        if sha(AMEND2)!=AMEND2.with_suffix('.sha256').read_text().split()[0]:
+            raise ValueError('AMENDMENT2_SHA_MISMATCH')
+        a2=read(AMEND2)
+        if a2['previous_amendment_sha256']!=sha(AMEND) or a2['registration_sha256']!=sha(REG):
+            raise ValueError('AMENDMENT2_CHAIN_MISMATCH')
+        if a2['admission_rule']!='margin_first' or a2['budget_gpu_seconds']!=10800 or a2['cells']!=r['cells']:
+            raise ValueError('AMENDMENT2_PROTOCOL_MISMATCH')
+        for name,change in a2['overrides'].items():
+            if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                raise ValueError('AMENDMENT2_BEFORE_MISMATCH')
+            inputs[name]=change['after_sha256']
+        inputs.update(a2['new_inputs'])
+        # Prior art: LT1/C7 SHA-chain source amendments (GRM, 2026), reused.
+        from scripts.grm_lt1_amendment3 import apply
+        apply(sys.modules[__name__], inputs, a2)
+        from scripts.grm_lt1_amendment4 import apply as apply4
+        apply4(sys.modules[__name__], inputs)
+        r['effective_admission_rule']='margin_first'
+        for arm in r['arms'].values():arm['admission_rule']='margin_first'
+        for name,digest in inputs.items():
+>           if sha(ROOT/name)!=digest: raise ValueError('INPUT_SHA_MISMATCH: '+name)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_lt1.py:101: ValueError
+______________________ test_200_turn_shared_worker_cpu[A] ______________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-1090/test_200_turn_shared_worker_cp0')
+arm = 'A'
+
+    @pytest.mark.parametrize('arm',['A','B'])
+    def test_200_turn_shared_worker_cpu(tmp_path,arm):
+>       r=lt.verify();run=tmp_path/'cells';run.mkdir()
+          ^^^^^^^^^^^
+
+tests/test_grm_lt1_fix6.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        if sha(REG)!=REG.with_suffix('.sha256').read_text().split()[0]: raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r=read(REG)
+        # Prior art: C7 SHA-bound amendments (GRM, 2026), unchanged original plan.
+        inputs=dict(r['immutable_inputs'])
+        if AMEND.exists():
+            if sha(AMEND)!=AMEND.with_suffix('.sha256').read_text().split()[0]:raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a=read(AMEND)
+            if a['registration_sha256']!=sha(REG):raise ValueError('AMENDMENT_CHAIN_MISMATCH')
+            for name,change in a['overrides'].items():
+                if name.startswith('core/'):raise ValueError('CORE_OVERRIDE_FORBIDDEN')
+                if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[name]=change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['status']='FIT_ESTIMATE';r['projection']['budget_seconds']=10800
+            for arm in r['arms'].values():arm['status']='FIT_ESTIMATE'
+            r['effective_admission_rule']=0
+        # Prior art: C7/C2 SHA-chain amendments (GRM, 2026). FIX6 alone authorizes
+        # these core overrides; preserve both preceding registrations byte-for-byte.
+        if sha(AMEND2)!=AMEND2.with_suffix('.sha256').read_text().split()[0]:
+            raise ValueError('AMENDMENT2_SHA_MISMATCH')
+        a2=read(AMEND2)
+        if a2['previous_amendment_sha256']!=sha(AMEND) or a2['registration_sha256']!=sha(REG):
+            raise ValueError('AMENDMENT2_CHAIN_MISMATCH')
+        if a2['admission_rule']!='margin_first' or a2['budget_gpu_seconds']!=10800 or a2['cells']!=r['cells']:
+            raise ValueError('AMENDMENT2_PROTOCOL_MISMATCH')
+        for name,change in a2['overrides'].items():
+            if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                raise ValueError('AMENDMENT2_BEFORE_MISMATCH')
+            inputs[name]=change['after_sha256']
+        inputs.update(a2['new_inputs'])
+        # Prior art: LT1/C7 SHA-chain source amendments (GRM, 2026), reused.
+        from scripts.grm_lt1_amendment3 import apply
+        apply(sys.modules[__name__], inputs, a2)
+        from scripts.grm_lt1_amendment4 import apply as apply4
+        apply4(sys.modules[__name__], inputs)
+        r['effective_admission_rule']='margin_first'
+        for arm in r['arms'].values():arm['admission_rule']='margin_first'
+        for name,digest in inputs.items():
+>           if sha(ROOT/name)!=digest: raise ValueError('INPUT_SHA_MISMATCH: '+name)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_lt1.py:101: ValueError
+______________________ test_200_turn_shared_worker_cpu[B] ______________________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-1090/test_200_turn_shared_worker_cp1')
+arm = 'B'
+
+    @pytest.mark.parametrize('arm',['A','B'])
+    def test_200_turn_shared_worker_cpu(tmp_path,arm):
+>       r=lt.verify();run=tmp_path/'cells';run.mkdir()
+          ^^^^^^^^^^^
+
+tests/test_grm_lt1_fix6.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        if sha(REG)!=REG.with_suffix('.sha256').read_text().split()[0]: raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r=read(REG)
+        # Prior art: C7 SHA-bound amendments (GRM, 2026), unchanged original plan.
+        inputs=dict(r['immutable_inputs'])
+        if AMEND.exists():
+            if sha(AMEND)!=AMEND.with_suffix('.sha256').read_text().split()[0]:raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a=read(AMEND)
+            if a['registration_sha256']!=sha(REG):raise ValueError('AMENDMENT_CHAIN_MISMATCH')
+            for name,change in a['overrides'].items():
+                if name.startswith('core/'):raise ValueError('CORE_OVERRIDE_FORBIDDEN')
+                if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[name]=change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['status']='FIT_ESTIMATE';r['projection']['budget_seconds']=10800
+            for arm in r['arms'].values():arm['status']='FIT_ESTIMATE'
+            r['effective_admission_rule']=0
+        # Prior art: C7/C2 SHA-chain amendments (GRM, 2026). FIX6 alone authorizes
+        # these core overrides; preserve both preceding registrations byte-for-byte.
+        if sha(AMEND2)!=AMEND2.with_suffix('.sha256').read_text().split()[0]:
+            raise ValueError('AMENDMENT2_SHA_MISMATCH')
+        a2=read(AMEND2)
+        if a2['previous_amendment_sha256']!=sha(AMEND) or a2['registration_sha256']!=sha(REG):
+            raise ValueError('AMENDMENT2_CHAIN_MISMATCH')
+        if a2['admission_rule']!='margin_first' or a2['budget_gpu_seconds']!=10800 or a2['cells']!=r['cells']:
+            raise ValueError('AMENDMENT2_PROTOCOL_MISMATCH')
+        for name,change in a2['overrides'].items():
+            if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                raise ValueError('AMENDMENT2_BEFORE_MISMATCH')
+            inputs[name]=change['after_sha256']
+        inputs.update(a2['new_inputs'])
+        # Prior art: LT1/C7 SHA-chain source amendments (GRM, 2026), reused.
+        from scripts.grm_lt1_amendment3 import apply
+        apply(sys.modules[__name__], inputs, a2)
+        from scripts.grm_lt1_amendment4 import apply as apply4
+        apply4(sys.modules[__name__], inputs)
+        r['effective_admission_rule']='margin_first'
+        for arm in r['arms'].values():arm['admission_rule']='margin_first'
+        for name,digest in inputs.items():
+>           if sha(ROOT/name)!=digest: raise ValueError('INPUT_SHA_MISMATCH: '+name)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_lt1.py:101: ValueError
+_____________________ test_registration_and_frozen_fixture _____________________
+
+    def test_registration_and_frozen_fixture():
+>       r=lt.verify(); f=lt.read(lt.FIX)
+          ^^^^^^^^^^^
+
+tests/test_grm_lt1.py:17: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        if sha(REG)!=REG.with_suffix('.sha256').read_text().split()[0]: raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r=read(REG)
+        # Prior art: C7 SHA-bound amendments (GRM, 2026), unchanged original plan.
+        inputs=dict(r['immutable_inputs'])
+        if AMEND.exists():
+            if sha(AMEND)!=AMEND.with_suffix('.sha256').read_text().split()[0]:raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a=read(AMEND)
+            if a['registration_sha256']!=sha(REG):raise ValueError('AMENDMENT_CHAIN_MISMATCH')
+            for name,change in a['overrides'].items():
+                if name.startswith('core/'):raise ValueError('CORE_OVERRIDE_FORBIDDEN')
+                if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[name]=change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['status']='FIT_ESTIMATE';r['projection']['budget_seconds']=10800
+            for arm in r['arms'].values():arm['status']='FIT_ESTIMATE'
+            r['effective_admission_rule']=0
+        # Prior art: C7/C2 SHA-chain amendments (GRM, 2026). FIX6 alone authorizes
+        # these core overrides; preserve both preceding registrations byte-for-byte.
+        if sha(AMEND2)!=AMEND2.with_suffix('.sha256').read_text().split()[0]:
+            raise ValueError('AMENDMENT2_SHA_MISMATCH')
+        a2=read(AMEND2)
+        if a2['previous_amendment_sha256']!=sha(AMEND) or a2['registration_sha256']!=sha(REG):
+            raise ValueError('AMENDMENT2_CHAIN_MISMATCH')
+        if a2['admission_rule']!='margin_first' or a2['budget_gpu_seconds']!=10800 or a2['cells']!=r['cells']:
+            raise ValueError('AMENDMENT2_PROTOCOL_MISMATCH')
+        for name,change in a2['overrides'].items():
+            if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                raise ValueError('AMENDMENT2_BEFORE_MISMATCH')
+            inputs[name]=change['after_sha256']
+        inputs.update(a2['new_inputs'])
+        # Prior art: LT1/C7 SHA-chain source amendments (GRM, 2026), reused.
+        from scripts.grm_lt1_amendment3 import apply
+        apply(sys.modules[__name__], inputs, a2)
+        from scripts.grm_lt1_amendment4 import apply as apply4
+        apply4(sys.modules[__name__], inputs)
+        r['effective_admission_rule']='margin_first'
+        for arm in r['arms'].values():arm['admission_rule']='margin_first'
+        for name,digest in inputs.items():
+>           if sha(ROOT/name)!=digest: raise ValueError('INPUT_SHA_MISMATCH: '+name)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_lt1.py:101: ValueError
+____________ test_full_fixture_fake_mounts_answers_and_restarts[A] _____________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-1090/test_full_fixture_fake_mounts_0')
+arm = 'A'
+
+    @pytest.mark.parametrize('arm',['A','B'])
+    def test_full_fixture_fake_mounts_answers_and_restarts(tmp_path,arm):
+        directory=tmp_path/arm;directory.mkdir()
+        env=dict(os.environ,CUDA_VISIBLE_DEVICES='',PYTHONDONTWRITEBYTECODE='1')
+        for start,stop in [(1,70),(71,140),(141,200)]:
+            result=subprocess.run([sys.executable,'-m','scripts.grm_lt1_cpu','--stage',str(directory),
+                '--arm',arm,'--start',str(start),'--stop',str(stop)],cwd=lt.ROOT,env=env,capture_output=True,text=True)
+            assert result.returncode==0,result.stdout+result.stderr
+        state=lt.read(directory/'state.json')
+>       lt.create(lt.OUT/f'fake_{arm}_receipt.json',state)
+
+tests/test_grm_lt1.py:82: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_c7_common.py:87: in create
+    with path.open('x') as stream:
+         ^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-d1/artifacts/grm_lt1/fake_A_receipt.json')
+mode = 'x', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileExistsError: [Errno 17] File exists: '/mnt/ForgeRealm/wt/grm-d1/artifacts/grm_lt1/fake_A_receipt.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileExistsError
+____________ test_full_fixture_fake_mounts_answers_and_restarts[B] _____________
+
+tmp_path = PosixPath('/tmp/pytest-of-vader/pytest-1090/test_full_fixture_fake_mounts_1')
+arm = 'B'
+
+    @pytest.mark.parametrize('arm',['A','B'])
+    def test_full_fixture_fake_mounts_answers_and_restarts(tmp_path,arm):
+        directory=tmp_path/arm;directory.mkdir()
+        env=dict(os.environ,CUDA_VISIBLE_DEVICES='',PYTHONDONTWRITEBYTECODE='1')
+        for start,stop in [(1,70),(71,140),(141,200)]:
+            result=subprocess.run([sys.executable,'-m','scripts.grm_lt1_cpu','--stage',str(directory),
+                '--arm',arm,'--start',str(start),'--stop',str(stop)],cwd=lt.ROOT,env=env,capture_output=True,text=True)
+            assert result.returncode==0,result.stdout+result.stderr
+        state=lt.read(directory/'state.json')
+>       lt.create(lt.OUT/f'fake_{arm}_receipt.json',state)
+
+tests/test_grm_lt1.py:82: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_c7_common.py:87: in create
+    with path.open('x') as stream:
+         ^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-d1/artifacts/grm_lt1/fake_B_receipt.json')
+mode = 'x', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileExistsError: [Errno 17] File exists: '/mnt/ForgeRealm/wt/grm-d1/artifacts/grm_lt1/fake_B_receipt.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileExistsError
+__________________ test_empty_summary_and_budget_fail_closed ___________________
+
+    def test_empty_summary_and_budget_fail_closed():
+        for arm in ('A','B'):
+>           s=lt.summary(arm)
+              ^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1.py:103: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_lt1.py:139: in summary
+    r=verify(); f=read(FIX); ps={p['id']:p for p in f['probes']}
+      ^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def verify():
+        if sha(REG)!=REG.with_suffix('.sha256').read_text().split()[0]: raise ValueError('REGISTRATION_SHA_MISMATCH')
+        r=read(REG)
+        # Prior art: C7 SHA-bound amendments (GRM, 2026), unchanged original plan.
+        inputs=dict(r['immutable_inputs'])
+        if AMEND.exists():
+            if sha(AMEND)!=AMEND.with_suffix('.sha256').read_text().split()[0]:raise ValueError('AMENDMENT_SHA_MISMATCH')
+            a=read(AMEND)
+            if a['registration_sha256']!=sha(REG):raise ValueError('AMENDMENT_CHAIN_MISMATCH')
+            for name,change in a['overrides'].items():
+                if name.startswith('core/'):raise ValueError('CORE_OVERRIDE_FORBIDDEN')
+                if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                    raise ValueError('AMENDMENT_BEFORE_MISMATCH')
+                inputs[name]=change['after_sha256']
+            inputs.update(a['new_inputs'])
+            r['status']='FIT_ESTIMATE';r['projection']['budget_seconds']=10800
+            for arm in r['arms'].values():arm['status']='FIT_ESTIMATE'
+            r['effective_admission_rule']=0
+        # Prior art: C7/C2 SHA-chain amendments (GRM, 2026). FIX6 alone authorizes
+        # these core overrides; preserve both preceding registrations byte-for-byte.
+        if sha(AMEND2)!=AMEND2.with_suffix('.sha256').read_text().split()[0]:
+            raise ValueError('AMENDMENT2_SHA_MISMATCH')
+        a2=read(AMEND2)
+        if a2['previous_amendment_sha256']!=sha(AMEND) or a2['registration_sha256']!=sha(REG):
+            raise ValueError('AMENDMENT2_CHAIN_MISMATCH')
+        if a2['admission_rule']!='margin_first' or a2['budget_gpu_seconds']!=10800 or a2['cells']!=r['cells']:
+            raise ValueError('AMENDMENT2_PROTOCOL_MISMATCH')
+        for name,change in a2['overrides'].items():
+            if inputs[name]!=change['before_sha256'] or sha(ROOT/change['before_archive'])!=inputs[name]:
+                raise ValueError('AMENDMENT2_BEFORE_MISMATCH')
+            inputs[name]=change['after_sha256']
+        inputs.update(a2['new_inputs'])
+        # Prior art: LT1/C7 SHA-chain source amendments (GRM, 2026), reused.
+        from scripts.grm_lt1_amendment3 import apply
+        apply(sys.modules[__name__], inputs, a2)
+        from scripts.grm_lt1_amendment4 import apply as apply4
+        apply4(sys.modules[__name__], inputs)
+        r['effective_admission_rule']='margin_first'
+        for arm in r['arms'].values():arm['admission_rule']='margin_first'
+        for name,digest in inputs.items():
+>           if sha(ROOT/name)!=digest: raise ValueError('INPUT_SHA_MISMATCH: '+name)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           ValueError: INPUT_SHA_MISMATCH: core/graft_arena.py
+
+scripts/grm_lt1.py:101: ValueError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_grm_lt1_amendment1.py::test_fixture_only_assistant_fact_changes_and_effective_registration
+FAILED tests/test_grm_lt1_amendment1.py::test_empty_summary_does_not_claim_quality
+FAILED tests/test_grm_lt1_amendment1.py::test_worker_all_8_turn_cells_resume_and_designated_restarts[A]
+FAILED tests/test_grm_lt1_amendment1.py::test_worker_all_8_turn_cells_resume_and_designated_restarts[B]
+FAILED tests/test_grm_lt1_amendment3.py::test_amendment3_preserves_protocol_and_binds_all_core
+FAILED tests/test_grm_lt1_amendment3.py::test_preflight_requires_current_receipt_and_fix4
+FAILED tests/test_grm_lt1_amendment3.py::test_dry_run_never_enters_worker - V...
+FAILED tests/test_grm_lt1_amendment4.py::test_resume_starts_at_failed_cell_and_keeps_charge
+FAILED tests/test_grm_lt1_amendment4.py::test_partial_failed_probes_are_not_scored
+FAILED tests/test_grm_lt1_controller.py::test_combined_budget_reserves_full_lease_before_start
+FAILED tests/test_grm_lt1_controller.py::test_resume_validates_completed_checkpoint_then_interleaves
+FAILED tests/test_grm_lt1_fix6.py::test_amendment_and_preflight_enforce_flag
+FAILED tests/test_grm_lt1_fix6.py::test_worker_rejects_unregistered_rule - Va...
+FAILED tests/test_grm_lt1_fix6.py::test_200_turn_shared_worker_cpu[A] - Value...
+FAILED tests/test_grm_lt1_fix6.py::test_200_turn_shared_worker_cpu[B] - Value...
+FAILED tests/test_grm_lt1.py::test_registration_and_frozen_fixture - ValueErr...
+FAILED tests/test_grm_lt1.py::test_full_fixture_fake_mounts_answers_and_restarts[A]
+FAILED tests/test_grm_lt1.py::test_full_fixture_fake_mounts_answers_and_restarts[B]
+FAILED tests/test_grm_lt1.py::test_empty_summary_and_budget_fail_closed - Val...
+19 failed, 101 passed, 2 warnings in 59.75s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

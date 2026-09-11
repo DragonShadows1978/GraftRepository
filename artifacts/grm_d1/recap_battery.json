@@ -1,0 +1,225 @@
+{
+  "gate": {
+    "battery": "LT1.1 recap",
+    "questions": [
+      {
+        "answerable": true,
+        "attribute": "lamp spacing",
+        "entity": "Promenade",
+        "expected": "9 voxels",
+        "id": "recap_1",
+        "identifier_tokens": [
+          "for",
+          "promenade"
+        ],
+        "max_distance": 184,
+        "min_distance": 184,
+        "question": "For Promenade, which lamp spacing did we go with?",
+        "scorer": "scripts.grm_lt1.score (C5 arm S contiguous value span)",
+        "source_turns": [
+          12
+        ],
+        "targets": "the lamp spacing we chose for Promenade",
+        "turn": 196
+      },
+      {
+        "answerable": true,
+        "attribute": "maintenance crew",
+        "entity": "Commtower",
+        "expected": "Iona Vale",
+        "id": "recap_2",
+        "identifier_tokens": [
+          "commtower",
+          "for"
+        ],
+        "max_distance": 184,
+        "min_distance": 184,
+        "question": "For Commtower, which maintenance crew did we go with?",
+        "scorer": "scripts.grm_lt1.score (C5 arm S contiguous value span)",
+        "source_turns": [
+          13
+        ],
+        "targets": "the maintenance crew we chose for Commtower",
+        "turn": 197
+      },
+      {
+        "answerable": true,
+        "attribute": "map position",
+        "entity": "Breakwater",
+        "expected": "(-31, 48, 12)",
+        "id": "recap_3",
+        "identifier_tokens": [
+          "breakwater",
+          "for"
+        ],
+        "max_distance": 184,
+        "min_distance": 184,
+        "question": "For Breakwater, which map position did we go with?",
+        "scorer": "scripts.grm_lt1.score (C5 arm S contiguous value span)",
+        "source_turns": [
+          14
+        ],
+        "targets": "the map position we chose for Breakwater",
+        "turn": 198
+      },
+      {
+        "answerable": true,
+        "attribute": "docking fee",
+        "entity": "Vega",
+        "expected": "29 credits",
+        "id": "recap_4",
+        "identifier_tokens": [
+          "for",
+          "vega"
+        ],
+        "max_distance": 198,
+        "min_distance": 184,
+        "question": "For Vega, which docking fee did we go with?",
+        "scorer": "scripts.grm_lt1.score (C5 arm S contiguous value span)",
+        "source_turns": [
+          1,
+          3,
+          15
+        ],
+        "targets": "the docking fee we chose for Vega",
+        "turn": 199
+      },
+      {
+        "answerable": true,
+        "attribute": "bed count",
+        "entity": "Medibay",
+        "expected": "16 beds",
+        "id": "recap_5",
+        "identifier_tokens": [
+          "for",
+          "medibay"
+        ],
+        "max_distance": 198,
+        "min_distance": 184,
+        "question": "For Medibay, which bed count did we go with?",
+        "scorer": "scripts.grm_lt1.score (C5 arm S contiguous value span)",
+        "source_turns": [
+          2,
+          4,
+          16
+        ],
+        "targets": "the bed count we chose for Medibay",
+        "turn": 200
+      }
+    ],
+    "replaces": {
+      "mechanism": "admission_identified_candidates == []; all ladder trips grounded=false",
+      "observed_score": "0/5 on both arms",
+      "question": "recap the five biggest decisions we made",
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/A-197-200/recap.json",
+      "turn": 200
+    }
+  },
+  "oracle": {
+    "evidence_class": "CPU oracle gate over the frozen fixture (question quality, not memory quality)",
+    "matched": 5,
+    "out_of": 5,
+    "rows": [
+      {
+        "answer": "For Promenade, the lamp spacing we went with is 9 voxels.",
+        "expected": "9 voxels",
+        "id": "recap_1",
+        "question": "For Promenade, which lamp spacing did we go with?",
+        "score": {
+          "abstention_error": 0,
+          "abstention_style": false,
+          "answer": "For Promenade, the lamp spacing we went with is 9 voxels.",
+          "category": "correct",
+          "exact_correct": true,
+          "refusal_error": 0,
+          "refusal_style": false,
+          "wrong_value_error": 0
+        },
+        "source_texts": [
+          "Promenade's lamp spacing will be 9 voxels."
+        ]
+      },
+      {
+        "answer": "For Commtower, the maintenance crew we went with is Iona Vale.",
+        "expected": "Iona Vale",
+        "id": "recap_2",
+        "question": "For Commtower, which maintenance crew did we go with?",
+        "score": {
+          "abstention_error": 0,
+          "abstention_style": false,
+          "answer": "For Commtower, the maintenance crew we went with is Iona Vale.",
+          "category": "correct",
+          "exact_correct": true,
+          "refusal_error": 0,
+          "refusal_style": false,
+          "wrong_value_error": 0
+        },
+        "source_texts": [
+          "Commtower's maintenance crew will be Iona Vale."
+        ]
+      },
+      {
+        "answer": "For Breakwater, the map position we went with is (-31, 48, 12).",
+        "expected": "(-31, 48, 12)",
+        "id": "recap_3",
+        "question": "For Breakwater, which map position did we go with?",
+        "score": {
+          "abstention_error": 0,
+          "abstention_style": false,
+          "answer": "For Breakwater, the map position we went with is (-31, 48, 12).",
+          "category": "correct",
+          "exact_correct": true,
+          "refusal_error": 0,
+          "refusal_style": false,
+          "wrong_value_error": 0
+        },
+        "source_texts": [
+          "Breakwater's map position will be (-31, 48, 12)."
+        ]
+      },
+      {
+        "answer": "For Vega, the docking fee we went with is 29 credits.",
+        "expected": "29 credits",
+        "id": "recap_4",
+        "question": "For Vega, which docking fee did we go with?",
+        "score": {
+          "abstention_error": 0,
+          "abstention_style": false,
+          "answer": "For Vega, the docking fee we went with is 29 credits.",
+          "category": "correct",
+          "exact_correct": true,
+          "refusal_error": 0,
+          "refusal_style": false,
+          "wrong_value_error": 0
+        },
+        "source_texts": [
+          "Vega's docking fee will be 17 credits.",
+          "Actually, Vega's docking fee will be 23 credits, replacing the earlier choice.",
+          "Actually, Vega's docking fee will be 29 credits, replacing the earlier choice."
+        ]
+      },
+      {
+        "answer": "For Medibay, the bed count we went with is 16 beds.",
+        "expected": "16 beds",
+        "id": "recap_5",
+        "question": "For Medibay, which bed count did we go with?",
+        "score": {
+          "abstention_error": 0,
+          "abstention_style": false,
+          "answer": "For Medibay, the bed count we went with is 16 beds.",
+          "category": "correct",
+          "exact_correct": true,
+          "refusal_error": 0,
+          "refusal_style": false,
+          "wrong_value_error": 0
+        },
+        "source_texts": [
+          "Medibay's bed count will be 12 beds.",
+          "Actually, Medibay's bed count will be 14 beds, replacing the earlier choice.",
+          "Actually, Medibay's bed count will be 16 beds, replacing the earlier choice."
+        ]
+      }
+    ],
+    "status": "PASS"
+  }
+}
