@@ -1,0 +1,21 @@
+{
+ "aliases_exact": 0,
+ "aliases_single_mount": 8,
+ "complete": true,
+ "controls": 0,
+ "controls_broken": 0,
+ "digests_over_width": 0,
+ "fake": false,
+ "lease_expired": false,
+ "non_fit_note": "NON_FIT rows are UNMEASURED: excluded from the prediction numerator AND denominator, never counted as wrong answers.",
+ "non_fit_row_ids": [],
+ "pending": 0,
+ "prediction": "aliases >= 5/8 exact AND 0 controls broken",
+ "prediction_met": false,
+ "rows": 8,
+ "rows_measured": 8,
+ "rows_non_fit": 0,
+ "schema": "grm.a1.gpu_contrast_summary.v1",
+ "scored_rows": 8,
+ "verdict": "RED"
+}
