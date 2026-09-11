@@ -1,0 +1,132 @@
+{
+  "evidence_class": "E2E session receipts only; missing GPU data never scores zero",
+  "fingerprint": "1a972a26f78e917cc0bd2ec676139687e2121bc7869ed5560daf1d10febf8171",
+  "status": "BLOCKED_OR_INCOMPLETE",
+  "receipt_count": 0,
+  "completed_questions": 0,
+  "missing": [
+    "correct_00",
+    "correct_01",
+    "correct_02",
+    "correct_03",
+    "correct_04",
+    "correct_05",
+    "correct_06",
+    "correct_07",
+    "correct_08",
+    "correct_09",
+    "correct_join_0",
+    "correct_join_1",
+    "decoy_00",
+    "decoy_01",
+    "decoy_02",
+    "decoy_03",
+    "decoy_04",
+    "decoy_05",
+    "unavailable_00",
+    "unavailable_01",
+    "unavailable_02",
+    "unavailable_03",
+    "unavailable_04",
+    "unavailable_05"
+  ],
+  "score_table": {
+    "correct": {
+      "n": 0,
+      "raw": {
+        "exact_answer": 0,
+        "false_answer": 0,
+        "abstained": 0,
+        "abstention_correct": 0,
+        "abstention_incorrect": 0,
+        "manual_review": 0,
+        "unsupported_lucky_truth": 0
+      },
+      "A": {
+        "exact_answer": 0,
+        "false_answer": 0,
+        "abstained": 0,
+        "abstention_correct": 0,
+        "abstention_incorrect": 0,
+        "manual_review": 0,
+        "unsupported_lucky_truth": 0
+      },
+      "B": {
+        "exact_answer": 0,
+        "false_answer": 0,
+        "abstained": 0,
+        "abstention_correct": 0,
+        "abstention_incorrect": 0,
+        "manual_review": 0,
+        "unsupported_lucky_truth": 0
+      }
+    },
+    "decoy": {
+      "n": 0,
+      "raw": {
+        "exact_answer": 0,
+        "false_answer": 0,
+        "abstained": 0,
+        "abstention_correct": 0,
+        "abstention_incorrect": 0,
+        "manual_review": 0,
+        "unsupported_lucky_truth": 0
+      },
+      "A": {
+        "exact_answer": 0,
+        "false_answer": 0,
+        "abstained": 0,
+        "abstention_correct": 0,
+        "abstention_incorrect": 0,
+        "manual_review": 0,
+        "unsupported_lucky_truth": 0
+      },
+      "B": {
+        "exact_answer": 0,
+        "false_answer": 0,
+        "abstained": 0,
+        "abstention_correct": 0,
+        "abstention_incorrect": 0,
+        "manual_review": 0,
+        "unsupported_lucky_truth": 0
+      }
+    },
+    "unavailable": {
+      "n": 0,
+      "raw": {
+        "exact_answer": 0,
+        "false_answer": 0,
+        "abstained": 0,
+        "abstention_correct": 0,
+        "abstention_incorrect": 0,
+        "manual_review": 0,
+        "unsupported_lucky_truth": 0
+      },
+      "A": {
+        "exact_answer": 0,
+        "false_answer": 0,
+        "abstained": 0,
+        "abstention_correct": 0,
+        "abstention_incorrect": 0,
+        "manual_review": 0,
+        "unsupported_lucky_truth": 0
+      },
+      "B": {
+        "exact_answer": 0,
+        "false_answer": 0,
+        "abstained": 0,
+        "abstention_correct": 0,
+        "abstention_incorrect": 0,
+        "manual_review": 0,
+        "unsupported_lucky_truth": 0
+      }
+    }
+  },
+  "correct_answers_B_rejected": null,
+  "raw_correct_answers_B_rejected": null,
+  "P3_pass": null,
+  "decoy_A_zero_floor": false,
+  "budget_reserved_s": 0,
+  "wall_s_completed_and_failed": 0,
+  "limitations": "controlled fresh mounts, not full 34-turn replay; split children not exercised; manual-review rows block P3"
+}

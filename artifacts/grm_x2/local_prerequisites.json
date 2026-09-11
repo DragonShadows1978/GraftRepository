@@ -1,0 +1,26 @@
+{
+  "evidence_class": "read-only filesystem prerequisite check, NOT model load or GPU evidence",
+  "fingerprint": "3080d41427f84e6dfd7babcb6451ba2bf6bdfd1db4df6e02c182bb52664cff28",
+  "gpu_probe_run": false,
+  "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+  "model_index_sha256": "0e085b977c4c9942f85938828e8c989ed7d5cdabf852e4da6a67c116cd502cd1",
+  "native_lib": "/mnt/ForgeRealm/GraftRepository/cpp/build/libgrm_runtime.so",
+  "native_lib_sha256": "6e984b0de89339e1ea5c7a0731323f5682aff476e3fabf48af2d173ecea3976d",
+  "shards": [
+    {
+      "bytes": 4792272488,
+      "exists": true,
+      "name": "model-00000-of-00002.safetensors"
+    },
+    {
+      "bytes": 4798702184,
+      "exists": true,
+      "name": "model-00001-of-00002.safetensors"
+    },
+    {
+      "bytes": 4170342232,
+      "exists": true,
+      "name": "model-00002-of-00002.safetensors"
+    }
+  ]
+}

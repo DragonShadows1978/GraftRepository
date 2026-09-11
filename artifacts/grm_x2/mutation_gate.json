@@ -1,0 +1,177 @@
+{
+  "evidence_class": "unit test / author mutation baseline, not blind verification",
+  "kill_fraction": 1.0,
+  "killed": 5,
+  "non_error_mutants": 5,
+  "production_sha256_unchanged": "357d233ec008a67caaf6c6ba32e7b470f1c520b944ab366433be207d06cae704",
+  "results": [
+    {
+      "error": null,
+      "killed": true,
+      "mutation_sha256": "8f018fa50f7703e694c37ea97dd580526f92296289834621172ce8b743be67a2",
+      "name": "ignore_entity",
+      "observed": {
+        "accepted": true,
+        "bindings": [
+          {
+            "entity": "orion",
+            "negated": false,
+            "relation": "owner",
+            "value": "mira"
+          }
+        ],
+        "joins": [],
+        "prompt_visible": false,
+        "reason": "all_bindings_witnessed",
+        "supports": [
+          {
+            "assertion_index": 0,
+            "source_id": "a",
+            "source_version": "8597f753ad9945050786b50fd0fc0efb65f519f02ccc57df38c443c58eaa3f73",
+            "span": [
+              0,
+              25
+            ],
+            "witness_id": "1dd37e997167c2d68fc7c93ba5747ff2c3e36d54526ddb6530b31d4ec08aa058"
+          }
+        ],
+        "unknown_clauses": []
+      }
+    },
+    {
+      "error": null,
+      "killed": true,
+      "mutation_sha256": "cedf256b931f3a85c2ed4992c5ebd6386cf1e3396e167ffadaf4d3638cb491e6",
+      "name": "ignore_relation",
+      "observed": {
+        "accepted": true,
+        "bindings": [
+          {
+            "entity": "orion",
+            "negated": false,
+            "relation": "owner",
+            "value": "mira"
+          }
+        ],
+        "joins": [],
+        "prompt_visible": false,
+        "reason": "all_bindings_witnessed",
+        "supports": [
+          {
+            "assertion_index": 0,
+            "source_id": "a",
+            "source_version": "33e0f922e1423175dd2e57331b36eb81d23029d148bfe5f19fea67ef1c072887",
+            "span": [
+              0,
+              26
+            ],
+            "witness_id": "3adaff245c21c6872febc656663e2a57a95610d64670454104c379b836cc6b79"
+          }
+        ],
+        "unknown_clauses": []
+      }
+    },
+    {
+      "error": null,
+      "killed": true,
+      "mutation_sha256": "a0562a75bb04ee4e348ed14e74f981811c541099dc4d72027f7617ceaf890700",
+      "name": "ignore_polarity",
+      "observed": {
+        "accepted": true,
+        "bindings": [
+          {
+            "entity": "orion",
+            "negated": false,
+            "relation": "owner",
+            "value": "mira"
+          }
+        ],
+        "joins": [],
+        "prompt_visible": false,
+        "reason": "all_bindings_witnessed",
+        "supports": [
+          {
+            "assertion_index": 0,
+            "source_id": "a",
+            "source_version": "aea58fce06ec06b4f51d93d78ef08afefb31beb83e9ce211b0a84c3144d1a976",
+            "span": [
+              0,
+              26
+            ],
+            "witness_id": "5bfa2a17112e32aefbf82780da47716eafec9d823f1b1580bc638515056f4ce0"
+          }
+        ],
+        "unknown_clauses": []
+      }
+    },
+    {
+      "error": null,
+      "killed": true,
+      "mutation_sha256": "e5697bb5cb6cdda45a153dec52ad1fbd7e8ab26e4feacdaee82b983f77118548",
+      "name": "skip_unknown_clause",
+      "observed": {
+        "accepted": true,
+        "bindings": [
+          {
+            "entity": "orion",
+            "negated": false,
+            "relation": "owner",
+            "value": "mira"
+          }
+        ],
+        "joins": [],
+        "prompt_visible": false,
+        "reason": "all_bindings_witnessed",
+        "supports": [
+          {
+            "assertion_index": 0,
+            "source_id": "a",
+            "source_version": "aea58fce06ec06b4f51d93d78ef08afefb31beb83e9ce211b0a84c3144d1a976",
+            "span": [
+              0,
+              26
+            ],
+            "witness_id": "5bfa2a17112e32aefbf82780da47716eafec9d823f1b1580bc638515056f4ce0"
+          }
+        ],
+        "unknown_clauses": [
+          "Penguins can fly"
+        ]
+      }
+    },
+    {
+      "error": null,
+      "killed": true,
+      "mutation_sha256": "680fd996fa6839529522fea1d304dbe71084c996aef276ca9e2f44bb194e3e4e",
+      "name": "ignore_source_version",
+      "observed": {
+        "accepted": true,
+        "bindings": [
+          {
+            "entity": "orion",
+            "negated": false,
+            "relation": "owner",
+            "value": "mira"
+          }
+        ],
+        "joins": [],
+        "prompt_visible": false,
+        "reason": "all_bindings_witnessed",
+        "supports": [
+          {
+            "assertion_index": 0,
+            "source_id": "a",
+            "source_version": "aea58fce06ec06b4f51d93d78ef08afefb31beb83e9ce211b0a84c3144d1a976",
+            "span": [
+              0,
+              26
+            ],
+            "witness_id": "5bfa2a17112e32aefbf82780da47716eafec9d823f1b1580bc638515056f4ce0"
+          }
+        ],
+        "unknown_clauses": []
+      }
+    }
+  ],
+  "status": "PASS"
+}

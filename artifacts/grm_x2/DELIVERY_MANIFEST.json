@@ -1,0 +1,401 @@
+{
+  "active_fingerprint": "1a972a26f78e917cc0bd2ec676139687e2121bc7869ed5560daf1d10febf8171",
+  "evidence_class": "read-only final file integrity check, no GPU result",
+  "exact_dry_run_cli_parity": true,
+  "files": [
+    {
+      "bytes": 5074,
+      "executable": false,
+      "lines": 83,
+      "path": "artifacts/grm_x2/BLOCKED_REPORT.md",
+      "sha256": "9eca9af6001d0cdcd5b0f82f985caac3ad9f1d09d360e306760d7ac85c4fc9bf"
+    },
+    {
+      "bytes": 10858,
+      "executable": false,
+      "lines": 179,
+      "path": "artifacts/grm_x2/REPORT.md",
+      "sha256": "996a35c98f94d851c8b4f12f0dcfb7290feaf7edd997dd2c677c9039bb221965"
+    },
+    {
+      "bytes": 1425,
+      "executable": false,
+      "lines": 15,
+      "path": "artifacts/grm_x2/amendments/001_metric_audit.json",
+      "sha256": "22dddb8fa79e9471dc953cc9d6ea5cd6a54234b01fdb4e1d25be739cb3654f8a"
+    },
+    {
+      "bytes": 1194,
+      "executable": false,
+      "lines": 14,
+      "path": "artifacts/grm_x2/amendments/002_turn_geometry.json",
+      "sha256": "b8064981b42570b8cf21a6ef7eb0da196b6338f13ec2f1188113d00d7b6109f9"
+    },
+    {
+      "bytes": 35429,
+      "executable": false,
+      "lines": 1479,
+      "path": "artifacts/grm_x2/cpu_gate.json",
+      "sha256": "976b795c44c6956f9f108728b7c61e1d8faa754493f7bfe765b3c99f28c7dc34"
+    },
+    {
+      "bytes": 35535,
+      "executable": false,
+      "lines": 1480,
+      "path": "artifacts/grm_x2/cpu_gate_001.json",
+      "sha256": "7e32d0a8d42f1159199ea1e2eec6fbbdbde04a68dd979473464506ce2a854daf"
+    },
+    {
+      "bytes": 35535,
+      "executable": false,
+      "lines": 1480,
+      "path": "artifacts/grm_x2/cpu_gate_002.json",
+      "sha256": "79cd23f9eaab6e04f054ba80409d01ef901a951d6a22544f5974ebb304872a52"
+    },
+    {
+      "bytes": 21371,
+      "executable": false,
+      "lines": 616,
+      "path": "artifacts/grm_x2/dry_run.json",
+      "sha256": "7c3384aa2673df2c8237bf1ceedcaaa6ed453e3747504a5406d093b1fd3434b7"
+    },
+    {
+      "bytes": 21371,
+      "executable": false,
+      "lines": 616,
+      "path": "artifacts/grm_x2/dry_run_001.json",
+      "sha256": "7c3384aa2673df2c8237bf1ceedcaaa6ed453e3747504a5406d093b1fd3434b7"
+    },
+    {
+      "bytes": 21371,
+      "executable": false,
+      "lines": 616,
+      "path": "artifacts/grm_x2/dry_run_002.json",
+      "sha256": "7c3384aa2673df2c8237bf1ceedcaaa6ed453e3747504a5406d093b1fd3434b7"
+    },
+    {
+      "bytes": 21371,
+      "executable": false,
+      "lines": 616,
+      "path": "artifacts/grm_x2/dry_run_cli.json",
+      "sha256": "76372b755a1e3721e3a988e78efc92b96474431b3e84519e9b5a3fc4ed16f9e7"
+    },
+    {
+      "bytes": 21371,
+      "executable": false,
+      "lines": 616,
+      "path": "artifacts/grm_x2/dry_run_cli_002.json",
+      "sha256": "76372b755a1e3721e3a988e78efc92b96474431b3e84519e9b5a3fc4ed16f9e7"
+    },
+    {
+      "bytes": 539,
+      "executable": false,
+      "lines": 19,
+      "path": "artifacts/grm_x2/fixture_manifest.json",
+      "sha256": "0f07531c264d8281b947cb0874fd79bfd2d0c138823968784465f6fc566c5996"
+    },
+    {
+      "bytes": 18060,
+      "executable": false,
+      "lines": 562,
+      "path": "artifacts/grm_x2/fixtures/cpu.json",
+      "sha256": "4070d2a8d00c9f3f89ae6841a3737caeb603140ddead7cf605aff895c16be5bd"
+    },
+    {
+      "bytes": 14617,
+      "executable": false,
+      "lines": 456,
+      "path": "artifacts/grm_x2/fixtures/live.json",
+      "sha256": "08a460ad9982a84717993c2a1815125d0cdc2dfc818b02c13e90a0f372ca159f"
+    },
+    {
+      "bytes": 2543,
+      "executable": false,
+      "lines": 104,
+      "path": "artifacts/grm_x2/gpu_blocked_summary.json",
+      "sha256": "df9ec9ac4cb76b6c01b62144d3409c206fabe92acd44e3a0046c88adbb594aeb"
+    },
+    {
+      "bytes": 3290,
+      "executable": false,
+      "lines": 132,
+      "path": "artifacts/grm_x2/gpu_blocked_summary_001.json",
+      "sha256": "90991f6772949bfd7aa745bf6d1aa00e05f2b0cc1b5e88eb67a47835a8296cbf"
+    },
+    {
+      "bytes": 3290,
+      "executable": false,
+      "lines": 132,
+      "path": "artifacts/grm_x2/gpu_blocked_summary_002.json",
+      "sha256": "852bc3d9ffc4d88b39149f631021a4916680ef69ea54eb4fe532787b31fb413d"
+    },
+    {
+      "bytes": 1987,
+      "executable": false,
+      "lines": 37,
+      "path": "artifacts/grm_x2/lead_commands.txt",
+      "sha256": "27d1d3f8bf8d5a7eda08e560f2a5f96d6f2e88e939f79d68bcf54cb79528960b"
+    },
+    {
+      "bytes": 954,
+      "executable": false,
+      "lines": 26,
+      "path": "artifacts/grm_x2/local_prerequisites.json",
+      "sha256": "84c45328512a522c37b23fa446fb361d609471d4427ba90d21078b4a55ed06d7"
+    },
+    {
+      "bytes": 14851,
+      "executable": false,
+      "lines": 305,
+      "path": "artifacts/grm_x2/mutants/ignore_entity.py",
+      "sha256": "8f018fa50f7703e694c37ea97dd580526f92296289834621172ce8b743be67a2"
+    },
+    {
+      "bytes": 14837,
+      "executable": false,
+      "lines": 305,
+      "path": "artifacts/grm_x2/mutants/ignore_polarity.py",
+      "sha256": "a0562a75bb04ee4e348ed14e74f981811c541099dc4d72027f7617ceaf890700"
+    },
+    {
+      "bytes": 14849,
+      "executable": false,
+      "lines": 305,
+      "path": "artifacts/grm_x2/mutants/ignore_relation.py",
+      "sha256": "cedf256b931f3a85c2ed4992c5ebd6386cf1e3396e167ffadaf4d3638cb491e6"
+    },
+    {
+      "bytes": 14860,
+      "executable": false,
+      "lines": 305,
+      "path": "artifacts/grm_x2/mutants/ignore_source_version.py",
+      "sha256": "680fd996fa6839529522fea1d304dbe71084c996aef276ca9e2f44bb194e3e4e"
+    },
+    {
+      "bytes": 14839,
+      "executable": false,
+      "lines": 305,
+      "path": "artifacts/grm_x2/mutants/skip_unknown_clause.py",
+      "sha256": "e5697bb5cb6cdda45a153dec52ad1fbd7e8ab26e4feacdaee82b983f77118548"
+    },
+    {
+      "bytes": 4968,
+      "executable": false,
+      "lines": 177,
+      "path": "artifacts/grm_x2/mutation_gate.json",
+      "sha256": "94db6bbf5ad865f7dfa5176a8acc544564bd44db22e428d0a668dafc7c552e8f"
+    },
+    {
+      "bytes": 5339,
+      "executable": false,
+      "lines": 143,
+      "path": "artifacts/grm_x2/registration.json",
+      "sha256": "92bc8695b2561dc1db68954d5025b2c3d505f24470b73e4985c26c705ae23373"
+    },
+    {
+      "bytes": 6011,
+      "executable": false,
+      "lines": 107,
+      "path": "artifacts/grm_x2/validation.json",
+      "sha256": "7b0b44949cc14e2b12b4e376271a7c32851114205797cd3f56a5f1f45b99c344"
+    },
+    {
+      "bytes": 5942,
+      "executable": false,
+      "lines": 95,
+      "path": "artifacts/grm_x2/validation_001.json",
+      "sha256": "588b857ef7ce0dfab9ca778091fb05e2ed3e64f92e889ec6582275053ab8ab6c"
+    },
+    {
+      "bytes": 5941,
+      "executable": false,
+      "lines": 95,
+      "path": "artifacts/grm_x2/validation_002.json",
+      "sha256": "ab0aa9797f69a8507ffd31d98cbf9461861850a152e22f2381d2d6b6e0f45522"
+    },
+    {
+      "bytes": 14850,
+      "executable": false,
+      "lines": 305,
+      "path": "core/grm_x2_witnesses.py",
+      "sha256": "357d233ec008a67caaf6c6ba32e7b470f1c520b944ab366433be207d06cae704"
+    },
+    {
+      "bytes": 8524,
+      "executable": false,
+      "lines": 130,
+      "path": "docs/GRM_X2_LEDGER.md",
+      "sha256": "04e195a923cc46796c801dfbd164904c6278e97d8723644ab9b57a2c90cededb"
+    },
+    {
+      "bytes": 880,
+      "executable": false,
+      "lines": 41,
+      "path": "logs/grm_x2_cpu_gate.log",
+      "sha256": "3e03ca1e4966e2baf468e85e8f80bdd1712a824c5918026da326988f578c0b80"
+    },
+    {
+      "bytes": 273,
+      "executable": false,
+      "lines": 8,
+      "path": "logs/grm_x2_mutation_gate.log",
+      "sha256": "5aa86ad24095115ff37f5c8625683acbae527ce679cb0191f7b60a82219fad03"
+    },
+    {
+      "bytes": 3000903,
+      "executable": false,
+      "lines": 54866,
+      "path": "logs/grm_x2_r1.log",
+      "sha256": "8c915a61282a26346390bea8b2999b22f438d1d0663c35dd82e60b2504bd4c1b"
+    },
+    {
+      "bytes": 0,
+      "executable": false,
+      "lines": 0,
+      "path": "logs/grm_x2_shell_gate.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "executable": false,
+      "lines": 0,
+      "path": "logs/grm_x2_shell_gate_001.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "executable": false,
+      "lines": 0,
+      "path": "logs/grm_x2_shell_gate_002.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 877,
+      "executable": false,
+      "lines": 14,
+      "path": "logs/grm_x2_unit_gate.log",
+      "sha256": "fd3b1719d755f27a79f367fc060378b7619bf40ae18156375d5b040f3070481c"
+    },
+    {
+      "bytes": 877,
+      "executable": false,
+      "lines": 14,
+      "path": "logs/grm_x2_unit_gate_001.log",
+      "sha256": "572480b0a49384bd2816df93ec16a22377e81dd46871b793485bae1cd194b1ec"
+    },
+    {
+      "bytes": 877,
+      "executable": false,
+      "lines": 14,
+      "path": "logs/grm_x2_unit_gate_002.log",
+      "sha256": "61a7ae692ac1df7fac81a23f2df29e271df30fab3966e1141acbb7cf11bb416c"
+    },
+    {
+      "bytes": 7391,
+      "executable": false,
+      "lines": 161,
+      "path": "scripts/grm_x2_common.py",
+      "sha256": "598d3ee694a7de47d3843b6b4d4ee18ef9e0ebd741ea483412d9f5b7ce9cd94e"
+    },
+    {
+      "bytes": 2615,
+      "executable": false,
+      "lines": 50,
+      "path": "scripts/grm_x2_cpu.py",
+      "sha256": "9bd75312c38167e26bd12899bf997a4b997e64f09ca2ef02c8aa073c3fdc8956"
+    },
+    {
+      "bytes": 11269,
+      "executable": false,
+      "lines": 152,
+      "path": "scripts/grm_x2_freeze.py",
+      "sha256": "c591dc374e66d63284381e85e77527136fab708a7d10b850494762af291a3dfd"
+    },
+    {
+      "bytes": 20225,
+      "executable": false,
+      "lines": 351,
+      "path": "scripts/grm_x2_gpu.py",
+      "sha256": "41707e8bcfd12d70db29a4b69f8044f711b3a4956ec622ebf62861dbc7847ef8"
+    },
+    {
+      "bytes": 349,
+      "executable": true,
+      "lines": 8,
+      "path": "scripts/grm_x2_lead_gpu.sh",
+      "sha256": "3cb525285d4539eb6f14ce11b57efc5d09eb7fa345b60c82e9f07c865fc3ac79"
+    },
+    {
+      "bytes": 4400,
+      "executable": false,
+      "lines": 81,
+      "path": "scripts/grm_x2_mutations.py",
+      "sha256": "508c083a01d660f44636a92e4c165d82b79377587f4e1e6c7fec1bcaa7789dbe"
+    },
+    {
+      "bytes": 3055,
+      "executable": false,
+      "lines": 60,
+      "path": "scripts/grm_x2_validate.py",
+      "sha256": "30d7cd00b5d73786dc84039a2a143d338b705cd95ecf5e64ae28a5c524a4ec41"
+    },
+    {
+      "bytes": 3037,
+      "executable": false,
+      "lines": 50,
+      "path": "scripts/grm_x2_validate_001.py",
+      "sha256": "34f146945cc3e837dcd20bb227599b2ecb9015517120f26f041d3b74aafaa73e"
+    },
+    {
+      "bytes": 5350,
+      "executable": false,
+      "lines": 111,
+      "path": "tests/test_grm_x2_runner.py",
+      "sha256": "39ed7afb71a3c67ba82f253f512a426b792123c7562bf4ad4c120ca140cf5859"
+    },
+    {
+      "bytes": 11591,
+      "executable": false,
+      "lines": 239,
+      "path": "tests/test_grm_x2_witnesses.py",
+      "sha256": "21ac36d3b3c3d2dc5613e3a0cb8d475497501989ff1e157713f00e25606d01b3"
+    }
+  ],
+  "gpu_claims": 0,
+  "manifest_self_excluded": true,
+  "original_inputs_verified": [
+    {
+      "path": "orders/GRM_X2_RELATIONAL_WITNESSES.md",
+      "sha256": "5a8e5ec2398c621840fd11e4b4ba9a59e44610144b127a441ddc55474cc8c1ff"
+    },
+    {
+      "path": "core/graft_arena.py",
+      "sha256": "e03a44b5e0155fc10a0be5c56e66e117c768a67993fab76df3ecf3aa62cdb20b"
+    },
+    {
+      "path": "core/grm_text_norm.py",
+      "sha256": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8"
+    },
+    {
+      "path": "core/grm_frame.py",
+      "sha256": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2"
+    },
+    {
+      "path": "scripts/grm_e2e_session.py",
+      "sha256": "74434dbb750e8e7635afa2f55709ae0533a3562f5b63aa54fc1f81d664bfd450"
+    },
+    {
+      "path": "config/grm_live_registered_baselines.json",
+      "sha256": "48609fa2e179c14401c4cbeb35c03157a8d8b241af90f15ae9568b23826da708"
+    },
+    {
+      "path": "config/grm_demand_registered.json",
+      "sha256": "1408d0b1c2ecd91ce89172add0f7d25248953f55e0dd1594cf8d54eab8a14a98"
+    },
+    {
+      "path": "tests/fixtures/supersession_battery/fresh_fact_controls.json",
+      "sha256": "9b75e1e4f70d77524d7d099f1416ae34ea3cafc149e749e26e7a5dd47b298d75"
+    }
+  ],
+  "registration_sha256": "92bc8695b2561dc1db68954d5025b2c3d505f24470b73e4985c26c705ae23373"
+}
