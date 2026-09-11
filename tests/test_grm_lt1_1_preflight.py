@@ -33,8 +33,27 @@ from scripts import grm_lt1_1 as runner          # noqa: E402
 
 
 @pytest.fixture
-def pinned():
-    """The preflight checks the pinned admission rule, as LT1's does."""
+def pinned(monkeypatch):
+    """The preflight checks the pinned admission rule, as LT1's does.
+
+    The `monkeypatch` pin is not redundant with `pinned_arm`. The GRM_* leak
+    guard (tests/conftest.py:198-226) runs at the END OF THE CALL PHASE, by
+    design, so a leak is attributed to the test that leaked rather than
+    surfacing as an error at teardown of some later test. A yield-fixture's
+    cleanup runs at TEARDOWN -- after that check -- so `pinned_arm`'s correct
+    `finally` restore happens too late to be seen, and every test taking this
+    fixture was flagged GRM_ENV_LEAK.
+
+    Registering the same keys with `monkeypatch` first tells the guard they
+    are pinned, not leaked (it excludes exactly the keys monkeypatch has
+    recorded). `pinned_arm` still performs the real pin and its readback; the
+    monkeypatch values here are overwritten by it immediately.
+
+    Found when amendment 8 removed the `campaign_receipt` marks: the marks had
+    been skipping these tests, so the leak had never been observed.
+    """
+    monkeypatch.setenv(runner.RULE_ENV, 'margin_first')
+    monkeypatch.setenv(runner.ARM_ENV, 'A')
     with runner.pinned_arm('A'):
         yield
 
@@ -50,6 +69,49 @@ def _stage(monkeypatch, tmp_path):
     return staged
 
 
+def _governing(staged):
+    """`(filename, doc)` of the amendment whose `core_rebind` governs.
+
+    The teeth tests must plant their drift in the block the runner ACTUALLY
+    reads. When amendment 8 rebound the core pins to the merged tree, that
+    stopped being amendment 1, and a test that keeps planting in amendment 1
+    proves nothing: the pin it corrupts is never consulted.
+    """
+    best = None
+    for path in sorted(staged.glob('amendment[0-9]*.json')):
+        doc = json.loads(path.read_text())
+        if 'core_rebind' not in doc:
+            continue
+        if best is None or doc['amendment'] > best[1]['amendment']:
+            best = (path, doc)
+    assert best is not None, 'no amendment carries a core_rebind'
+    return best[0].name, best[1]
+
+
+def _replant(staged, name, doc):
+    """Rewrite a planted amendment and REPAIR the chain below it.
+
+    `_rewrite` changes the document's sha, which breaks the
+    `previous_amendment_sha256` of whatever amendment follows it. The
+    preflight checks chain continuity BEFORE the input shas and returns on
+    the first reason, so without this repair the test would observe
+    AMENDMENT<n>_CHAIN_MISMATCH and never reach the INPUT check it is
+    actually about. Re-linking the successors keeps the planted drift as the
+    ONLY defect in the staged chain.
+    """
+    _rewrite(staged / name, doc)
+    ordered = sorted(staged.glob('amendment[0-9]*.json'),
+                     key=lambda p: json.loads(p.read_text())['amendment'])
+    for previous, nxt in zip(ordered, ordered[1:]):
+        child = json.loads(nxt.read_text())
+        if 'previous_amendment_sha256' not in child:
+            continue
+        expected = hashlib.sha256(previous.read_bytes()).hexdigest()
+        if child['previous_amendment_sha256'] != expected:
+            child['previous_amendment_sha256'] = expected
+            _rewrite(nxt, child)
+
+
 def _rewrite(path, doc):
     payload = (json.dumps(doc, sort_keys=True, indent=2) + '\n').encode()
     path.write_bytes(payload)
@@ -59,8 +121,6 @@ def _rewrite(path, doc):
 
 # --------------------------------------------------------------- it passes
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_d1/lt1_1/registration.json + artifacts/grm_lt1/amendment4/resume_registration.json')
 @pytest.mark.parametrize('arm', ['A', 'A+'])
 def test_the_chain_preflight_is_ready_on_this_tree(arm):
     with runner.pinned_arm(arm):
@@ -70,16 +130,12 @@ def test_the_chain_preflight_is_ready_on_this_tree(arm):
     assert gate['gpu_executed'] is False
 
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_d1/lt1_1/registration.json + artifacts/grm_lt1/amendment4/resume_registration.json')
 def test_no_input_sha_mismatch_anywhere(pinned):
     """The blocker the ruling resolves must be gone, by name."""
     gate = runner.lt1_1_preflight('A')
     assert not any('INPUT_SHA_MISMATCH' in r for r in gate['reasons'])
 
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_d1/lt1_1/registration.json + artifacts/grm_lt1/amendment4/resume_registration.json')
 def test_it_checks_the_classes_the_ruling_names(pinned):
     """sha-bound inputs, fixture sha, cell schedule, budget."""
     gate = runner.lt1_1_preflight('A')
@@ -94,8 +150,6 @@ def test_it_checks_the_classes_the_ruling_names(pinned):
     assert 'registration.json' in gate['document_sha256']
 
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_d1/lt1_1/registration.json + artifacts/grm_lt1/amendment4/resume_registration.json')
 def test_the_ruling_is_carried_in_the_receipt(pinned):
     gate = runner.lt1_1_preflight('A')
     assert 'frozen receipt' in gate['ruling']
@@ -114,11 +168,11 @@ def test_a_planted_drift_in_our_own_amendment_goes_red(monkeypatch, tmp_path):
     merely a document-sha mismatch.
     """
     staged = _stage(monkeypatch, tmp_path)
-    doc = json.loads((staged / 'amendment1.json').read_text())
+    name, doc = _governing(staged)
     victim = 'core/graft_arena.py'
     assert victim in doc['core_rebind']['changed']
     doc['core_rebind']['changed'][victim]['after_sha256'] = 'deadbeef' * 8
-    _rewrite(staged / 'amendment1.json', doc)
+    _replant(staged, name, doc)
 
     with runner.pinned_arm('A'):
         gate = runner.lt1_1_preflight('A')
@@ -129,10 +183,16 @@ def test_a_planted_drift_in_our_own_amendment_goes_red(monkeypatch, tmp_path):
 def test_a_planted_drift_in_a_new_input_goes_red(monkeypatch, tmp_path):
     """The new-input branch needs teeth too, not just the changed one."""
     staged = _stage(monkeypatch, tmp_path)
-    doc = json.loads((staged / 'amendment1.json').read_text())
+    name, doc = _governing(staged)
     victim = 'core/grm_alias_fold.py'
-    doc['core_rebind']['new_inputs'][victim]['sha256'] = 'deadbeef' * 8
-    _rewrite(staged / 'amendment1.json', doc)
+    # The governing rebind may carry this pin under `changed` (amendment 8
+    # rebound it) rather than `new_inputs`. The branch under test is the
+    # new-input one, so plant it there and drop any `changed` duplicate.
+    doc['core_rebind'].setdefault('new_inputs', {})
+    doc['core_rebind']['changed'].pop(victim, None)
+    doc['core_rebind']['new_inputs'][victim] = dict(
+        sha256='deadbeef' * 8, attribution='planted by the teeth test')
+    _replant(staged, name, doc)
     with runner.pinned_arm('A'):
         gate = runner.lt1_1_preflight('A')
     assert 'INPUT_SHA_MISMATCH: ' + victim in gate['reasons']
@@ -175,8 +235,6 @@ def test_an_unpinned_admission_rule_goes_red(monkeypatch):
 
 # ------------------------------------------------------- the parent lineage
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_d1/lt1_1/registration.json + artifacts/grm_lt1/amendment4/resume_registration.json')
 def test_lt1_identity_is_recorded_not_gated(pinned):
     gate = runner.lt1_1_preflight('A')
     parent = gate['parent']
@@ -232,8 +290,6 @@ def test_the_old_lt1_gate_is_no_longer_called():
 
 # ---------------------------- the amendment-3 blocker, INVERTED with receipt
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_d1/lt1_1/registration.json + artifacts/grm_lt1/amendment4/resume_registration.json')
 def test_the_amendment3_host_blocker_is_resolved():
     """Inverts `test_the_host_blocker_claim_is_true_right_now`.
 
@@ -260,8 +316,6 @@ def test_the_amendment3_host_blocker_is_resolved():
 
 # --------------------------------------------------- the route, host gate ON
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_d1/lt1_1/registration.json + artifacts/grm_lt1/amendment4/resume_registration.json')
 @pytest.mark.parametrize('arm', ['A', 'A+'])
 def test_dry_lease_passes_with_the_host_gate_on(arm, tmp_path):
     """The gate the lead asked for: both arms, real route, no escape hatch."""
@@ -275,8 +329,6 @@ def test_dry_lease_passes_with_the_host_gate_on(arm, tmp_path):
     assert 'INPUT_SHA_MISMATCH' not in json.dumps(value)
 
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_d1/lt1_1/registration.json + artifacts/grm_lt1/amendment4/resume_registration.json')
 @pytest.mark.parametrize('arm', ['A', 'A+'])
 def test_dry_lease_passes_from_the_cli_without_no_host_gate(arm, tmp_path):
     result = subprocess.run(

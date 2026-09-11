@@ -78,6 +78,57 @@ REGISTRATION = OUT / 'registration.json'
 AMENDMENT1 = OUT / 'amendment1.json'
 FIXTURE = OUT / 'dialogue.json'
 
+def governing_core_rebind():
+    """The LATEST amendment that carries a `core_rebind`, and its block.
+
+    LT1.1's core pins were bound once (amendment 1) and read from
+    `AMENDMENT1` at four sites.  That is correct only while amendment 1 is
+    the newest rebind.  When the tree LT1.1 must run on moves -- SCOUT-FIX-9
+    and A1 amendment 3 landed in `core/` under the grm-merge fast-forward --
+    a NEW amendment rebinds the pins, and every reader has to follow the
+    chain forward instead of re-reading a superseded block.
+
+    The rule is the same one the preflight already uses for the runner
+    binding ("the LATEST amendment governs"), applied to the core pins:
+    scan amendments by number, take the highest one carrying `core_rebind`.
+    Amendment 1 remains the answer until a later amendment supersedes it, so
+    this is byte-identical in behaviour on a tree where nothing moved.
+
+    Returns `(amendment_number, core_rebind_block)`.
+
+    Prior art: no prior art known to me for this specific rule -- it is the
+    ordinary "latest record wins" of an append-only amendment chain
+    (append-only ledgers, Haber & Stornetta 1991, in kind), and the
+    "LATEST amendment governs" phrasing is this campaign's own, from the
+    runner-binding logic in `lt1_1_preflight`.
+    """
+    best, block = None, None
+    for path in sorted(OUT.glob('amendment[0-9]*.json')):
+        doc = json.loads(path.read_text())
+        if 'core_rebind' not in doc:
+            continue
+        if best is None or doc['amendment'] > best:
+            best, block = doc['amendment'], doc['core_rebind']
+    if block is None:
+        raise ValueError('LT11_NO_CORE_REBIND')
+    return best, block
+
+
+def governing_core_pins():
+    """`{path: expected_sha256}` from the governing rebind block.
+
+    `unchanged` entries are pins too: a file that did not move is still a
+    sha-bound input, and dropping it from the checked set would mean a later
+    change to it went unnoticed. Amendment 1 had no `unchanged` block (every
+    pin there was changed or new), so this is additive, not a reinterpretation.
+    """
+    _, block = governing_core_rebind()
+    pins = {n: c['after_sha256'] for n, c in block['changed'].items()}
+    pins.update({n: e['sha256'] for n, e in block['new_inputs'].items()})
+    pins.update({n: e['sha256'] for n, e in block.get('unchanged', {}).items()})
+    return pins
+
+
 ALIAS_ENV = 'GRM_ALIAS_FOLD_MERGE'
 RULE_ENV = 'GRM_ADMISSION_RULE'
 ARMS = ('A', 'A+')
@@ -193,10 +244,8 @@ def binding(label):
     read from the runner's pinned state, which is where it truly lives.
     """
     amendment = json.loads(AMENDMENT1.read_text())
-    core = {n: c['after_sha256']
-            for n, c in amendment['core_rebind']['changed'].items()}
-    core.update({n: e['sha256']
-                 for n, e in amendment['core_rebind']['new_inputs'].items()})
+    # The GOVERNING rebind, not amendment 1's: see `governing_core_rebind`.
+    core = governing_core_pins()
     arm = current_arm(label)
     return dict(label=label,
                 arm=label if label in ARMS else arm,
@@ -938,18 +987,31 @@ def parent_lineage():
     amendment1 = json.loads(AMENDMENT1.read_text())
     recorded = {n: c['after_sha256']
                 for n, c in json.loads(lt1_binding.read_text())['core_shas'].items()}
+    # `lt1_1_rebound` is the GOVERNING pin (the newest rebind), so the table
+    # never claims a superseded sha is what LT1.1 runs on. Amendment 1 still
+    # supplies `lt1_recorded`, which is LT1's day-of value and never moves.
+    governing_number, governing = governing_core_rebind()
+    pins = governing_core_pins()
     drift = []
     for name, change in sorted(amendment1['core_rebind']['changed'].items()):
+        entry = (governing.get('changed', {}).get(name)
+                 or governing.get('new_inputs', {}).get(name) or {})
         drift.append(dict(input=name,
                           lt1_recorded=change['before_sha256'],
-                          lt1_1_rebound=change['after_sha256'],
+                          lt1_1_rebound=pins.get(name, change['after_sha256']),
                           on_tree_now=sha(ROOT / name),
-                          attribution=change['attribution']))
+                          attribution=entry.get('attribution',
+                                                change['attribution']),
+                          rebound_by_amendment=governing_number))
     for name, entry in sorted(amendment1['core_rebind']['new_inputs'].items()):
+        later = (governing.get('changed', {}).get(name)
+                 or governing.get('new_inputs', {}).get(name) or {})
         drift.append(dict(input=name, lt1_recorded=None,
-                          lt1_1_rebound=entry['sha256'],
+                          lt1_1_rebound=pins.get(name, entry['sha256']),
                           on_tree_now=sha(ROOT / name),
-                          attribution=entry['attribution']))
+                          attribution=later.get('attribution',
+                                                entry['attribution']),
+                          rebound_by_amendment=governing_number))
     return dict(
         lt1_registration='artifacts/grm_lt1/registration.json',
         lt1_registration_sha256=sha(lt1_registration),
@@ -1034,13 +1096,10 @@ def lt1_1_preflight(arm='A'):
 
     # sha-bound inputs: LT1.1's OWN rebound core pins, checked against the tree
     checked_inputs = 0
-    for name, change in sorted(a1['core_rebind']['changed'].items()):
+    # The GOVERNING rebind (latest amendment carrying one), not amendment 1's.
+    for name, expected in sorted(governing_core_pins().items()):
         checked_inputs += 1
-        if sha(ROOT / name) != change['after_sha256']:
-            reasons.append('INPUT_SHA_MISMATCH: ' + name)
-    for name, entry in sorted(a1['core_rebind']['new_inputs'].items()):
-        checked_inputs += 1
-        if sha(ROOT / name) != entry['sha256']:
+        if sha(ROOT / name) != expected:
             reasons.append('INPUT_SHA_MISMATCH: ' + name)
     # ... and the runner the LATEST amendment bound.
     runner = latest['runner']

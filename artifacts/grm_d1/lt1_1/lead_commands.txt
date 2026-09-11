@@ -1,24 +1,40 @@
-# LT1.1 — arm A and arm A+ (amendment 7)
+# LT1.1 — arm A and arm A+ (amendment 8)
 # registration sha256: 02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8
-# amendment 6  sha256: 89d26556ade25ea05de2101929c22ac0d7374c8eb59c6f057119b776d393a0ba
 # amendment 7  sha256: 46bb7fd83e048999a6316bfcf488740f0e7163eb97480320b183eeca2a130af5
-# runner            : scripts/grm_lt1_1.py (sha256 19e3a895c5e5442f0354fec59fcbe54b7c5dcb783f349b15d7612202bf1c14ec)
+# amendment 8  sha256: 1ea99e96c7fc089d434ed7b0d7aa1371189103c664c6fdf052cbbd3718abe542
+# runner            : scripts/grm_lt1_1.py (sha256 2c745e2b27194ade4ec2c78c625fa2d70bd7ff0d5f1518e2b64f153708677937)
 # worker            : scripts/grm_lt1_worker.py (sha256 79492eafe9176510a649c5477bf78bf1eb5c129ecaeaf4094221c67e22646c71)
 #
 # 26 cells per arm. Reservation ceiling 7410 s (2.06 GPU-h) PER ARM;
 # both arms: 4.12 GPU-h ceiling. Separately resumable.
 #
-# THE PREVIOUS A+ RUN WAS A HARNESS NULL (amendment 7). execute()
-# fed supersede and alias turns as prose and never called the
-# production turn funnel, so nothing was retired and A1 fold-merge
-# never ran -- which is why A+ reproduced LT1 numbers exactly.
-# Both runs are archived under
-#   artifacts/grm_d1/lt1_1/archive/r1_harness_null/
-# and both arms re-arm from cell 1.
+# AMENDMENT 8 REBINDS THE CORE PINS TO THE MERGED TREE. The
+# grm-merge fast-forward brought SCOUT-FIX-9 and A1 amendment 3
+# into core/, which superseded amendment 1's pins and left the
+# chain preflight BLOCKED with INPUT_SHA_MISMATCH on three files:
+#   core/graft_arena.py       SCOUT-FIX-9
+#   core/graft_repository.py  SCOUT-FIX-9
+#   core/grm_alias_fold.py    A1 amendment 3 (U+2011 normalization)
+# Three further pins (grm_admission, grm_runtime, grm_text_norm)
+# are unchanged and are recorded as such, not dropped.
+# LT1.1 measures the core that SHIPS, so the pins follow the tree.
 #
-# FAIRNESS: arms A and A+ now share this worker, so A-vs-A+ is the
-# fair contrast. LT1 numbers are the PARENT BASELINE (different
-# worker, different fixture), not a same-worker control.
+# The runner now reads the GOVERNING rebind (the newest amendment
+# carrying one), not amendment 1's. Both arms re-arm from cell 1.
+#
+# AMENDMENT 7's CPU NUMBERS WERE TAKEN ON THE PRE-MERGE CORE and
+# are NOT restated as results for this tree.
+#
+# FAIRNESS (unchanged): arms A and A+ share one worker, so A-vs-A+
+# is the fair contrast. LT1 numbers are the PARENT BASELINE
+# (different worker, different fixture), not a same-worker control.
+#
+# SCRATCH: the preflight tamper tests copytree the document set.
+# Run repo-copying tests with
+#   --basetemp /mnt/ForgeRealm/wt/grm-d1/artifacts/grm_d1/tmp
+# (NVMe) and delete it after; one run of the two unmarked files
+# left 53 GB behind. The opt-in full-campaign fakes stay OFF
+# (GRM_LT1_1_FULL_RUN unset) unless a campaign is actually wanted.
 #
 # ---- CPU gates (no GPU, no lease) ----
 cd /mnt/ForgeRealm/wt/grm-d1
