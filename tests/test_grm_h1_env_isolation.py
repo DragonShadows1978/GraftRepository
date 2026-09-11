@@ -126,6 +126,31 @@ def test_non_grm_variables_are_not_policed(tmp_path):
     assert out.returncode == 0, out.stdout
 
 
+def test_a_wholesale_environ_clear_is_repaired_for_the_next_test(tmp_path):
+    """GRM-H1 follow-up: `pin_flags()` does os.environ.clear().
+
+    A test that reaches that on an exception path wipes PATH/HOME/DISPLAY for
+    every later test in the process.  It is outside the GRM_* contract the
+    guard ATTRIBUTES on -- so the wiping test is not failed for it -- but the
+    repair must still happen, or one receipt takes the whole run down with it.
+    """
+    out = _run_inner(tmp_path, """
+        import os
+        os.environ['GRM_PREEXISTING'] = 'keepme'
+        os.environ['NOT_A_GRM_VAR'] = 'keepme too'
+        def test_wipes_everything():
+            os.environ.clear()
+        def test_two_still_has_its_environment():
+            assert os.environ.get('NOT_A_GRM_VAR') == 'keepme too'
+            assert os.environ.get('GRM_PREEXISTING') == 'keepme'
+            assert 'PATH' in os.environ
+    """)
+    # The wiper is failed for the GRM_ key it deleted; the NEXT test passes,
+    # which is the point.
+    assert "1 failed, 1 passed" in out.stdout, out.stdout
+    assert "GRM_PREEXISTING" in out.stdout
+
+
 # -- (b) the restore really happens, in THIS process ------------------------
 
 @pytest.mark.grm_env_leak_expected

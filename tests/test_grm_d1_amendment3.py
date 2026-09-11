@@ -165,6 +165,8 @@ def test_the_open_host_blocker_is_recorded_not_hidden(doc):
     assert 'pre-existing' in blocker['status']
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_d1/lt1_1/registration.json (LT1.1 chain, core pins rebound at D1 amendment 4)')
 def test_the_host_blocker_claim_was_true_and_is_now_resolved():
     """INVERTED by the lead's ruling of 2026-09-11, with the receipt.
 

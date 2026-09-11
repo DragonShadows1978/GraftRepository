@@ -137,10 +137,36 @@ PREFIX = "GRM_"
 _LAST_LEAK: dict = {}
 
 _SETUP_SNAPSHOT = "_grm_h1_env_before"
+_SETUP_FULL = "_grm_h1_env_full_before"
 
 
 def _snapshot():
     return {k: v for k, v in os.environ.items() if k.startswith(PREFIX)}
+
+
+def _restore_non_grm(before_full):
+    """Put back NON-GRM_ keys a test deleted, without touching GRM_ ones.
+
+    GRM-H1 follow-up: `scripts/grm_a1_gpu_contrast.pin_flags()` opens with
+    ``os.environ.clear()`` before repopulating from its own `environment`
+    dict, so a test that calls it with an empty environment and an exception
+    on the way out (the A1_FLAG_NOT_IN_FORCE_AFTER_PIN receipt does exactly
+    that) wipes PATH, HOME, DISPLAY and ~80 other keys for every later test
+    in the process.  That is outside the GRM_* contract this guard
+    ATTRIBUTES on, but leaving it unrepaired would mis-rule far more than a
+    pinned admission rule would, so the repair is unconditional and silent
+    here; the GRM_* attribution below is what fails a test.  Keys the test
+    ADDED are left alone -- only deletions and mutations of pre-existing
+    non-GRM_ keys are undone.
+    """
+    restored = []
+    for key, value in before_full.items():
+        if key.startswith(PREFIX):
+            continue
+        if os.environ.get(key) != value:
+            os.environ[key] = value
+            restored.append(key)
+    return restored
 
 
 def _describe(before, after):
@@ -210,8 +236,9 @@ LEAK_MESSAGE = (
 
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_setup(item):
-    """Snapshot GRM_* BEFORE any fixture of this test has run."""
+    """Snapshot the environment BEFORE any fixture of this test has run."""
     setattr(item, _SETUP_SNAPSHOT, _snapshot())
+    setattr(item, _SETUP_FULL, dict(os.environ))
     yield
 
 
@@ -222,6 +249,11 @@ def pytest_runtest_call(item):
     before = getattr(item, _SETUP_SNAPSHOT, None)
     if before is None:                              # pragma: no cover
         return
+
+    full = getattr(item, _SETUP_FULL, None)
+    if full is not None:
+        _restore_non_grm(full)
+
     after = _snapshot()
     if before == after:
         return
@@ -260,6 +292,9 @@ def pytest_runtest_teardown(item, nextitem):
     before = getattr(item, _SETUP_SNAPSHOT, None)
     if before is None:                              # pragma: no cover
         return
+    full = getattr(item, _SETUP_FULL, None)
+    if full is not None:
+        _restore_non_grm(full)
     after = _snapshot()
     if before != after:
         _restore(before, after)

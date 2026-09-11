@@ -1,6 +1,3 @@
-ERROR tests/test_grm_lt1_amendment4.py::test_repeated_mount_does_not_duplicate_registration
-ERROR tests/test_grm_lt1_amendment4.py::test_native_unavailable_keeps_original_cpu_path
-ERROR tests/test_grm_lt1_amendment4.py::test_replay_retains_checkpoint_ids_and_names_graft25
 ERROR tests/test_grm_lt1_amendment4.py::test_actual_attempt_clears_original_failure_without_changing_pick
-134 failed, 2 passed, 2097 deselected, 2 warnings, 63 errors in 58.05s
+176 failed, 2 passed, 2309 deselected, 2 warnings, 68 errors in 59.00s
 sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

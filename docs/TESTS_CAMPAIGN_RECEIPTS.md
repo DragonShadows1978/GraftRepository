@@ -1,4 +1,4 @@
-# Campaign-receipt tests (GRM-H1, 2026-09-11)
+# Campaign-receipt tests (GRM-H1, re-derived 2026-09-11 on `grm-merge`)
 
 A **campaign receipt** is a test that is valid only at the sha its campaign
 registered. It either
@@ -6,9 +6,7 @@ registered. It either
 * asserts `INPUT_SHA_MISMATCH`-class binding against `core/` and `scripts/`
   shas that the campaign froze on its own day, or
 * reads gitignored campaign artifacts under `artifacts/` (checkpoints,
-  receipts, controller state) that a given tree does not carry complete, or
-* asserts a **tree state** the registration recorded (e.g. "flag X is absent
-  from `core/` and `scripts/`").
+  receipts, controller state) that a given tree does not carry complete.
 
 Such a test fails on **its own source branch** once the core moves past its
 registration. It is a receipt, not a regression detector, and a tree-wide run
@@ -29,9 +27,6 @@ Registered in `tests/conftest.py`. Behaviour:
 | `pytest -m campaign_receipt tests/test_grm_*.py` | run (and expected to fail) |
 | `pytest --campaign-receipts tests/test_grm_*.py` | run alongside everything else |
 
-The skip reason is
-`campaign receipt (registration=<path>): sha-bound to its campaign; run with -m campaign_receipt`.
-
 **No test assertion was changed to obtain the marker.** Every marked test still
 asserts exactly what its campaign registered; only its default *collection*
 changed.
@@ -39,16 +34,18 @@ changed.
 ## Marked files
 
 Decided per file by reading it (`INPUT_SHA_MISMATCH`, `registration`,
-`artifacts/`) and by reproducing the failure in an isolated process, never by
-name. Marks sit on the **test function**, not the module, so healthy coverage
-in a mixed module keeps running: of the 28 modules that failed on the merged
-tree, 27 are marked and in 20 of them only *some* tests are receipts.
+`artifacts/`) and by reproducing every failure **in an isolated single-module
+process** — all 113 `tests/test_grm_*.py` modules were run one at a time under
+`--campaign-receipts` for this re-derivation, so no mark rests on a mark.
+Marks sit on the **test function**, not the module, so healthy coverage in a
+mixed module keeps running.
 
 "Tests" counts marked test functions; "Node ids" counts collected test ids
 (parametrised cases expand).
 
 | Test module | Tests | Node ids | Class | Registration | Why it is a receipt |
 |---|---:|---:|---|---|---|
+| `tests/test_grm_a1_gpu_contrast.py` **(new)** | 16 | 16 | sha-bound | `artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..3.json` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
 | `tests/test_grm_c2_amendment.py` | 12 | 18 | artifact-bound | `artifacts/grm_c2/registration.json + orders/GRM_C2_AMENDMENT_1.md` | reads gitignored campaign artifacts under artifacts/ that this tree does not carry complete |
 | `tests/test_grm_c2_budget_a5.py` | 15 | 28 | artifact-bound | `artifacts/grm_c2/a5/ + orders/GRM_C2_AMENDMENT_5.md` | reads gitignored campaign artifacts under artifacts/ that this tree does not carry complete |
 | `tests/test_grm_c2_epoch3.py` | 7 | 12 | sha-bound | `artifacts/grm_c2/epochs/scout-fix-2/ + orders/GRM_SCOUT_FIX_2.md` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
@@ -61,92 +58,119 @@ tree, 27 are marked and in 20 of them only *some* tests are receipts.
 | `tests/test_grm_c7_r2_launch.py` | 1 | 4 | sha-bound | `artifacts/grm_c7/r2/ (C7 r2 registration)` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
 | `tests/test_grm_c7_r2_registration.py` | 2 | 12 | sha-bound | `artifacts/grm_c7/r2/ (C7 r2 registration)` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
 | `tests/test_grm_c7_r3.py` | 5 | 5 | sha-bound | `artifacts/grm_c7/r3/registration.json` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
-| `tests/test_grm_chat.py` | 1 | 1 | tree-state | `GRM-P1 chat registration (records GRM_ALIAS_FOLD_MERGE as ABSENT)` | asserts a TREE STATE (a named flag absent from core/scripts) that the registration recorded |
-| `tests/test_grm_d1_registration.py` | 1 | 1 | tree-state | `artifacts/grm_d1/lt1_1/registration.json (records GRM_ALIAS_FOLD_MERGE as ABSENT)` | asserts a TREE STATE (a named flag absent from core/scripts) that the registration recorded |
+| `tests/test_grm_d1_amendment3.py` **(new)** | 1 | 1 | sha-bound | `artifacts/grm_d1/lt1_1/registration.json (LT1.1 chain, core pins rebound at D1 amendment 4)` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
 | `tests/test_grm_lt1.py` | 3 | 4 | sha-bound | `artifacts/grm_lt1/registration.json` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
+| `tests/test_grm_lt1_1_preflight.py` **(new)** | 8 | 11 | sha-bound | `artifacts/grm_d1/lt1_1/registration.json + artifacts/grm_lt1/amendment4/resume_registration.json` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
 | `tests/test_grm_lt1_amendment1.py` | 3 | 4 | sha-bound | `artifacts/grm_lt1/amendment1/registration_amendment.json` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
 | `tests/test_grm_lt1_amendment3.py` | 3 | 3 | sha-bound | `artifacts/grm_lt1/amendment3/registration_amendment.json` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
 | `tests/test_grm_lt1_amendment4.py` | 9 | 14 | artifact-bound | `artifacts/grm_lt1/amendment2/run_margin_first/cells/*/checkpoint` | reads gitignored campaign artifacts under artifacts/ that this tree does not carry complete |
 | `tests/test_grm_lt1_controller.py` | 2 | 2 | sha-bound | `artifacts/grm_lt1/registration.json` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
 | `tests/test_grm_lt1_fix6.py` | 3 | 4 | sha-bound | `artifacts/grm_lt1/ (FIX-6 amendment)` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
-| `tests/test_grm_r1_amendment1.py` | 11 | 11 | sha-bound | `artifacts/grm_r1/amendment_1.json` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
+| `tests/test_grm_r1_amendment1.py` **(re-marked)** | 11 | 11 | sha-bound | `artifacts/grm_r1/amendment_1.json` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
+| `tests/test_grm_r1_amendment2.py` **(new)** | 6 | 6 | sha-bound | `artifacts/grm_r1/amendment_2.json` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
+| `tests/test_grm_r1_amendment3.py` **(new)** | 10 | 10 | sha-bound | `artifacts/grm_r1/amendment_3.json` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
+| `tests/test_grm_r1_amendment4.py` **(new)** | 8 | 8 | sha-bound | `artifacts/grm_r1/amendment_4.json` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
 | `tests/test_grm_r1_cpu_gate.py` | 1 | 1 | sha-bound | `artifacts/grm_r1/registration.json` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
-| `tests/test_grm_r1_replay.py` | 18 | 18 | sha-bound | `artifacts/grm_r1/registration.json + orders/GRM_R1_MARGIN_FIRST_REPLAY.md` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
+| `tests/test_grm_r1_replay.py` | 15 | 15 | sha-bound | `artifacts/grm_r1/registration.json + orders/GRM_R1_MARGIN_FIRST_REPLAY.md` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
 | `tests/test_grm_scout_fix4_continuation.py` | 3 | 10 | sha-bound | `artifacts/grm_scout_fix4/registration.json` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
 | `tests/test_grm_scout_fix5_runner.py` | 4 | 16 | artifact-bound | `artifacts/grm_scout_fix5/registration.json + artifacts/grm_c7/r2/cells/*/checkpoint` | reads gitignored campaign artifacts under artifacts/ that this tree does not carry complete |
 | `tests/test_grm_scout_fix8_replay.py` | 5 | 5 | sha-bound | `artifacts/grm_scout_fix8/registration.json` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
 | `tests/test_grm_scout_fix8_resume.py` | 2 | 3 | sha-bound | `artifacts/grm_scout_fix8/resume_amendment_1/registration.json` | asserts INPUT_SHA_MISMATCH-class binding against core/scripts shas frozen at registration |
-| **27 modules** | **134** | **199** | | | |
+| **31 modules** | **178** | **246** | | | |
 
-### One module that is NOT marked
+## Delta from the first pass (pre-merge tree, 100 GRM modules -> 113)
 
-`tests/test_grm_native_runtime.py::test_gqa_cuda_epoch_bump_covers_graft_repository_mutation_battery`
-also failed on the merged tree but is **not** a campaign receipt — it is a
-genuine merge-drift RED, and marking it would have hidden a real regression.
-The A1 alias-fold merge added `self.alias_fold_merge` to
-`GraftRepository.__init__` and a read of it in `correct_memory()`; the test's
-fixture builds the repository via `GraftRepository.__new__`, bypassing
-`__init__`, so the battery died with `AttributeError` before exercising the
-epoch contract it exists to prove. Fixed in the fixture
-(`_fake_gqa_repo_for_epoch_battery`) by listing the three attributes the merge
-added, at `__init__`'s defaults with the A1 flag OFF. No assertion changed.
+| Change | Module | Tests | Reason |
+|---|---|---:|---|
+| **removed** | `tests/test_grm_chat.py` | 1 | The merge resolved this file to the later version: the "`GRM_ALIAS_FOLD_MERGE` is absent from this tree" test was replaced by a present-flag test once A1 landed. It is no longer a receipt; it passes. |
+| **removed** | `tests/test_grm_d1_registration.py` | 1 | Same cause, same resolution. Passes. |
+| **removed** | `tests/test_grm_r1_replay.py` | 3 | `test_parity_barrier_stops_the_run`, `test_parity_barrier_passes_on_the_recorded_plan`, `test_both_arms_share_one_verified_state` now PASS — R1 amendments 2-4 rebound R1's pins to this tree. Verified individually before unmarking. |
+| **re-marked** | `tests/test_grm_r1_amendment1.py` | 11 | The merge resolved this file to the later version (R1 amendments 2-4 rewrote it), which dropped the first pass's marks. Re-derived: still `R1_INPUT_SHA_MISMATCH: core/graft_arena.py`. |
+| **added** | `tests/test_grm_r1_amendment2.py` | 6 | New module. `R1_INPUT_SHA_MISMATCH: core/graft_arena.py`. |
+| **added** | `tests/test_grm_r1_amendment3.py` | 10 | New module. Same binding. |
+| **added** | `tests/test_grm_r1_amendment4.py` | 8 | New module. Same binding. |
+| **added** | `tests/test_grm_a1_gpu_contrast.py` | 16 | New module. `A1_INPUT_SHA_MISMATCH` against paths in `/mnt/ForgeRealm/wt/grm-a1/` — it binds shas in its own source worktree, so it cannot pass anywhere else. |
+| **added** | `tests/test_grm_lt1_1_preflight.py` | 8 | New module. LT1.1's own chain gate returns `BLOCKED` with `INPUT_SHA_MISMATCH` on `core/graft_arena.py`, `core/graft_repository.py`, `core/grm_alias_fold.py`. |
+| **added** | `tests/test_grm_d1_amendment3.py` | 1 | New module; one test (`test_the_host_blocker_claim_was_true_and_is_now_resolved`) asserts LT1.1's gate is `READY`. It is `BLOCKED` by the same three-file drift, so the assertion is bound to LT1.1's registration sha. |
+| **NOT marked** | `tests/test_grm_scout_fix2_capture.py` | 3 | A genuine merge-drift RED — fixed, not marked. See below. |
+
+Net: 134 -> 178 marked test functions (199 -> 246 node ids), 27 -> 31 modules.
+Modules that newly landed and are **clean** on this tree, needing no marks:
+`test_grm_d1_amendment1/2`, `test_grm_d1_alias_cpu`, `test_grm_lt1_1_runner`,
+`test_grm_lt1_1_resume_route`, `test_grm_scout_fix9`.
+
+## Failures that are NOT receipts
+
+Two modules failed on a merged tree because a **test double went stale against
+a merge**, not because a campaign sha moved. Marking either would have hidden a
+real regression, so both were fixed in the test fixture. No assertion changed;
+`core/` and `scripts/` untouched.
+
+1. `tests/test_grm_native_runtime.py::test_gqa_cuda_epoch_bump_covers_graft_repository_mutation_battery`
+   (first pass). A1 added `self.alias_fold_merge` to `GraftRepository.__init__`
+   and a read of it in `correct_memory()`; the fixture builds the repository via
+   `GraftRepository.__new__`, bypassing `__init__`, so the battery died with
+   `AttributeError` before exercising the epoch contract. Fixed in
+   `_fake_gqa_repo_for_epoch_battery` by listing the three attributes A1 added,
+   at `__init__`'s defaults with the flag OFF.
+2. `tests/test_grm_scout_fix2_capture.py::test_split_children_inherit_exact_capture[deposit|fit|repair]`
+   (this pass). SCOUT-FIX-9's degenerate-split-child guard calls
+   `self.arena._fact_set(...)`; `FakeArena` in
+   `tests/test_grm_runtime_lifecycle.py` is not an `ArenaCache` subclass and
+   never inherited it — `AttributeError: 'CapturedArena' object has no
+   attribute '_fact_set'`. Fixed by borrowing the real
+   `ArenaCache._fact_set` onto the double (the pattern that class already uses
+   for `_rare_tokens`), so the fixture measures FIX-9's actual fidelity
+   vocabulary and cannot drift from it.
 
 ## Environment isolation
 
-`tests/conftest.py` also snapshots every `GRM_*` environment variable at setup,
+`tests/conftest.py` snapshots every `GRM_*` environment variable at setup,
 restores it exactly (deleting keys that did not exist), and **fails the test
 that leaked**, naming the key. See the module docstring there for the
-mechanism, and `tests/test_grm_h1_env_isolation.py` for the proof.
+mechanism, and `tests/test_grm_h1_env_isolation.py` (11 tests) for the proof.
 
-One real leaker was found across the whole GRM suite:
+Leakers found, across two full sweeps of the suite:
 
-```
-tests/test_grm_r1_replay.py::test_parity_barrier_stops_the_run
-  GRM_ADMISSION_RULE: unset -> 'margin_first' (set and not cleaned up)
-```
+| Test | Leak | Status |
+|---|---|---|
+| `test_grm_r1_replay.py::test_parity_barrier_stops_the_run` | `GRM_ADMISSION_RULE: unset -> 'margin_first'` | Fixed at source by R1 amendment 2; no longer leaks. |
+| `test_grm_a1_gpu_contrast.py::test_pin_failure_is_red` | `GRM_A1_FLAG_THAT_NOTHING_READS: unset -> '1'` | Attributed by the guard. Origin is `scripts/grm_a1_gpu_contrast.pin_flags()` (read-only here), which writes `os.environ` directly and raises `A1_FLAG_NOT_IN_FORCE_AFTER_PIN` before any cleanup. |
 
-`scripts/grm_r1_replay.pin_rule()` writes `os.environ['GRM_ADMISSION_RULE']`
-directly (by design — `environment(flags)` strips every `GRM_` var, so the
-rule must be pinned after it), and the `R1_OFF_PLAN_PARITY_RED_STOP` the test
-asserts escapes before any caller cleanup. Every later module in the same
-pytest process was then re-ruled `margin_first`.
+That second test also calls `os.environ.clear()` inside `pin_flags()` and so
+**wiped 86 non-`GRM_` variables** — `PATH`, `HOME`, `DISPLAY` and the rest —
+for every later test in the process. That is outside the `GRM_*` contract the
+guard *attributes* on, but leaving it unrepaired would mis-rule far more than a
+pinned admission rule would, so `_restore_non_grm()` repairs pre-existing
+non-`GRM_` keys unconditionally and silently; only the `GRM_*` leak fails a
+test. Proved by
+`test_grm_h1_env_isolation.py::test_a_wholesale_environ_clear_is_repaired_for_the_next_test`.
 
-Receipt, before the guard:
-
-```
-$ python3 -m pytest -q tests/test_grm_r1_replay.py tests/test_grm_scout_fix4.py \
-      tests/test_grm_a1_alias_fold.py tests/test_grm_admission.py
-39 failed, 132 passed, 2 warnings in 8.59s
-```
-
-with all three downstream modules green in their own process (7, 113 and 11
-passed). After the guard, every failure is confined to `test_grm_r1_replay.py`
-itself; with the receipts also marked the same command is:
-
-```
-$ python3 -m pytest -q tests/test_grm_r1_*.py tests/test_grm_scout_fix4.py \
-      tests/test_grm_a1_alias_fold.py tests/test_grm_admission.py
-164 passed, 30 skipped, 2 warnings in 8.50s
-```
-
-## Gates (this tree, 2026-09-11)
+## Gates (merged tree, 2026-09-11)
 
 ```
 $ python3 -m pytest -q tests/test_grm_*.py
-2097 passed, 199 skipped, 2 warnings in 542.53s (0:09:02)
+2309 passed, 246 skipped, 2 warnings in 585.77s (0:09:45)
 
 $ python3 -m pytest -q -m campaign_receipt tests/test_grm_*.py
-134 failed, 2 passed, 2097 deselected, 2 warnings, 63 errors in 58.05s
+176 failed, 2 passed, 2309 deselected, 2 warnings, 68 errors in 59.00s
+
+$ python3 -m pytest -q tests/test_grm_r1_*.py tests/test_grm_scout_fix4.py \
+      tests/test_grm_a1_alias_fold.py tests/test_grm_admission.py
+204 passed, 51 skipped, 2 warnings in 9.22s
 ```
 
-The 2 that pass under `-m` are two parametrised cases of
-`test_grm_c2_epoch3.py::test_stale_epoch_input_refused`, whose other cases
-fail; the mark is on the function, so all of its cases travel together.
+176 + 68 + 2 = 246, matching the skip count exactly. The 2 that pass under `-m`
+are two parametrised cases of
+`test_grm_c2_epoch3.py::test_stale_epoch_input_refused` whose other cases fail;
+the mark is on the function, so all its cases travel together.
 
 ## Re-blessing a receipt
 
 A campaign receipt is never "fixed" by editing its assertions. When a campaign
 is re-run and re-registered, its registration artifact and the shas it binds
 move together, and the `registration=` argument in the mark is updated to name
-the new registration. Until then the receipt stays marked and stays honest
-about the sha it was true at.
+the new registration — or the mark is removed, if the rebound pins now match
+the tree. R1 amendments 2-4 did exactly that for three `test_grm_r1_replay.py`
+tests in this pass. Until then the receipt stays marked and stays honest about
+the sha it was true at.

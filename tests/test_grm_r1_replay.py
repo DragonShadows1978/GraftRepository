@@ -132,8 +132,6 @@ def test_a_hash_mismatch_never_becomes_a_retry():
 # RED fixture: the arm-OFF parity barrier stops the run
 # --------------------------------------------------------------------------
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_r1/registration.json + orders/GRM_R1_MARGIN_FIRST_REPLAY.md')
 def test_parity_barrier_stops_the_run(tmp_path, monkeypatch):
     """A replayed OFF plan that is not the recorded plan is RED and STOPS."""
     c = copy.deepcopy(run.cells()[0])
@@ -157,8 +155,6 @@ def test_parity_barrier_stops_the_run(tmp_path, monkeypatch):
     assert calls == ['off', 'on']        # both arms ran; only the check failed
 
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_r1/registration.json + orders/GRM_R1_MARGIN_FIRST_REPLAY.md')
 def test_parity_barrier_passes_on_the_recorded_plan(tmp_path):
     c = run.cells()[0]
     value, _ = run.run_cell(copy.deepcopy(c), tmp_path, None, fake=True)
@@ -230,8 +226,6 @@ def test_rule_is_pinned_after_environment_strips_grm_vars(monkeypatch):
     monkeypatch.delenv(run.RULE_ENV, raising=False)
 
 
-@pytest.mark.campaign_receipt(
-    registration='artifacts/grm_r1/registration.json + orders/GRM_R1_MARGIN_FIRST_REPLAY.md')
 def test_both_arms_share_one_verified_state(tmp_path):
     c = run.cells()[0]
     value, _ = run.run_cell(copy.deepcopy(c), tmp_path, None, fake=True)

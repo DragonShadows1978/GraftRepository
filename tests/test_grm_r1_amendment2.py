@@ -98,6 +98,8 @@ def test_archive_stale_sessions_numbers_successive_attempts(tmp_path):
         'attempt_1', 'attempt_2', 'attempt_3'}
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_2.json')
 def test_reissue_over_stale_scratch_no_longer_collides(tmp_path):
     """The exact shape of batch_R1_a1.log: cell 6 kept off/ and on/.
 
@@ -138,6 +140,8 @@ def test_reissue_over_stale_scratch_no_longer_collides(tmp_path):
         assert (d / 'cells' / (cell_id + '.json')).exists()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_2.json')
 def test_a_cell_with_a_receipt_is_never_rerun(tmp_path):
     """Archiving only ever sees cells with no receipt, so evidence is safe."""
     r = run.verify(tmp_path)
@@ -196,6 +200,8 @@ def test_scoped_env_restores_on_exception(monkeypatch):
     assert run.RULE_ENV not in os.environ
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_2.json')
 def test_fake_batch_leaves_no_rule_in_the_environment(tmp_path, monkeypatch):
     """THE REGRESSION: a batch must not re-rule the rest of the process."""
     monkeypatch.delenv(run.RULE_ENV, raising=False)
@@ -205,6 +211,8 @@ def test_fake_batch_leaves_no_rule_in_the_environment(tmp_path, monkeypatch):
     assert not [k for k in os.environ if k.startswith('GRM_')]
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_2.json')
 def test_admission_rule_is_back_to_default_after_a_fake_batch(tmp_path,
                                                               monkeypatch):
     """admission_rule() reads os.environ at CALL time -- check the real call."""
@@ -236,6 +244,8 @@ def test_both_arms_still_get_their_own_rule_despite_restoration(tmp_path):
 # the amendment chain
 # --------------------------------------------------------------------------
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_2.json')
 def test_amendment_2_chains_to_amendment_1():
     # amendment() returns the LATEST link, so assert link 2's own contents
     # and its place in the chain rather than "latest == 2".
@@ -292,6 +302,8 @@ def test_amendment_2_documents_both_defects():
 # accounting: an archived attempt's GPU time is never refunded
 # --------------------------------------------------------------------------
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/amendment_2.json')
 def test_archived_attempt_charge_stays_on_the_books(tmp_path):
     """A re-issue must ADD to the failed attempt's charge, never replace it.
 
