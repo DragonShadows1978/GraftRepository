@@ -1,0 +1,632 @@
+{
+  "status": "READY_FOR_LEAD",
+  "gpu_executed": false,
+  "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+  "cells": [
+    {
+      "id": "fix6-replay-defaults-census-1--e2e_t13_orion_pin",
+      "side": "defaults",
+      "battery": "census",
+      "question_id": "e2e_t13_orion_pin",
+      "off_plan": [
+        6,
+        7
+      ],
+      "on_plan": [
+        6,
+        7,
+        4
+      ],
+      "estimate_seconds": 23,
+      "checkpoint_sha256": "ca41a8aadfe904daa7664b3397a158305890c30ba79b22345509c67e490870dd",
+      "checkpoint_files": 19
+    },
+    {
+      "id": "fix6-replay-defaults-census-1--e2e_t16_lyra_dock",
+      "side": "defaults",
+      "battery": "census",
+      "question_id": "e2e_t16_lyra_dock",
+      "off_plan": [
+        12,
+        13
+      ],
+      "on_plan": [
+        12,
+        13,
+        4
+      ],
+      "estimate_seconds": 23,
+      "checkpoint_sha256": "905d2bd057e73e2fbcf597cec47e00c0801b2f98bedbce5ac92bb78da8a8fdfb",
+      "checkpoint_files": 22
+    },
+    {
+      "id": "fix6-replay-defaults-census-2--e2e_t22_mira_seal",
+      "side": "defaults",
+      "battery": "census",
+      "question_id": "e2e_t22_mira_seal",
+      "off_plan": [
+        19,
+        20
+      ],
+      "on_plan": [
+        19,
+        20,
+        4
+      ],
+      "estimate_seconds": 23,
+      "checkpoint_sha256": "f0b9d03863bb4cd5507a9f9972cdc537d57a42af7e7cc4a435033d79879d25ea",
+      "checkpoint_files": 29
+    },
+    {
+      "id": "fix6-replay-defaults-census-restart-0--e2e_t13_orion_pin",
+      "side": "defaults",
+      "battery": "census",
+      "question_id": "e2e_t13_orion_pin",
+      "off_plan": [
+        6,
+        7
+      ],
+      "on_plan": [
+        6,
+        7,
+        4
+      ],
+      "estimate_seconds": 23,
+      "checkpoint_sha256": "ca41a8aadfe904daa7664b3397a158305890c30ba79b22345509c67e490870dd",
+      "checkpoint_files": 19
+    },
+    {
+      "id": "fix6-replay-defaults-census-restart-0--e2e_t16_lyra_dock",
+      "side": "defaults",
+      "battery": "census",
+      "question_id": "e2e_t16_lyra_dock",
+      "off_plan": [
+        12,
+        13
+      ],
+      "on_plan": [
+        12,
+        13,
+        4
+      ],
+      "estimate_seconds": 23,
+      "checkpoint_sha256": "905d2bd057e73e2fbcf597cec47e00c0801b2f98bedbce5ac92bb78da8a8fdfb",
+      "checkpoint_files": 22
+    },
+    {
+      "id": "fix6-replay-defaults-census-restart-1--e2e_t22_mira_seal",
+      "side": "defaults",
+      "battery": "census",
+      "question_id": "e2e_t22_mira_seal",
+      "off_plan": [
+        19,
+        20
+      ],
+      "on_plan": [
+        19,
+        20,
+        4
+      ],
+      "estimate_seconds": 23,
+      "checkpoint_sha256": "f0b9d03863bb4cd5507a9f9972cdc537d57a42af7e7cc4a435033d79879d25ea",
+      "checkpoint_files": 29
+    },
+    {
+      "id": "fix6-replay-defaults-longhistory-1--lh_t013",
+      "side": "defaults",
+      "battery": "longhistory",
+      "question_id": "lh_t013",
+      "off_plan": [
+        6,
+        7
+      ],
+      "on_plan": [
+        6,
+        7,
+        4
+      ],
+      "estimate_seconds": 23,
+      "checkpoint_sha256": "63bcb3b12a442a767b321bf0e378d81737eff9a363ce9d7b4aac5bd0b4901af7",
+      "checkpoint_files": 19
+    },
+    {
+      "id": "fix6-replay-defaults-longhistory-1--lh_t016",
+      "side": "defaults",
+      "battery": "longhistory",
+      "question_id": "lh_t016",
+      "off_plan": [
+        12,
+        13
+      ],
+      "on_plan": [
+        12,
+        13,
+        4
+      ],
+      "estimate_seconds": 23,
+      "checkpoint_sha256": "b30c5cd4f9e71d99c1ff5c90296a13414b7bdbc73d39065e4b2d592d058ffe05",
+      "checkpoint_files": 22
+    },
+    {
+      "id": "fix6-replay-defaults-longhistory-2--lh_t022",
+      "side": "defaults",
+      "battery": "longhistory",
+      "question_id": "lh_t022",
+      "off_plan": [
+        19,
+        20
+      ],
+      "on_plan": [
+        19,
+        20,
+        4
+      ],
+      "estimate_seconds": 23,
+      "checkpoint_sha256": "0b32d96e57ee66d15d9477e9136f8ea479a8ab377344a5d87ef4739a15716ca9",
+      "checkpoint_files": 29
+    },
+    {
+      "id": "fix6-replay-defaults-longhistory-restart-0--lh_t013",
+      "side": "defaults",
+      "battery": "longhistory",
+      "question_id": "lh_t013",
+      "off_plan": [
+        6,
+        7
+      ],
+      "on_plan": [
+        6,
+        7,
+        4
+      ],
+      "estimate_seconds": 23,
+      "checkpoint_sha256": "63bcb3b12a442a767b321bf0e378d81737eff9a363ce9d7b4aac5bd0b4901af7",
+      "checkpoint_files": 19
+    },
+    {
+      "id": "fix6-replay-defaults-longhistory-restart-0--lh_t016",
+      "side": "defaults",
+      "battery": "longhistory",
+      "question_id": "lh_t016",
+      "off_plan": [
+        12,
+        13
+      ],
+      "on_plan": [
+        12,
+        13,
+        4
+      ],
+      "estimate_seconds": 23,
+      "checkpoint_sha256": "b30c5cd4f9e71d99c1ff5c90296a13414b7bdbc73d39065e4b2d592d058ffe05",
+      "checkpoint_files": 22
+    },
+    {
+      "id": "fix6-replay-defaults-longhistory-restart-1--lh_t022",
+      "side": "defaults",
+      "battery": "longhistory",
+      "question_id": "lh_t022",
+      "off_plan": [
+        19,
+        20
+      ],
+      "on_plan": [
+        19,
+        20,
+        4
+      ],
+      "estimate_seconds": 23,
+      "checkpoint_sha256": "0b32d96e57ee66d15d9477e9136f8ea479a8ab377344a5d87ef4739a15716ca9",
+      "checkpoint_files": 29
+    },
+    {
+      "id": "fix6-replay-defaults-sup-correction_then_restatement--sup_harbor_restatement",
+      "side": "defaults",
+      "battery": "sup",
+      "question_id": "sup_harbor_restatement",
+      "off_plan": [
+        1,
+        0
+      ],
+      "on_plan": [
+        3,
+        1,
+        2
+      ],
+      "estimate_seconds": 23,
+      "checkpoint_sha256": "ed1158e7457ea1271c5c92b6a04ac8cb6c99f37c9a6dad25df09c3e5485c54d5",
+      "checkpoint_files": 8
+    },
+    {
+      "id": "fix6-replay-profile-census-1--e2e_t13_orion_pin",
+      "side": "profile",
+      "battery": "census",
+      "question_id": "e2e_t13_orion_pin",
+      "off_plan": [
+        6,
+        7
+      ],
+      "on_plan": [
+        6,
+        7,
+        4
+      ],
+      "estimate_seconds": 19,
+      "checkpoint_sha256": "4900608ad162a28beb25b46f08a6939e59097306246834fedaa2c7bbd829aada",
+      "checkpoint_files": 19
+    },
+    {
+      "id": "fix6-replay-profile-census-1--e2e_t16_lyra_dock",
+      "side": "profile",
+      "battery": "census",
+      "question_id": "e2e_t16_lyra_dock",
+      "off_plan": [
+        12,
+        13
+      ],
+      "on_plan": [
+        12,
+        13,
+        4
+      ],
+      "estimate_seconds": 19,
+      "checkpoint_sha256": "7cc9ce1523ca05c02be7dd4e38c6a56079abe13d76a3953267057c6fbbfe58d6",
+      "checkpoint_files": 22
+    },
+    {
+      "id": "fix6-replay-profile-census-2--e2e_t22_mira_seal",
+      "side": "profile",
+      "battery": "census",
+      "question_id": "e2e_t22_mira_seal",
+      "off_plan": [
+        19,
+        20
+      ],
+      "on_plan": [
+        19,
+        20,
+        4
+      ],
+      "estimate_seconds": 19,
+      "checkpoint_sha256": "a6f60af4f24d317386f7def589b509e1ca0645e0eaf48c5f4e037a99aa14f1d5",
+      "checkpoint_files": 29
+    },
+    {
+      "id": "fix6-replay-profile-census-restart-0--e2e_t13_orion_pin",
+      "side": "profile",
+      "battery": "census",
+      "question_id": "e2e_t13_orion_pin",
+      "off_plan": [
+        6,
+        7
+      ],
+      "on_plan": [
+        6,
+        7,
+        4
+      ],
+      "estimate_seconds": 19,
+      "checkpoint_sha256": "4900608ad162a28beb25b46f08a6939e59097306246834fedaa2c7bbd829aada",
+      "checkpoint_files": 19
+    },
+    {
+      "id": "fix6-replay-profile-census-restart-0--e2e_t16_lyra_dock",
+      "side": "profile",
+      "battery": "census",
+      "question_id": "e2e_t16_lyra_dock",
+      "off_plan": [
+        12,
+        13
+      ],
+      "on_plan": [
+        12,
+        13,
+        4
+      ],
+      "estimate_seconds": 19,
+      "checkpoint_sha256": "7cc9ce1523ca05c02be7dd4e38c6a56079abe13d76a3953267057c6fbbfe58d6",
+      "checkpoint_files": 22
+    },
+    {
+      "id": "fix6-replay-profile-census-restart-1--e2e_t22_mira_seal",
+      "side": "profile",
+      "battery": "census",
+      "question_id": "e2e_t22_mira_seal",
+      "off_plan": [
+        19,
+        20
+      ],
+      "on_plan": [
+        19,
+        20,
+        4
+      ],
+      "estimate_seconds": 19,
+      "checkpoint_sha256": "a6f60af4f24d317386f7def589b509e1ca0645e0eaf48c5f4e037a99aa14f1d5",
+      "checkpoint_files": 29
+    },
+    {
+      "id": "fix6-replay-profile-longhistory-1--lh_t013",
+      "side": "profile",
+      "battery": "longhistory",
+      "question_id": "lh_t013",
+      "off_plan": [
+        6,
+        7
+      ],
+      "on_plan": [
+        6,
+        7,
+        4
+      ],
+      "estimate_seconds": 19,
+      "checkpoint_sha256": "3b73f6759b2f1aa8d3bfe8630e78143ec530907a4bb42cf9950204904aa8eba8",
+      "checkpoint_files": 19
+    },
+    {
+      "id": "fix6-replay-profile-longhistory-1--lh_t016",
+      "side": "profile",
+      "battery": "longhistory",
+      "question_id": "lh_t016",
+      "off_plan": [
+        12,
+        13
+      ],
+      "on_plan": [
+        12,
+        13,
+        4
+      ],
+      "estimate_seconds": 19,
+      "checkpoint_sha256": "a7d63127563eb9be73d99482c81b161dfe45bd20a9eb94a13fb2c473aea38361",
+      "checkpoint_files": 22
+    },
+    {
+      "id": "fix6-replay-profile-longhistory-2--lh_t022",
+      "side": "profile",
+      "battery": "longhistory",
+      "question_id": "lh_t022",
+      "off_plan": [
+        19,
+        20
+      ],
+      "on_plan": [
+        19,
+        20,
+        4
+      ],
+      "estimate_seconds": 19,
+      "checkpoint_sha256": "514a61f7c586c661f78b9496038ace28c1d5b9ed786ec656ef402b7b2c540688",
+      "checkpoint_files": 29
+    },
+    {
+      "id": "fix6-replay-profile-longhistory-restart-0--lh_t013",
+      "side": "profile",
+      "battery": "longhistory",
+      "question_id": "lh_t013",
+      "off_plan": [
+        6,
+        7
+      ],
+      "on_plan": [
+        6,
+        7,
+        4
+      ],
+      "estimate_seconds": 19,
+      "checkpoint_sha256": "3b73f6759b2f1aa8d3bfe8630e78143ec530907a4bb42cf9950204904aa8eba8",
+      "checkpoint_files": 19
+    },
+    {
+      "id": "fix6-replay-profile-longhistory-restart-0--lh_t016",
+      "side": "profile",
+      "battery": "longhistory",
+      "question_id": "lh_t016",
+      "off_plan": [
+        12,
+        13
+      ],
+      "on_plan": [
+        12,
+        13,
+        4
+      ],
+      "estimate_seconds": 19,
+      "checkpoint_sha256": "a7d63127563eb9be73d99482c81b161dfe45bd20a9eb94a13fb2c473aea38361",
+      "checkpoint_files": 22
+    },
+    {
+      "id": "fix6-replay-profile-longhistory-restart-1--lh_t022",
+      "side": "profile",
+      "battery": "longhistory",
+      "question_id": "lh_t022",
+      "off_plan": [
+        19,
+        20
+      ],
+      "on_plan": [
+        19,
+        20,
+        4
+      ],
+      "estimate_seconds": 19,
+      "checkpoint_sha256": "514a61f7c586c661f78b9496038ace28c1d5b9ed786ec656ef402b7b2c540688",
+      "checkpoint_files": 29
+    },
+    {
+      "id": "fix6-replay-profile-sup-correction_then_restatement--sup_harbor_restatement",
+      "side": "profile",
+      "battery": "sup",
+      "question_id": "sup_harbor_restatement",
+      "off_plan": [
+        1,
+        0
+      ],
+      "on_plan": [
+        3,
+        2,
+        1
+      ],
+      "estimate_seconds": 19,
+      "checkpoint_sha256": "9bb475dbf0ea4f12576d74db54cff7ad03f725bf584b839af1f349d8507dc5f8",
+      "checkpoint_files": 8
+    },
+    {
+      "id": "fix6-replay-profile-sup-multi_hop_a_b_c--sup_lumen_head",
+      "side": "profile",
+      "battery": "sup",
+      "question_id": "sup_lumen_head",
+      "off_plan": [
+        2,
+        1,
+        0
+      ],
+      "on_plan": [
+        2,
+        3,
+        1
+      ],
+      "estimate_seconds": 19,
+      "checkpoint_sha256": "8fc89025f763ad9ad7067c5d6305f6c95e07012de6a607926384e1f81f22f2d9",
+      "checkpoint_files": 8
+    },
+    {
+      "id": "fix6-replay-profile-sup-restart-0--sup_harbor_restatement",
+      "side": "profile",
+      "battery": "sup",
+      "question_id": "sup_harbor_restatement",
+      "off_plan": [
+        1,
+        0
+      ],
+      "on_plan": [
+        3,
+        2,
+        1
+      ],
+      "estimate_seconds": 19,
+      "checkpoint_sha256": "9bb475dbf0ea4f12576d74db54cff7ad03f725bf584b839af1f349d8507dc5f8",
+      "checkpoint_files": 8
+    },
+    {
+      "id": "fix6-replay-profile-sup-restart-1--sup_lumen_head",
+      "side": "profile",
+      "battery": "sup",
+      "question_id": "sup_lumen_head",
+      "off_plan": [
+        2,
+        1,
+        0
+      ],
+      "on_plan": [
+        2,
+        3,
+        1
+      ],
+      "estimate_seconds": 19,
+      "checkpoint_sha256": "8fc89025f763ad9ad7067c5d6305f6c95e07012de6a607926384e1f81f22f2d9",
+      "checkpoint_files": 8
+    },
+    {
+      "id": "fix6-replay-profile-sup-restart-1--sup_orion_current",
+      "side": "profile",
+      "battery": "sup",
+      "question_id": "sup_orion_current",
+      "off_plan": [
+        1,
+        0
+      ],
+      "on_plan": [
+        2,
+        1,
+        0
+      ],
+      "estimate_seconds": 19,
+      "checkpoint_sha256": "dcc741173640ee298336f8c8bda0343e3e5dcba98d3f31e3ee8082d617ea2592",
+      "checkpoint_files": 7
+    },
+    {
+      "id": "fix6-replay-profile-sup-short_correction_long_competitor--sup_orion_current",
+      "side": "profile",
+      "battery": "sup",
+      "question_id": "sup_orion_current",
+      "off_plan": [
+        1,
+        0
+      ],
+      "on_plan": [
+        2,
+        1,
+        0
+      ],
+      "estimate_seconds": 19,
+      "checkpoint_sha256": "dcc741173640ee298336f8c8bda0343e3e5dcba98d3f31e3ee8082d617ea2592",
+      "checkpoint_files": 7
+    }
+  ],
+  "cell_count": 31,
+  "batches": {
+    "R1": [
+      "fix6-replay-defaults-census-1--e2e_t13_orion_pin",
+      "fix6-replay-defaults-census-1--e2e_t16_lyra_dock",
+      "fix6-replay-defaults-census-2--e2e_t22_mira_seal",
+      "fix6-replay-defaults-census-restart-0--e2e_t13_orion_pin",
+      "fix6-replay-defaults-census-restart-0--e2e_t16_lyra_dock",
+      "fix6-replay-defaults-census-restart-1--e2e_t22_mira_seal",
+      "fix6-replay-defaults-longhistory-1--lh_t013",
+      "fix6-replay-defaults-longhistory-1--lh_t016"
+    ],
+    "R2": [
+      "fix6-replay-defaults-longhistory-2--lh_t022",
+      "fix6-replay-defaults-longhistory-restart-0--lh_t013",
+      "fix6-replay-defaults-longhistory-restart-0--lh_t016",
+      "fix6-replay-defaults-longhistory-restart-1--lh_t022",
+      "fix6-replay-defaults-sup-correction_then_restatement--sup_harbor_restatement"
+    ],
+    "R3": [
+      "fix6-replay-profile-census-1--e2e_t13_orion_pin",
+      "fix6-replay-profile-census-1--e2e_t16_lyra_dock",
+      "fix6-replay-profile-census-2--e2e_t22_mira_seal",
+      "fix6-replay-profile-census-restart-0--e2e_t13_orion_pin",
+      "fix6-replay-profile-census-restart-0--e2e_t16_lyra_dock",
+      "fix6-replay-profile-census-restart-1--e2e_t22_mira_seal",
+      "fix6-replay-profile-longhistory-1--lh_t013",
+      "fix6-replay-profile-longhistory-1--lh_t016"
+    ],
+    "R4": [
+      "fix6-replay-profile-longhistory-2--lh_t022",
+      "fix6-replay-profile-longhistory-restart-0--lh_t013",
+      "fix6-replay-profile-longhistory-restart-0--lh_t016",
+      "fix6-replay-profile-longhistory-restart-1--lh_t022",
+      "fix6-replay-profile-sup-correction_then_restatement--sup_harbor_restatement",
+      "fix6-replay-profile-sup-multi_hop_a_b_c--sup_lumen_head",
+      "fix6-replay-profile-sup-restart-0--sup_harbor_restatement",
+      "fix6-replay-profile-sup-restart-1--sup_lumen_head"
+    ],
+    "R5": [
+      "fix6-replay-profile-sup-restart-1--sup_orion_current",
+      "fix6-replay-profile-sup-short_correction_long_competitor--sup_orion_current"
+    ]
+  },
+  "batch_ids": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5"
+  ],
+  "batch_lease_seconds": {
+    "R1": 263,
+    "R2": 194,
+    "R3": 238,
+    "R4": 238,
+    "R5": 124
+  },
+  "reserved_seconds": 1057,
+  "reserved_gpu_hours": 0.2936,
+  "gpu_cap_seconds": 3600,
+  "estimated_seconds": 641,
+  "prediction": "Registered prediction: <= 2 of 31 executions change their answer; 0 correct->wrong on supersession.",
+  "verdict_rule": "Verdict rule: margin_first is adoptable as the profile default iff correct->wrong = 0 on sup and <= 1 elsewhere.",
+  "measurement_status": "NOT_RUN"
+}

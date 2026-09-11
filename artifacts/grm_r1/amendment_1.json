@@ -1,0 +1,53 @@
+{
+  "acceptance_unchanged": true,
+  "added_reserved_seconds": 134,
+  "amendment": 1,
+  "cause": "GraftRepository.close() frees only the native store; the arena's device-resident grafts[i][\"h\"] payloads survive, so resident payloads accumulate across arms and cells in one batch process. 218 node payloads were resident when the 12th arm-pass harvested 26 more and hit cudaMalloc OOM at turn 22. Evidence: artifacts/grm_r1/batch_R1.log.",
+  "evidence_class": "Campaign-control amendment. Changes device memory lifecycle and campaign scope only; no admission, routing or scoring logic is touched, and the prediction and verdict rule are unchanged.",
+  "fix": "grm_r1_replay.release_arm drops each arm's device payloads with the pager's own g[\"h\"] = None idiom and calls tensor_cuda.empty_cache() BEFORE the next arm allocates; a per-cell device_memory probe receipt records MiB before and after each arm and each cell.",
+  "gpu_cap_seconds": 3600,
+  "order": "orders/GRM_R1_MARGIN_FIRST_REPLAY.md",
+  "order_sha256": "b351d8c25d1c2f5ab5a9a439e00adfb70a3535f9a5242508583ee83edd3dcda7",
+  "prediction": "Registered prediction: <= 2 of 31 executions change their answer; 0 correct->wrong on supersession.",
+  "prior_art": "GRM-R1 amendment 1: device-memory release + re-arm batch R1's missing cells.\n\nCause (from the lead's own receipts, `artifacts/grm_r1/batch_R1.log`):\n`GraftRepository.close()` releases only the NATIVE STORE\n(`core/graft_repository.py:368-372`); it never touches the arena.  But\n`ArenaCache._graft_block` documents that \"Grafts are device-resident tc\ntensors\", so every `grafts[i]['h']` an arm harvests stays pinned in VRAM\nafter `close()`.  With a fresh arena per arm and two arms per cell, resident\npayloads accumulate ACROSS cells inside the one batch process: the log shows\n16+16+19+19+26+26+16+16+19+19+26 = 218 node payloads resident when the 12th\narm-pass tried to harvest 26 more and hit\n`RuntimeError('cudaMalloc failed: out of memory')` at turn 22.\n\nFix: `grm_r1_replay.release_arm` drops each arm's device payloads using the\nrepository pager's OWN idiom (`g['h'] = None`, as in `_free_retired` /\n`_page` / `_mark_payload_missing`) and then calls `tensor_cuda.empty_cache()`,\nBEFORE the next arm allocates.  A per-cell device-memory probe receipt\n(`device_memory`, MiB before/after each arm and each cell) makes the next\nrun's peak profile visible instead of inferred.\n\nScope: amendment 1 re-arms ONLY batch R1, and within it ONLY the cells that\nhave no receipt.  The completed cell receipts are retained byte-for-byte and\nare never re-run -- they are valid create-only receipts, parity-clean, with\nmeasured answers.  R2-R5 are untouched: the release fix removes accumulation\nrather than changing per-cell cost, so their registered estimates stand.\n\nPrior art: GRM C7 / C2 sha-bound amendment chains (GRM contributors, 2026) --\nTAKEN verbatim: an amendment is a separate create-only file bound to the\nregistration hash which widens scope explicitly and never edits the immutable\nregistration; the prior attempt's controller is archived, not overwritten.\nGRM FIX8 `grm_scout_fix8_resume` (GRM, 2026) -- TAKEN: the shape of a\nregistered successor to a single OOM-failed batch, and the nvidia-smi\nframebuffer probe.  OURS: the arena-payload release itself and the\n\"retain completed cells, re-issue only the missing ones\" scope.\nNo prior art known to me for this exact composition.  No new algorithm.\n",
+  "prior_charged_seconds": 263.0,
+  "rearm": {
+    "R1": {
+      "estimate_basis": "max both-arm wall over this batch's retained receipts, plus one model load and 60 s headroom; measured, not guessed",
+      "lease_seconds": 134,
+      "measured_per_cell_seconds": 18.12,
+      "prior_charged_seconds": 263.0,
+      "prior_error": "RuntimeError: turn 22 failed: RuntimeError('cudaMalloc failed: out of memory')",
+      "prior_status": "FAILED",
+      "reissue": [
+        "fix6-replay-defaults-census-restart-1--e2e_t22_mira_seal",
+        "fix6-replay-defaults-longhistory-1--lh_t013",
+        "fix6-replay-defaults-longhistory-1--lh_t016"
+      ],
+      "retain": [
+        "fix6-replay-defaults-census-1--e2e_t13_orion_pin",
+        "fix6-replay-defaults-census-1--e2e_t16_lyra_dock",
+        "fix6-replay-defaults-census-2--e2e_t22_mira_seal",
+        "fix6-replay-defaults-census-restart-0--e2e_t13_orion_pin",
+        "fix6-replay-defaults-census-restart-0--e2e_t16_lyra_dock"
+      ]
+    }
+  },
+  "rebound_inputs": {
+    "scripts/grm_r1_amend_1.py": "3a425a100e38da6b61552cc756a956462fab05b4ab91e1a478805c97f604cac1",
+    "scripts/grm_r1_replay.py": "a25d1e96ee36d37fb6035dd189ee2a49291cf359d39e309f6c1eb4e07e04e993"
+  },
+  "rebound_reason": "release_arm, device_memory_mib, the amendment reader and the re-arm scope live in the worker, so its hash necessarily changes; every other registered input keeps its original hash.",
+  "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+  "retained_receipts_policy": "Completed cell receipts are VALID create-only receipts: retained byte-for-byte, never re-run, never rewritten. Only cells with no receipt are re-issued. resume_scope() compares the amendment's retain/reissue lists against what is actually on disk and STOPS (R1_AMENDMENT_RETAIN_MISMATCH / _REISSUE_MISMATCH) if they disagree, rather than silently re-scoping.",
+  "schema": "grm.r1.amendment.v1",
+  "total_reserved_seconds": 397.0,
+  "unchanged_batches": [
+    "R2",
+    "R3",
+    "R4",
+    "R5"
+  ],
+  "unchanged_reason": "The release fix removes cross-cell accumulation rather than changing per-cell cost, so the registered R2-R5 estimates stand unamended.",
+  "verdict_rule": "Verdict rule: margin_first is adoptable as the profile default iff correct->wrong = 0 on sup and <= 1 elsewhere."
+}

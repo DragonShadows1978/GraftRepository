@@ -1,0 +1,54 @@
+{
+  "batches": {
+    "R1": {
+      "cells": 8,
+      "lease_seconds": 263
+    },
+    "R2": {
+      "cells": 5,
+      "lease_seconds": 194
+    },
+    "R3": {
+      "cells": 8,
+      "lease_seconds": 238
+    },
+    "R4": {
+      "cells": 8,
+      "lease_seconds": 238
+    },
+    "R5": {
+      "cells": 2,
+      "lease_seconds": 124
+    }
+  },
+  "evidence_class": "CPU plan-replay receipts and unit gates only. No model quality, throughput or answer-accuracy claim is made by this seat.",
+  "gpu_cap_gpu_hours": 1.0,
+  "gpu_cap_seconds": 3600,
+  "gpu_executed": false,
+  "gpu_touched": false,
+  "lead_commands": "artifacts/grm_r1/lead_commands.txt",
+  "lease_path": "/tmp/forge-gpu.lock",
+  "model_loaded": false,
+  "prediction": "Registered prediction: <= 2 of 31 executions change their answer; 0 correct->wrong on supersession.",
+  "process_safety": "This seat started no long-lived process, killed or signalled nothing, took no GPU lease, and loaded no model. Every command ran in the foreground and completed.",
+  "reason": "Order GRM_R1_MARGIN_FIRST_REPLAY.md forbids this seat from running GPT-OSS-20B or touching the GPU. The worker, registration and every CPU gate are complete; the 31-cell measurement itself requires the lead to run the five batches under /tmp/forge-gpu.lock.",
+  "registration_sha256": "b02593ecbd31b89e0e5b59fcff62d828b87deccd4616f68b4d04cd6779a56cf5",
+  "reserved_gpu_hours": 0.2936,
+  "reserved_seconds": 1057,
+  "schema": "grm.r1.blocked.v1",
+  "seat": "Opus 5 (opus-max) implementation seat",
+  "status": "BLOCKED_ON_LEAD_GPU",
+  "verdict_rule": "Verdict rule: margin_first is adoptable as the profile default iff correct->wrong = 0 on sup and <= 1 elsewhere.",
+  "what_is_blocked": [
+    "The measured answers for both arms of all 31 executions (needs GPT-OSS-20B on GPU)",
+    "The adoption verdict: summary() returns NOT_MEASURED until real answers exist"
+  ],
+  "what_is_done": [
+    "scripts/grm_r1_replay.py: resumable, leased, create-only-receipt two-arm worker",
+    "scripts/grm_r1_register.py: immutable registration builder (budget from C2 receipts)",
+    "artifacts/grm_r1/registration.json + .sha256: 31 cells, 5 batches, 1057 s reserved",
+    "artifacts/grm_r1/dry_run.json: all 31 cells enumerated, 614 checkpoint files verified",
+    "CPU fake-model run of all 31 cells: arm-OFF plan parity 31/31, arm-ON plan parity 31/31",
+    "tests/test_grm_r1_replay.py (40 tests) + tests/test_grm_r1_cpu_gate.py (3 tests)"
+  ]
+}

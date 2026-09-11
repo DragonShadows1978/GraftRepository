@@ -1,0 +1,291 @@
+{
+  "arms": {
+    "off": {
+      "GRM_ADMISSION_RULE": null,
+      "note": "today's shipped default",
+      "rule": "all_tokens_bind"
+    },
+    "on": {
+      "GRM_ADMISSION_RULE": "margin_first",
+      "note": "the FIX-6 opt-in rule under test",
+      "rule": "margin_first"
+    }
+  },
+  "batch_ids": [
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5"
+  ],
+  "batch_lease_seconds": {
+    "R1": 263,
+    "R2": 194,
+    "R3": 238,
+    "R4": 238,
+    "R5": 124
+  },
+  "batches": {
+    "R1": [
+      "fix6-replay-defaults-census-1--e2e_t13_orion_pin",
+      "fix6-replay-defaults-census-1--e2e_t16_lyra_dock",
+      "fix6-replay-defaults-census-2--e2e_t22_mira_seal",
+      "fix6-replay-defaults-census-restart-0--e2e_t13_orion_pin",
+      "fix6-replay-defaults-census-restart-0--e2e_t16_lyra_dock",
+      "fix6-replay-defaults-census-restart-1--e2e_t22_mira_seal",
+      "fix6-replay-defaults-longhistory-1--lh_t013",
+      "fix6-replay-defaults-longhistory-1--lh_t016"
+    ],
+    "R2": [
+      "fix6-replay-defaults-longhistory-2--lh_t022",
+      "fix6-replay-defaults-longhistory-restart-0--lh_t013",
+      "fix6-replay-defaults-longhistory-restart-0--lh_t016",
+      "fix6-replay-defaults-longhistory-restart-1--lh_t022",
+      "fix6-replay-defaults-sup-correction_then_restatement--sup_harbor_restatement"
+    ],
+    "R3": [
+      "fix6-replay-profile-census-1--e2e_t13_orion_pin",
+      "fix6-replay-profile-census-1--e2e_t16_lyra_dock",
+      "fix6-replay-profile-census-2--e2e_t22_mira_seal",
+      "fix6-replay-profile-census-restart-0--e2e_t13_orion_pin",
+      "fix6-replay-profile-census-restart-0--e2e_t16_lyra_dock",
+      "fix6-replay-profile-census-restart-1--e2e_t22_mira_seal",
+      "fix6-replay-profile-longhistory-1--lh_t013",
+      "fix6-replay-profile-longhistory-1--lh_t016"
+    ],
+    "R4": [
+      "fix6-replay-profile-longhistory-2--lh_t022",
+      "fix6-replay-profile-longhistory-restart-0--lh_t013",
+      "fix6-replay-profile-longhistory-restart-0--lh_t016",
+      "fix6-replay-profile-longhistory-restart-1--lh_t022",
+      "fix6-replay-profile-sup-correction_then_restatement--sup_harbor_restatement",
+      "fix6-replay-profile-sup-multi_hop_a_b_c--sup_lumen_head",
+      "fix6-replay-profile-sup-restart-0--sup_harbor_restatement",
+      "fix6-replay-profile-sup-restart-1--sup_lumen_head"
+    ],
+    "R5": [
+      "fix6-replay-profile-sup-restart-1--sup_orion_current",
+      "fix6-replay-profile-sup-short_correction_long_competitor--sup_orion_current"
+    ]
+  },
+  "budget": "5 pessimistic per-batch reservations totalling 1057s (0.2936 GPU-h), charged in full even on success, under the registered 1.0 GPU-h cap. Estimates derive from the C2 scout-fix-2 restart controller receipts. No retries and no cohort trimming: inability to finish STOPS the campaign.",
+  "cell_count": 31,
+  "cells_path": "artifacts/grm_scout_fix6/c2_replay_cells.json",
+  "cells_sha256": "5d1da5d14f24ea82dfff17b290951fc19b6067e8067fd5cd981962889ee75a1a",
+  "cooldown_seconds": 30,
+  "cost_model": {
+    "defaults": {
+      "basis_many_charged": 46.95013576420024,
+      "basis_many_probe_cell": "defaults-sup-restart-0",
+      "basis_one_charged": 26.219162625726312,
+      "basis_one_probe_cell": "defaults-sup-restart-2",
+      "model_load_seconds": 19.31,
+      "per_probe_seconds": 6.91
+    },
+    "evidence_class": "C2 scout-fix-2 restart controller wall clock; timing only, no model-quality claim",
+    "profile": {
+      "basis_many_charged": 48.10502136219293,
+      "basis_many_probe_cell": "profile-sup-restart-1",
+      "basis_one_charged": 31.425035009160638,
+      "basis_one_probe_cell": "profile-sup-restart-2",
+      "model_load_seconds": 25.87,
+      "per_probe_seconds": 5.56
+    },
+    "rows": [
+      {
+        "cell": "defaults-census-restart-0",
+        "charged_seconds": 65.59324117284268,
+        "probes": 4,
+        "side": "defaults"
+      },
+      {
+        "cell": "defaults-census-restart-1",
+        "charged_seconds": 70.3368994356133,
+        "probes": 4,
+        "side": "defaults"
+      },
+      {
+        "cell": "defaults-census-restart-2",
+        "charged_seconds": 40.64004313480109,
+        "probes": 2,
+        "side": "defaults"
+      },
+      {
+        "cell": "defaults-longhistory-restart-0",
+        "charged_seconds": 65.02398118004203,
+        "probes": 4,
+        "side": "defaults"
+      },
+      {
+        "cell": "defaults-longhistory-restart-1",
+        "charged_seconds": 66.58109954092652,
+        "probes": 4,
+        "side": "defaults"
+      },
+      {
+        "cell": "defaults-longhistory-restart-2",
+        "charged_seconds": 65.87366456119344,
+        "probes": 4,
+        "side": "defaults"
+      },
+      {
+        "cell": "defaults-longhistory-restart-3",
+        "charged_seconds": 45.443307105917484,
+        "probes": 2,
+        "side": "defaults"
+      },
+      {
+        "cell": "defaults-sup-restart-0",
+        "charged_seconds": 46.95013576420024,
+        "probes": 4,
+        "side": "defaults"
+      },
+      {
+        "cell": "defaults-sup-restart-1",
+        "charged_seconds": 47.853216976858675,
+        "probes": 4,
+        "side": "defaults"
+      },
+      {
+        "cell": "defaults-sup-restart-2",
+        "charged_seconds": 26.219162625726312,
+        "probes": 1,
+        "side": "defaults"
+      },
+      {
+        "cell": "profile-census-restart-0",
+        "charged_seconds": 50.556698254775256,
+        "probes": 4,
+        "side": "profile"
+      },
+      {
+        "cell": "profile-census-restart-1",
+        "charged_seconds": 51.40596992475912,
+        "probes": 4,
+        "side": "profile"
+      },
+      {
+        "cell": "profile-census-restart-2",
+        "charged_seconds": 35.07788853999227,
+        "probes": 2,
+        "side": "profile"
+      },
+      {
+        "cell": "profile-longhistory-restart-0",
+        "charged_seconds": 53.965997675899416,
+        "probes": 4,
+        "side": "profile"
+      },
+      {
+        "cell": "profile-longhistory-restart-1",
+        "charged_seconds": 53.11143768206239,
+        "probes": 4,
+        "side": "profile"
+      },
+      {
+        "cell": "profile-longhistory-restart-2",
+        "charged_seconds": 53.50657696928829,
+        "probes": 4,
+        "side": "profile"
+      },
+      {
+        "cell": "profile-longhistory-restart-3",
+        "charged_seconds": 39.33715587342158,
+        "probes": 2,
+        "side": "profile"
+      },
+      {
+        "cell": "profile-sup-restart-0",
+        "charged_seconds": 53.86830897582695,
+        "probes": 4,
+        "side": "profile"
+      },
+      {
+        "cell": "profile-sup-restart-1",
+        "charged_seconds": 48.10502136219293,
+        "probes": 4,
+        "side": "profile"
+      },
+      {
+        "cell": "profile-sup-restart-2",
+        "charged_seconds": 31.425035009160638,
+        "probes": 1,
+        "side": "profile"
+      }
+    ]
+  },
+  "distinct_question_ids": 9,
+  "evidence_class": "Admission-rule A/B replay on recorded C2 checkpoints through the production ladder. Establishes answer transitions under one rule flip; NOT a fresh battery and NOT a product certification.",
+  "free_space_min_bytes": 21474836480,
+  "gpu_cap_gpu_hours": 1.0,
+  "gpu_cap_seconds": 3600,
+  "gpu_executed": false,
+  "inputs": {
+    "artifacts/grm_scout_fix6/c2_replay_cells.json": "5d1da5d14f24ea82dfff17b290951fc19b6067e8067fd5cd981962889ee75a1a",
+    "config/grm_eb1_profile_registered.json": "cfee19259a071d1314dde602978d8f83880f7fd3cca04a9d41b26ed42d4fb74e",
+    "core/graft_arena.py": "918f5d0b202b4efabfaa1c37c965cdf3ce8fbd7e6b69045c4dafd985bee820a9",
+    "core/graft_repository.py": "fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db",
+    "core/grm_admission.py": "ebdfd84af435a163dfe4a37281d489047acd974bf76190b79622340c29af7ab6",
+    "core/grm_text_norm.py": "e968d68791950adb3a59bc83f43d75a75e31879a2f77c379b44bf711ccecc30a",
+    "core/grm_three_pass.py": "312f4bc0e4922449b9231ea2d9c3e6fff3a116aef6d0a48712f530d9c419742f",
+    "orders/GRM_R1_MARGIN_FIRST_REPLAY.md": "b351d8c25d1c2f5ab5a9a439e00adfb70a3535f9a5242508583ee83edd3dcda7",
+    "scripts/grm_c2_cells.py": "fb942daf29086ed5a8e2b5a9e70da2571cd5e29cd6bda3a66fd9468df9f5826b",
+    "scripts/grm_c2_profile.py": "acbca2fadc7b295e9814449cb0de8d7882bda0726cbffa436bada8c2c7c37439",
+    "scripts/grm_c7_diagnose.py": "4fa4c992969862ab499387cce6c88968963498ef8621654ab5f43bffc0ee1ba2",
+    "scripts/grm_cmc1_gpu_arms.py": "663760d175bb35ed6c4df2b252bf909bcf52577f3ad5eb1c518167b6bb5e39ba",
+    "scripts/grm_det1_3_gpu.py": "fef8442aa9cb17e194982b92ae53d8d4f2a7a65fd100ed28bdc8a7da7e29c58f",
+    "scripts/grm_det1_common.py": "f13f44cfa6f87dc57cec4ae9bf7fe509a6fbd0be983746202ad64da18a4d8343",
+    "scripts/grm_e2e_session.py": "f2e8f07027b735b9b0e6ee8749e1c25aa8e7883ca782fa03efb5395e34367506",
+    "scripts/grm_r1_replay.py": "036e3bb318fed6853cbca384f203c7e85c15233b3b792b9aa2df5e58fe3f621e",
+    "scripts/lsr_p2c_replay_gpu.py": "833d3f520f6ad17925b7371407032a792a60176d86445117627e44fddaa6b617"
+  },
+  "lease_path": "/tmp/forge-gpu.lock",
+  "order": "orders/GRM_R1_MARGIN_FIRST_REPLAY.md",
+  "outer_seconds": 590,
+  "parity_barrier": "Arm OFF must reproduce the FIX-6 recorded off_plan byte-for-byte (RD1 A0 shape). A mismatch is a RED receipt and the run STOPS; never a retry.",
+  "per_cell_estimate_seconds": {
+    "fix6-replay-defaults-census-1--e2e_t13_orion_pin": 23,
+    "fix6-replay-defaults-census-1--e2e_t16_lyra_dock": 23,
+    "fix6-replay-defaults-census-2--e2e_t22_mira_seal": 23,
+    "fix6-replay-defaults-census-restart-0--e2e_t13_orion_pin": 23,
+    "fix6-replay-defaults-census-restart-0--e2e_t16_lyra_dock": 23,
+    "fix6-replay-defaults-census-restart-1--e2e_t22_mira_seal": 23,
+    "fix6-replay-defaults-longhistory-1--lh_t013": 23,
+    "fix6-replay-defaults-longhistory-1--lh_t016": 23,
+    "fix6-replay-defaults-longhistory-2--lh_t022": 23,
+    "fix6-replay-defaults-longhistory-restart-0--lh_t013": 23,
+    "fix6-replay-defaults-longhistory-restart-0--lh_t016": 23,
+    "fix6-replay-defaults-longhistory-restart-1--lh_t022": 23,
+    "fix6-replay-defaults-sup-correction_then_restatement--sup_harbor_restatement": 23,
+    "fix6-replay-profile-census-1--e2e_t13_orion_pin": 19,
+    "fix6-replay-profile-census-1--e2e_t16_lyra_dock": 19,
+    "fix6-replay-profile-census-2--e2e_t22_mira_seal": 19,
+    "fix6-replay-profile-census-restart-0--e2e_t13_orion_pin": 19,
+    "fix6-replay-profile-census-restart-0--e2e_t16_lyra_dock": 19,
+    "fix6-replay-profile-census-restart-1--e2e_t22_mira_seal": 19,
+    "fix6-replay-profile-longhistory-1--lh_t013": 19,
+    "fix6-replay-profile-longhistory-1--lh_t016": 19,
+    "fix6-replay-profile-longhistory-2--lh_t022": 19,
+    "fix6-replay-profile-longhistory-restart-0--lh_t013": 19,
+    "fix6-replay-profile-longhistory-restart-0--lh_t016": 19,
+    "fix6-replay-profile-longhistory-restart-1--lh_t022": 19,
+    "fix6-replay-profile-sup-correction_then_restatement--sup_harbor_restatement": 19,
+    "fix6-replay-profile-sup-multi_hop_a_b_c--sup_lumen_head": 19,
+    "fix6-replay-profile-sup-restart-0--sup_harbor_restatement": 19,
+    "fix6-replay-profile-sup-restart-1--sup_lumen_head": 19,
+    "fix6-replay-profile-sup-restart-1--sup_orion_current": 19,
+    "fix6-replay-profile-sup-short_correction_long_competitor--sup_orion_current": 19
+  },
+  "plan": "/mnt/Shared/LEAD_TODO_2026-09-10.md (R1)",
+  "plan_immutable": true,
+  "prediction": "Registered prediction: <= 2 of 31 executions change their answer; 0 correct->wrong on supersession.",
+  "prior_art": "GRM-R1 margin-first regression replay worker.\n\nRuns the 31 SCOUT-FIX-6 registered execution cells twice from ONE recorded\nC2 checkpoint each: arm OFF (today's ``all_tokens_bind``) and arm ON\n(``GRM_ADMISSION_RULE=margin_first``).  Both arms use the PRODUCTION ladder\n(``scripts/grm_e2e_session``), the production scorer\n(``lsr_p2c_replay_gpu.answer_verdict`` -> ``det1_common.contains_value``),\nand the C2 frame flags of that cell's own side (profile vs defaults).\n\nPrior art (paper/system/year; taken vs ours) -- see REPORT.md \"Prior art\":\n  * GRM C2 restart cells / ``grm_c2_cells.py`` (GRM contributors, 2026):\n    TAKEN verbatim -- ``environment(flags)`` frame pinning, ``flags_for``,\n    ``args_for``, ``observe`` and ``score_probe``'s traced ``run_turn``\n    shape.  Imported, not re-implemented.\n  * GRM C7 amendment-7 / ``grm_c7_middle_replay.open_copy`` (GRM, 2026):\n    TAKEN -- copy the recorded repository per arm and load the GPU model\n    ONCE per batch, reusing the ordinary ``GraftRepository`` constructor for\n    every later open.  OURS: two arms per cell off one load, not one.\n  * GRM C7/FIX8 lease + receipt discipline (GRM, 2026): TAKEN -- O_EXCL\n    single-owner file, pessimistic reservations charged even on failure,\n    create-only receipts, orphan/failed-campaign fail-closed, foreground\n    cooldown outside the lease.  The lease itself is ``grm_cmc1_gpu_arms.\n    gpu_lease`` IMPORTED, not a third copy (order 1 forbids one).\n  * GRM RD1 amendment-1 / C7 ``A0_R3_BYTE_MISMATCH_STOP`` (GRM, 2026):\n    TAKEN -- the arm-OFF parity barrier.  OURS: the barrier compares the\n    OFF ``rank_plan`` to the FIX-6 recorded ``off_plan`` bytes, and a\n    mismatch is a RED receipt that STOPS the run (order 1).\n  * GRM LT1 ``grm_lt1_admission.evaluate`` / FIX-6 ``FrozenArena``\n    (GRM, 2026): TAKEN -- replay stored eligibility/ranking/margin through\n    the REAL ``core.grm_admission`` boundary.  OURS: the ``--fake`` CPU seam\n    below, which must synthesize a score vector because the CPU double's\n    ``_node_key`` is a constant and cannot reproduce GPU cosine scores.\n  * SQuAD / SQuAD 2.0 answerability (Rajpurkar et al. 2016 arXiv:1606.05250;\n    Rajpurkar/Jia/Liang 2018 arXiv:1806.03822) -- the value-span + abstention\n    ancestry behind ``contains_value``.  Concept only; the normalization and\n    the transition classes below are not SQuAD's.  Unverified in-sandbox\n    (no network) -- lead to check.\n  * ARIES (Mohan et al., 1992) -- checkpoint/restart recovery concept behind\n    the C2 checkpoints this worker consumes.  Concept only, no WAL algorithm.\n  * Paired/counterfactual A-B evaluation off one held state is standard\n    experimental practice; no specific prior art known to me for the exact\n    composition of (recorded-plan parity barrier + in-process rule flip +\n    per-arm fresh repository copy + five-way transition classification).\n\nNO NEW ROUTING, SCORING OR ADMISSION ALGORITHM IS INTRODUCED HERE.  This\nfile is glue, receipts and gates.\n",
+  "reserved_gpu_hours": 0.2936,
+  "reserved_seconds": 1057,
+  "schema": "grm.r1.replay.v1",
+  "scorer": "lsr_p2c_replay_gpu.answer_verdict over grm_det1_common.contains_value (LT1/C5 value-span rule), plus grm_det1_3_gpu._is_refusal for abstention. Expected values come from the RECORDED checkpoint context only.",
+  "status": "REGISTERED_NOT_RUN",
+  "unresolved_policy": "The 20 FIX-6 executions without exact margins stay UNRESOLVED and are NOT in this cohort. Nothing is imputed.",
+  "verdict_rule": "Verdict rule: margin_first is adoptable as the profile default iff correct->wrong = 0 on sup and <= 1 elsewhere.",
+  "worker_seconds": 280
+}
