@@ -1,0 +1,4393 @@
+{
+  "arm": "B",
+  "class_counts": {
+    "alias-edge-without-base (core composition)": 10,
+    "fixture-lineage (harness)": 5,
+    "reader wrong value with the right mount": 12,
+    "stale-first ranking (core A-DEC) [arm-A instance is ladder-drop, not mis-rank]": 3
+  },
+  "rows": [
+    {
+      "admission_identified_candidates": [
+        11,
+        6
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        11
+      ],
+      "admission_route_margin_1_2": 0.5116987908326998,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [],
+      "base_fact_mounted": true,
+      "because": "the correct node 11 (turn 12) WAS seated (fit_seated=[11]) and the reader still produced a wrong value",
+      "cause_class": "reader wrong value with the right mount",
+      "current_value_node": 11,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 12,
+      "distance": 10,
+      "expected": "9 voxels",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 12,
+          "kind": "fact",
+          "node": 11,
+          "value": "9 voxels"
+        }
+      ],
+      "probe_class": "fresh",
+      "probe_turn": 22,
+      "question": "What did we settle on for Promenade's lamp spacing?",
+      "question_id": "recall_1_10",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 12,
+          "kind": "fact",
+          "node": 11,
+          "value": "9 voxels"
+        },
+        {
+          "deposited_turn": 7,
+          "kind": "ordinary",
+          "node": 6,
+          "value": null
+        },
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 1,
+          "kind": "fact",
+          "node": 0,
+          "value": "17 credits"
+        },
+        {
+          "deposited_turn": 16,
+          "kind": "correction",
+          "node": 15,
+          "value": "16 beds"
+        },
+        {
+          "deposited_turn": 11,
+          "kind": "ordinary",
+          "node": 10,
+          "value": null
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-017-024/probes.jsonl",
+      "recency_mounted_ids": [
+        19,
+        20
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 51,
+        "live_token_rows": 43,
+        "mounted_ids": [
+          11
+        ],
+        "phase": "session",
+        "process_id": "931b040b-149a-4cd9-bd25-ae6a99f09a48",
+        "summed_token_seats": 51,
+        "turn": 22,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          19,
+          20
+        ],
+        "identifier_tokens": [
+          "promenade"
+        ],
+        "rare_identifier_tokens": [
+          "promenade"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": true,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              11
+            ],
+            "ordinal": 0,
+            "planned": [
+              11
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "I will.",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        12
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        12
+      ],
+      "admission_route_margin_1_2": 0.5199787401148628,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [],
+      "base_fact_mounted": false,
+      "because": "the correct node 12 (turn 13) is rank-1 in ranking_ids=[12, 16, 17, 10, 15, 9] and is the entire admission_rank_plan=[12], but fit_seated=[9, 10, 15] (nodes at turns [10, 11, 16]): the ladder's first trip mounted the plan head and came back ungrounded, and a LATER trip seated an unrelated same-attribute node (served_without_plan_head=True). Routing picked the right node; the ladder discarded it.",
+      "cause_class": "stale-first ranking (core A-DEC) [arm-A instance is ladder-drop, not mis-rank]",
+      "current_value_node": 12,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": false,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 13,
+      "distance": 10,
+      "expected": "Iona Vale",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 10,
+          "kind": "ordinary",
+          "node": 9,
+          "value": null
+        },
+        {
+          "deposited_turn": 11,
+          "kind": "ordinary",
+          "node": 10,
+          "value": null
+        },
+        {
+          "deposited_turn": 16,
+          "kind": "correction",
+          "node": 15,
+          "value": "16 beds"
+        }
+      ],
+      "probe_class": "fresh",
+      "probe_turn": 23,
+      "question": "What did we settle on for Commtower's maintenance crew?",
+      "question_id": "recall_2_10",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 17,
+          "kind": "alias",
+          "node": 16,
+          "value": null
+        },
+        {
+          "deposited_turn": 18,
+          "kind": "alias",
+          "node": 17,
+          "value": null
+        },
+        {
+          "deposited_turn": 11,
+          "kind": "ordinary",
+          "node": 10,
+          "value": null
+        },
+        {
+          "deposited_turn": 16,
+          "kind": "correction",
+          "node": 15,
+          "value": "16 beds"
+        },
+        {
+          "deposited_turn": 10,
+          "kind": "ordinary",
+          "node": 9,
+          "value": null
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-017-024/probes.jsonl",
+      "recency_mounted_ids": [
+        19,
+        20
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 162,
+        "live_token_rows": 73,
+        "mounted_ids": [
+          9,
+          10,
+          15
+        ],
+        "phase": "session",
+        "process_id": "931b040b-149a-4cd9-bd25-ae6a99f09a48",
+        "summed_token_seats": 162,
+        "turn": 23,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          19,
+          20
+        ],
+        "identifier_tokens": [
+          "commtower"
+        ],
+        "rare_identifier_tokens": [
+          "commtower"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              12
+            ],
+            "ordinal": 0,
+            "planned": [
+              12
+            ],
+            "shuttle": false
+          },
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": true,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              9,
+              10,
+              15
+            ],
+            "ordinal": 1,
+            "planned": [
+              10,
+              15,
+              9
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "We decided to keep it simple: a single, single\u2011room, single\u2011room maintenance crew. The crew\u2019s job was to keep the building\u2019s single\u2011",
+      "served_without_plan_head": true
+    },
+    {
+      "admission_identified_candidates": [
+        13
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        13
+      ],
+      "admission_route_margin_1_2": 0.7291658700855156,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [],
+      "base_fact_mounted": true,
+      "because": "the correct node 13 (turn 14) WAS seated (fit_seated=[13]) and the reader still produced a wrong value",
+      "cause_class": "reader wrong value with the right mount",
+      "current_value_node": 13,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 14,
+      "distance": 10,
+      "expected": "(-31, 48, 12)",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 14,
+          "kind": "fact",
+          "node": 13,
+          "value": "(-31, 48, 12)"
+        }
+      ],
+      "probe_class": "fresh",
+      "probe_turn": 24,
+      "question": "What did we settle on for Breakwater's map position?",
+      "question_id": "recall_3_10",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 14,
+          "kind": "fact",
+          "node": 13,
+          "value": "(-31, 48, 12)"
+        },
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 17,
+          "kind": "alias",
+          "node": 16,
+          "value": null
+        },
+        {
+          "deposited_turn": 16,
+          "kind": "correction",
+          "node": 15,
+          "value": "16 beds"
+        },
+        {
+          "deposited_turn": 4,
+          "kind": "correction",
+          "node": 3,
+          "value": "14 beds"
+        },
+        {
+          "deposited_turn": 1,
+          "kind": "fact",
+          "node": 0,
+          "value": "17 credits"
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-017-024/probes.jsonl",
+      "recency_mounted_ids": [
+        19,
+        20
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 53,
+        "live_token_rows": 43,
+        "mounted_ids": [
+          13
+        ],
+        "phase": "session",
+        "process_id": "931b040b-149a-4cd9-bd25-ae6a99f09a48",
+        "summed_token_seats": 53,
+        "turn": 24,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          19,
+          20
+        ],
+        "identifier_tokens": [
+          "breakwater"
+        ],
+        "rare_identifier_tokens": [
+          "breakwater"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              13
+            ],
+            "ordinal": 0,
+            "planned": [
+              13
+            ],
+            "shuttle": false
+          },
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              0,
+              3,
+              15
+            ],
+            "ordinal": 1,
+            "planned": [
+              15,
+              3,
+              0
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "I apologize.",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        0,
+        2,
+        14
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "margin_insurance_k3_identifier_tiebreak",
+      "admission_rank_plan": [
+        0,
+        2,
+        14
+      ],
+      "admission_route_margin_1_2": 0.00018306204506490786,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [],
+      "base_fact_mounted": true,
+      "because": "correction family [0, 2, 14] all still active in ranking_ids=[0, 2, 14, 12, 3, 15]; no supersession edge exists",
+      "cause_class": "fixture-lineage (harness)",
+      "current_value_node": 14,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 15,
+      "distance": 10,
+      "expected": "29 credits",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 1,
+          "kind": "fact",
+          "node": 0,
+          "value": "17 credits"
+        },
+        {
+          "deposited_turn": 3,
+          "kind": "correction",
+          "node": 2,
+          "value": "23 credits"
+        },
+        {
+          "deposited_turn": 15,
+          "kind": "correction",
+          "node": 14,
+          "value": "29 credits"
+        }
+      ],
+      "probe_class": "correction",
+      "probe_turn": 25,
+      "question": "What did we settle on for Vega's docking fee?",
+      "question_id": "recall_4_10",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 1,
+          "kind": "fact",
+          "node": 0,
+          "value": "17 credits"
+        },
+        {
+          "deposited_turn": 3,
+          "kind": "correction",
+          "node": 2,
+          "value": "23 credits"
+        },
+        {
+          "deposited_turn": 15,
+          "kind": "correction",
+          "node": 14,
+          "value": "29 credits"
+        },
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 4,
+          "kind": "correction",
+          "node": 3,
+          "value": "14 beds"
+        },
+        {
+          "deposited_turn": 16,
+          "kind": "correction",
+          "node": 15,
+          "value": "16 beds"
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-025-032/probes.jsonl",
+      "recency_mounted_ids": [
+        19,
+        20
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 165,
+        "live_token_rows": 51,
+        "mounted_ids": [
+          0,
+          2,
+          14
+        ],
+        "phase": "session",
+        "process_id": "eafe3ea9-48e4-4093-8ef5-6efad586cb61",
+        "summed_token_seats": 165,
+        "turn": 25,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          19,
+          20
+        ],
+        "identifier_tokens": [
+          "vega"
+        ],
+        "rare_identifier_tokens": [
+          "vega"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": true,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              0,
+              2,
+              14
+            ],
+            "ordinal": 0,
+            "planned": [
+              0,
+              2,
+              14
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "We agreed on 23 credits for Vega\u2019s docking fee.",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        16
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        4
+      ],
+      "admission_route_margin_1_2": 0.23190968140956603,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [
+        16
+      ],
+      "base_fact_mounted": true,
+      "because": "the identifier token(s) ['hauler'] matched the alias edge node(s) [16] (admission_identified_candidates=[16]), but the rank plan and mount seated only the base fact node(s) [4] (turns [5]); core has no alias->base composition (no alias handling exists in core/graft_arena.py or core/graft_repository.py), so the alias edge is never mounted together with its base and the reader sees a base fact it cannot bind to the queried name",
+      "cause_class": "alias-edge-without-base (core composition)",
+      "current_value_node": 4,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 5,
+      "distance": 10,
+      "expected": "37 crates",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 5,
+          "kind": "fact",
+          "node": 4,
+          "value": "37 crates"
+        }
+      ],
+      "probe_class": "alias",
+      "probe_turn": 27,
+      "question": "What did we settle on for the Hauler's cargo allowance?",
+      "question_id": "recall_6_10",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 5,
+          "kind": "fact",
+          "node": 4,
+          "value": "37 crates"
+        },
+        {
+          "deposited_turn": 17,
+          "kind": "alias",
+          "node": 16,
+          "value": null
+        },
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 11,
+          "kind": "ordinary",
+          "node": 10,
+          "value": null
+        },
+        {
+          "deposited_turn": 1,
+          "kind": "fact",
+          "node": 0,
+          "value": "17 credits"
+        },
+        {
+          "deposited_turn": 16,
+          "kind": "correction",
+          "node": 15,
+          "value": "16 beds"
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-025-032/probes.jsonl",
+      "recency_mounted_ids": [
+        19,
+        20
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 52,
+        "live_token_rows": 46,
+        "mounted_ids": [
+          4
+        ],
+        "phase": "session",
+        "process_id": "eafe3ea9-48e4-4093-8ef5-6efad586cb61",
+        "summed_token_seats": 52,
+        "turn": 27,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          19,
+          20
+        ],
+        "identifier_tokens": [
+          "hauler"
+        ],
+        "rare_identifier_tokens": [
+          "hauler"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": true,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              4
+            ],
+            "ordinal": 0,
+            "planned": [
+              4
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "Sure to the next.",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        17
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        5
+      ],
+      "admission_route_margin_1_2": 0.25557074162488336,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [
+        17
+      ],
+      "base_fact_mounted": true,
+      "because": "the identifier token(s) ['beacon'] matched the alias edge node(s) [17] (admission_identified_candidates=[17]), but the rank plan and mount seated only the base fact node(s) [5] (turns [6]); core has no alias->base composition (no alias handling exists in core/graft_arena.py or core/graft_repository.py), so the alias edge is never mounted together with its base and the reader sees a base fact it cannot bind to the queried name",
+      "cause_class": "alias-edge-without-base (core composition)",
+      "current_value_node": 5,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 6,
+      "distance": 10,
+      "expected": "18 October 2196",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 6,
+          "kind": "fact",
+          "node": 5,
+          "value": "18 October 2196"
+        }
+      ],
+      "probe_class": "alias",
+      "probe_turn": 28,
+      "question": "What did we settle on for the Beacon's launch date?",
+      "question_id": "recall_7_10",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 6,
+          "kind": "fact",
+          "node": 5,
+          "value": "18 October 2196"
+        },
+        {
+          "deposited_turn": 18,
+          "kind": "alias",
+          "node": 17,
+          "value": null
+        },
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 11,
+          "kind": "ordinary",
+          "node": 10,
+          "value": null
+        },
+        {
+          "deposited_turn": 1,
+          "kind": "fact",
+          "node": 0,
+          "value": "17 credits"
+        },
+        {
+          "deposited_turn": 16,
+          "kind": "correction",
+          "node": 15,
+          "value": "16 beds"
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-025-032/probes.jsonl",
+      "recency_mounted_ids": [
+        19,
+        20
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 56,
+        "live_token_rows": 43,
+        "mounted_ids": [
+          5
+        ],
+        "phase": "session",
+        "process_id": "eafe3ea9-48e4-4093-8ef5-6efad586cb61",
+        "summed_token_seats": 56,
+        "turn": 28,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          19,
+          20
+        ],
+        "identifier_tokens": [
+          "beacon"
+        ],
+        "rare_identifier_tokens": [
+          "beacon"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              5
+            ],
+            "ordinal": 0,
+            "planned": [
+              5
+            ],
+            "shuttle": false
+          },
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              0,
+              10,
+              15
+            ],
+            "ordinal": 1,
+            "planned": [
+              10,
+              0,
+              15
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "I apologize.",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        11,
+        6
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        11
+      ],
+      "admission_route_margin_1_2": 0.5116987908326998,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [],
+      "base_fact_mounted": true,
+      "because": "the correct node 11 (turn 12) WAS seated (fit_seated=[11]) and the reader still produced a wrong value",
+      "cause_class": "reader wrong value with the right mount",
+      "current_value_node": 11,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 12,
+      "distance": 25,
+      "expected": "9 voxels",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 12,
+          "kind": "fact",
+          "node": 11,
+          "value": "9 voxels"
+        }
+      ],
+      "probe_class": "fresh",
+      "probe_turn": 37,
+      "question": "What did we settle on for Promenade's lamp spacing?",
+      "question_id": "recall_1_25",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 12,
+          "kind": "fact",
+          "node": 11,
+          "value": "9 voxels"
+        },
+        {
+          "deposited_turn": 7,
+          "kind": "ordinary",
+          "node": 6,
+          "value": null
+        },
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 30,
+          "kind": "fact",
+          "node": 22,
+          "value": "83 ingots"
+        },
+        {
+          "deposited_turn": 33,
+          "kind": "correction",
+          "node": 25,
+          "value": "89 ingots"
+        },
+        {
+          "deposited_turn": 1,
+          "kind": "fact",
+          "node": 0,
+          "value": "17 credits"
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-033-040/probes.jsonl",
+      "recency_mounted_ids": [
+        27,
+        28
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 51,
+        "live_token_rows": 43,
+        "mounted_ids": [
+          11
+        ],
+        "phase": "session",
+        "process_id": "61580364-040e-4018-a285-0b367b6d0aaf",
+        "summed_token_seats": 51,
+        "turn": 37,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          27,
+          28
+        ],
+        "identifier_tokens": [
+          "promenade"
+        ],
+        "rare_identifier_tokens": [
+          "promenade"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": true,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              11
+            ],
+            "ordinal": 0,
+            "planned": [
+              11
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "I will.",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        12
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        12
+      ],
+      "admission_route_margin_1_2": 0.5199787401148628,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [],
+      "base_fact_mounted": false,
+      "because": "the correct node 12 (turn 13) is rank-1 in ranking_ids=[12, 16, 17, 10, 15, 9] and is the entire admission_rank_plan=[12], but fit_seated=[9, 10, 15] (nodes at turns [10, 11, 16]): the ladder's first trip mounted the plan head and came back ungrounded, and a LATER trip seated an unrelated same-attribute node (served_without_plan_head=True). Routing picked the right node; the ladder discarded it.",
+      "cause_class": "stale-first ranking (core A-DEC) [arm-A instance is ladder-drop, not mis-rank]",
+      "current_value_node": 12,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": false,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 13,
+      "distance": 25,
+      "expected": "Iona Vale",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 10,
+          "kind": "ordinary",
+          "node": 9,
+          "value": null
+        },
+        {
+          "deposited_turn": 11,
+          "kind": "ordinary",
+          "node": 10,
+          "value": null
+        },
+        {
+          "deposited_turn": 16,
+          "kind": "correction",
+          "node": 15,
+          "value": "16 beds"
+        }
+      ],
+      "probe_class": "fresh",
+      "probe_turn": 38,
+      "question": "What did we settle on for Commtower's maintenance crew?",
+      "question_id": "recall_2_25",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 17,
+          "kind": "alias",
+          "node": 16,
+          "value": null
+        },
+        {
+          "deposited_turn": 18,
+          "kind": "alias",
+          "node": 17,
+          "value": null
+        },
+        {
+          "deposited_turn": 11,
+          "kind": "ordinary",
+          "node": 10,
+          "value": null
+        },
+        {
+          "deposited_turn": 16,
+          "kind": "correction",
+          "node": 15,
+          "value": "16 beds"
+        },
+        {
+          "deposited_turn": 10,
+          "kind": "ordinary",
+          "node": 9,
+          "value": null
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-033-040/probes.jsonl",
+      "recency_mounted_ids": [
+        27,
+        28
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 162,
+        "live_token_rows": 73,
+        "mounted_ids": [
+          9,
+          10,
+          15
+        ],
+        "phase": "session",
+        "process_id": "61580364-040e-4018-a285-0b367b6d0aaf",
+        "summed_token_seats": 162,
+        "turn": 38,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          27,
+          28
+        ],
+        "identifier_tokens": [
+          "commtower"
+        ],
+        "rare_identifier_tokens": [
+          "commtower"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              12
+            ],
+            "ordinal": 0,
+            "planned": [
+              12
+            ],
+            "shuttle": false
+          },
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": true,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              9,
+              10,
+              15
+            ],
+            "ordinal": 1,
+            "planned": [
+              10,
+              15,
+              9
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "We decided to keep it simple: a single, single\u2011room, single\u2011room maintenance crew. The crew\u2019s job was to keep the building\u2019s single\u2011",
+      "served_without_plan_head": true
+    },
+    {
+      "admission_identified_candidates": [
+        13
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        13
+      ],
+      "admission_route_margin_1_2": 0.7291658700855156,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [],
+      "base_fact_mounted": false,
+      "because": "the correct node 13 (turn 14) is rank-1 in ranking_ids=[13, 12, 22, 25, 16, 15] and is the entire admission_rank_plan=[13], but fit_seated=[15, 16, 25] (nodes at turns [16, 17, 33]): the ladder's first trip mounted the plan head and came back ungrounded, and a LATER trip seated an unrelated same-attribute node (served_without_plan_head=True). Routing picked the right node; the ladder discarded it.",
+      "cause_class": "stale-first ranking (core A-DEC) [arm-A instance is ladder-drop, not mis-rank]",
+      "current_value_node": 13,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": false,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 14,
+      "distance": 25,
+      "expected": "(-31, 48, 12)",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 16,
+          "kind": "correction",
+          "node": 15,
+          "value": "16 beds"
+        },
+        {
+          "deposited_turn": 17,
+          "kind": "alias",
+          "node": 16,
+          "value": null
+        },
+        {
+          "deposited_turn": 33,
+          "kind": "correction",
+          "node": 25,
+          "value": "89 ingots"
+        }
+      ],
+      "probe_class": "fresh",
+      "probe_turn": 39,
+      "question": "What did we settle on for Breakwater's map position?",
+      "question_id": "recall_3_25",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 14,
+          "kind": "fact",
+          "node": 13,
+          "value": "(-31, 48, 12)"
+        },
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 30,
+          "kind": "fact",
+          "node": 22,
+          "value": "83 ingots"
+        },
+        {
+          "deposited_turn": 33,
+          "kind": "correction",
+          "node": 25,
+          "value": "89 ingots"
+        },
+        {
+          "deposited_turn": 17,
+          "kind": "alias",
+          "node": 16,
+          "value": null
+        },
+        {
+          "deposited_turn": 16,
+          "kind": "correction",
+          "node": 15,
+          "value": "16 beds"
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-033-040/probes.jsonl",
+      "recency_mounted_ids": [
+        27,
+        28
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 180,
+        "live_token_rows": 55,
+        "mounted_ids": [
+          15,
+          16,
+          25
+        ],
+        "phase": "session",
+        "process_id": "61580364-040e-4018-a285-0b367b6d0aaf",
+        "summed_token_seats": 180,
+        "turn": 39,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          27,
+          28
+        ],
+        "identifier_tokens": [
+          "breakwater"
+        ],
+        "rare_identifier_tokens": [
+          "breakwater"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              13
+            ],
+            "ordinal": 0,
+            "planned": [
+              13
+            ],
+            "shuttle": false
+          },
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": true,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              15,
+              16,
+              25
+            ],
+            "ordinal": 1,
+            "planned": [
+              25,
+              16,
+              15
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "We decided to place the map at the **bottom** of the page.",
+      "served_without_plan_head": true
+    },
+    {
+      "admission_identified_candidates": [
+        0,
+        2,
+        14
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "margin_insurance_k3_identifier_tiebreak",
+      "admission_rank_plan": [
+        0,
+        2,
+        14
+      ],
+      "admission_route_margin_1_2": 0.0004988126348284272,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [],
+      "base_fact_mounted": true,
+      "because": "correction family [0, 2, 14] all still active in ranking_ids=[0, 2, 14, 19, 12, 3]; no supersession edge exists",
+      "cause_class": "fixture-lineage (harness)",
+      "current_value_node": 14,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 15,
+      "distance": 25,
+      "expected": "29 credits",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 1,
+          "kind": "fact",
+          "node": 0,
+          "value": "17 credits"
+        },
+        {
+          "deposited_turn": 3,
+          "kind": "correction",
+          "node": 2,
+          "value": "23 credits"
+        },
+        {
+          "deposited_turn": 15,
+          "kind": "correction",
+          "node": 14,
+          "value": "29 credits"
+        }
+      ],
+      "probe_class": "correction",
+      "probe_turn": 40,
+      "question": "What did we settle on for Vega's docking fee?",
+      "question_id": "recall_4_25",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 1,
+          "kind": "fact",
+          "node": 0,
+          "value": "17 credits"
+        },
+        {
+          "deposited_turn": 3,
+          "kind": "correction",
+          "node": 2,
+          "value": "23 credits"
+        },
+        {
+          "deposited_turn": 15,
+          "kind": "correction",
+          "node": 14,
+          "value": "29 credits"
+        },
+        {
+          "deposited_turn": 20,
+          "kind": "ordinary",
+          "node": 19,
+          "value": null
+        },
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 4,
+          "kind": "correction",
+          "node": 3,
+          "value": "14 beds"
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-033-040/probes.jsonl",
+      "recency_mounted_ids": [
+        27,
+        28
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 165,
+        "live_token_rows": 51,
+        "mounted_ids": [
+          0,
+          2,
+          14
+        ],
+        "phase": "session",
+        "process_id": "61580364-040e-4018-a285-0b367b6d0aaf",
+        "summed_token_seats": 165,
+        "turn": 40,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          27,
+          28
+        ],
+        "identifier_tokens": [
+          "vega"
+        ],
+        "rare_identifier_tokens": [
+          "vega"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": true,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              0,
+              2,
+              14
+            ],
+            "ordinal": 0,
+            "planned": [
+              0,
+              2,
+              14
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "We agreed on 23 credits for Vega\u2019s docking fee.",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        16
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        4
+      ],
+      "admission_route_margin_1_2": 0.23190968140956603,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [
+        16
+      ],
+      "base_fact_mounted": true,
+      "because": "the identifier token(s) ['hauler'] matched the alias edge node(s) [16] (admission_identified_candidates=[16]), but the rank plan and mount seated only the base fact node(s) [4] (turns [5]); core has no alias->base composition (no alias handling exists in core/graft_arena.py or core/graft_repository.py), so the alias edge is never mounted together with its base and the reader sees a base fact it cannot bind to the queried name",
+      "cause_class": "alias-edge-without-base (core composition)",
+      "current_value_node": 4,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 5,
+      "distance": 25,
+      "expected": "37 crates",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 5,
+          "kind": "fact",
+          "node": 4,
+          "value": "37 crates"
+        }
+      ],
+      "probe_class": "alias",
+      "probe_turn": 42,
+      "question": "What did we settle on for the Hauler's cargo allowance?",
+      "question_id": "recall_6_25",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 5,
+          "kind": "fact",
+          "node": 4,
+          "value": "37 crates"
+        },
+        {
+          "deposited_turn": 17,
+          "kind": "alias",
+          "node": 16,
+          "value": null
+        },
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 33,
+          "kind": "correction",
+          "node": 25,
+          "value": "89 ingots"
+        },
+        {
+          "deposited_turn": 30,
+          "kind": "fact",
+          "node": 22,
+          "value": "83 ingots"
+        },
+        {
+          "deposited_turn": 11,
+          "kind": "ordinary",
+          "node": 10,
+          "value": null
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-041-048/probes.jsonl",
+      "recency_mounted_ids": [
+        27,
+        28
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 52,
+        "live_token_rows": 46,
+        "mounted_ids": [
+          4
+        ],
+        "phase": "session",
+        "process_id": "73b0baf7-967e-483a-9881-bf309efbaeec",
+        "summed_token_seats": 52,
+        "turn": 42,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          27,
+          28
+        ],
+        "identifier_tokens": [
+          "hauler"
+        ],
+        "rare_identifier_tokens": [
+          "hauler"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": true,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              4
+            ],
+            "ordinal": 0,
+            "planned": [
+              4
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "Sure to the next.",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        17
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        5
+      ],
+      "admission_route_margin_1_2": 0.25557074162488336,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [
+        17
+      ],
+      "base_fact_mounted": true,
+      "because": "the identifier token(s) ['beacon'] matched the alias edge node(s) [17] (admission_identified_candidates=[17]), but the rank plan and mount seated only the base fact node(s) [5] (turns [6]); core has no alias->base composition (no alias handling exists in core/graft_arena.py or core/graft_repository.py), so the alias edge is never mounted together with its base and the reader sees a base fact it cannot bind to the queried name",
+      "cause_class": "alias-edge-without-base (core composition)",
+      "current_value_node": 5,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 6,
+      "distance": 25,
+      "expected": "18 October 2196",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 6,
+          "kind": "fact",
+          "node": 5,
+          "value": "18 October 2196"
+        }
+      ],
+      "probe_class": "alias",
+      "probe_turn": 43,
+      "question": "What did we settle on for the Beacon's launch date?",
+      "question_id": "recall_7_25",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 6,
+          "kind": "fact",
+          "node": 5,
+          "value": "18 October 2196"
+        },
+        {
+          "deposited_turn": 18,
+          "kind": "alias",
+          "node": 17,
+          "value": null
+        },
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 33,
+          "kind": "correction",
+          "node": 25,
+          "value": "89 ingots"
+        },
+        {
+          "deposited_turn": 30,
+          "kind": "fact",
+          "node": 22,
+          "value": "83 ingots"
+        },
+        {
+          "deposited_turn": 11,
+          "kind": "ordinary",
+          "node": 10,
+          "value": null
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-041-048/probes.jsonl",
+      "recency_mounted_ids": [
+        27,
+        28
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 56,
+        "live_token_rows": 43,
+        "mounted_ids": [
+          5
+        ],
+        "phase": "session",
+        "process_id": "73b0baf7-967e-483a-9881-bf309efbaeec",
+        "summed_token_seats": 56,
+        "turn": 43,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          27,
+          28
+        ],
+        "identifier_tokens": [
+          "beacon"
+        ],
+        "rare_identifier_tokens": [
+          "beacon"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              5
+            ],
+            "ordinal": 0,
+            "planned": [
+              5
+            ],
+            "shuttle": false
+          },
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              10,
+              22,
+              25
+            ],
+            "ordinal": 1,
+            "planned": [
+              25,
+              22,
+              10
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "I apologize.",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        11,
+        6
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        11
+      ],
+      "admission_route_margin_1_2": 0.5116987908326998,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [],
+      "base_fact_mounted": true,
+      "because": "the correct node 11 (turn 12) WAS seated (fit_seated=[11]) and the reader still produced a wrong value",
+      "cause_class": "reader wrong value with the right mount",
+      "current_value_node": 11,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 12,
+      "distance": 50,
+      "expected": "9 voxels",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 12,
+          "kind": "fact",
+          "node": 11,
+          "value": "9 voxels"
+        }
+      ],
+      "probe_class": "fresh",
+      "probe_turn": 62,
+      "question": "What did we settle on for Promenade's lamp spacing?",
+      "question_id": "recall_1_50",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 12,
+          "kind": "fact",
+          "node": 11,
+          "value": "9 voxels"
+        },
+        {
+          "deposited_turn": 7,
+          "kind": "ordinary",
+          "node": 6,
+          "value": null
+        },
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 30,
+          "kind": "fact",
+          "node": 22,
+          "value": "83 ingots"
+        },
+        {
+          "deposited_turn": 52,
+          "kind": "correction",
+          "node": 37,
+          "value": "(64, -17, 8)"
+        },
+        {
+          "deposited_turn": 33,
+          "kind": "correction",
+          "node": 25,
+          "value": "89 ingots"
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-057-064/probes.jsonl",
+      "recency_mounted_ids": [
+        45,
+        46
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 51,
+        "live_token_rows": 43,
+        "mounted_ids": [
+          11
+        ],
+        "phase": "session",
+        "process_id": "6b2f0122-67eb-4f5a-a584-f5cb62aacc93",
+        "summed_token_seats": 51,
+        "turn": 62,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          45,
+          46
+        ],
+        "identifier_tokens": [
+          "promenade"
+        ],
+        "rare_identifier_tokens": [
+          "promenade"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": true,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              11
+            ],
+            "ordinal": 0,
+            "planned": [
+              11
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "I will.",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        12
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        12
+      ],
+      "admission_route_margin_1_2": 0.5199787401148628,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [],
+      "base_fact_mounted": true,
+      "because": "the correct node 12 (turn 13) WAS seated (fit_seated=[12]) and the reader still produced a wrong value",
+      "cause_class": "reader wrong value with the right mount",
+      "current_value_node": 12,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 13,
+      "distance": 50,
+      "expected": "Iona Vale",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        }
+      ],
+      "probe_class": "fresh",
+      "probe_turn": 63,
+      "question": "What did we settle on for Commtower's maintenance crew?",
+      "question_id": "recall_2_50",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 17,
+          "kind": "alias",
+          "node": 16,
+          "value": null
+        },
+        {
+          "deposited_turn": 55,
+          "kind": "alias",
+          "node": 40,
+          "value": null
+        },
+        {
+          "deposited_turn": 18,
+          "kind": "alias",
+          "node": 17,
+          "value": null
+        },
+        {
+          "deposited_turn": 44,
+          "kind": "fact",
+          "node": 29,
+          "value": "412 credits"
+        },
+        {
+          "deposited_turn": 47,
+          "kind": "correction",
+          "node": 32,
+          "value": "Neri Ash"
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-057-064/probes.jsonl",
+      "recency_mounted_ids": [
+        45,
+        46
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 49,
+        "live_token_rows": 42,
+        "mounted_ids": [
+          12
+        ],
+        "phase": "session",
+        "process_id": "6b2f0122-67eb-4f5a-a584-f5cb62aacc93",
+        "summed_token_seats": 49,
+        "turn": 63,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          45,
+          46
+        ],
+        "identifier_tokens": [
+          "commtower"
+        ],
+        "rare_identifier_tokens": [
+          "commtower"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              12
+            ],
+            "ordinal": 0,
+            "planned": [
+              12
+            ],
+            "shuttle": false
+          },
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              17,
+              29,
+              32
+            ],
+            "ordinal": 1,
+            "planned": [
+              17,
+              29,
+              32
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": ".",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        13
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        13
+      ],
+      "admission_route_margin_1_2": 0.255635887982296,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [],
+      "base_fact_mounted": true,
+      "because": "the correct node 13 (turn 14) WAS seated (fit_seated=[13]) and the reader still produced a wrong value",
+      "cause_class": "reader wrong value with the right mount",
+      "current_value_node": 13,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 14,
+      "distance": 50,
+      "expected": "(-31, 48, 12)",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 14,
+          "kind": "fact",
+          "node": 13,
+          "value": "(-31, 48, 12)"
+        }
+      ],
+      "probe_class": "fresh",
+      "probe_turn": 64,
+      "question": "What did we settle on for Breakwater's map position?",
+      "question_id": "recall_3_50",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 14,
+          "kind": "fact",
+          "node": 13,
+          "value": "(-31, 48, 12)"
+        },
+        {
+          "deposited_turn": 52,
+          "kind": "correction",
+          "node": 37,
+          "value": "(64, -17, 8)"
+        },
+        {
+          "deposited_turn": 49,
+          "kind": "fact",
+          "node": 34,
+          "value": "(62, -17, 8)"
+        },
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 30,
+          "kind": "fact",
+          "node": 22,
+          "value": "83 ingots"
+        },
+        {
+          "deposited_turn": 33,
+          "kind": "correction",
+          "node": 25,
+          "value": "89 ingots"
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-057-064/probes.jsonl",
+      "recency_mounted_ids": [
+        45,
+        46
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 53,
+        "live_token_rows": 43,
+        "mounted_ids": [
+          13
+        ],
+        "phase": "session",
+        "process_id": "6b2f0122-67eb-4f5a-a584-f5cb62aacc93",
+        "summed_token_seats": 53,
+        "turn": 64,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          45,
+          46
+        ],
+        "identifier_tokens": [
+          "breakwater"
+        ],
+        "rare_identifier_tokens": [
+          "breakwater"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              13
+            ],
+            "ordinal": 0,
+            "planned": [
+              13
+            ],
+            "shuttle": false
+          },
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              12,
+              22,
+              25
+            ],
+            "ordinal": 1,
+            "planned": [
+              12,
+              22,
+              25
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "I apologize.",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        0,
+        2,
+        14
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "margin_insurance_k3_identifier_tiebreak",
+      "admission_rank_plan": [
+        0,
+        2,
+        14
+      ],
+      "admission_route_margin_1_2": 0.00018306204506490786,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [],
+      "base_fact_mounted": true,
+      "because": "correction family [0, 2, 14] all still active in ranking_ids=[0, 2, 14, 19, 12, 3]; no supersession edge exists",
+      "cause_class": "fixture-lineage (harness)",
+      "current_value_node": 14,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 15,
+      "distance": 50,
+      "expected": "29 credits",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 1,
+          "kind": "fact",
+          "node": 0,
+          "value": "17 credits"
+        },
+        {
+          "deposited_turn": 3,
+          "kind": "correction",
+          "node": 2,
+          "value": "23 credits"
+        },
+        {
+          "deposited_turn": 15,
+          "kind": "correction",
+          "node": 14,
+          "value": "29 credits"
+        }
+      ],
+      "probe_class": "correction",
+      "probe_turn": 65,
+      "question": "What did we settle on for Vega's docking fee?",
+      "question_id": "recall_4_50",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 1,
+          "kind": "fact",
+          "node": 0,
+          "value": "17 credits"
+        },
+        {
+          "deposited_turn": 3,
+          "kind": "correction",
+          "node": 2,
+          "value": "23 credits"
+        },
+        {
+          "deposited_turn": 15,
+          "kind": "correction",
+          "node": 14,
+          "value": "29 credits"
+        },
+        {
+          "deposited_turn": 20,
+          "kind": "ordinary",
+          "node": 19,
+          "value": null
+        },
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 4,
+          "kind": "correction",
+          "node": 3,
+          "value": "14 beds"
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-065-070/probes.jsonl",
+      "recency_mounted_ids": [
+        45,
+        46
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 165,
+        "live_token_rows": 51,
+        "mounted_ids": [
+          0,
+          2,
+          14
+        ],
+        "phase": "session",
+        "process_id": "827e3779-b83a-4fff-977a-7d3b4b35d69d",
+        "summed_token_seats": 165,
+        "turn": 65,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          45,
+          46
+        ],
+        "identifier_tokens": [
+          "vega"
+        ],
+        "rare_identifier_tokens": [
+          "vega"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": true,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              0,
+              2,
+              14
+            ],
+            "ordinal": 0,
+            "planned": [
+              0,
+              2,
+              14
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "We agreed on 23 credits for Vega\u2019s docking fee.",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        16
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        4
+      ],
+      "admission_route_margin_1_2": 0.23190968140956603,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [
+        16
+      ],
+      "base_fact_mounted": true,
+      "because": "the identifier token(s) ['hauler'] matched the alias edge node(s) [16] (admission_identified_candidates=[16]), but the rank plan and mount seated only the base fact node(s) [4] (turns [5]); core has no alias->base composition (no alias handling exists in core/graft_arena.py or core/graft_repository.py), so the alias edge is never mounted together with its base and the reader sees a base fact it cannot bind to the queried name",
+      "cause_class": "alias-edge-without-base (core composition)",
+      "current_value_node": 4,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 5,
+      "distance": 50,
+      "expected": "37 crates",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 5,
+          "kind": "fact",
+          "node": 4,
+          "value": "37 crates"
+        }
+      ],
+      "probe_class": "alias",
+      "probe_turn": 67,
+      "question": "What did we settle on for the Hauler's cargo allowance?",
+      "question_id": "recall_6_50",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 5,
+          "kind": "fact",
+          "node": 4,
+          "value": "37 crates"
+        },
+        {
+          "deposited_turn": 17,
+          "kind": "alias",
+          "node": 16,
+          "value": null
+        },
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 33,
+          "kind": "correction",
+          "node": 25,
+          "value": "89 ingots"
+        },
+        {
+          "deposited_turn": 30,
+          "kind": "fact",
+          "node": 22,
+          "value": "83 ingots"
+        },
+        {
+          "deposited_turn": 11,
+          "kind": "ordinary",
+          "node": 10,
+          "value": null
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-065-070/probes.jsonl",
+      "recency_mounted_ids": [
+        45,
+        46
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 52,
+        "live_token_rows": 46,
+        "mounted_ids": [
+          4
+        ],
+        "phase": "session",
+        "process_id": "827e3779-b83a-4fff-977a-7d3b4b35d69d",
+        "summed_token_seats": 52,
+        "turn": 67,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          45,
+          46
+        ],
+        "identifier_tokens": [
+          "hauler"
+        ],
+        "rare_identifier_tokens": [
+          "hauler"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": true,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              4
+            ],
+            "ordinal": 0,
+            "planned": [
+              4
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "Sure to the next.",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        17
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        5
+      ],
+      "admission_route_margin_1_2": 0.2457811458137742,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [
+        17
+      ],
+      "base_fact_mounted": true,
+      "because": "the identifier token(s) ['beacon'] matched the alias edge node(s) [17] (admission_identified_candidates=[17]), but the rank plan and mount seated only the base fact node(s) [5] (turns [6]); core has no alias->base composition (no alias handling exists in core/graft_arena.py or core/graft_repository.py), so the alias edge is never mounted together with its base and the reader sees a base fact it cannot bind to the queried name",
+      "cause_class": "alias-edge-without-base (core composition)",
+      "current_value_node": 5,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 6,
+      "distance": 50,
+      "expected": "18 October 2196",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 6,
+          "kind": "fact",
+          "node": 5,
+          "value": "18 October 2196"
+        }
+      ],
+      "probe_class": "alias",
+      "probe_turn": 68,
+      "question": "What did we settle on for the Beacon's launch date?",
+      "question_id": "recall_7_50",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 6,
+          "kind": "fact",
+          "node": 5,
+          "value": "18 October 2196"
+        },
+        {
+          "deposited_turn": 46,
+          "kind": "fact",
+          "node": 31,
+          "value": "22 November 2196"
+        },
+        {
+          "deposited_turn": 50,
+          "kind": "correction",
+          "node": 35,
+          "value": "24 November 2196"
+        },
+        {
+          "deposited_turn": 18,
+          "kind": "alias",
+          "node": 17,
+          "value": null
+        },
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 33,
+          "kind": "correction",
+          "node": 25,
+          "value": "89 ingots"
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-065-070/probes.jsonl",
+      "recency_mounted_ids": [
+        45,
+        46
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 56,
+        "live_token_rows": 43,
+        "mounted_ids": [
+          5
+        ],
+        "phase": "session",
+        "process_id": "827e3779-b83a-4fff-977a-7d3b4b35d69d",
+        "summed_token_seats": 56,
+        "turn": 68,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          45,
+          46
+        ],
+        "identifier_tokens": [
+          "beacon"
+        ],
+        "rare_identifier_tokens": [
+          "beacon"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              5
+            ],
+            "ordinal": 0,
+            "planned": [
+              5
+            ],
+            "shuttle": false
+          },
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              12,
+              17,
+              25
+            ],
+            "ordinal": 1,
+            "planned": [
+              17,
+              12,
+              25
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "I apologize.",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        11,
+        6,
+        77
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        11
+      ],
+      "admission_route_margin_1_2": 0.5116987908326998,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [],
+      "base_fact_mounted": true,
+      "because": "the correct node 11 (turn 12) WAS seated (fit_seated=[11]) and the reader still produced a wrong value",
+      "cause_class": "reader wrong value with the right mount",
+      "current_value_node": 11,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 12,
+      "distance": 100,
+      "expected": "9 voxels",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 12,
+          "kind": "fact",
+          "node": 11,
+          "value": "9 voxels"
+        }
+      ],
+      "probe_class": "fresh",
+      "probe_turn": 112,
+      "question": "What did we settle on for Promenade's lamp spacing?",
+      "question_id": "recall_1_100",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 12,
+          "kind": "fact",
+          "node": 11,
+          "value": "9 voxels"
+        },
+        {
+          "deposited_turn": 7,
+          "kind": "ordinary",
+          "node": 6,
+          "value": null
+        },
+        {
+          "deposited_turn": 99,
+          "kind": "ordinary",
+          "node": 77,
+          "value": null
+        },
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 30,
+          "kind": "fact",
+          "node": 22,
+          "value": "83 ingots"
+        },
+        {
+          "deposited_turn": 93,
+          "kind": "fact",
+          "node": 71,
+          "value": "118 canisters"
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-111-118/probes.jsonl",
+      "recency_mounted_ids": [
+        88,
+        89
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 51,
+        "live_token_rows": 43,
+        "mounted_ids": [
+          11
+        ],
+        "phase": "session",
+        "process_id": "5c33226a-4097-4c12-abf2-1aa45efea8cd",
+        "summed_token_seats": 51,
+        "turn": 112,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          88,
+          89
+        ],
+        "identifier_tokens": [
+          "promenade"
+        ],
+        "rare_identifier_tokens": [
+          "promenade"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": true,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              11
+            ],
+            "ordinal": 0,
+            "planned": [
+              11
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "I will.",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        12
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        12
+      ],
+      "admission_route_margin_1_2": 0.5135937488729401,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [],
+      "base_fact_mounted": true,
+      "because": "the correct node 12 (turn 13) WAS seated (fit_seated=[12]) and the reader still produced a wrong value",
+      "cause_class": "reader wrong value with the right mount",
+      "current_value_node": 12,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 13,
+      "distance": 100,
+      "expected": "Iona Vale",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        }
+      ],
+      "probe_class": "fresh",
+      "probe_turn": 113,
+      "question": "What did we settle on for Commtower's maintenance crew?",
+      "question_id": "recall_2_100",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 71,
+          "kind": "alias",
+          "node": 49,
+          "value": null
+        },
+        {
+          "deposited_turn": 73,
+          "kind": "alias",
+          "node": 51,
+          "value": null
+        },
+        {
+          "deposited_turn": 17,
+          "kind": "alias",
+          "node": 16,
+          "value": null
+        },
+        {
+          "deposited_turn": 55,
+          "kind": "alias",
+          "node": 40,
+          "value": null
+        },
+        {
+          "deposited_turn": 69,
+          "kind": "alias",
+          "node": 47,
+          "value": null
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-111-118/probes.jsonl",
+      "recency_mounted_ids": [
+        88,
+        89
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 49,
+        "live_token_rows": 42,
+        "mounted_ids": [
+          12
+        ],
+        "phase": "session",
+        "process_id": "5c33226a-4097-4c12-abf2-1aa45efea8cd",
+        "summed_token_seats": 49,
+        "turn": 113,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          88,
+          89
+        ],
+        "identifier_tokens": [
+          "commtower"
+        ],
+        "rare_identifier_tokens": [
+          "commtower"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              12
+            ],
+            "ordinal": 0,
+            "planned": [
+              12
+            ],
+            "shuttle": false
+          },
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              16,
+              40,
+              47
+            ],
+            "ordinal": 1,
+            "planned": [
+              16,
+              40,
+              47
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": ".",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        13
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        13
+      ],
+      "admission_route_margin_1_2": 0.2538704402665042,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [],
+      "base_fact_mounted": true,
+      "because": "the correct node 13 (turn 14) WAS seated (fit_seated=[13]) and the reader still produced a wrong value",
+      "cause_class": "reader wrong value with the right mount",
+      "current_value_node": 13,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 14,
+      "distance": 100,
+      "expected": "(-31, 48, 12)",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 14,
+          "kind": "fact",
+          "node": 13,
+          "value": "(-31, 48, 12)"
+        }
+      ],
+      "probe_class": "fresh",
+      "probe_turn": 114,
+      "question": "What did we settle on for Breakwater's map position?",
+      "question_id": "recall_3_100",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 14,
+          "kind": "fact",
+          "node": 13,
+          "value": "(-31, 48, 12)"
+        },
+        {
+          "deposited_turn": 102,
+          "kind": "fact",
+          "node": 80,
+          "value": "(19, 83, -22)"
+        },
+        {
+          "deposited_turn": 52,
+          "kind": "correction",
+          "node": 37,
+          "value": "(64, -17, 8)"
+        },
+        {
+          "deposited_turn": 88,
+          "kind": "fact",
+          "node": 66,
+          "value": "(-72, 15, -6)"
+        },
+        {
+          "deposited_turn": 49,
+          "kind": "fact",
+          "node": 34,
+          "value": "(62, -17, 8)"
+        },
+        {
+          "deposited_turn": 109,
+          "kind": "fact",
+          "node": 87,
+          "value": "Oren Pike"
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-111-118/probes.jsonl",
+      "recency_mounted_ids": [
+        88,
+        89
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 53,
+        "live_token_rows": 43,
+        "mounted_ids": [
+          13
+        ],
+        "phase": "session",
+        "process_id": "5c33226a-4097-4c12-abf2-1aa45efea8cd",
+        "summed_token_seats": 53,
+        "turn": 114,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          88,
+          89
+        ],
+        "identifier_tokens": [
+          "breakwater"
+        ],
+        "rare_identifier_tokens": [
+          "breakwater"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              13
+            ],
+            "ordinal": 0,
+            "planned": [
+              13
+            ],
+            "shuttle": false
+          },
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              34,
+              66,
+              87
+            ],
+            "ordinal": 1,
+            "planned": [
+              66,
+              34,
+              87
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "I apologize.",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        0,
+        2,
+        14
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "margin_insurance_k3_identifier_tiebreak",
+      "admission_rank_plan": [
+        0,
+        2,
+        14
+      ],
+      "admission_route_margin_1_2": 0.0004988126348284272,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [],
+      "base_fact_mounted": true,
+      "because": "correction family [0, 2, 14] all still active in ranking_ids=[0, 2, 14, 19, 12, 3]; no supersession edge exists",
+      "cause_class": "fixture-lineage (harness)",
+      "current_value_node": 14,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 15,
+      "distance": 100,
+      "expected": "29 credits",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 1,
+          "kind": "fact",
+          "node": 0,
+          "value": "17 credits"
+        },
+        {
+          "deposited_turn": 3,
+          "kind": "correction",
+          "node": 2,
+          "value": "23 credits"
+        },
+        {
+          "deposited_turn": 15,
+          "kind": "correction",
+          "node": 14,
+          "value": "29 credits"
+        }
+      ],
+      "probe_class": "correction",
+      "probe_turn": 115,
+      "question": "What did we settle on for Vega's docking fee?",
+      "question_id": "recall_4_100",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 1,
+          "kind": "fact",
+          "node": 0,
+          "value": "17 credits"
+        },
+        {
+          "deposited_turn": 3,
+          "kind": "correction",
+          "node": 2,
+          "value": "23 credits"
+        },
+        {
+          "deposited_turn": 15,
+          "kind": "correction",
+          "node": 14,
+          "value": "29 credits"
+        },
+        {
+          "deposited_turn": 20,
+          "kind": "ordinary",
+          "node": 19,
+          "value": null
+        },
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 4,
+          "kind": "correction",
+          "node": 3,
+          "value": "14 beds"
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-111-118/probes.jsonl",
+      "recency_mounted_ids": [
+        88,
+        89
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 165,
+        "live_token_rows": 51,
+        "mounted_ids": [
+          0,
+          2,
+          14
+        ],
+        "phase": "session",
+        "process_id": "5c33226a-4097-4c12-abf2-1aa45efea8cd",
+        "summed_token_seats": 165,
+        "turn": 115,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          88,
+          89
+        ],
+        "identifier_tokens": [
+          "vega"
+        ],
+        "rare_identifier_tokens": [
+          "vega"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": true,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              0,
+              2,
+              14
+            ],
+            "ordinal": 0,
+            "planned": [
+              0,
+              2,
+              14
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "We agreed on 23 credits for Vega\u2019s docking fee.",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        16
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        4
+      ],
+      "admission_route_margin_1_2": 0.23190968140956603,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [
+        16
+      ],
+      "base_fact_mounted": true,
+      "because": "the identifier token(s) ['hauler'] matched the alias edge node(s) [16] (admission_identified_candidates=[16]), but the rank plan and mount seated only the base fact node(s) [4] (turns [5]); core has no alias->base composition (no alias handling exists in core/graft_arena.py or core/graft_repository.py), so the alias edge is never mounted together with its base and the reader sees a base fact it cannot bind to the queried name",
+      "cause_class": "alias-edge-without-base (core composition)",
+      "current_value_node": 4,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 5,
+      "distance": 100,
+      "expected": "37 crates",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 5,
+          "kind": "fact",
+          "node": 4,
+          "value": "37 crates"
+        }
+      ],
+      "probe_class": "alias",
+      "probe_turn": 117,
+      "question": "What did we settle on for the Hauler's cargo allowance?",
+      "question_id": "recall_6_100",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 5,
+          "kind": "fact",
+          "node": 4,
+          "value": "37 crates"
+        },
+        {
+          "deposited_turn": 17,
+          "kind": "alias",
+          "node": 16,
+          "value": null
+        },
+        {
+          "deposited_turn": 82,
+          "kind": "ordinary",
+          "node": 60,
+          "value": null
+        },
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 33,
+          "kind": "correction",
+          "node": 25,
+          "value": "89 ingots"
+        },
+        {
+          "deposited_turn": 30,
+          "kind": "fact",
+          "node": 22,
+          "value": "83 ingots"
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-111-118/probes.jsonl",
+      "recency_mounted_ids": [
+        88,
+        89
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 52,
+        "live_token_rows": 46,
+        "mounted_ids": [
+          4
+        ],
+        "phase": "session",
+        "process_id": "5c33226a-4097-4c12-abf2-1aa45efea8cd",
+        "summed_token_seats": 52,
+        "turn": 117,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          88,
+          89
+        ],
+        "identifier_tokens": [
+          "hauler"
+        ],
+        "rare_identifier_tokens": [
+          "hauler"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": true,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              4
+            ],
+            "ordinal": 0,
+            "planned": [
+              4
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "Sure to the next.",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        55,
+        17
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        5
+      ],
+      "admission_route_margin_1_2": 0.240242992481992,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [
+        17
+      ],
+      "base_fact_mounted": true,
+      "because": "the identifier token(s) ['beacon'] matched the alias edge node(s) [17] (admission_identified_candidates=[55, 17]), but the rank plan and mount seated only the base fact node(s) [5] (turns [6]); core has no alias->base composition (no alias handling exists in core/graft_arena.py or core/graft_repository.py), so the alias edge is never mounted together with its base and the reader sees a base fact it cannot bind to the queried name",
+      "cause_class": "alias-edge-without-base (core composition)",
+      "current_value_node": 5,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 6,
+      "distance": 100,
+      "expected": "18 October 2196",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 6,
+          "kind": "fact",
+          "node": 5,
+          "value": "18 October 2196"
+        }
+      ],
+      "probe_class": "alias",
+      "probe_turn": 118,
+      "question": "What did we settle on for the Beacon's launch date?",
+      "question_id": "recall_7_100",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 6,
+          "kind": "fact",
+          "node": 5,
+          "value": "18 October 2196"
+        },
+        {
+          "deposited_turn": 100,
+          "kind": "fact",
+          "node": 78,
+          "value": "6 January 2197"
+        },
+        {
+          "deposited_turn": 46,
+          "kind": "fact",
+          "node": 31,
+          "value": "22 November 2196"
+        },
+        {
+          "deposited_turn": 77,
+          "kind": "fact",
+          "node": 55,
+          "value": "27 voxels"
+        },
+        {
+          "deposited_turn": 50,
+          "kind": "correction",
+          "node": 35,
+          "value": "24 November 2196"
+        },
+        {
+          "deposited_turn": 84,
+          "kind": "fact",
+          "node": 62,
+          "value": "9 December 2196"
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-111-118/probes.jsonl",
+      "recency_mounted_ids": [
+        88,
+        89
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 56,
+        "live_token_rows": 43,
+        "mounted_ids": [
+          5
+        ],
+        "phase": "session",
+        "process_id": "5c33226a-4097-4c12-abf2-1aa45efea8cd",
+        "summed_token_seats": 56,
+        "turn": 118,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          88,
+          89
+        ],
+        "identifier_tokens": [
+          "beacon"
+        ],
+        "rare_identifier_tokens": [
+          "beacon"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              5
+            ],
+            "ordinal": 0,
+            "planned": [
+              5
+            ],
+            "shuttle": false
+          },
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              35,
+              55,
+              62
+            ],
+            "ordinal": 1,
+            "planned": [
+              55,
+              35,
+              62
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "I apologize.",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        11,
+        111,
+        6,
+        77
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        11
+      ],
+      "admission_route_margin_1_2": 0.5002873259464535,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [],
+      "base_fact_mounted": true,
+      "because": "the correct node 11 (turn 12) WAS seated (fit_seated=[11]) and the reader still produced a wrong value",
+      "cause_class": "reader wrong value with the right mount",
+      "current_value_node": 11,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 12,
+      "distance": 150,
+      "expected": "9 voxels",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 12,
+          "kind": "fact",
+          "node": 11,
+          "value": "9 voxels"
+        }
+      ],
+      "probe_class": "fresh",
+      "probe_turn": 162,
+      "question": "What did we settle on for Promenade's lamp spacing?",
+      "question_id": "recall_1_150",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 12,
+          "kind": "fact",
+          "node": 11,
+          "value": "9 voxels"
+        },
+        {
+          "deposited_turn": 140,
+          "kind": "ordinary",
+          "node": 111,
+          "value": null
+        },
+        {
+          "deposited_turn": 7,
+          "kind": "ordinary",
+          "node": 6,
+          "value": null
+        },
+        {
+          "deposited_turn": 99,
+          "kind": "ordinary",
+          "node": 77,
+          "value": null
+        },
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 137,
+          "kind": "fact",
+          "node": 108,
+          "value": "(55, -26, 39)"
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-157-164/probes.jsonl",
+      "recency_mounted_ids": [
+        131,
+        132
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 51,
+        "live_token_rows": 43,
+        "mounted_ids": [
+          11
+        ],
+        "phase": "session",
+        "process_id": "c43efa16-62fe-4d07-af3c-7c6df85bacce",
+        "summed_token_seats": 51,
+        "turn": 162,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          131,
+          132
+        ],
+        "identifier_tokens": [
+          "promenade"
+        ],
+        "rare_identifier_tokens": [
+          "promenade"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": true,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              11
+            ],
+            "ordinal": 0,
+            "planned": [
+              11
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "I will.",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        12
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        12
+      ],
+      "admission_route_margin_1_2": 0.5135937488729401,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [],
+      "base_fact_mounted": true,
+      "because": "the correct node 12 (turn 13) WAS seated (fit_seated=[12]) and the reader still produced a wrong value",
+      "cause_class": "reader wrong value with the right mount",
+      "current_value_node": 12,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 13,
+      "distance": 150,
+      "expected": "Iona Vale",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        }
+      ],
+      "probe_class": "fresh",
+      "probe_turn": 163,
+      "question": "What did we settle on for Commtower's maintenance crew?",
+      "question_id": "recall_2_150",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        },
+        {
+          "deposited_turn": 71,
+          "kind": "alias",
+          "node": 49,
+          "value": null
+        },
+        {
+          "deposited_turn": 73,
+          "kind": "alias",
+          "node": 51,
+          "value": null
+        },
+        {
+          "deposited_turn": 17,
+          "kind": "alias",
+          "node": 16,
+          "value": null
+        },
+        {
+          "deposited_turn": 55,
+          "kind": "alias",
+          "node": 40,
+          "value": null
+        },
+        {
+          "deposited_turn": 69,
+          "kind": "alias",
+          "node": 47,
+          "value": null
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-157-164/probes.jsonl",
+      "recency_mounted_ids": [
+        131,
+        132
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 49,
+        "live_token_rows": 42,
+        "mounted_ids": [
+          12
+        ],
+        "phase": "session",
+        "process_id": "c43efa16-62fe-4d07-af3c-7c6df85bacce",
+        "summed_token_seats": 49,
+        "turn": 163,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          131,
+          132
+        ],
+        "identifier_tokens": [
+          "commtower"
+        ],
+        "rare_identifier_tokens": [
+          "commtower"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              12
+            ],
+            "ordinal": 0,
+            "planned": [
+              12
+            ],
+            "shuttle": false
+          },
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              16,
+              40,
+              47
+            ],
+            "ordinal": 1,
+            "planned": [
+              16,
+              40,
+              47
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": ".",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        13
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        13
+      ],
+      "admission_route_margin_1_2": 0.22919168844406057,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [],
+      "base_fact_mounted": true,
+      "because": "the correct node 13 (turn 14) WAS seated (fit_seated=[13]) and the reader still produced a wrong value",
+      "cause_class": "reader wrong value with the right mount",
+      "current_value_node": 13,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 14,
+      "distance": 150,
+      "expected": "(-31, 48, 12)",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 14,
+          "kind": "fact",
+          "node": 13,
+          "value": "(-31, 48, 12)"
+        }
+      ],
+      "probe_class": "fresh",
+      "probe_turn": 164,
+      "question": "What did we settle on for Breakwater's map position?",
+      "question_id": "recall_3_150",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 14,
+          "kind": "fact",
+          "node": 13,
+          "value": "(-31, 48, 12)"
+        },
+        {
+          "deposited_turn": 137,
+          "kind": "fact",
+          "node": 108,
+          "value": "(55, -26, 39)"
+        },
+        {
+          "deposited_turn": 102,
+          "kind": "fact",
+          "node": 80,
+          "value": "(19, 83, -22)"
+        },
+        {
+          "deposited_turn": 151,
+          "kind": "fact",
+          "node": 122,
+          "value": "(-63, 28, 46)"
+        },
+        {
+          "deposited_turn": 52,
+          "kind": "correction",
+          "node": 37,
+          "value": "(64, -17, 8)"
+        },
+        {
+          "deposited_turn": 123,
+          "kind": "fact",
+          "node": 94,
+          "value": "(-9, -44, 71)"
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-157-164/probes.jsonl",
+      "recency_mounted_ids": [
+        131,
+        132
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 53,
+        "live_token_rows": 43,
+        "mounted_ids": [
+          13
+        ],
+        "phase": "session",
+        "process_id": "c43efa16-62fe-4d07-af3c-7c6df85bacce",
+        "summed_token_seats": 53,
+        "turn": 164,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          131,
+          132
+        ],
+        "identifier_tokens": [
+          "breakwater"
+        ],
+        "rare_identifier_tokens": [
+          "breakwater"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              13
+            ],
+            "ordinal": 0,
+            "planned": [
+              13
+            ],
+            "shuttle": false
+          },
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              37,
+              94,
+              122
+            ],
+            "ordinal": 1,
+            "planned": [
+              122,
+              37,
+              94
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "I apologize.",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        0,
+        2,
+        14
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "margin_insurance_k3_identifier_tiebreak",
+      "admission_rank_plan": [
+        0,
+        2,
+        14
+      ],
+      "admission_route_margin_1_2": 0.00018306204506490786,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [],
+      "base_fact_mounted": true,
+      "because": "correction family [0, 2, 14] all still active in ranking_ids=[0, 2, 14, 121, 19, 12]; no supersession edge exists",
+      "cause_class": "fixture-lineage (harness)",
+      "current_value_node": 14,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 15,
+      "distance": 150,
+      "expected": "29 credits",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 1,
+          "kind": "fact",
+          "node": 0,
+          "value": "17 credits"
+        },
+        {
+          "deposited_turn": 3,
+          "kind": "correction",
+          "node": 2,
+          "value": "23 credits"
+        },
+        {
+          "deposited_turn": 15,
+          "kind": "correction",
+          "node": 14,
+          "value": "29 credits"
+        }
+      ],
+      "probe_class": "correction",
+      "probe_turn": 165,
+      "question": "What did we settle on for Vega's docking fee?",
+      "question_id": "recall_4_150",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 1,
+          "kind": "fact",
+          "node": 0,
+          "value": "17 credits"
+        },
+        {
+          "deposited_turn": 3,
+          "kind": "correction",
+          "node": 2,
+          "value": "23 credits"
+        },
+        {
+          "deposited_turn": 15,
+          "kind": "correction",
+          "node": 14,
+          "value": "29 credits"
+        },
+        {
+          "deposited_turn": 150,
+          "kind": "ordinary",
+          "node": 121,
+          "value": null
+        },
+        {
+          "deposited_turn": 20,
+          "kind": "ordinary",
+          "node": 19,
+          "value": null
+        },
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-165-172/probes.jsonl",
+      "recency_mounted_ids": [
+        131,
+        132
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 165,
+        "live_token_rows": 51,
+        "mounted_ids": [
+          0,
+          2,
+          14
+        ],
+        "phase": "session",
+        "process_id": "c82fd152-0196-4be0-8759-25e0b0817ef0",
+        "summed_token_seats": 165,
+        "turn": 165,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          131,
+          132
+        ],
+        "identifier_tokens": [
+          "vega"
+        ],
+        "rare_identifier_tokens": [
+          "vega"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": true,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              0,
+              2,
+              14
+            ],
+            "ordinal": 0,
+            "planned": [
+              0,
+              2,
+              14
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "We agreed on 23 credits for Vega\u2019s docking fee.",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        16
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        4
+      ],
+      "admission_route_margin_1_2": 0.23190968140956603,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [
+        16
+      ],
+      "base_fact_mounted": true,
+      "because": "the identifier token(s) ['hauler'] matched the alias edge node(s) [16] (admission_identified_candidates=[16]), but the rank plan and mount seated only the base fact node(s) [4] (turns [5]); core has no alias->base composition (no alias handling exists in core/graft_arena.py or core/graft_repository.py), so the alias edge is never mounted together with its base and the reader sees a base fact it cannot bind to the queried name",
+      "cause_class": "alias-edge-without-base (core composition)",
+      "current_value_node": 4,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": true,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 5,
+      "distance": 150,
+      "expected": "37 crates",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 5,
+          "kind": "fact",
+          "node": 4,
+          "value": "37 crates"
+        }
+      ],
+      "probe_class": "alias",
+      "probe_turn": 167,
+      "question": "What did we settle on for the Hauler's cargo allowance?",
+      "question_id": "recall_6_150",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 5,
+          "kind": "fact",
+          "node": 4,
+          "value": "37 crates"
+        },
+        {
+          "deposited_turn": 17,
+          "kind": "alias",
+          "node": 16,
+          "value": null
+        },
+        {
+          "deposited_turn": 159,
+          "kind": "ordinary",
+          "node": 130,
+          "value": null
+        },
+        {
+          "deposited_turn": 82,
+          "kind": "ordinary",
+          "node": 60,
+          "value": null
+        },
+        {
+          "deposited_turn": 110,
+          "kind": "ordinary",
+          "node": 88,
+          "value": null
+        },
+        {
+          "deposited_turn": 13,
+          "kind": "fact",
+          "node": 12,
+          "value": "Iona Vale"
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-165-172/probes.jsonl",
+      "recency_mounted_ids": [
+        131,
+        132
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 52,
+        "live_token_rows": 46,
+        "mounted_ids": [
+          4
+        ],
+        "phase": "session",
+        "process_id": "c82fd152-0196-4be0-8759-25e0b0817ef0",
+        "summed_token_seats": 52,
+        "turn": 167,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          131,
+          132
+        ],
+        "identifier_tokens": [
+          "hauler"
+        ],
+        "rare_identifier_tokens": [
+          "hauler"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": true,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              4
+            ],
+            "ordinal": 0,
+            "planned": [
+              4
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "Sure to the next.",
+      "served_without_plan_head": false
+    },
+    {
+      "admission_identified_candidates": [
+        17,
+        55
+      ],
+      "admission_margin_threshold": 0.1385774091529802,
+      "admission_policy": "A-DEC",
+      "admission_policy_branch": "fit_margin_decisive_rank1",
+      "admission_rank_plan": [
+        5
+      ],
+      "admission_route_margin_1_2": 0.2266975058596996,
+      "admission_rule": "margin_first",
+      "alias_edge_mounted": false,
+      "alias_edge_nodes": [
+        17
+      ],
+      "base_fact_mounted": false,
+      "because": "the identifier token(s) ['beacon'] matched the alias edge node(s) [17] (admission_identified_candidates=[17, 55]), but the rank plan and mount seated only the base fact node(s) [31, 78, 92] (turns [46, 100, 121]); core has no alias->base composition (no alias handling exists in core/graft_arena.py or core/graft_repository.py), so the alias edge is never mounted together with its base and the reader sees a base fact it cannot bind to the queried name",
+      "cause_class": "alias-edge-without-base (core composition)",
+      "current_value_node": 5,
+      "current_value_node_exists": true,
+      "current_value_node_mounted": false,
+      "current_value_node_superseded": false,
+      "current_value_node_turn": 6,
+      "distance": 150,
+      "expected": "18 October 2196",
+      "mounted_nodes": [
+        {
+          "deposited_turn": 46,
+          "kind": "fact",
+          "node": 31,
+          "value": "22 November 2196"
+        },
+        {
+          "deposited_turn": 100,
+          "kind": "fact",
+          "node": 78,
+          "value": "6 January 2197"
+        },
+        {
+          "deposited_turn": 121,
+          "kind": "fact",
+          "node": 92,
+          "value": "13 February 2197"
+        }
+      ],
+      "probe_class": "alias",
+      "probe_turn": 168,
+      "question": "What did we settle on for the Beacon's launch date?",
+      "question_id": "recall_7_150",
+      "ranked_nodes": [
+        {
+          "deposited_turn": 6,
+          "kind": "fact",
+          "node": 5,
+          "value": "18 October 2196"
+        },
+        {
+          "deposited_turn": 135,
+          "kind": "fact",
+          "node": 106,
+          "value": "27 March 2197"
+        },
+        {
+          "deposited_turn": 149,
+          "kind": "fact",
+          "node": 120,
+          "value": "11 April 2197"
+        },
+        {
+          "deposited_turn": 100,
+          "kind": "fact",
+          "node": 78,
+          "value": "6 January 2197"
+        },
+        {
+          "deposited_turn": 121,
+          "kind": "fact",
+          "node": 92,
+          "value": "13 February 2197"
+        },
+        {
+          "deposited_turn": 46,
+          "kind": "fact",
+          "node": 31,
+          "value": "22 November 2196"
+        }
+      ],
+      "receipt": "/mnt/ForgeRealm/wt/grm-lt1/artifacts/grm_lt1/amendment2/run_margin_first/cells/B-165-172/probes.jsonl",
+      "recency_mounted_ids": [
+        131,
+        132
+      ],
+      "rs3_residency": {
+        "actual_recency_token_seats": 0,
+        "admission_rule": "margin_first",
+        "arena_cur_mount_n": 165,
+        "live_token_rows": 72,
+        "mounted_ids": [
+          31,
+          78,
+          92
+        ],
+        "phase": "session",
+        "process_id": "c82fd152-0196-4be0-8759-25e0b0817ef0",
+        "summed_token_seats": 165,
+        "turn": 168,
+        "width": 256
+      },
+      "rt1_provenance": {
+        "excluded_live_ids": [
+          131,
+          132
+        ],
+        "identifier_tokens": [
+          "beacon"
+        ],
+        "rare_identifier_tokens": [
+          "beacon"
+        ],
+        "route_backend": "python",
+        "route_limit": 6,
+        "rule_sha256": "c304609f81475bd2ae3399ad180d3bb00cc5d2b44b1a49db570387c810defb91",
+        "trips": [
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": false,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              5
+            ],
+            "ordinal": 0,
+            "planned": [
+              5
+            ],
+            "shuttle": false
+          },
+          {
+            "clean_room": true,
+            "early_aborted": false,
+            "grounded": true,
+            "grounding_glyph_rescued": false,
+            "grounding_normalized": true,
+            "mount_set": [
+              31,
+              78,
+              92
+            ],
+            "ordinal": 1,
+            "planned": [
+              78,
+              92,
+              31
+            ],
+            "shuttle": false
+          }
+        ]
+      },
+      "score_category": "wrong_value",
+      "served_from": "grm_e2e_session._probe_ladder_chat",
+      "served_value": "We had a bit of back\u2011and\u2011forth. The original plan had the beacon launching on **13\u202fFebruary 2197**\u2014the same day as",
+      "served_without_plan_head": true
+    }
+  ],
+  "wrong_rows": 30
+}

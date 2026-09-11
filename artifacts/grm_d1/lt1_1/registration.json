@@ -1,0 +1,487 @@
+{
+  "admission_rule": "margin_first",
+  "arms": {
+    "A": {
+      "admission_rule": "margin_first",
+      "flags": {
+        "adm_decisive": true,
+        "admission_mode": "A-DEC",
+        "arena_width": 96,
+        "capture_pin": "live",
+        "demand_ngh": false,
+        "ephemeral": true,
+        "gqa_cuda_route": true,
+        "graft_storage_bits": 8,
+        "length_debias": false,
+        "live_turns": 2,
+        "lsr_fixes": true,
+        "max_live": 4096,
+        "max_trips": 1,
+        "ngen": 32,
+        "probe_ladder": true,
+        "route_query_lex": true,
+        "rt1_rule": true,
+        "seat_near_live": true,
+        "sup_resolve": true,
+        "topk": 3,
+        "turn_pipeline": "single",
+        "vram_budget_mb": null
+      },
+      "status": "NON_FIT"
+    }
+  },
+  "budget_gpu_hours": 1.7,
+  "budget_gpu_seconds": 6120,
+  "cells": [
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": null,
+      "estimate_seconds": 199.40821250870405,
+      "id": "A-001-008",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 0,
+      "start": 1,
+      "stop": 8,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-001-008",
+      "estimate_seconds": 199.408212508704,
+      "id": "A-009-016",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 0,
+      "start": 9,
+      "stop": 16,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-009-016",
+      "estimate_seconds": 171.07217440341347,
+      "id": "A-017-024",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 0,
+      "start": 17,
+      "stop": 24,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-017-024",
+      "estimate_seconds": 180.28420271311637,
+      "id": "A-025-032",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 0,
+      "start": 25,
+      "stop": 32,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-025-032",
+      "estimate_seconds": 236.25632574751555,
+      "id": "A-033-040",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 0,
+      "start": 33,
+      "stop": 40,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-033-040",
+      "estimate_seconds": 255.03035895501222,
+      "id": "A-041-048",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 0,
+      "start": 41,
+      "stop": 48,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-041-048",
+      "estimate_seconds": 227.39427402590363,
+      "id": "A-049-056",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 0,
+      "start": 49,
+      "stop": 56,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-049-056",
+      "estimate_seconds": 255.03035895501228,
+      "id": "A-057-064",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 0,
+      "start": 57,
+      "stop": 64,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-057-064",
+      "estimate_seconds": 177.84923696394588,
+      "id": "A-065-070",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 2,
+      "start": 65,
+      "stop": 70,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-065-070",
+      "estimate_seconds": 161.8601460937106,
+      "id": "A-071-078",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 2,
+      "start": 71,
+      "stop": 78,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-071-078",
+      "estimate_seconds": 143.43608947430485,
+      "id": "A-079-086",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 0,
+      "start": 79,
+      "stop": 86,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-079-086",
+      "estimate_seconds": 143.43608947430485,
+      "id": "A-087-094",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 0,
+      "start": 87,
+      "stop": 94,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-087-094",
+      "estimate_seconds": 143.43608947430485,
+      "id": "A-095-102",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 0,
+      "start": 95,
+      "stop": 102,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-095-102",
+      "estimate_seconds": 143.43608947430485,
+      "id": "A-103-110",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 0,
+      "start": 103,
+      "stop": 110,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-103-110",
+      "estimate_seconds": 207.920287642225,
+      "id": "A-111-118",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 0,
+      "start": 111,
+      "stop": 118,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-111-118",
+      "estimate_seconds": 143.43608947430485,
+      "id": "A-119-126",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 0,
+      "start": 119,
+      "stop": 126,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-119-126",
+      "estimate_seconds": 143.43608947430485,
+      "id": "A-127-134",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 0,
+      "start": 127,
+      "stop": 134,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-127-134",
+      "estimate_seconds": 141.00112372513436,
+      "id": "A-135-140",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 2,
+      "start": 135,
+      "stop": 140,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-135-140",
+      "estimate_seconds": 161.8601460937106,
+      "id": "A-141-148",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 2,
+      "start": 141,
+      "stop": 148,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-141-148",
+      "estimate_seconds": 143.43608947430485,
+      "id": "A-149-156",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 0,
+      "start": 149,
+      "stop": 156,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-149-156",
+      "estimate_seconds": 171.07217440341347,
+      "id": "A-157-164",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 0,
+      "start": 157,
+      "stop": 164,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-157-164",
+      "estimate_seconds": 180.28420271311637,
+      "id": "A-165-172",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 0,
+      "start": 165,
+      "stop": 172,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-165-172",
+      "estimate_seconds": 143.43608947430485,
+      "id": "A-173-180",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 0,
+      "start": 173,
+      "stop": 180,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-173-180",
+      "estimate_seconds": 143.43608947430485,
+      "id": "A-181-188",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 0,
+      "start": 181,
+      "stop": 188,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-181-188",
+      "estimate_seconds": 143.43608947430485,
+      "id": "A-189-196",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 0,
+      "start": 189,
+      "stop": 196,
+      "worker_seconds": 280
+    },
+    {
+      "arm": "A",
+      "cooldown_seconds": 30,
+      "depends": "A-189-196",
+      "estimate_seconds": 147.77818628566678,
+      "id": "A-197-200",
+      "lease_seconds": 285,
+      "outer_seconds": 590,
+      "restart_sentinel_calls": 0,
+      "start": 197,
+      "stop": 200,
+      "worker_seconds": 280
+    }
+  ],
+  "changes": [
+    {
+      "core_change": false,
+      "id": "LT11-C1",
+      "kind": "fixture",
+      "proof": "tests/test_grm_d1_supersession_fixture.py; artifacts/grm_d1/supersession_cpu_receipt.json",
+      "what": "15 correction turns become kind=\"supersede\" with old_value and correction_command",
+      "why": "LT1 fed corrections as ordinary prose (arena.feed), so nothing was retired and the stale node outranked and outseated the current one in all 5 recall_4_* rows"
+    },
+    {
+      "core_change": false,
+      "id": "LT11-C2",
+      "kind": "fixture",
+      "proof": "tests/test_grm_d1_recap.py; artifacts/grm_d1/recap_battery.json",
+      "what": "one un-keyable recap turn becomes five named value-span recap probes",
+      "why": "the old question carried no identifier token (admission_identified_candidates == []), so every ladder trip came back ungrounded and the score was 0/5 by construction"
+    }
+  ],
+  "cpu_gates": [
+    "python3 -m pytest -q tests/test_grm_d1_supersession_fixture.py",
+    "python3 -m pytest -q tests/test_grm_d1_recap.py",
+    "python3 -m pytest -q tests/test_grm_d1_registration.py",
+    "python3 scripts/grm_d1_recap.py   # oracle 5/5 PASS"
+  ],
+  "derived_from": {
+    "diagnosis": "artifacts/grm_d1/cause_table_A.json",
+    "registration": "artifacts/grm_lt1/registration.json",
+    "registration_sha256": "e1913b144087ea79e6eea4a0b8eceae0bedd2a4853cd931db5f24c795488300c",
+    "run": "artifacts/grm_lt1/amendment2/run_margin_first"
+  },
+  "fixture": {
+    "parent": "fixtures/lt1/dialogue.json",
+    "parent_sha256": "ad61c9488f722ae7ce248aee34cda688c13a5f0d3ec47b62954da2a3c146855c",
+    "path": "artifacts/grm_d1/lt1_1/dialogue.json",
+    "sha256": "470da44b3a570684bd24c9f3b96f434468d7914094222ed5867c1382fbc94d26"
+  },
+  "model": {
+    "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "repository": "openai/gpt-oss-20b",
+    "revision": "6cee5e81ee83917806bbde320786a8fb61efebee"
+  },
+  "model_frame": {
+    "n_sink": 19,
+    "name": "EB1 ephemeral",
+    "sink_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|>",
+    "sink_token_ids": [
+      200006,
+      17360,
+      200008,
+      3575,
+      553,
+      17554,
+      162016,
+      13,
+      57369,
+      289,
+      25,
+      4465,
+      13,
+      13888,
+      9334,
+      25,
+      1721,
+      13,
+      200007
+    ],
+    "source_sha256": "28b3196f8fb04a4123fcf21b1e61f8bb1b8a0e64fadcfc6643801f3e19c4ac02",
+    "turn_pipeline": "single"
+  },
+  "not_addressed": [
+    {
+      "cause_class": "alias-edge-without-base (core composition)",
+      "id": "LT11-N1",
+      "proposed_fix": "see artifacts/grm_d1/REPORT.md \"Proposed core fix\"",
+      "rows": 5,
+      "statement": "Core has no alias->base composition. The identifier matches the alias edge node; the mount seats only the base fact; nothing binds them. This is a CORE gap, STOPPED under the GRM-D1 order (core/ is read-only). A1 owns it. LT1.1 predicts these 5 rows stay wrong."
+    }
+  ],
+  "optional_named_flags": [
+    {
+      "disposition": "NOT pinned. The lead may pin it only if a later merge introduces it; until then LT1.1 must not claim it was applied. Alias rows stay RED by design.",
+      "evidence": "grep -rn 'GRM_ALIAS_FOLD_MERGE' core/ scripts/ tests/ returns no match on branch grm-d1",
+      "name": "GRM_ALIAS_FOLD_MERGE",
+      "present_on_tree": false
+    }
+  ],
+  "predictions": {
+    "aliases": "0/5 correct (unchanged) -- core gap, not addressed",
+    "corrections": "5/5 correct (was 0/5) -- the supersession fix retires the stale nodes so they cannot be ranked",
+    "evidence_class": "prediction registered BEFORE the run, per house rules",
+    "fresh": "6/7 unchanged; recall_3_150 is a ladder-drop, not addressed by either change",
+    "recap": "5/5 on the oracle (gated on CPU); memory side unpredicted"
+  },
+  "prior_art": [
+    "C7 r3 supersede fixture shape: wt/grm-c7 scripts/grm_c7_register_r3.py:41-49 (GRM contributors, 2026)",
+    "Production supersede turn path: scripts/grm_e2e_session.py:2590-2597",
+    "correct_memory retirement: core/graft_repository.py:1953-1998",
+    "Route eligibility excludes retired: core/graft_arena.py:1450-1454",
+    "Value-span scorer: C5 arm S via scripts/grm_lt1.py:score",
+    "Recap decomposition: no specific prior art known to me; unverified -- lead to check (search: aggregate question decomposition, list-recall vs point-recall evaluation)"
+  ],
+  "process_safety": {
+    "display": "no windowed gate; CPU gates only",
+    "git": "lead commits; the seat never runs git",
+    "gpu": "single lease via flock --wait; operator has absolute right of way; no process this run did not start is ever signalled"
+  },
+  "required_env": {
+    "GRM_ADMISSION_RULE": "margin_first",
+    "GRM_PROFILE": "eb1_c2"
+  },
+  "schema": "grm.lt1_1.registration.v1",
+  "status": "FIT_ESTIMATE"
+}

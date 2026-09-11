@@ -1,0 +1,18 @@
+# LT1.1 -- arm A only, 26 cells, budget 6120 s (1.70 GPU-h)
+# registration sha256: 02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8
+# fixture     sha256: 470da44b3a570684bd24c9f3b96f434468d7914094222ed5867c1382fbc94d26
+#
+# The alias flag GRM_ALIAS_FOLD_MERGE is ABSENT on this tree and is NOT set.
+# Pin it ONLY if a later merge introduces it:
+#   export GRM_ALIAS_FOLD_MERGE=1
+#
+export GRM_ADMISSION_RULE=margin_first
+export GRM_PROFILE=eb1_c2
+cd /mnt/ForgeRealm/wt/grm-d1
+python3 -m pytest -q tests/test_grm_d1_supersession_fixture.py \
+  tests/test_grm_d1_recap.py tests/test_grm_d1_registration.py
+python3 scripts/grm_d1_recap.py
+flock --wait 7200 /var/lock/grm_gpu.lock \
+  python3 scripts/grm_lt1.py --run --arm A \
+    --registration artifacts/grm_d1/lt1_1/registration.json \
+    --fixture artifacts/grm_d1/lt1_1/dialogue.json
