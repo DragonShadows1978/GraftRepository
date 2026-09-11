@@ -15,9 +15,13 @@ from __future__ import annotations
 
 import json
 
+import pytest
+
 from scripts import grm_r1_replay as run
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_r1/registration.json')
 def test_all_31_cells_replay_on_cpu_with_both_plans_reproduced(tmp_path):
     r = run.verify()
     for batch_id in r['batch_ids']:

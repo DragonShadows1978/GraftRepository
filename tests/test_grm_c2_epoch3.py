@@ -12,6 +12,8 @@ from scripts.grm_c2_profile import read, create, sha
 from tests.test_grm_c2_amendment import finished
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/epochs/scout-fix-2/ + orders/GRM_SCOUT_FIX_2.md')
 def test_epoch_registration_all52_fresh_and_prior_red_preserved():
     epoch = e.verify_amendment()
     r = e.effective_registration()
@@ -36,6 +38,8 @@ def test_forged_epoch_refused_with_recomputed_sidecar(tmp_path, monkeypatch, def
         e.verify_amendment()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/epochs/scout-fix-2/ + orders/GRM_SCOUT_FIX_2.md')
 @pytest.mark.parametrize('target', ['core/graft_repository.py', 'scripts/grm_c2_profile.py',
     'orders/GRM_SCOUT_FIX_2.md', 'artifacts/grm_c2/lead_commands.txt',
     'artifacts/grm_c2/cells/profile-sup-correction_then_restatement/controller.json',
@@ -59,6 +63,8 @@ def local_epoch(tmp_path, monkeypatch):
     return a.effective_registration()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/epochs/scout-fix-2/ + orders/GRM_SCOUT_FIX_2.md')
 def test_resume_runs_all52_fresh_then_only_next_unstarted(local_epoch, monkeypatch):
     r = local_epoch; calls = []
     assert a.charged_seconds(r) == r['epoch']['prior_charged_seconds']
@@ -79,6 +85,8 @@ def test_resume_runs_all52_fresh_then_only_next_unstarted(local_epoch, monkeypat
     assert a.summary(r) == 0
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/epochs/scout-fix-2/ + orders/GRM_SCOUT_FIX_2.md')
 def test_old_epoch_receipt_refused(local_epoch):
     cell = local_epoch['cells'][0]
     d = a.OUT / 'cells' / cell['id']; d.mkdir(parents=True)
@@ -88,6 +96,8 @@ def test_old_epoch_receipt_refused(local_epoch):
         a.cell_state(cell)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/epochs/scout-fix-2/ + orders/GRM_SCOUT_FIX_2.md')
 def test_prior_charge_counts_toward_reservation(local_epoch, monkeypatch):
     r = local_epoch; cells = a.ordered_cells(r)
     # 3300+285 fits3600 alone, but the historical46.348 charge makes it exceed.
@@ -97,6 +107,8 @@ def test_prior_charge_counts_toward_reservation(local_epoch, monkeypatch):
     assert 'budget rail' in read(a.OUT / 'cells' / cells[0]['id'] / 'controller.json')['error']
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/epochs/scout-fix-2/ + orders/GRM_SCOUT_FIX_2.md')
 def test_new_red_stops_and_is_not_retried(local_epoch, monkeypatch):
     r = local_epoch; calls = []
     def execute(command, **kw):
@@ -110,6 +122,8 @@ def test_new_red_stops_and_is_not_retried(local_epoch, monkeypatch):
     assert a.charged_seconds(r) == pytest.approx(10 + 46.348182500805706)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/epochs/scout-fix-2/ + orders/GRM_SCOUT_FIX_2.md')
 def test_orphan_fully_charged_and_restart_dependency_fails_closed(local_epoch, monkeypatch):
     r = local_epoch
     first = a.ordered_cells(r)[0]

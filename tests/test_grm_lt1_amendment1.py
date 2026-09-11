@@ -27,6 +27,8 @@ for _name in ('test_recency_gate_rejects_recent_source',
 
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_lt1/amendment1/registration_amendment.json')
 def test_fixture_only_assistant_fact_changes_and_effective_registration():
     r=lt.verify();f=lt.read(lt.FIX)
     old=lt.read(lt.OUT/'amendment1/before/fixtures/lt1/dialogue.json')
@@ -94,6 +96,8 @@ def test_orphan_red_and_checkpoint_process_integrity(tmp_path):
     with pytest.raises(TimeoutError):worker.check_deadline(0)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_lt1/amendment1/registration_amendment.json')
 def test_empty_summary_does_not_claim_quality():
     for arm in ('A','B'):
         s=lt.summary(arm)
@@ -101,6 +105,8 @@ def test_empty_summary_does_not_claim_quality():
         assert all(x['memory']['exact_rate'] is None for x in s['by_distance'])
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_lt1/amendment1/registration_amendment.json')
 @pytest.mark.parametrize('arm',['A','B'])
 def test_worker_all_8_turn_cells_resume_and_designated_restarts(tmp_path,arm):
     # Shared GPU worker body, fresh CPU process for EVERY registered cell.

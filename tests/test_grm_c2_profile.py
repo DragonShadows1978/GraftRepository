@@ -48,6 +48,8 @@ def test_registry_matches_shipped_defaults_and_exact_frame():
     assert r['model']['revision']=='6cee5e81ee83917806bbde320786a8fb61efebee'
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c2/checkpoints/profile/')
 def test_cell_plan_complete_dependencies_and_nonfit_honesty():
     r=p.read(p.REGISTRATION);cells=r['cells'];seen=set()
     assert len(cells)==52 and r['estimated_seconds']==3140>r['budget_seconds']==2880

@@ -14,6 +14,8 @@ from scripts import grm_c7_register_r2 as r2
 from scripts import grm_c7_fix4 as fix4
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c7/r2/ (C7 r2 registration)')
 def test_r2_layout_bindings_fixtures_and_no_r1_resume(tmp_path):
     r = c.verify()
     a = c.read(c.OUT/'r2/amendment.json')
@@ -37,6 +39,8 @@ def test_r2_layout_bindings_fixtures_and_no_r1_resume(tmp_path):
     assert run.dry_run()['receipt_directory'] == str(run.OUT)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c7/r2/ (C7 r2 registration)')
 @pytest.mark.parametrize('attack,error', [
     ('missing','AMENDMENT_REQUIRED'), ('checksum','SHA_MISMATCH'),
     ('previous','CHAIN_MISMATCH'), ('scope','SCOPE_MISMATCH'),

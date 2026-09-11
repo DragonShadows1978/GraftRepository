@@ -97,6 +97,8 @@ def test_live_bytes_must_match_authorized_amendment(isolated, monkeypatch, chang
         run.dry_run()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c7/amendment_lead_1.json')
 def test_receipt_and_checkpoint_bind_amended_source_and_keep_39_cells(tmp_path):
     r = c.verify()
     a = c.read(c.OUT/'amendment_lead_1.json')

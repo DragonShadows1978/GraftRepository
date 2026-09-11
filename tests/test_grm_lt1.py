@@ -13,6 +13,8 @@ from scripts import grm_lt1 as lt
 from scripts.grm_lt1_cpu import visible_answer
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_lt1/registration.json')
 def test_registration_and_frozen_fixture():
     r=lt.verify(); f=lt.read(lt.FIX)
     rows=lt.fixture_gate(f)
@@ -70,6 +72,8 @@ def test_visible_reader_requires_sources_and_current_revision():
     assert visible_answer(text,"What did we settle on for the Hauler's cargo allowance?")=='37 crates'
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_lt1/registration.json')
 @pytest.mark.parametrize('arm',['A','B'])
 def test_full_fixture_fake_mounts_answers_and_restarts(tmp_path,arm):
     directory=tmp_path/arm;directory.mkdir()
@@ -98,6 +102,8 @@ def test_c7_checkpoint_roundtrip_and_corruption(tmp_path):
     with pytest.raises(ValueError):lt.validate_checkpoint(tmp_path,71,binding)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_lt1/registration.json')
 def test_empty_summary_and_budget_fail_closed():
     for arm in ('A','B'):
         s=lt.summary(arm)

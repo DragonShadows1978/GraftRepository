@@ -46,6 +46,8 @@ def test_leased_child_keeps_r2_after_c2_environment_filter(tmp_path, monkeypatch
     assert common.read(tmp_path/'cells'/cell['id']/'controller.json')['status'] == 'COMPLETE'
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c7/r2/ (C7 r2 registration)')
 @pytest.mark.parametrize('attack,error', [('checksum','SHA'), ('chain','CHAIN'),
                                         ('scope','SCOPE'), ('before','BEFORE')])
 def test_launch_amendment_rehashed_forgery_rejected(tmp_path, attack, error):

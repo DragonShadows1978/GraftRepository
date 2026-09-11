@@ -9,6 +9,8 @@ from scripts import grm_lt1 as lt
 from scripts import grm_lt1_worker as worker
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_lt1/registration.json')
 def test_combined_budget_reserves_full_lease_before_start(monkeypatch):
     r=lt.verify();cell=r['cells'][0]
     monkeypatch.setattr(worker,'accounting',lambda:10800-284)
@@ -16,6 +18,8 @@ def test_combined_budget_reserves_full_lease_before_start(monkeypatch):
         worker.run_cell(cell,r)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_lt1/registration.json')
 def test_resume_validates_completed_checkpoint_then_interleaves(tmp_path):
     r=lt.verify();cell=r['cells'][0]
     assert worker.pending(r,tmp_path)['id']=='A-001-008'

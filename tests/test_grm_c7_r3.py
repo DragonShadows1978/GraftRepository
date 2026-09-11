@@ -118,6 +118,8 @@ def test_fixture_exact_scope_and_all_aliases_retained():
         assert sum(p['class']==cls and p['answerable'] for p in changed['probes']) == 10
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c7/r3/registration.json')
 def test_registration_and_budget():
     r = common.verify()
     assert len(r['cells']) == 39 and set(r['arms']) == {'A'}
@@ -163,6 +165,8 @@ def test_registration_tamper(tmp_path, attack):
         reg.verify_r3(path)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c7/r3/registration.json')
 def test_resume_complete_only_with_checkpoint(tmp_path):
     from scripts import grm_c7_register_r3 as reg
     r = common.verify(); cell = r['cells'][0]; binding=run.binding('A')
@@ -184,6 +188,8 @@ def test_resume_complete_only_with_checkpoint(tmp_path):
         reg.resume_check(cell['id'], tmp_path)
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c7/r3/registration.json')
 def test_r3_child_keeps_revision_and_no_alias_switch(tmp_path, monkeypatch):
     from contextlib import nullcontext
     from types import SimpleNamespace
@@ -209,6 +215,8 @@ def test_r3_child_keeps_revision_and_no_alias_switch(tmp_path, monkeypatch):
     assert observed[0]['GRM_C7_LEASE_PARENT'] == str(os.getpid())
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c7/r3/registration.json')
 def test_oracle_plain_source_and_answerability(tmp_path, monkeypatch):
     from scripts.grm_c7_diagnose import repository
     repo=repository(tmp_path/'repo', monkeypatch)
@@ -225,6 +233,8 @@ def test_oracle_plain_source_and_answerability(tmp_path, monkeypatch):
         repo.close()
 
 
+@pytest.mark.campaign_receipt(
+    registration='artifacts/grm_c7/r3/registration.json')
 def test_plain_restart_sentinels(monkeypatch, tmp_path):
     from types import SimpleNamespace
     r=common.verify(); f=fixture(); calls=[]
