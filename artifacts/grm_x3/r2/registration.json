@@ -1,0 +1,212 @@
+{
+  "author": {
+    "model_id": "GPT-6 / Codex; exact deployment subvariant unavailable",
+    "reasoning_effort": "high requested"
+  },
+  "control_scope": "unrelated sham can compete for attention; not a mathematical zero; ZERO replay measures hydration noise separately",
+  "cpu_gates": [
+    "test_registered_scorer_controls",
+    "test_all_registered_dashes",
+    "test_r2_registration_rejects_forged_and_stale",
+    "test_r1_evidence_byte_unchanged",
+    "test_r2_disjoint_recipes_and_dry_run",
+    "test_r2_summary_guards_and_floor",
+    "test_r2_summary_existing_run_layout"
+  ],
+  "deviations": [
+    "No GPU snapshots exist in sandbox; recipes are not snapshots.",
+    "Controlled direct _attempt after chronological fact feeds; not a natural routed full-battery serving receipt.",
+    "Mask exclusion replaces physical deletion to preserve all other row positions.",
+    "E2E-derived recipes retain completed fact turns; filler and previous generated probes are not replayed.",
+    "New relational ordering values to exercise swapped-relation negative controls; single completed fact-turn recipes retain the same capture frame."
+  ],
+  "evidence_class": "reasoning; preregistration before any CPU/GPU gate",
+  "fixture_phase": "freeze 20 recipes now; lead captures 20 actual model states before fork gates, in four cells of five. Actual strata are pending.",
+  "fork_contract": "remove/sham disable only target columns in canonical attention masks (no row compaction); swaps change only same-length active K/V span; all remaining canonical host bytes identical",
+  "forks": [
+    "unforked",
+    "zero",
+    "remove",
+    "swap",
+    "same_payload",
+    "sham"
+  ],
+  "frame": {
+    "GRM_CAPTURE_PIN": "live",
+    "GRM_DEMAND_NGH": "0",
+    "GRM_LSR_FIXES": "1",
+    "GRM_PERSISTENT_BOAT": "0",
+    "GRM_SEAT_NEAR_LIVE": "1",
+    "arena_width": 96,
+    "routing": "RT1 source retained; diagnostic controlled picks after chronological feed"
+  },
+  "immutable": true,
+  "lead_predictions": {
+    "P1'": "same-payload raw logits byte-identical 20/20 AND sham KL <0.10 on >=18/20",
+    "P2'": "remove KL >1 on >=6 realized correct cases",
+    "P3'": "mass high on >=4 realized decoy cases AND lesion accuracy >= mass accuracy on realized decoys (amendment 2 inclusive comparison)"
+  },
+  "model_id": "openai/gpt-oss-20b",
+  "order": {
+    "path": "orders/GRM_X3_AMENDMENT_2.md",
+    "sha256": "ae126b0456ea1a538c6ff0cb0dd9f1c5055bc468363a2eeb9577cfeca0fef844"
+  },
+  "parent_registration": {
+    "path": "artifacts/grm_x3/registration.json",
+    "sha256": "83bba1ea9f9223271526694e97ed3c92b89f11382facc6598515b2c3fed09b62"
+  },
+  "prior_art": [
+    {
+      "url": "https://aclanthology.org/N19-1357/",
+      "used": "attention weight is not sufficient causal attribution; verified primary abstract",
+      "work": "Jain and Wallace 2019 Attention is not Explanation"
+    },
+    {
+      "url": "https://arxiv.org/abs/2202.05262",
+      "used": "controlled activation interventions; no ROME weight editing; verified primary abstract",
+      "work": "Meng et al. 2022 Locating and Editing Factual Associations in GPT"
+    },
+    {
+      "search_terms": "Kullback Leibler 1951 On Information and Sufficiency doi 10.1214/aoms/1177729694",
+      "status": "unverified \u2014 lead to check",
+      "used": "KL divergence",
+      "work": "Kullback and Leibler 1951 On Information and Sufficiency"
+    },
+    {
+      "used": "capture/hydration, arithmetic, geometry, repository feed; own code is scoped mask/payload fork adapter and negative controls",
+      "work": "house DET1 S3/S4 D-NGH RS3/RS4 EB1 RT1 (2026)"
+    },
+    {
+      "used": "particular fixed accuracy direction, thresholds beyond lead values, digit decoy rule and 8/6/6 allocation; no novelty claim",
+      "work": "no prior art known to me"
+    },
+    {
+      "url": "https://www.unicode.org/reports/tr15/",
+      "used": "NFKC normalization; primary source verified",
+      "work": "Unicode Consortium UAX #15 (1998 onward)"
+    },
+    {
+      "used": "ordered span rule; local duplication requires lead reconciliation",
+      "work": "house C5 arm S / X3 amendment 2 (2026)"
+    },
+    {
+      "used": "conservative negation veto, relation recipe construction and r1-calibrated 0.10 floor; no novelty claim",
+      "work": "no prior art known to me"
+    }
+  ],
+  "r1_evidence": {
+    "path": "artifacts/grm_x3/r2/r1_evidence_before.json",
+    "sha256": "783c1cf9a3f83a360601dadfbbd39175536f4f623a414f510c338868e5629e90"
+  },
+  "rails": {
+    "campaign_gpu_budget_hours": 0.64,
+    "cells": 4,
+    "cooldown_seconds": 30,
+    "gpu_budget_seconds": 1140,
+    "kill": "controls comparable to factual interventions (max(same,sham,zero) >= max(remove,swap) with factual max>=0.05 on >=3/20) OR no strict overall accuracy improvement; no serving change",
+    "lock_wait_seconds": 240,
+    "maximum_launches": 4,
+    "outer_seconds": 590,
+    "retry": "none; failed or abandoned starts remain consumed; resume only never-started cells",
+    "snapshots_per_cell": 5,
+    "worker_seconds": 285
+  },
+  "revision": "6cee5e81ee83917806bbde320786a8fb61efebee",
+  "schema": "grm.x3.registration.r2.v1",
+  "scorer": {
+    "controls": {
+      "path": "artifacts/grm_x3/r2/scorer_controls.json",
+      "sha256": "d86e32474a83e5612a68204286fe4191dc5abff0c476db294e6e1e3779bbdda5"
+    },
+    "dash_codepoints": [
+      45,
+      1418,
+      1470,
+      5120,
+      6150,
+      8208,
+      8209,
+      8210,
+      8211,
+      8212,
+      8213,
+      8275,
+      8315,
+      8331,
+      8722,
+      11799,
+      11802,
+      11834,
+      11835,
+      11840,
+      11869,
+      12316,
+      12336,
+      12448,
+      65073,
+      65074,
+      65112,
+      65123,
+      65293,
+      69293,
+      68974,
+      173,
+      12539,
+      65381
+    ],
+    "duplication": "GRM-C5 arm S independent local implementation; no worktree import; lead reconciliation pending",
+    "refusal_phrases": [
+      "not in memory",
+      "i don't know",
+      "i do not know",
+      "i cannot",
+      "i can't",
+      "unknown"
+    ],
+    "rule": "NFKC, Dash+legacy Hyphen map to ASCII hyphen, whitespace collapse, casefold; contiguous ordered span with word/hyphen boundaries; whole-answer negation veto except the matched refusal phrase; competing classes veto realization",
+    "source": {
+      "path": "scripts/grm_x3_r2_scorer.py",
+      "sha256": "0d2a6d4a6f3b466fda8289cb78b5e0a0375ba1d07563ebda5e7549542af367d3"
+    },
+    "unicode_version": "15.0.0"
+  },
+  "scoring": {
+    "effect_high": "remove KL > 1.0 (strict)",
+    "error": "casefold+outer-whitespace exact whole answer differs from every expected value; refusals count as factual errors",
+    "kl": "KL(P_unforked || P_fork), float64 log-softmax over full vocabulary, natural log; no clipping",
+    "lesion_error_classifier": "remove KL > 1.0; fixed positive association, no label-dependent inversion",
+    "mass_caveat": "D-NGH threshold carried from TWO full-mount calibration turns; applied to target mount here, never refit.",
+    "mass_error_classifier": "mass < registered mass threshold (D-NGH direction)",
+    "mass_high": ">= 0.3380523274342219",
+    "mass_statistic": "unforked first-position mean over full-attention layers and heads, target span only; D-NGH arithmetic",
+    "mass_threshold": 0.3380523274342219,
+    "metric": "Frozen exact-answer error label retained. Paired classifier accuracy on realized strata; all20 descriptive accuracy separately. P3-prime uses >= per amendment; unchanged kill requires strict overall improvement.",
+    "realization": "value-span; frozen r1 exact-equality realization separately labeled",
+    "refusal": "normalized answer starts with not in memory, i don't know, i do not know, i cannot, i can't, or unknown",
+    "table": "All20 mass/effect four-way table with frozen exact-answer error rates; separately report value-span errors",
+    "token_position": "first predicted token after the identical full question prefill, no teacher forcing",
+    "truncation": "ngen=40, no stop reached => truncated; prediction gates unevaluable (RED), keep rows"
+  },
+  "seat_predictions": {
+    "Q1'": "same-payload raw logits byte-identical 20/20 AND sham KL <0.10 on >=18/20",
+    "Q2'": "remove KL >1 on <=5 realized correct cases",
+    "Q3'": "lesion accuracy <= mass accuracy on all realized cases (r1 competing witness prediction)"
+  },
+  "sham_calibration": {
+    "prior_run": "r1",
+    "reported_max_nats": 0.078,
+    "reported_mean_nats": 0.037,
+    "required_below": 18,
+    "statement": "0.10 nats was chosen from r1 as prior-run calibration. Each r2 sham KL >= 0.10 is a FAIL for that snapshot, never a recalibration; P1-prime fails if fewer than 18/20 pass or same-payload is not byte-identical 20/20.",
+    "threshold_nats": 0.1
+  },
+  "strata_minimum": {
+    "correct": 6,
+    "decoy": 4,
+    "refusal": 4
+  },
+  "tokenizer": {
+    "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee/tokenizer.json",
+    "sha256": "0614fe83cadab421296e664e1f48f4261fa8fef6e03e63bb75c20f38e37d07d3"
+  }
+}

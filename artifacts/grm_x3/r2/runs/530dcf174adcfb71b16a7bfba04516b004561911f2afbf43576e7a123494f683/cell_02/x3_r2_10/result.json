@@ -1,0 +1,536 @@
+{
+  "donor_payload": {
+    "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_10/donor_payload.npz",
+    "sha256": "cf777ae02edcd383c2276ac40d4e982238c19afe2f8a1e18a11e81acd4b5321f"
+  },
+  "evidence_class": "E2E session receipt",
+  "forks": {
+    "remove": {
+      "base_mass_on_lesioned_mount": 0.4058348089456558,
+      "base_top1": 976,
+      "delta_pin": {
+        "base_fingerprint": "9fc114f7aa9d3b999959990e9553e24ba1bfd005f68413934e7468f147a7b6cf",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [
+          "mask.layer_00.allowed",
+          "mask.layer_01.allowed",
+          "mask.layer_02.allowed",
+          "mask.layer_03.allowed",
+          "mask.layer_04.allowed",
+          "mask.layer_05.allowed",
+          "mask.layer_06.allowed",
+          "mask.layer_07.allowed",
+          "mask.layer_08.allowed",
+          "mask.layer_09.allowed",
+          "mask.layer_10.allowed",
+          "mask.layer_11.allowed",
+          "mask.layer_12.allowed",
+          "mask.layer_13.allowed",
+          "mask.layer_14.allowed",
+          "mask.layer_15.allowed",
+          "mask.layer_16.allowed",
+          "mask.layer_17.allowed",
+          "mask.layer_18.allowed",
+          "mask.layer_19.allowed",
+          "mask.layer_20.allowed",
+          "mask.layer_21.allowed",
+          "mask.layer_22.allowed",
+          "mask.layer_23.allowed"
+        ],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "9377aa425940ded5d575e91cce8b994ff50ddb8cb56da1be24b8d6b40f744aa6",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 40,
+      "kl_nats": 0.4044039779140133,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_10/remove.npy",
+        "sha256": "8ce124d3f4a03bb1fe7e233258a9e66ec0104cc92941fa938b60246dcbf7a45a"
+      },
+      "mass_on_lesioned_mount": 0.0,
+      "mass_on_target": 0.0,
+      "outcome": {
+        "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": false,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": false,
+      "tokens": [
+        40,
+        4572,
+        23045,
+        11,
+        889,
+        357,
+        1700,
+        1573,
+        679,
+        484,
+        2164,
+        13,
+        200002
+      ],
+      "top1_changed": true,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "ba03cc5450286ecaf70a0cd145400f6326ad798ed587b4337c4e0778b802f5aa"
+      }
+    },
+    "same_payload": {
+      "base_mass_on_lesioned_mount": 0.4058348089456558,
+      "base_top1": 976,
+      "delta_pin": {
+        "base_fingerprint": "9fc114f7aa9d3b999959990e9553e24ba1bfd005f68413934e7468f147a7b6cf",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "9fc114f7aa9d3b999959990e9553e24ba1bfd005f68413934e7468f147a7b6cf",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 976,
+      "kl_nats": 0.0,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_10/same_payload.npy",
+        "sha256": "133c5344344d371d498578b5d6d0c527f98575d23389f83cee748c9c34072370"
+      },
+      "mass_on_lesioned_mount": 0.4058348089456558,
+      "mass_on_target": 0.4058348089456558,
+      "outcome": {
+        "answer": "The recorded order for Kestrelgate is: copper\u2011841 precedes indigo\u2011861.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "The recorded order for Kestrelgate is: copper\u2011841 precedes indigo\u2011861.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": false,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": true,
+      "tokens": [
+        976,
+        19460,
+        2569,
+        395,
+        658,
+        376,
+        6004,
+        33990,
+        382,
+        25,
+        34855,
+        50005,
+        48517,
+        25951,
+        268,
+        1383,
+        6235,
+        50005,
+        46991,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "ba03cc5450286ecaf70a0cd145400f6326ad798ed587b4337c4e0778b802f5aa"
+      }
+    },
+    "sham": {
+      "base_mass_on_lesioned_mount": 0.03856369487281578,
+      "base_top1": 976,
+      "delta_pin": {
+        "base_fingerprint": "9fc114f7aa9d3b999959990e9553e24ba1bfd005f68413934e7468f147a7b6cf",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [
+          "mask.layer_00.allowed",
+          "mask.layer_01.allowed",
+          "mask.layer_02.allowed",
+          "mask.layer_03.allowed",
+          "mask.layer_04.allowed",
+          "mask.layer_05.allowed",
+          "mask.layer_06.allowed",
+          "mask.layer_07.allowed",
+          "mask.layer_08.allowed",
+          "mask.layer_09.allowed",
+          "mask.layer_10.allowed",
+          "mask.layer_11.allowed",
+          "mask.layer_12.allowed",
+          "mask.layer_13.allowed",
+          "mask.layer_14.allowed",
+          "mask.layer_15.allowed",
+          "mask.layer_16.allowed",
+          "mask.layer_17.allowed",
+          "mask.layer_18.allowed",
+          "mask.layer_19.allowed",
+          "mask.layer_20.allowed",
+          "mask.layer_21.allowed",
+          "mask.layer_22.allowed",
+          "mask.layer_23.allowed"
+        ],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "bb2a97348ceabe06c8348d5a386a2cea8e98a845bfae7a9864c5a0a0b4ea0e9e",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 976,
+      "kl_nats": 0.026579868734540584,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_10/sham.npy",
+        "sha256": "d0e70249e8cce9b9af330c979cd4417ca594b609a9636e91daec512cc48a1d2d"
+      },
+      "mass_on_lesioned_mount": 0.0,
+      "mass_on_target": 0.42652228971322376,
+      "outcome": {
+        "answer": "The recorded order for Kestrelgate is: copper\u2011841 precedes indigo\u2011861.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "The recorded order for Kestrelgate is: copper\u2011841 precedes indigo\u2011861.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": false,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": false,
+      "tokens": [
+        976,
+        19460,
+        2569,
+        395,
+        658,
+        376,
+        6004,
+        33990,
+        382,
+        25,
+        34855,
+        50005,
+        48517,
+        25951,
+        268,
+        1383,
+        6235,
+        50005,
+        46991,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "ba03cc5450286ecaf70a0cd145400f6326ad798ed587b4337c4e0778b802f5aa"
+      }
+    },
+    "swap": {
+      "base_mass_on_lesioned_mount": 0.4058348089456558,
+      "base_top1": 976,
+      "delta_pin": {
+        "base_fingerprint": "9fc114f7aa9d3b999959990e9553e24ba1bfd005f68413934e7468f147a7b6cf",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [
+          "injection.layer_00.k",
+          "injection.layer_00.v",
+          "injection.layer_01.k",
+          "injection.layer_01.v",
+          "injection.layer_02.k",
+          "injection.layer_02.v",
+          "injection.layer_03.k",
+          "injection.layer_03.v",
+          "injection.layer_04.k",
+          "injection.layer_04.v",
+          "injection.layer_05.k",
+          "injection.layer_05.v",
+          "injection.layer_06.k",
+          "injection.layer_06.v",
+          "injection.layer_07.k",
+          "injection.layer_07.v",
+          "injection.layer_08.k",
+          "injection.layer_08.v",
+          "injection.layer_09.k",
+          "injection.layer_09.v",
+          "injection.layer_10.k",
+          "injection.layer_10.v",
+          "injection.layer_11.k",
+          "injection.layer_11.v",
+          "injection.layer_12.k",
+          "injection.layer_12.v",
+          "injection.layer_13.k",
+          "injection.layer_13.v",
+          "injection.layer_14.k",
+          "injection.layer_14.v",
+          "injection.layer_15.k",
+          "injection.layer_15.v",
+          "injection.layer_16.k",
+          "injection.layer_16.v",
+          "injection.layer_17.k",
+          "injection.layer_17.v",
+          "injection.layer_18.k",
+          "injection.layer_18.v",
+          "injection.layer_19.k",
+          "injection.layer_19.v",
+          "injection.layer_20.k",
+          "injection.layer_20.v",
+          "injection.layer_21.k",
+          "injection.layer_21.v",
+          "injection.layer_22.k",
+          "injection.layer_22.v",
+          "injection.layer_23.k",
+          "injection.layer_23.v"
+        ],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "5656c269e909d32520f525fb9ef4e54f04b2409299e0f1e4f00f2bb9ac4137b3",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 976,
+      "kl_nats": 0.011669403872909389,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_10/swap.npy",
+        "sha256": "5205ecc2422a696937ac3c100410d111c5d7f0c3833008169b35a9e2cedaf989"
+      },
+      "mass_on_lesioned_mount": 0.40590791900952655,
+      "mass_on_target": 0.40590791900952655,
+      "outcome": {
+        "answer": "The recorded order for Kestrelgate is: copper-741 before indigo-861.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "The recorded order for Kestrelgate is: copper-741 before indigo-861.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": true,
+        "value_span_decoy": false,
+        "value_span_error": false,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": false,
+      "tokens": [
+        976,
+        19460,
+        2569,
+        395,
+        658,
+        376,
+        6004,
+        33990,
+        382,
+        25,
+        34855,
+        12,
+        47572,
+        2254,
+        1383,
+        6235,
+        12,
+        46991,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "ba03cc5450286ecaf70a0cd145400f6326ad798ed587b4337c4e0778b802f5aa"
+      }
+    },
+    "zero": {
+      "base_mass_on_lesioned_mount": 0.4058348089456558,
+      "base_top1": 976,
+      "delta_pin": {
+        "base_fingerprint": "9fc114f7aa9d3b999959990e9553e24ba1bfd005f68413934e7468f147a7b6cf",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "9fc114f7aa9d3b999959990e9553e24ba1bfd005f68413934e7468f147a7b6cf",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 976,
+      "kl_nats": 0.0,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_10/zero.npy",
+        "sha256": "133c5344344d371d498578b5d6d0c527f98575d23389f83cee748c9c34072370"
+      },
+      "mass_on_lesioned_mount": 0.4058348089456558,
+      "mass_on_target": 0.4058348089456558,
+      "outcome": {
+        "answer": "The recorded order for Kestrelgate is: copper\u2011841 precedes indigo\u2011861.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "The recorded order for Kestrelgate is: copper\u2011841 precedes indigo\u2011861.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": false,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": true,
+      "tokens": [
+        976,
+        19460,
+        2569,
+        395,
+        658,
+        376,
+        6004,
+        33990,
+        382,
+        25,
+        34855,
+        50005,
+        48517,
+        25951,
+        268,
+        1383,
+        6235,
+        50005,
+        46991,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "ba03cc5450286ecaf70a0cd145400f6326ad798ed587b4337c4e0778b802f5aa"
+      }
+    }
+  },
+  "id": "x3_r2_10",
+  "intended_group": "decoy",
+  "mass": 0.4058348089456558,
+  "mass_telemetry_first_position": {
+    "ent": null,
+    "full_attention_layers": 12,
+    "lqr": null,
+    "ngh": {
+      "learned_sink_mass": 0.206844116638725,
+      "live_mass": 0.3257456397016843,
+      "mounted_mass": 0.4058348089456558,
+      "physical_sink_mass": 0.06151096786682805
+    },
+    "prediction_token_id": 976,
+    "token_index": 0
+  },
+  "outcome": {
+    "answer": "The recorded order for Kestrelgate is: copper\u2011841 precedes indigo\u2011861.",
+    "category_realized": false,
+    "exact_equality_outcome": {
+      "answer": "The recorded order for Kestrelgate is: copper\u2011841 precedes indigo\u2011861.",
+      "category_realized": false,
+      "exact_error": true,
+      "is_exact_decoy": false,
+      "is_refusal": false,
+      "truncated": false
+    },
+    "exact_equality_realization": false,
+    "exact_error": true,
+    "is_exact_decoy": false,
+    "is_refusal": false,
+    "realization_scorer": "grm.x3.r2.value_span.v1",
+    "truncated": false,
+    "value_span_correct": false,
+    "value_span_decoy": false,
+    "value_span_error": true,
+    "value_span_refusal": false
+  },
+  "seat": {
+    "arena_width": 96,
+    "delta_positions": 37,
+    "live_shift": 115,
+    "mount_ntok": 59,
+    "mount_pos0": 56,
+    "mount_pos0_legacy": 19,
+    "n_sink": 19,
+    "plan_head": 1,
+    "plan_head_adjacent_to_live_shift": true,
+    "plan_head_last_position": 114,
+    "plan_head_ntok": 56,
+    "seat_near_live": true,
+    "seat_offset_plan_head": 59,
+    "seat_order": [
+      3,
+      1
+    ],
+    "seat_order_legacy": [
+      1,
+      3
+    ],
+    "seat_rule": "GRM_SEAT_NEAR_LIVE: the block is filled from the TOP DOWN \u2014 the plan head (picks[0]) is seated LAST so its final token sits at live_shift - 1, immediately below the first live token; filler and the other mounts sit below it; the sink stays at [0, n_sink)"
+  },
+  "session_scope": "controlled captured attempt, not full natural battery acceptance",
+  "sham_mass": 0.03856369487281578,
+  "snapshot": {
+    "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_10/snapshot/manifest.json",
+    "sha256": "ba03cc5450286ecaf70a0cd145400f6326ad798ed587b4337c4e0778b802f5aa"
+  },
+  "spans": {
+    "sham": [
+      19,
+      22
+    ],
+    "target": [
+      22,
+      78
+    ]
+  },
+  "unforked_logits": {
+    "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_02/x3_r2_10/unforked.npy",
+    "sha256": "133c5344344d371d498578b5d6d0c527f98575d23389f83cee748c9c34072370"
+  }
+}

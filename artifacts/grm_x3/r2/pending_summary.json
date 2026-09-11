@@ -1,0 +1,166 @@
+{
+  "P2_high_count": 0,
+  "accuracy": {
+    "all": {
+      "lesion": null,
+      "mass": null
+    },
+    "decoy": {
+      "lesion": null,
+      "mass": null
+    }
+  },
+  "accuracy_label": "frozen whole-answer exact-error; accuracy field is descriptive all20/intended-decoy",
+  "accuracy_realized": {
+    "all": {
+      "lesion": null,
+      "mass": null
+    },
+    "decoy": {
+      "lesion": null,
+      "mass": null
+    }
+  },
+  "controls": {
+    "same_payload": {
+      "kl_below_0_05_count": 0,
+      "kl_max_nats": null,
+      "kl_mean_nats": null,
+      "kl_median_nats": null,
+      "kl_min_nats": null,
+      "n": 0,
+      "raw_logits_byte_equal_count": 0,
+      "top1_changed_count": 0
+    },
+    "sham": {
+      "kl_below_0_05_count": 0,
+      "kl_below_0_10_count": 0,
+      "kl_max_nats": null,
+      "kl_mean_nats": null,
+      "kl_median_nats": null,
+      "kl_min_nats": null,
+      "n": 0,
+      "raw_logits_byte_equal_count": 0,
+      "top1_changed_count": 0
+    },
+    "zero": {
+      "kl_below_0_05_count": 0,
+      "kl_max_nats": null,
+      "kl_mean_nats": null,
+      "kl_median_nats": null,
+      "kl_min_nats": null,
+      "n": 0,
+      "raw_logits_byte_equal_count": 0,
+      "top1_changed_count": 0
+    }
+  },
+  "controls_comparable_count": 0,
+  "decoy_mass_high_count": 0,
+  "evidence_class": "reasoning; GPU blocked",
+  "frozen_exact_equality_strata": {
+    "correct": 0,
+    "decoy": 0,
+    "refusal": 0
+  },
+  "limitations": [
+    "canonical host value bytes only",
+    "fixed first token may precede fact",
+    "tiny or constant-class decoy subset; accuracy not discrimination/AUROC",
+    "controlled diagnostic attempts, not natural routing acceptance"
+  ],
+  "no_serving_adoption": true,
+  "observed_snapshots": 0,
+  "predictions": {
+    "P1'": null,
+    "P2'": null,
+    "P3'": null,
+    "Q1'": null,
+    "Q2'": null,
+    "Q3'": null
+  },
+  "realization_scorer": "registered value-span",
+  "realized_strata": false,
+  "same_payload_equal_count": 0,
+  "schema": "grm.x3.summary.r2.v1",
+  "sham_below_0_10_count": 0,
+  "sham_floor_statement": "0.10 nats was chosen from r1 as prior-run calibration. Each r2 sham KL >= 0.10 is a FAIL for that snapshot, never a recalibration; P1-prime fails if fewer than 18/20 pass or same-payload is not byte-identical 20/20.",
+  "status": "RED_STRATA_OR_INCOMPLETE",
+  "strata": {
+    "correct": {
+      "intended": 0,
+      "minimum": 6,
+      "realized_untruncated": 0
+    },
+    "decoy": {
+      "intended": 0,
+      "minimum": 4,
+      "realized_untruncated": 0
+    },
+    "refusal": {
+      "intended": 0,
+      "minimum": 4,
+      "realized_untruncated": 0
+    }
+  },
+  "table": [
+    {
+      "effect": "low",
+      "error_rate": null,
+      "exact_errors": 0,
+      "mass": "low",
+      "n": 0
+    },
+    {
+      "effect": "high",
+      "error_rate": null,
+      "exact_errors": 0,
+      "mass": "low",
+      "n": 0
+    },
+    {
+      "effect": "low",
+      "error_rate": null,
+      "exact_errors": 0,
+      "mass": "high",
+      "n": 0
+    },
+    {
+      "effect": "high",
+      "error_rate": null,
+      "exact_errors": 0,
+      "mass": "high",
+      "n": 0
+    }
+  ],
+  "truncated_count": 0,
+  "value_span_error_table": [
+    {
+      "effect": "low",
+      "error_rate": null,
+      "mass": "low",
+      "n": 0,
+      "value_span_errors": 0
+    },
+    {
+      "effect": "high",
+      "error_rate": null,
+      "mass": "low",
+      "n": 0,
+      "value_span_errors": 0
+    },
+    {
+      "effect": "low",
+      "error_rate": null,
+      "mass": "high",
+      "n": 0,
+      "value_span_errors": 0
+    },
+    {
+      "effect": "high",
+      "error_rate": null,
+      "mass": "high",
+      "n": 0,
+      "value_span_errors": 0
+    }
+  ]
+}

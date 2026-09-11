@@ -1,0 +1,7 @@
+{
+  "checked_files": 5161,
+  "evidence_class": "CPU filesystem SHA256 verification",
+  "input_manifest_sha256": "783c1cf9a3f83a360601dadfbbd39175536f4f623a414f510c338868e5629e90",
+  "mismatches": [],
+  "pass": true
+}

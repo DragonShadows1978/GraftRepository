@@ -1,0 +1,33 @@
+{
+  "engine_sha256": "7f438cc7ceb66a16b492d59185f2bd9940f0ecfa44d05514499c89ac2195b250",
+  "fingerprint": "530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683",
+  "fixtures_sha256": "b848cf7f1af0c9cf2816acaa8dd253394e2837871677574361e64b9cc38acce6",
+  "frame": {
+    "GRM_CAPTURE_PIN": "live",
+    "GRM_DEMAND_NGH": "0",
+    "GRM_LSR_FIXES": "1",
+    "GRM_PERSISTENT_BOAT": "0",
+    "GRM_SEAT_NEAR_LIVE": "1",
+    "arena_width": 96,
+    "routing": "RT1 source retained; diagnostic controlled picks after chronological feed"
+  },
+  "implementation_sha256": "a5e13f8337d305a6d6b5e380888d3a6a7c21f7d31d4ce06684f63b6296a94887",
+  "model_id": "openai/gpt-oss-20b",
+  "model_inventory": {
+    "model-00000-of-00002.safetensors": {
+      "blob": "16d0f997dcfc4462089d536bffe51b4bcea2f872f5c430be09ef8ed392312427",
+      "size": 4792272488
+    },
+    "model-00001-of-00002.safetensors": {
+      "blob": "4fbe328ab445455d6f58dc73852b85873bd626986310abd91cd4d2ce3245eaea",
+      "size": 4798702184
+    },
+    "model-00002-of-00002.safetensors": {
+      "blob": "a18106b209e9ab35c3406db4f6f12a927364a058b21e9d1373d682e20674b303",
+      "size": 4170342232
+    }
+  },
+  "native_sha256": "6e984b0de89339e1ea5c7a0731323f5682aff476e3fabf48af2d173ecea3976d",
+  "python": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+  "registration_sha256": "99abd4dfbed92df335135cdb08f5180bba32a6cbfa8ff2e37b8d1190d236af33"
+}

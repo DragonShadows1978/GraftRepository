@@ -1,0 +1,299 @@
+{
+  "evidence_class": "reasoning; source authorization frozen after CPU build, before lead GPU",
+  "files": [
+    {
+      "path": "artifacts/grm_x3/amendment_implementation_details.json",
+      "sha256": "f7a3a1ac6651aecaf291d2c61fd275ab60da6df3d9a6a2e36e77e8db2f55c999"
+    },
+    {
+      "path": "artifacts/grm_x3/fixtures/manifest.json",
+      "sha256": "a437e950a89e45e629a7a8c11cd1225429030dfc210749502c07e1faa35eff45"
+    },
+    {
+      "path": "artifacts/grm_x3/registration.json",
+      "sha256": "83bba1ea9f9223271526694e97ed3c92b89f11382facc6598515b2c3fed09b62"
+    },
+    {
+      "path": "core/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "core/deepseek_v2_lite_tc.py",
+      "sha256": "96e371754496eb2ca467ad199bebed07c354cf5eae4b0a08daf571c6f04f0d07"
+    },
+    {
+      "path": "core/gemma4_tc.py",
+      "sha256": "c9a8cc1d01c30bb2b20e9c2e477d4bedf21072d0b1b6b157f3ba75c78a271d8b"
+    },
+    {
+      "path": "core/gpt_oss20b_tc.py",
+      "sha256": "da8ca3bc8c961d731d9e32bf4558702ad1b8b10c8ecc37b18326e7df4ade74a1"
+    },
+    {
+      "path": "core/graft_arena.py",
+      "sha256": "e03a44b5e0155fc10a0be5c56e66e117c768a67993fab76df3ecf3aa62cdb20b"
+    },
+    {
+      "path": "core/graft_quant.py",
+      "sha256": "ebe40790286a719db38de403210aa20e17e7e4d2699f7b7dae452e014f4fa130"
+    },
+    {
+      "path": "core/graft_repository.py",
+      "sha256": "e0a0fc777d3c0f535ec915238390d7c1f1a6d43e927976351b8441a1b1358e89"
+    },
+    {
+      "path": "core/grm_admission.py",
+      "sha256": "62510861b5b1a33af375a4120d78351d2f880b2618a5462c1776a073f3f2d00f"
+    },
+    {
+      "path": "core/grm_cuda_router.py",
+      "sha256": "8dfd7a6ff5395eb846996c67b1570c9fb0e8b26dd78e84f28059f1b291766ce5"
+    },
+    {
+      "path": "core/grm_demand.py",
+      "sha256": "2fd50307650af0c72c19ecb4f7ce6eb11c3bbf9d5b3439905007b87857b195b3"
+    },
+    {
+      "path": "core/grm_frame.py",
+      "sha256": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2"
+    },
+    {
+      "path": "core/grm_native.py",
+      "sha256": "1f5a69716d751c670f37328cf012544b800f86226ad4549a0781bac654aaf3df"
+    },
+    {
+      "path": "core/grm_runtime.py",
+      "sha256": "39f823cbdb98e32528fb5240777cb8c0144f3be77fa86466a67f1f636505c13e"
+    },
+    {
+      "path": "core/grm_supersession.py",
+      "sha256": "c8e9baf7c69e41ebdcf05fda84a2895ed7d2b6f7ff67903fdb655924510fdd5e"
+    },
+    {
+      "path": "core/grm_text_norm.py",
+      "sha256": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8"
+    },
+    {
+      "path": "core/grm_three_pass.py",
+      "sha256": "71e0e4f8503d4e132101fc79cce9d64daf399ffe73892e2f0102c8568d0ec0f3"
+    },
+    {
+      "path": "core/kv_graft.py",
+      "sha256": "d8d44d032c5398c4606b1b6f1b547a94baa2415e36225cb04dd6ef313622ef2d"
+    },
+    {
+      "path": "core/minicpm3_tc.py",
+      "sha256": "3d19734f51d28eb48dc20a62658f2bfc250fdac4fce2cb906116d034b1371a69"
+    },
+    {
+      "path": "core/mistral7b_tc.py",
+      "sha256": "49430e5920508d740a2f8be7b6ba0caadd0442c7798454cf6fa2a808204bf1c4"
+    },
+    {
+      "path": "core/paging_telemetry.py",
+      "sha256": "4eb484b1f6b512962b18d08cb714dd61346980a8af550c1fd814bcbad474097c"
+    },
+    {
+      "path": "core/qwen35_tc.py",
+      "sha256": "3f84f8e99f5cf8932440e5d6ff29df41cbf3fdaf13d27f3bbe8fb1dc3a7ec41b"
+    },
+    {
+      "path": "core/qwen35_translation_poc.py",
+      "sha256": "5a7f364aa7a4ff24bb9299671fc945626037cff44595f0b80364ebe9d1cfa3d1"
+    },
+    {
+      "path": "core/qwen38_tc.py",
+      "sha256": "39875f97f09906ccdfcdf6f510c9ed2f7cad01e85007363a8d7ad00869f9d67e"
+    },
+    {
+      "path": "core/qwen3_1p7b_tc.py",
+      "sha256": "1a563f502753a86b57abff8710440ae0e1921ed083481dee8232872704093c0f"
+    },
+    {
+      "path": "core/qwen3_tc.py",
+      "sha256": "ba0e2d9ab68716922b9f942bc4bb8cd2c4a791abe2a2fabd42a65799212d95aa"
+    },
+    {
+      "path": "core/qwen_tc.py",
+      "sha256": "1353e44f727fc24d1638e4e238d160619fea561602c921259b010af5f63478e3"
+    },
+    {
+      "path": "scripts/grm_det1_11_census.py",
+      "sha256": "b5f88597f031903d7c3a68a38131fb1a8466d32b2f183aedaf81b6df9ccb90d6"
+    },
+    {
+      "path": "scripts/grm_det1_2_gpu.py",
+      "sha256": "a0be3e62133aae30cf233c57948e6d8af66b2319d50bae0e3222e86e00cc8e2f"
+    },
+    {
+      "path": "scripts/grm_det1_3_gpu.py",
+      "sha256": "fef8442aa9cb17e194982b92ae53d8d4f2a7a65fd100ed28bdc8a7da7e29c58f"
+    },
+    {
+      "path": "scripts/grm_det1_3_snapshot.py",
+      "sha256": "1da5c10d1ff658f3f09f6649ab0dc849f182c171d045bfea149f440ab4f2035b"
+    },
+    {
+      "path": "scripts/grm_det1_4_gpu.py",
+      "sha256": "6f5c5dc9502912f48e4247118e9110eca75076c6b4e7dbc94eb49e3966929cc0"
+    },
+    {
+      "path": "scripts/grm_det1_5_analyze.py",
+      "sha256": "253c7ed9c39dabeae84ea28da0f19b50a56edf191da6836d11935a1355583259"
+    },
+    {
+      "path": "scripts/grm_det1_5_gpu.py",
+      "sha256": "d1ade7d4029b1717471822bd7c74e9c32b87026c93668a0aa500a8d75f14ad52"
+    },
+    {
+      "path": "scripts/grm_det1_5_workers.py",
+      "sha256": "9f27b116b16a6b8ff0719f2444877ddd6db757bf18cded2a2ffe801d3f04f682"
+    },
+    {
+      "path": "scripts/grm_det1_7_registry.py",
+      "sha256": "c042b14e726458613b459d967b958e221da6609b75c0069b3a9629606930633e"
+    },
+    {
+      "path": "scripts/grm_det1_7_source_auth.py",
+      "sha256": "2b85d7a5489b5895de6c2724118b7e99f7d02c41da12d07d6f975e632f201eb9"
+    },
+    {
+      "path": "scripts/grm_det1_8_source_auth.py",
+      "sha256": "faab7798dfbb1aa7d8b046a1f967dc7e3eb3ec5a808f7506d222fe4f9f6c1498"
+    },
+    {
+      "path": "scripts/grm_det1_9_findings.py",
+      "sha256": "39a5b6d5b3b66b0872af66abec2323e0428da03745af94f37d6ac3bdde272162"
+    },
+    {
+      "path": "scripts/grm_det1_9_source_auth.py",
+      "sha256": "01c4511c354fe0e6a6160ef0b34ec9e7458b5f0edbdafdf61b952ba62a9c26a4"
+    },
+    {
+      "path": "scripts/grm_det1_analyze.py",
+      "sha256": "3c873355f391a6291b9c40c5c55b2c39bef0615e7425b21549ade861e22ee1cf"
+    },
+    {
+      "path": "scripts/grm_det1_baseline_registry.py",
+      "sha256": "d89f5bd81aec2dda291edb5f8320cf031f35488abb2d3218a896bf0d204a0524"
+    },
+    {
+      "path": "scripts/grm_det1_common.py",
+      "sha256": "f13f44cfa6f87dc57cec4ae9bf7fe509a6fbd0be983746202ad64da18a4d8343"
+    },
+    {
+      "path": "scripts/grm_det1_e2e.py",
+      "sha256": "21035fb2cb96707207143b45015d7b0fa78e6ad1127c9344ab9908f5568ed734"
+    },
+    {
+      "path": "scripts/grm_det1_gpu.py",
+      "sha256": "ca1b051760885f64eea53b7039c54575e670c1174d6aa387817586fe3998bdeb"
+    },
+    {
+      "path": "scripts/grm_det1_register.py",
+      "sha256": "e7161f826a57abd08e75b0ed7839b240ca60a954bda9129e1aa8e47deec16b61"
+    },
+    {
+      "path": "scripts/grm_e2e_session.py",
+      "sha256": "74434dbb750e8e7635afa2f55709ae0533a3562f5b63aa54fc1f81d664bfd450"
+    },
+    {
+      "path": "scripts/grm_probe_ladder.py",
+      "sha256": "d1ad0ad74ba522b96c39c634c86ba3292b887af39321f7fc105a62f82fa26d0d"
+    },
+    {
+      "path": "scripts/grm_rs1_amendment.py",
+      "sha256": "50ad868089407559859555a191c49705078339e52693b33a1226a32649de72c6"
+    },
+    {
+      "path": "scripts/grm_rs1_read_strength_gpu.py",
+      "sha256": "dde95a2dc46683def3e13aeee439b6eb6f552a6325318e7365c0c656da05b284"
+    },
+    {
+      "path": "scripts/grm_rs1_registration.py",
+      "sha256": "765bfb769fb78583b7ab6e2ffa47f6ac3eabc5ac5e939f0f59dfdc5e2c73e3af"
+    },
+    {
+      "path": "scripts/grm_rs1_results.py",
+      "sha256": "8ccc2e1a192847071c376e5a811ebb7a5aee41bc6d123608ffe4da3b98a61e46"
+    },
+    {
+      "path": "scripts/grm_rs2_amendment.py",
+      "sha256": "be8575889c2c0b268d3fa2f53257312deab303b84e5dc5da586ebc3c13ec0eef"
+    },
+    {
+      "path": "scripts/grm_rs2_mount_read_gpu.py",
+      "sha256": "96c7efe99adf0ced6387b7697cd3a79ba0f7a1a50162dee86ae97d3fc3eb7bcb"
+    },
+    {
+      "path": "scripts/grm_rs2_registration.py",
+      "sha256": "b15d9c8b167b2ed151881bd79abbf7675e8bbe665c76e199af94d01360c69488"
+    },
+    {
+      "path": "scripts/grm_rs2_results.py",
+      "sha256": "d48a22a3f64ea6588b58bd57742e7d5bc25835162b4a3c397615328e0a98b8ff"
+    },
+    {
+      "path": "scripts/grm_rs3_capture_seat_gpu.py",
+      "sha256": "231b7b79424f9a1cd18ccffb328377ebf3667ab540279e9a473a8af6aefcda80"
+    },
+    {
+      "path": "scripts/grm_rs3_part4.py",
+      "sha256": "ad6d7f6731fc9f48bd0ebf484d279df2dc7bdbf79f213710dbd37051e32b3ea9"
+    },
+    {
+      "path": "scripts/grm_rs3_registration.py",
+      "sha256": "225cc4cd3aa82361c7cef85673143885d6e929121e6a924941a7a79539f5c5ee"
+    },
+    {
+      "path": "scripts/grm_rs3_results.py",
+      "sha256": "957d54216654b388331739717dd3aede5f9edd6afbf72cd9cb9535e593e7de69"
+    },
+    {
+      "path": "scripts/grm_rs4_ceiling_gpu.py",
+      "sha256": "7009821ad8caaa3357ca0c7316cf25dfe08a83f94c797a36e8036bde18fd547d"
+    },
+    {
+      "path": "scripts/grm_rs4_registration.py",
+      "sha256": "ba6882075e3572a0cf998c40cf0bb524cf9bd5df3f9695e60060893f7a6b3487"
+    },
+    {
+      "path": "scripts/grm_rs4_results.py",
+      "sha256": "911750227e096848a277fd7916ff4b2be7601325d87d3b7681a74136ff5c70c1"
+    },
+    {
+      "path": "scripts/grm_rs4_row_split.py",
+      "sha256": "4c7d2a1dbf852f638d64c7c01adf9e75edc32577dc26ff26b535682a06f2f590"
+    },
+    {
+      "path": "scripts/grm_x3_diagnostic.py",
+      "sha256": "958d2a9ed920c02c632aa094777b579ccd7573513a846795f229b9ad37c21bae"
+    },
+    {
+      "path": "scripts/grm_x3_freeze.py",
+      "sha256": "f911ed2680153f57fffd2f88b184f991b162fc149f3cc2fa0d118fafb0634a9f"
+    },
+    {
+      "path": "scripts/grm_x3_gpu.py",
+      "sha256": "87326e9a8b16b54512e26fdd5d9ef630aea87cb30f87c91f2af630531c1ee8ff"
+    },
+    {
+      "path": "scripts/grm_x3_lead.py",
+      "sha256": "5463e9a28917922f1f44c6fd03f737a2d1cad93306b87f3d76469038f03cf0ed"
+    },
+    {
+      "path": "scripts/grm_x3_lead_gpu.sh",
+      "sha256": "34652727dc719a7b9557c4064ed87d56e21a38481b17d282297ec6ba8369fe9d"
+    },
+    {
+      "path": "scripts/grm_x3_mutations.py",
+      "sha256": "2ad70b55c1877dd30153364fd437ff9f488a594ba33c31a3dac199be72d26672"
+    },
+    {
+      "path": "tests/test_grm_x3_lesions.py",
+      "sha256": "dbb362020509b6009288f830bb0b6866ad6e9efb038ab9078eea82a949eaf2ea"
+    }
+  ],
+  "registration_sha256": "83bba1ea9f9223271526694e97ed3c92b89f11382facc6598515b2c3fed09b62",
+  "schema": "grm.x3.implementation_manifest.v1"
+}

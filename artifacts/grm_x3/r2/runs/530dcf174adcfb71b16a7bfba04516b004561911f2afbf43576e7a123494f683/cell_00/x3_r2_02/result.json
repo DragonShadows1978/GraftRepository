@@ -1,0 +1,529 @@
+{
+  "donor_payload": {
+    "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_02/donor_payload.npz",
+    "sha256": "7fa6eda6db50ad4a49b6298d56743bf1d5a1a010836df277ff52b7e6a7025765"
+  },
+  "evidence_class": "E2E session receipt",
+  "forks": {
+    "remove": {
+      "base_mass_on_lesioned_mount": 0.40860001494487125,
+      "base_top1": 976,
+      "delta_pin": {
+        "base_fingerprint": "9df636220bb12fd8d606b237aa1109d96eb714995d6dad3e9810b73aaefdd00c",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [
+          "mask.layer_00.allowed",
+          "mask.layer_01.allowed",
+          "mask.layer_02.allowed",
+          "mask.layer_03.allowed",
+          "mask.layer_04.allowed",
+          "mask.layer_05.allowed",
+          "mask.layer_06.allowed",
+          "mask.layer_07.allowed",
+          "mask.layer_08.allowed",
+          "mask.layer_09.allowed",
+          "mask.layer_10.allowed",
+          "mask.layer_11.allowed",
+          "mask.layer_12.allowed",
+          "mask.layer_13.allowed",
+          "mask.layer_14.allowed",
+          "mask.layer_15.allowed",
+          "mask.layer_16.allowed",
+          "mask.layer_17.allowed",
+          "mask.layer_18.allowed",
+          "mask.layer_19.allowed",
+          "mask.layer_20.allowed",
+          "mask.layer_21.allowed",
+          "mask.layer_22.allowed",
+          "mask.layer_23.allowed"
+        ],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "8c94c0a60f6c1152dfb53755a052b60a6260bddd384063dd0e22892fea302aac",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 40,
+      "kl_nats": 0.5371093662463402,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_02/remove.npy",
+        "sha256": "5963bcb15f8e4f92d0ca3cc98ced8024081ba257b7a70494e46dd0dc4a098227"
+      },
+      "mass_on_lesioned_mount": 0.0,
+      "mass_on_target": 0.0,
+      "outcome": {
+        "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": false,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": false,
+      "tokens": [
+        40,
+        4572,
+        23045,
+        11,
+        889,
+        357,
+        1700,
+        1573,
+        679,
+        484,
+        2164,
+        13,
+        200002
+      ],
+      "top1_changed": true,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "b277ba6f261d316e0f29fd9e31a53c30870a0784b5f2d9f2eaa533df3affea9a"
+      }
+    },
+    "same_payload": {
+      "base_mass_on_lesioned_mount": 0.40860001494487125,
+      "base_top1": 976,
+      "delta_pin": {
+        "base_fingerprint": "9df636220bb12fd8d606b237aa1109d96eb714995d6dad3e9810b73aaefdd00c",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "9df636220bb12fd8d606b237aa1109d96eb714995d6dad3e9810b73aaefdd00c",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 976,
+      "kl_nats": 0.0,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_02/same_payload.npy",
+        "sha256": "0d60c4f45aa15dd159aa999fafdd17e9b5ffcff7bc0460b141e23d4ebf84dba6"
+      },
+      "mass_on_lesioned_mount": 0.40860001494487125,
+      "mass_on_target": 0.40860001494487125,
+      "outcome": {
+        "answer": "The recorded order for Cairnvale is: copper-733 before indigo-853.",
+        "category_realized": true,
+        "exact_equality_outcome": {
+          "answer": "The recorded order for Cairnvale is: copper-733 before indigo-853.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": true,
+        "value_span_decoy": false,
+        "value_span_error": false,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": true,
+      "tokens": [
+        976,
+        19460,
+        2569,
+        395,
+        137038,
+        77,
+        67990,
+        382,
+        25,
+        34855,
+        12,
+        46229,
+        2254,
+        1383,
+        6235,
+        12,
+        49380,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "b277ba6f261d316e0f29fd9e31a53c30870a0784b5f2d9f2eaa533df3affea9a"
+      }
+    },
+    "sham": {
+      "base_mass_on_lesioned_mount": 0.03962928944383748,
+      "base_top1": 976,
+      "delta_pin": {
+        "base_fingerprint": "9df636220bb12fd8d606b237aa1109d96eb714995d6dad3e9810b73aaefdd00c",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [
+          "mask.layer_00.allowed",
+          "mask.layer_01.allowed",
+          "mask.layer_02.allowed",
+          "mask.layer_03.allowed",
+          "mask.layer_04.allowed",
+          "mask.layer_05.allowed",
+          "mask.layer_06.allowed",
+          "mask.layer_07.allowed",
+          "mask.layer_08.allowed",
+          "mask.layer_09.allowed",
+          "mask.layer_10.allowed",
+          "mask.layer_11.allowed",
+          "mask.layer_12.allowed",
+          "mask.layer_13.allowed",
+          "mask.layer_14.allowed",
+          "mask.layer_15.allowed",
+          "mask.layer_16.allowed",
+          "mask.layer_17.allowed",
+          "mask.layer_18.allowed",
+          "mask.layer_19.allowed",
+          "mask.layer_20.allowed",
+          "mask.layer_21.allowed",
+          "mask.layer_22.allowed",
+          "mask.layer_23.allowed"
+        ],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "758390c19dd99503c6187a6853be56786cc6ce2bcb953f240c56e88bafb9f9c0",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 976,
+      "kl_nats": 0.02067603022519634,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_02/sham.npy",
+        "sha256": "4646b047977337a5a5e9f31d2c8ff472a5d39a104ca5c9b874c1b9b3f0664a13"
+      },
+      "mass_on_lesioned_mount": 0.0,
+      "mass_on_target": 0.42273392528295517,
+      "outcome": {
+        "answer": "The recorded order for Cairnvale is: copper-733 before indigo-853.",
+        "category_realized": true,
+        "exact_equality_outcome": {
+          "answer": "The recorded order for Cairnvale is: copper-733 before indigo-853.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": true,
+        "value_span_decoy": false,
+        "value_span_error": false,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": false,
+      "tokens": [
+        976,
+        19460,
+        2569,
+        395,
+        137038,
+        77,
+        67990,
+        382,
+        25,
+        34855,
+        12,
+        46229,
+        2254,
+        1383,
+        6235,
+        12,
+        49380,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "b277ba6f261d316e0f29fd9e31a53c30870a0784b5f2d9f2eaa533df3affea9a"
+      }
+    },
+    "swap": {
+      "base_mass_on_lesioned_mount": 0.40860001494487125,
+      "base_top1": 976,
+      "delta_pin": {
+        "base_fingerprint": "9df636220bb12fd8d606b237aa1109d96eb714995d6dad3e9810b73aaefdd00c",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [
+          "injection.layer_00.k",
+          "injection.layer_00.v",
+          "injection.layer_01.k",
+          "injection.layer_01.v",
+          "injection.layer_02.k",
+          "injection.layer_02.v",
+          "injection.layer_03.k",
+          "injection.layer_03.v",
+          "injection.layer_04.k",
+          "injection.layer_04.v",
+          "injection.layer_05.k",
+          "injection.layer_05.v",
+          "injection.layer_06.k",
+          "injection.layer_06.v",
+          "injection.layer_07.k",
+          "injection.layer_07.v",
+          "injection.layer_08.k",
+          "injection.layer_08.v",
+          "injection.layer_09.k",
+          "injection.layer_09.v",
+          "injection.layer_10.k",
+          "injection.layer_10.v",
+          "injection.layer_11.k",
+          "injection.layer_11.v",
+          "injection.layer_12.k",
+          "injection.layer_12.v",
+          "injection.layer_13.k",
+          "injection.layer_13.v",
+          "injection.layer_14.k",
+          "injection.layer_14.v",
+          "injection.layer_15.k",
+          "injection.layer_15.v",
+          "injection.layer_16.k",
+          "injection.layer_16.v",
+          "injection.layer_17.k",
+          "injection.layer_17.v",
+          "injection.layer_18.k",
+          "injection.layer_18.v",
+          "injection.layer_19.k",
+          "injection.layer_19.v",
+          "injection.layer_20.k",
+          "injection.layer_20.v",
+          "injection.layer_21.k",
+          "injection.layer_21.v",
+          "injection.layer_22.k",
+          "injection.layer_22.v",
+          "injection.layer_23.k",
+          "injection.layer_23.v"
+        ],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "32348fe8dec5e59b50bfc9ec0ac0ef5ad2fd4989c2116303a7298d80fc93c6cd",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 976,
+      "kl_nats": 0.0263184625031117,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_02/swap.npy",
+        "sha256": "6d8831100fae3ba97369bb76abb099e2b0ef668e84387c78653128d5ec0ccb8e"
+      },
+      "mass_on_lesioned_mount": 0.40984854847192764,
+      "mass_on_target": 0.40984854847192764,
+      "outcome": {
+        "answer": "The recorded order for Cairnvale is: copper-833 before indigo-853.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "The recorded order for Cairnvale is: copper-833 before indigo-853.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": true,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": false,
+      "tokens": [
+        976,
+        19460,
+        2569,
+        395,
+        137038,
+        77,
+        67990,
+        382,
+        25,
+        34855,
+        12,
+        43243,
+        2254,
+        1383,
+        6235,
+        12,
+        49380,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "b277ba6f261d316e0f29fd9e31a53c30870a0784b5f2d9f2eaa533df3affea9a"
+      }
+    },
+    "zero": {
+      "base_mass_on_lesioned_mount": 0.40860001494487125,
+      "base_top1": 976,
+      "delta_pin": {
+        "base_fingerprint": "9df636220bb12fd8d606b237aa1109d96eb714995d6dad3e9810b73aaefdd00c",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "9df636220bb12fd8d606b237aa1109d96eb714995d6dad3e9810b73aaefdd00c",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 976,
+      "kl_nats": 0.0,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_02/zero.npy",
+        "sha256": "0d60c4f45aa15dd159aa999fafdd17e9b5ffcff7bc0460b141e23d4ebf84dba6"
+      },
+      "mass_on_lesioned_mount": 0.40860001494487125,
+      "mass_on_target": 0.40860001494487125,
+      "outcome": {
+        "answer": "The recorded order for Cairnvale is: copper-733 before indigo-853.",
+        "category_realized": true,
+        "exact_equality_outcome": {
+          "answer": "The recorded order for Cairnvale is: copper-733 before indigo-853.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": true,
+        "value_span_decoy": false,
+        "value_span_error": false,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": true,
+      "tokens": [
+        976,
+        19460,
+        2569,
+        395,
+        137038,
+        77,
+        67990,
+        382,
+        25,
+        34855,
+        12,
+        46229,
+        2254,
+        1383,
+        6235,
+        12,
+        49380,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "b277ba6f261d316e0f29fd9e31a53c30870a0784b5f2d9f2eaa533df3affea9a"
+      }
+    }
+  },
+  "id": "x3_r2_02",
+  "intended_group": "correct",
+  "mass": 0.40860001494487125,
+  "mass_telemetry_first_position": {
+    "ent": null,
+    "full_attention_layers": 12,
+    "lqr": null,
+    "ngh": {
+      "learned_sink_mass": 0.20607464232792458,
+      "live_mass": 0.32299264520406723,
+      "mounted_mass": 0.40860001494487125,
+      "physical_sink_mass": 0.062422554629544415
+    },
+    "prediction_token_id": 976,
+    "token_index": 0
+  },
+  "outcome": {
+    "answer": "The recorded order for Cairnvale is: copper-733 before indigo-853.",
+    "category_realized": true,
+    "exact_equality_outcome": {
+      "answer": "The recorded order for Cairnvale is: copper-733 before indigo-853.",
+      "category_realized": false,
+      "exact_error": true,
+      "is_exact_decoy": false,
+      "is_refusal": false,
+      "truncated": false
+    },
+    "exact_equality_realization": false,
+    "exact_error": true,
+    "is_exact_decoy": false,
+    "is_refusal": false,
+    "realization_scorer": "grm.x3.r2.value_span.v1",
+    "truncated": false,
+    "value_span_correct": true,
+    "value_span_decoy": false,
+    "value_span_error": false,
+    "value_span_refusal": false
+  },
+  "seat": {
+    "arena_width": 96,
+    "delta_positions": 38,
+    "live_shift": 115,
+    "mount_ntok": 58,
+    "mount_pos0": 57,
+    "mount_pos0_legacy": 19,
+    "n_sink": 19,
+    "plan_head": 0,
+    "plan_head_adjacent_to_live_shift": true,
+    "plan_head_last_position": 114,
+    "plan_head_ntok": 55,
+    "seat_near_live": true,
+    "seat_offset_plan_head": 60,
+    "seat_order": [
+      2,
+      0
+    ],
+    "seat_order_legacy": [
+      0,
+      2
+    ],
+    "seat_rule": "GRM_SEAT_NEAR_LIVE: the block is filled from the TOP DOWN \u2014 the plan head (picks[0]) is seated LAST so its final token sits at live_shift - 1, immediately below the first live token; filler and the other mounts sit below it; the sink stays at [0, n_sink)"
+  },
+  "session_scope": "controlled captured attempt, not full natural battery acceptance",
+  "sham_mass": 0.03962928944383748,
+  "snapshot": {
+    "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_02/snapshot/manifest.json",
+    "sha256": "b277ba6f261d316e0f29fd9e31a53c30870a0784b5f2d9f2eaa533df3affea9a"
+  },
+  "spans": {
+    "sham": [
+      19,
+      22
+    ],
+    "target": [
+      22,
+      77
+    ]
+  },
+  "unforked_logits": {
+    "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_02/unforked.npy",
+    "sha256": "0d60c4f45aa15dd159aa999fafdd17e9b5ffcff7bc0460b141e23d4ebf84dba6"
+  }
+}

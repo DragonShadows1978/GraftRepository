@@ -1,0 +1,34 @@
+{
+  "baseline_log_sha256": "17e24963143b0f00f803ed1313506eb786bd93d5782d6d5738ec162b89aa1183",
+  "evidence_class": "reasoning; registered before mutation runs, after passing CPU baseline",
+  "invalid_lane": "pytest exit >=2; any invalid lane is RED",
+  "mutants": {
+    "classifier_inverted": [
+      "eh=effect>1;err=",
+      "eh=effect<=1;err="
+    ],
+    "kl_reversed": [
+      "p,q=log_probs(base),log_probs(other)",
+      "p,q=log_probs(other),log_probs(base)"
+    ],
+    "mask_wrong_span": [
+      "mask[...,lo:hi]=0;arrays[mask_key]",
+      "mask[...,0:hi-lo]=0;arrays[mask_key]"
+    ],
+    "receipt_overwrite": [
+      "with path.open('xb') as f:f.write(canonical(x))",
+      "with path.open('wb') as f:f.write(canonical(x))"
+    ],
+    "scalar_check_missing": [
+      "if canonical(base.state)!=canonical(other.state) or base.spans!=other.spans or base.layers!=other.layers or base.active_prefix!=other.active_prefix:",
+      "if False:"
+    ],
+    "swap_noop": [
+      "dst[:,:,lo:hi,:]=donor;arrays[key]",
+      "dst[:,:,lo:hi,:]=src[:,:,lo:hi,:];arrays[key]"
+    ]
+  },
+  "required_fraction": 0.8,
+  "source_restoration": "never edit original source; fresh child process in-memory mutants only",
+  "source_sha256": "958d2a9ed920c02c632aa094777b579ccd7573513a846795f229b9ad37c21bae"
+}

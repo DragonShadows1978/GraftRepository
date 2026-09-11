@@ -1,0 +1,10 @@
+{
+  "command": "scripts/grm_x3_lead_gpu.sh run cell_00",
+  "evidence_class": "unit test / CPU preflight guard; no GPU worker",
+  "exit_code": 2,
+  "gpu_starts": 0,
+  "implementation_sha256": "361dc992bd19b8ba896f784e4cb04f0efbf1fe1dac029bbfa19b08af0f5f6d1f",
+  "registration_sha256": "83bba1ea9f9223271526694e97ed3c92b89f11382facc6598515b2c3fed09b62",
+  "stderr": "RED/BLOCKED: NO GPU: /dev/nvidia0 absent in dispatched sandbox\n",
+  "stdout": ""
+}

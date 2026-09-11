@@ -1,0 +1,46 @@
+{
+  "evidence_class": "unit test / CPU preflight only",
+  "fixture_hash_entries_verified": 21,
+  "gpu_hours": 0,
+  "gpu_sessions": 0,
+  "implementation_manifest_sha256": "361dc992bd19b8ba896f784e4cb04f0efbf1fe1dac029bbfa19b08af0f5f6d1f",
+  "mutation_detected": 6,
+  "mutation_fraction": 1.0,
+  "mutation_minimum": 0.8,
+  "mutation_valid": 6,
+  "pytest_warnings": "2 SWIG DeprecationWarnings in final baseline and reused suite, plus swigvarlink shutdown warning; unsuppressed",
+  "python_ast": "PASS",
+  "receipts": [
+    {
+      "path": "logs/grm_x3_cpu_baseline_03.txt",
+      "sha256": "71449105df92b34dcda45bba5a9b2cccf966c6dba939315279ecdce853b558b0"
+    },
+    {
+      "path": "logs/grm_x3_reused_cpu_gates.txt",
+      "sha256": "88ca2c2c1b0773ad4217ffb26a147fa1f61c85d5d6efbcb34534d8de7ff1b63c"
+    },
+    {
+      "path": "artifacts/grm_x3/mutation_receipt.json",
+      "sha256": "053c3dc5e451d917579ee4788ab6079371fdd931faa7b0f2cd08fe38965bd468"
+    },
+    {
+      "path": "artifacts/grm_x3/dry_run.json",
+      "sha256": "00b7e5f05b212050a220dfe214ba4564a696f9b0ca7126abd581a89556cdd93e"
+    },
+    {
+      "path": "artifacts/grm_x3/lead_cells.json",
+      "sha256": "c17198fa064982ed956f09f3143dcd64f2ba6f37f97a224011e33c3cc6282c85"
+    },
+    {
+      "path": "artifacts/grm_x3/gpu_blocked_preflight.json",
+      "sha256": "46ad900646ad2958ce5378b4611ed47c1484f1f65a5dbbb1596c2fef3994e4fe"
+    }
+  ],
+  "registration_sha256": "83bba1ea9f9223271526694e97ed3c92b89f11382facc6598515b2c3fed09b62",
+  "reused_passed": 185,
+  "schema": "grm.x3.cpu_gate_receipt.v1",
+  "scope": "author baseline; blind lead review still pending; no native CUDA validation",
+  "shell_syntax": "PASS",
+  "total_distinct_passed": 227,
+  "x3_passed": 42
+}

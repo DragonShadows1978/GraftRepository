@@ -1,0 +1,14 @@
+{
+  "changes": [
+    "Raw snapshots are frozen per attempt before its measurements, not all20 at once; same-process index hydration and four bounded workers require this. All20 input recipes already frozen before every CPU/GPU gate.",
+    "SHAM is a 3-token standalone Weather calm. repository graft with no answer values; semantically unrelated, not guaranteed causally inert.",
+    "Donor payload is separately frozen and hashed before intervention comparisons. Exact SAME-PAYLOAD uses source value bytes, no recapture.",
+    "Every removal mask persists through greedy answer decode; first-token KL stays the registered statistic.",
+    "Worker Python SIGALRM raises TimeoutError at285 s; cooperative check at280 s. Native CUDA hangs can delay Python handling, so hard native-call wall bound is NOT claimed. No process kill APIs are used.",
+    "External native library reused read-only from /mnt/ForgeRealm/GraftRepository/cpp/build/libgrm_runtime.so because worktree has no built library.",
+    "Agent model is GPT-6/Codex; deployment variant and reasoning setting not exposed. Target GPT-OSS-20B receives frozen Reasoning: low Harmony prompt."
+  ],
+  "evidence_class": "reasoning; no GPU gate has run",
+  "no_prediction_or_threshold_changes": true,
+  "registration_sha256": "83bba1ea9f9223271526694e97ed3c92b89f11382facc6598515b2c3fed09b62"
+}

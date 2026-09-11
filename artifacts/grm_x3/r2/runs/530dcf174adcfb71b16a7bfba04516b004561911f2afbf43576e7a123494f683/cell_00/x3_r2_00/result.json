@@ -1,0 +1,535 @@
+{
+  "donor_payload": {
+    "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_00/donor_payload.npz",
+    "sha256": "09a22fd0eb43deb091c31758553546db3a8fffaceed9d27f66332278fc3526b7"
+  },
+  "evidence_class": "E2E session receipt",
+  "forks": {
+    "remove": {
+      "base_mass_on_lesioned_mount": 0.40923673659563065,
+      "base_top1": 976,
+      "delta_pin": {
+        "base_fingerprint": "56a6d8dad3aa8011f08fc49ecea301a57e29784532d3cadc2da2d650c0d505d8",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [
+          "mask.layer_00.allowed",
+          "mask.layer_01.allowed",
+          "mask.layer_02.allowed",
+          "mask.layer_03.allowed",
+          "mask.layer_04.allowed",
+          "mask.layer_05.allowed",
+          "mask.layer_06.allowed",
+          "mask.layer_07.allowed",
+          "mask.layer_08.allowed",
+          "mask.layer_09.allowed",
+          "mask.layer_10.allowed",
+          "mask.layer_11.allowed",
+          "mask.layer_12.allowed",
+          "mask.layer_13.allowed",
+          "mask.layer_14.allowed",
+          "mask.layer_15.allowed",
+          "mask.layer_16.allowed",
+          "mask.layer_17.allowed",
+          "mask.layer_18.allowed",
+          "mask.layer_19.allowed",
+          "mask.layer_20.allowed",
+          "mask.layer_21.allowed",
+          "mask.layer_22.allowed",
+          "mask.layer_23.allowed"
+        ],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "a750b37d29811dd8f893fca40490a282065264fd9b5d671948993bbe78d2f3ba",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 40,
+      "kl_nats": 0.593380865684692,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_00/remove.npy",
+        "sha256": "b5a86936d29e3711775797fd8e3ebf3915e057d42df07f2f249af43ec994e8eb"
+      },
+      "mass_on_lesioned_mount": 0.0,
+      "mass_on_target": 0.0,
+      "outcome": {
+        "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "I\u2019m sorry, but I don\u2019t have that information.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": false,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": false,
+      "tokens": [
+        40,
+        4572,
+        23045,
+        11,
+        889,
+        357,
+        1700,
+        1573,
+        679,
+        484,
+        2164,
+        13,
+        200002
+      ],
+      "top1_changed": true,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "c7e391a56e5daf20a2c737ca827afa84628aec3cdca7c27f940c9b780a6bb731"
+      }
+    },
+    "same_payload": {
+      "base_mass_on_lesioned_mount": 0.40923673659563065,
+      "base_top1": 976,
+      "delta_pin": {
+        "base_fingerprint": "56a6d8dad3aa8011f08fc49ecea301a57e29784532d3cadc2da2d650c0d505d8",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "56a6d8dad3aa8011f08fc49ecea301a57e29784532d3cadc2da2d650c0d505d8",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 976,
+      "kl_nats": 0.0,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_00/same_payload.npy",
+        "sha256": "6f99779b77ad417cf287d4cf6bd396a4a8a0d5d57a80ac3b6c28fdf70e6493d8"
+      },
+      "mass_on_lesioned_mount": 0.40923673659563065,
+      "mass_on_target": 0.40923673659563065,
+      "outcome": {
+        "answer": "The recorded order for Asterwick is: copper-731 before indigo-851.",
+        "category_realized": true,
+        "exact_equality_outcome": {
+          "answer": "The recorded order for Asterwick is: copper-731 before indigo-851.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": true,
+        "value_span_decoy": false,
+        "value_span_error": false,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": true,
+      "tokens": [
+        976,
+        19460,
+        2569,
+        395,
+        355,
+        3968,
+        14105,
+        382,
+        25,
+        34855,
+        12,
+        47628,
+        2254,
+        1383,
+        6235,
+        12,
+        47886,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "c7e391a56e5daf20a2c737ca827afa84628aec3cdca7c27f940c9b780a6bb731"
+      }
+    },
+    "sham": {
+      "base_mass_on_lesioned_mount": 0.03960089945273163,
+      "base_top1": 976,
+      "delta_pin": {
+        "base_fingerprint": "56a6d8dad3aa8011f08fc49ecea301a57e29784532d3cadc2da2d650c0d505d8",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [
+          "mask.layer_00.allowed",
+          "mask.layer_01.allowed",
+          "mask.layer_02.allowed",
+          "mask.layer_03.allowed",
+          "mask.layer_04.allowed",
+          "mask.layer_05.allowed",
+          "mask.layer_06.allowed",
+          "mask.layer_07.allowed",
+          "mask.layer_08.allowed",
+          "mask.layer_09.allowed",
+          "mask.layer_10.allowed",
+          "mask.layer_11.allowed",
+          "mask.layer_12.allowed",
+          "mask.layer_13.allowed",
+          "mask.layer_14.allowed",
+          "mask.layer_15.allowed",
+          "mask.layer_16.allowed",
+          "mask.layer_17.allowed",
+          "mask.layer_18.allowed",
+          "mask.layer_19.allowed",
+          "mask.layer_20.allowed",
+          "mask.layer_21.allowed",
+          "mask.layer_22.allowed",
+          "mask.layer_23.allowed"
+        ],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "5beeea0f6e580d93cc59d1a517d60dc6dedacddd2293e3d39450af9f27c6d8c7",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 976,
+      "kl_nats": 0.021805541242946147,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_00/sham.npy",
+        "sha256": "a4429fa5ba0863dac49fd7b13891b575008ac0a9c23b8fdca89b1c94242a6a57"
+      },
+      "mass_on_lesioned_mount": 0.0,
+      "mass_on_target": 0.42391787966092426,
+      "outcome": {
+        "answer": "The recorded order for Asterwick is: **copper\u2011731** precedes **indigo\u2011851**.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "The recorded order for Asterwick is: **copper\u2011731** precedes **indigo\u2011851**.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": false,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": false,
+      "tokens": [
+        976,
+        19460,
+        2569,
+        395,
+        355,
+        3968,
+        14105,
+        382,
+        25,
+        6240,
+        66,
+        42902,
+        50005,
+        47628,
+        410,
+        25951,
+        268,
+        6240,
+        521,
+        6235,
+        50005,
+        47886,
+        410,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "c7e391a56e5daf20a2c737ca827afa84628aec3cdca7c27f940c9b780a6bb731"
+      }
+    },
+    "swap": {
+      "base_mass_on_lesioned_mount": 0.40923673659563065,
+      "base_top1": 976,
+      "delta_pin": {
+        "base_fingerprint": "56a6d8dad3aa8011f08fc49ecea301a57e29784532d3cadc2da2d650c0d505d8",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [
+          "injection.layer_00.k",
+          "injection.layer_00.v",
+          "injection.layer_01.k",
+          "injection.layer_01.v",
+          "injection.layer_02.k",
+          "injection.layer_02.v",
+          "injection.layer_03.k",
+          "injection.layer_03.v",
+          "injection.layer_04.k",
+          "injection.layer_04.v",
+          "injection.layer_05.k",
+          "injection.layer_05.v",
+          "injection.layer_06.k",
+          "injection.layer_06.v",
+          "injection.layer_07.k",
+          "injection.layer_07.v",
+          "injection.layer_08.k",
+          "injection.layer_08.v",
+          "injection.layer_09.k",
+          "injection.layer_09.v",
+          "injection.layer_10.k",
+          "injection.layer_10.v",
+          "injection.layer_11.k",
+          "injection.layer_11.v",
+          "injection.layer_12.k",
+          "injection.layer_12.v",
+          "injection.layer_13.k",
+          "injection.layer_13.v",
+          "injection.layer_14.k",
+          "injection.layer_14.v",
+          "injection.layer_15.k",
+          "injection.layer_15.v",
+          "injection.layer_16.k",
+          "injection.layer_16.v",
+          "injection.layer_17.k",
+          "injection.layer_17.v",
+          "injection.layer_18.k",
+          "injection.layer_18.v",
+          "injection.layer_19.k",
+          "injection.layer_19.v",
+          "injection.layer_20.k",
+          "injection.layer_20.v",
+          "injection.layer_21.k",
+          "injection.layer_21.v",
+          "injection.layer_22.k",
+          "injection.layer_22.v",
+          "injection.layer_23.k",
+          "injection.layer_23.v"
+        ],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "ad91d63cd9d15cd6aa642316fd6860edee8a71b958879a2ec180185b3223b3ca",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 976,
+      "kl_nats": 0.005055575967648309,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_00/swap.npy",
+        "sha256": "0c9659b587fa55d71416ef23293eed972e866a099389ab170b73b6e6ae2864f1"
+      },
+      "mass_on_lesioned_mount": 0.40076158195734024,
+      "mass_on_target": 0.40076158195734024,
+      "outcome": {
+        "answer": "The recorded order for Asterwick is: copper-831 before indigo-851.",
+        "category_realized": false,
+        "exact_equality_outcome": {
+          "answer": "The recorded order for Asterwick is: copper-831 before indigo-851.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": false,
+        "value_span_decoy": true,
+        "value_span_error": true,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": false,
+      "tokens": [
+        976,
+        19460,
+        2569,
+        395,
+        355,
+        3968,
+        14105,
+        382,
+        25,
+        34855,
+        12,
+        48267,
+        2254,
+        1383,
+        6235,
+        12,
+        47886,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "c7e391a56e5daf20a2c737ca827afa84628aec3cdca7c27f940c9b780a6bb731"
+      }
+    },
+    "zero": {
+      "base_mass_on_lesioned_mount": 0.40923673659563065,
+      "base_top1": 976,
+      "delta_pin": {
+        "base_fingerprint": "56a6d8dad3aa8011f08fc49ecea301a57e29784532d3cadc2da2d650c0d505d8",
+        "canonical_host_bytes_pinned": true,
+        "changed_fields": [],
+        "evidence_class": "E2E session receipt",
+        "fork_fingerprint": "56a6d8dad3aa8011f08fc49ecea301a57e29784532d3cadc2da2d650c0d505d8",
+        "literal_device_storage_bytes": false
+      },
+      "fork_top1": 976,
+      "kl_nats": 0.0,
+      "logits": {
+        "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_00/zero.npy",
+        "sha256": "6f99779b77ad417cf287d4cf6bd396a4a8a0d5d57a80ac3b6c28fdf70e6493d8"
+      },
+      "mass_on_lesioned_mount": 0.40923673659563065,
+      "mass_on_target": 0.40923673659563065,
+      "outcome": {
+        "answer": "The recorded order for Asterwick is: copper-731 before indigo-851.",
+        "category_realized": true,
+        "exact_equality_outcome": {
+          "answer": "The recorded order for Asterwick is: copper-731 before indigo-851.",
+          "category_realized": false,
+          "exact_error": true,
+          "is_exact_decoy": false,
+          "is_refusal": false,
+          "truncated": false
+        },
+        "exact_equality_realization": false,
+        "exact_error": true,
+        "is_exact_decoy": false,
+        "is_refusal": false,
+        "realization_scorer": "grm.x3.r2.value_span.v1",
+        "truncated": false,
+        "value_span_correct": true,
+        "value_span_decoy": false,
+        "value_span_error": false,
+        "value_span_refusal": false
+      },
+      "raw_logits_byte_equal": true,
+      "tokens": [
+        976,
+        19460,
+        2569,
+        395,
+        355,
+        3968,
+        14105,
+        382,
+        25,
+        34855,
+        12,
+        47628,
+        2254,
+        1383,
+        6235,
+        12,
+        47886,
+        13,
+        200002
+      ],
+      "top1_changed": false,
+      "zero_hydration": {
+        "same_process_index_verified": true,
+        "source_manifest_sha256": "c7e391a56e5daf20a2c737ca827afa84628aec3cdca7c27f940c9b780a6bb731"
+      }
+    }
+  },
+  "id": "x3_r2_00",
+  "intended_group": "correct",
+  "mass": 0.40923673659563065,
+  "mass_telemetry_first_position": {
+    "ent": null,
+    "full_attention_layers": 12,
+    "lqr": null,
+    "ngh": {
+      "learned_sink_mass": 0.203934530261904,
+      "live_mass": 0.32422106464703876,
+      "mounted_mass": 0.40923673659563065,
+      "physical_sink_mass": 0.06264369989124437
+    },
+    "prediction_token_id": 976,
+    "token_index": 0
+  },
+  "outcome": {
+    "answer": "The recorded order for Asterwick is: copper-731 before indigo-851.",
+    "category_realized": true,
+    "exact_equality_outcome": {
+      "answer": "The recorded order for Asterwick is: copper-731 before indigo-851.",
+      "category_realized": false,
+      "exact_error": true,
+      "is_exact_decoy": false,
+      "is_refusal": false,
+      "truncated": false
+    },
+    "exact_equality_realization": false,
+    "exact_error": true,
+    "is_exact_decoy": false,
+    "is_refusal": false,
+    "realization_scorer": "grm.x3.r2.value_span.v1",
+    "truncated": false,
+    "value_span_correct": true,
+    "value_span_decoy": false,
+    "value_span_error": false,
+    "value_span_refusal": false
+  },
+  "seat": {
+    "arena_width": 96,
+    "delta_positions": 38,
+    "live_shift": 115,
+    "mount_ntok": 58,
+    "mount_pos0": 57,
+    "mount_pos0_legacy": 19,
+    "n_sink": 19,
+    "plan_head": 0,
+    "plan_head_adjacent_to_live_shift": true,
+    "plan_head_last_position": 114,
+    "plan_head_ntok": 55,
+    "seat_near_live": true,
+    "seat_offset_plan_head": 60,
+    "seat_order": [
+      2,
+      0
+    ],
+    "seat_order_legacy": [
+      0,
+      2
+    ],
+    "seat_rule": "GRM_SEAT_NEAR_LIVE: the block is filled from the TOP DOWN \u2014 the plan head (picks[0]) is seated LAST so its final token sits at live_shift - 1, immediately below the first live token; filler and the other mounts sit below it; the sink stays at [0, n_sink)"
+  },
+  "session_scope": "controlled captured attempt, not full natural battery acceptance",
+  "sham_mass": 0.03960089945273163,
+  "snapshot": {
+    "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_00/snapshot/manifest.json",
+    "sha256": "c7e391a56e5daf20a2c737ca827afa84628aec3cdca7c27f940c9b780a6bb731"
+  },
+  "spans": {
+    "sham": [
+      19,
+      22
+    ],
+    "target": [
+      22,
+      77
+    ]
+  },
+  "unforked_logits": {
+    "path": "artifacts/grm_x3/r2/runs/530dcf174adcfb71b16a7bfba04516b004561911f2afbf43576e7a123494f683/cell_00/x3_r2_00/unforked.npy",
+    "sha256": "6f99779b77ad417cf287d4cf6bd396a4a8a0d5d57a80ac3b6c28fdf70e6493d8"
+  }
+}

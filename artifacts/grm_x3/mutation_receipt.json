@@ -1,0 +1,64 @@
+{
+  "evidence_class": "unit test; author mutation baseline, not blind verification",
+  "mutants": [
+    {
+      "name": "mask_wrong_span",
+      "exit_code": 1,
+      "killed": true,
+      "valid_lane": true,
+      "seconds": 3.061618020758033,
+      "log": "logs/grm_x3_mutation_mask_wrong_span.txt",
+      "log_sha256": "060e1f6f7e713748caad3c585f5c9fd2af834bb86d26e4a02f74b3749de2fd28"
+    },
+    {
+      "name": "swap_noop",
+      "exit_code": 1,
+      "killed": true,
+      "valid_lane": true,
+      "seconds": 3.090388524811715,
+      "log": "logs/grm_x3_mutation_swap_noop.txt",
+      "log_sha256": "6cdb60bb7c11d3e1ee42994cdb3a60a752ec327e71bf3f4f43a2925f0c937f0e"
+    },
+    {
+      "name": "kl_reversed",
+      "exit_code": 1,
+      "killed": true,
+      "valid_lane": true,
+      "seconds": 3.1749701108783484,
+      "log": "logs/grm_x3_mutation_kl_reversed.txt",
+      "log_sha256": "1ae9407760e332bb23e6f1c40b575da643ae9ee8306f77df0f00ee2f35380b37"
+    },
+    {
+      "name": "classifier_inverted",
+      "exit_code": 1,
+      "killed": true,
+      "valid_lane": true,
+      "seconds": 3.2784250266849995,
+      "log": "logs/grm_x3_mutation_classifier_inverted.txt",
+      "log_sha256": "7a226b8591a13f1796d5f728e4c45e58dc66ab605c17168417da776572588e3c"
+    },
+    {
+      "name": "scalar_check_missing",
+      "exit_code": 1,
+      "killed": true,
+      "valid_lane": true,
+      "seconds": 3.1265294500626624,
+      "log": "logs/grm_x3_mutation_scalar_check_missing.txt",
+      "log_sha256": "cd88860ad6bb6f02b918f45b4b7a13ccb26bbaee55c648210330ba82917093e1"
+    },
+    {
+      "name": "receipt_overwrite",
+      "exit_code": 1,
+      "killed": true,
+      "valid_lane": true,
+      "seconds": 3.096261376980692,
+      "log": "logs/grm_x3_mutation_receipt_overwrite.txt",
+      "log_sha256": "37c23b7252c15326dcdadce46211498850973ac79d35cb268635285186385dfe"
+    }
+  ],
+  "valid_lanes": 6,
+  "kill_fraction": 1.0,
+  "required_fraction": 0.8,
+  "source_unchanged": true,
+  "status": "PASS"
+}

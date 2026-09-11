@@ -1,0 +1,2249 @@
+{
+  "cases": [
+    {
+      "accept": true,
+      "answer": "copper-731 before indigo-851",
+      "kind": "positive_exact",
+      "value": "copper-731 before indigo-851"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011731\n\tBEFORE\n\tINDIGO\u2011851**.",
+      "kind": "positive_wrapped",
+      "value": "copper-731 before indigo-851"
+    },
+    {
+      "accept": false,
+      "answer": "copper-931 before indigo-851",
+      "kind": "changed_digit",
+      "value": "copper-731 before indigo-851"
+    },
+    {
+      "accept": false,
+      "answer": "copper-731 indigo-851",
+      "kind": "omitted_token",
+      "value": "copper-731 before indigo-851"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-851 before copper-731",
+      "kind": "swapped_relation",
+      "value": "copper-731 before indigo-851"
+    },
+    {
+      "accept": false,
+      "answer": "copper-731 after indigo-851",
+      "kind": "changed_relation",
+      "value": "copper-731 before indigo-851"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-731 before indigo-851.",
+      "kind": "negation",
+      "value": "copper-731 before indigo-851"
+    },
+    {
+      "accept": false,
+      "answer": "copper-731 before indigo-851 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-731 before indigo-851"
+    },
+    {
+      "accept": false,
+      "answer": "copper-731 before indigo-8510",
+      "kind": "token_boundary",
+      "value": "copper-731 before indigo-851"
+    },
+    {
+      "accept": true,
+      "answer": "copper-831 before indigo-851",
+      "kind": "positive_exact",
+      "value": "copper-831 before indigo-851"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011831\n\tBEFORE\n\tINDIGO\u2011851**.",
+      "kind": "positive_wrapped",
+      "value": "copper-831 before indigo-851"
+    },
+    {
+      "accept": false,
+      "answer": "copper-931 before indigo-851",
+      "kind": "changed_digit",
+      "value": "copper-831 before indigo-851"
+    },
+    {
+      "accept": false,
+      "answer": "copper-831 indigo-851",
+      "kind": "omitted_token",
+      "value": "copper-831 before indigo-851"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-851 before copper-831",
+      "kind": "swapped_relation",
+      "value": "copper-831 before indigo-851"
+    },
+    {
+      "accept": false,
+      "answer": "copper-831 after indigo-851",
+      "kind": "changed_relation",
+      "value": "copper-831 before indigo-851"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-831 before indigo-851.",
+      "kind": "negation",
+      "value": "copper-831 before indigo-851"
+    },
+    {
+      "accept": false,
+      "answer": "copper-831 before indigo-851 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-831 before indigo-851"
+    },
+    {
+      "accept": false,
+      "answer": "copper-831 before indigo-8510",
+      "kind": "token_boundary",
+      "value": "copper-831 before indigo-851"
+    },
+    {
+      "accept": true,
+      "answer": "copper-732 before indigo-852",
+      "kind": "positive_exact",
+      "value": "copper-732 before indigo-852"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011732\n\tBEFORE\n\tINDIGO\u2011852**.",
+      "kind": "positive_wrapped",
+      "value": "copper-732 before indigo-852"
+    },
+    {
+      "accept": false,
+      "answer": "copper-932 before indigo-852",
+      "kind": "changed_digit",
+      "value": "copper-732 before indigo-852"
+    },
+    {
+      "accept": false,
+      "answer": "copper-732 indigo-852",
+      "kind": "omitted_token",
+      "value": "copper-732 before indigo-852"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-852 before copper-732",
+      "kind": "swapped_relation",
+      "value": "copper-732 before indigo-852"
+    },
+    {
+      "accept": false,
+      "answer": "copper-732 after indigo-852",
+      "kind": "changed_relation",
+      "value": "copper-732 before indigo-852"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-732 before indigo-852.",
+      "kind": "negation",
+      "value": "copper-732 before indigo-852"
+    },
+    {
+      "accept": false,
+      "answer": "copper-732 before indigo-852 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-732 before indigo-852"
+    },
+    {
+      "accept": false,
+      "answer": "copper-732 before indigo-8520",
+      "kind": "token_boundary",
+      "value": "copper-732 before indigo-852"
+    },
+    {
+      "accept": true,
+      "answer": "copper-832 before indigo-852",
+      "kind": "positive_exact",
+      "value": "copper-832 before indigo-852"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011832\n\tBEFORE\n\tINDIGO\u2011852**.",
+      "kind": "positive_wrapped",
+      "value": "copper-832 before indigo-852"
+    },
+    {
+      "accept": false,
+      "answer": "copper-932 before indigo-852",
+      "kind": "changed_digit",
+      "value": "copper-832 before indigo-852"
+    },
+    {
+      "accept": false,
+      "answer": "copper-832 indigo-852",
+      "kind": "omitted_token",
+      "value": "copper-832 before indigo-852"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-852 before copper-832",
+      "kind": "swapped_relation",
+      "value": "copper-832 before indigo-852"
+    },
+    {
+      "accept": false,
+      "answer": "copper-832 after indigo-852",
+      "kind": "changed_relation",
+      "value": "copper-832 before indigo-852"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-832 before indigo-852.",
+      "kind": "negation",
+      "value": "copper-832 before indigo-852"
+    },
+    {
+      "accept": false,
+      "answer": "copper-832 before indigo-852 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-832 before indigo-852"
+    },
+    {
+      "accept": false,
+      "answer": "copper-832 before indigo-8520",
+      "kind": "token_boundary",
+      "value": "copper-832 before indigo-852"
+    },
+    {
+      "accept": true,
+      "answer": "copper-733 before indigo-853",
+      "kind": "positive_exact",
+      "value": "copper-733 before indigo-853"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011733\n\tBEFORE\n\tINDIGO\u2011853**.",
+      "kind": "positive_wrapped",
+      "value": "copper-733 before indigo-853"
+    },
+    {
+      "accept": false,
+      "answer": "copper-933 before indigo-853",
+      "kind": "changed_digit",
+      "value": "copper-733 before indigo-853"
+    },
+    {
+      "accept": false,
+      "answer": "copper-733 indigo-853",
+      "kind": "omitted_token",
+      "value": "copper-733 before indigo-853"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-853 before copper-733",
+      "kind": "swapped_relation",
+      "value": "copper-733 before indigo-853"
+    },
+    {
+      "accept": false,
+      "answer": "copper-733 after indigo-853",
+      "kind": "changed_relation",
+      "value": "copper-733 before indigo-853"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-733 before indigo-853.",
+      "kind": "negation",
+      "value": "copper-733 before indigo-853"
+    },
+    {
+      "accept": false,
+      "answer": "copper-733 before indigo-853 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-733 before indigo-853"
+    },
+    {
+      "accept": false,
+      "answer": "copper-733 before indigo-8530",
+      "kind": "token_boundary",
+      "value": "copper-733 before indigo-853"
+    },
+    {
+      "accept": true,
+      "answer": "copper-833 before indigo-853",
+      "kind": "positive_exact",
+      "value": "copper-833 before indigo-853"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011833\n\tBEFORE\n\tINDIGO\u2011853**.",
+      "kind": "positive_wrapped",
+      "value": "copper-833 before indigo-853"
+    },
+    {
+      "accept": false,
+      "answer": "copper-933 before indigo-853",
+      "kind": "changed_digit",
+      "value": "copper-833 before indigo-853"
+    },
+    {
+      "accept": false,
+      "answer": "copper-833 indigo-853",
+      "kind": "omitted_token",
+      "value": "copper-833 before indigo-853"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-853 before copper-833",
+      "kind": "swapped_relation",
+      "value": "copper-833 before indigo-853"
+    },
+    {
+      "accept": false,
+      "answer": "copper-833 after indigo-853",
+      "kind": "changed_relation",
+      "value": "copper-833 before indigo-853"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-833 before indigo-853.",
+      "kind": "negation",
+      "value": "copper-833 before indigo-853"
+    },
+    {
+      "accept": false,
+      "answer": "copper-833 before indigo-853 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-833 before indigo-853"
+    },
+    {
+      "accept": false,
+      "answer": "copper-833 before indigo-8530",
+      "kind": "token_boundary",
+      "value": "copper-833 before indigo-853"
+    },
+    {
+      "accept": true,
+      "answer": "copper-734 before indigo-854",
+      "kind": "positive_exact",
+      "value": "copper-734 before indigo-854"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011734\n\tBEFORE\n\tINDIGO\u2011854**.",
+      "kind": "positive_wrapped",
+      "value": "copper-734 before indigo-854"
+    },
+    {
+      "accept": false,
+      "answer": "copper-934 before indigo-854",
+      "kind": "changed_digit",
+      "value": "copper-734 before indigo-854"
+    },
+    {
+      "accept": false,
+      "answer": "copper-734 indigo-854",
+      "kind": "omitted_token",
+      "value": "copper-734 before indigo-854"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-854 before copper-734",
+      "kind": "swapped_relation",
+      "value": "copper-734 before indigo-854"
+    },
+    {
+      "accept": false,
+      "answer": "copper-734 after indigo-854",
+      "kind": "changed_relation",
+      "value": "copper-734 before indigo-854"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-734 before indigo-854.",
+      "kind": "negation",
+      "value": "copper-734 before indigo-854"
+    },
+    {
+      "accept": false,
+      "answer": "copper-734 before indigo-854 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-734 before indigo-854"
+    },
+    {
+      "accept": false,
+      "answer": "copper-734 before indigo-8540",
+      "kind": "token_boundary",
+      "value": "copper-734 before indigo-854"
+    },
+    {
+      "accept": true,
+      "answer": "copper-834 before indigo-854",
+      "kind": "positive_exact",
+      "value": "copper-834 before indigo-854"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011834\n\tBEFORE\n\tINDIGO\u2011854**.",
+      "kind": "positive_wrapped",
+      "value": "copper-834 before indigo-854"
+    },
+    {
+      "accept": false,
+      "answer": "copper-934 before indigo-854",
+      "kind": "changed_digit",
+      "value": "copper-834 before indigo-854"
+    },
+    {
+      "accept": false,
+      "answer": "copper-834 indigo-854",
+      "kind": "omitted_token",
+      "value": "copper-834 before indigo-854"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-854 before copper-834",
+      "kind": "swapped_relation",
+      "value": "copper-834 before indigo-854"
+    },
+    {
+      "accept": false,
+      "answer": "copper-834 after indigo-854",
+      "kind": "changed_relation",
+      "value": "copper-834 before indigo-854"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-834 before indigo-854.",
+      "kind": "negation",
+      "value": "copper-834 before indigo-854"
+    },
+    {
+      "accept": false,
+      "answer": "copper-834 before indigo-854 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-834 before indigo-854"
+    },
+    {
+      "accept": false,
+      "answer": "copper-834 before indigo-8540",
+      "kind": "token_boundary",
+      "value": "copper-834 before indigo-854"
+    },
+    {
+      "accept": true,
+      "answer": "copper-735 before indigo-855",
+      "kind": "positive_exact",
+      "value": "copper-735 before indigo-855"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011735\n\tBEFORE\n\tINDIGO\u2011855**.",
+      "kind": "positive_wrapped",
+      "value": "copper-735 before indigo-855"
+    },
+    {
+      "accept": false,
+      "answer": "copper-935 before indigo-855",
+      "kind": "changed_digit",
+      "value": "copper-735 before indigo-855"
+    },
+    {
+      "accept": false,
+      "answer": "copper-735 indigo-855",
+      "kind": "omitted_token",
+      "value": "copper-735 before indigo-855"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-855 before copper-735",
+      "kind": "swapped_relation",
+      "value": "copper-735 before indigo-855"
+    },
+    {
+      "accept": false,
+      "answer": "copper-735 after indigo-855",
+      "kind": "changed_relation",
+      "value": "copper-735 before indigo-855"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-735 before indigo-855.",
+      "kind": "negation",
+      "value": "copper-735 before indigo-855"
+    },
+    {
+      "accept": false,
+      "answer": "copper-735 before indigo-855 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-735 before indigo-855"
+    },
+    {
+      "accept": false,
+      "answer": "copper-735 before indigo-8550",
+      "kind": "token_boundary",
+      "value": "copper-735 before indigo-855"
+    },
+    {
+      "accept": true,
+      "answer": "copper-835 before indigo-855",
+      "kind": "positive_exact",
+      "value": "copper-835 before indigo-855"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011835\n\tBEFORE\n\tINDIGO\u2011855**.",
+      "kind": "positive_wrapped",
+      "value": "copper-835 before indigo-855"
+    },
+    {
+      "accept": false,
+      "answer": "copper-935 before indigo-855",
+      "kind": "changed_digit",
+      "value": "copper-835 before indigo-855"
+    },
+    {
+      "accept": false,
+      "answer": "copper-835 indigo-855",
+      "kind": "omitted_token",
+      "value": "copper-835 before indigo-855"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-855 before copper-835",
+      "kind": "swapped_relation",
+      "value": "copper-835 before indigo-855"
+    },
+    {
+      "accept": false,
+      "answer": "copper-835 after indigo-855",
+      "kind": "changed_relation",
+      "value": "copper-835 before indigo-855"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-835 before indigo-855.",
+      "kind": "negation",
+      "value": "copper-835 before indigo-855"
+    },
+    {
+      "accept": false,
+      "answer": "copper-835 before indigo-855 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-835 before indigo-855"
+    },
+    {
+      "accept": false,
+      "answer": "copper-835 before indigo-8550",
+      "kind": "token_boundary",
+      "value": "copper-835 before indigo-855"
+    },
+    {
+      "accept": true,
+      "answer": "copper-736 before indigo-856",
+      "kind": "positive_exact",
+      "value": "copper-736 before indigo-856"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011736\n\tBEFORE\n\tINDIGO\u2011856**.",
+      "kind": "positive_wrapped",
+      "value": "copper-736 before indigo-856"
+    },
+    {
+      "accept": false,
+      "answer": "copper-936 before indigo-856",
+      "kind": "changed_digit",
+      "value": "copper-736 before indigo-856"
+    },
+    {
+      "accept": false,
+      "answer": "copper-736 indigo-856",
+      "kind": "omitted_token",
+      "value": "copper-736 before indigo-856"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-856 before copper-736",
+      "kind": "swapped_relation",
+      "value": "copper-736 before indigo-856"
+    },
+    {
+      "accept": false,
+      "answer": "copper-736 after indigo-856",
+      "kind": "changed_relation",
+      "value": "copper-736 before indigo-856"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-736 before indigo-856.",
+      "kind": "negation",
+      "value": "copper-736 before indigo-856"
+    },
+    {
+      "accept": false,
+      "answer": "copper-736 before indigo-856 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-736 before indigo-856"
+    },
+    {
+      "accept": false,
+      "answer": "copper-736 before indigo-8560",
+      "kind": "token_boundary",
+      "value": "copper-736 before indigo-856"
+    },
+    {
+      "accept": true,
+      "answer": "copper-836 before indigo-856",
+      "kind": "positive_exact",
+      "value": "copper-836 before indigo-856"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011836\n\tBEFORE\n\tINDIGO\u2011856**.",
+      "kind": "positive_wrapped",
+      "value": "copper-836 before indigo-856"
+    },
+    {
+      "accept": false,
+      "answer": "copper-936 before indigo-856",
+      "kind": "changed_digit",
+      "value": "copper-836 before indigo-856"
+    },
+    {
+      "accept": false,
+      "answer": "copper-836 indigo-856",
+      "kind": "omitted_token",
+      "value": "copper-836 before indigo-856"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-856 before copper-836",
+      "kind": "swapped_relation",
+      "value": "copper-836 before indigo-856"
+    },
+    {
+      "accept": false,
+      "answer": "copper-836 after indigo-856",
+      "kind": "changed_relation",
+      "value": "copper-836 before indigo-856"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-836 before indigo-856.",
+      "kind": "negation",
+      "value": "copper-836 before indigo-856"
+    },
+    {
+      "accept": false,
+      "answer": "copper-836 before indigo-856 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-836 before indigo-856"
+    },
+    {
+      "accept": false,
+      "answer": "copper-836 before indigo-8560",
+      "kind": "token_boundary",
+      "value": "copper-836 before indigo-856"
+    },
+    {
+      "accept": true,
+      "answer": "copper-737 before indigo-857",
+      "kind": "positive_exact",
+      "value": "copper-737 before indigo-857"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011737\n\tBEFORE\n\tINDIGO\u2011857**.",
+      "kind": "positive_wrapped",
+      "value": "copper-737 before indigo-857"
+    },
+    {
+      "accept": false,
+      "answer": "copper-937 before indigo-857",
+      "kind": "changed_digit",
+      "value": "copper-737 before indigo-857"
+    },
+    {
+      "accept": false,
+      "answer": "copper-737 indigo-857",
+      "kind": "omitted_token",
+      "value": "copper-737 before indigo-857"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-857 before copper-737",
+      "kind": "swapped_relation",
+      "value": "copper-737 before indigo-857"
+    },
+    {
+      "accept": false,
+      "answer": "copper-737 after indigo-857",
+      "kind": "changed_relation",
+      "value": "copper-737 before indigo-857"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-737 before indigo-857.",
+      "kind": "negation",
+      "value": "copper-737 before indigo-857"
+    },
+    {
+      "accept": false,
+      "answer": "copper-737 before indigo-857 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-737 before indigo-857"
+    },
+    {
+      "accept": false,
+      "answer": "copper-737 before indigo-8570",
+      "kind": "token_boundary",
+      "value": "copper-737 before indigo-857"
+    },
+    {
+      "accept": true,
+      "answer": "copper-837 before indigo-857",
+      "kind": "positive_exact",
+      "value": "copper-837 before indigo-857"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011837\n\tBEFORE\n\tINDIGO\u2011857**.",
+      "kind": "positive_wrapped",
+      "value": "copper-837 before indigo-857"
+    },
+    {
+      "accept": false,
+      "answer": "copper-839 before indigo-857",
+      "kind": "changed_digit",
+      "value": "copper-837 before indigo-857"
+    },
+    {
+      "accept": false,
+      "answer": "copper-837 indigo-857",
+      "kind": "omitted_token",
+      "value": "copper-837 before indigo-857"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-857 before copper-837",
+      "kind": "swapped_relation",
+      "value": "copper-837 before indigo-857"
+    },
+    {
+      "accept": false,
+      "answer": "copper-837 after indigo-857",
+      "kind": "changed_relation",
+      "value": "copper-837 before indigo-857"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-837 before indigo-857.",
+      "kind": "negation",
+      "value": "copper-837 before indigo-857"
+    },
+    {
+      "accept": false,
+      "answer": "copper-837 before indigo-857 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-837 before indigo-857"
+    },
+    {
+      "accept": false,
+      "answer": "copper-837 before indigo-8570",
+      "kind": "token_boundary",
+      "value": "copper-837 before indigo-857"
+    },
+    {
+      "accept": true,
+      "answer": "copper-738 before indigo-858",
+      "kind": "positive_exact",
+      "value": "copper-738 before indigo-858"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011738\n\tBEFORE\n\tINDIGO\u2011858**.",
+      "kind": "positive_wrapped",
+      "value": "copper-738 before indigo-858"
+    },
+    {
+      "accept": false,
+      "answer": "copper-938 before indigo-858",
+      "kind": "changed_digit",
+      "value": "copper-738 before indigo-858"
+    },
+    {
+      "accept": false,
+      "answer": "copper-738 indigo-858",
+      "kind": "omitted_token",
+      "value": "copper-738 before indigo-858"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-858 before copper-738",
+      "kind": "swapped_relation",
+      "value": "copper-738 before indigo-858"
+    },
+    {
+      "accept": false,
+      "answer": "copper-738 after indigo-858",
+      "kind": "changed_relation",
+      "value": "copper-738 before indigo-858"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-738 before indigo-858.",
+      "kind": "negation",
+      "value": "copper-738 before indigo-858"
+    },
+    {
+      "accept": false,
+      "answer": "copper-738 before indigo-858 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-738 before indigo-858"
+    },
+    {
+      "accept": false,
+      "answer": "copper-738 before indigo-8580",
+      "kind": "token_boundary",
+      "value": "copper-738 before indigo-858"
+    },
+    {
+      "accept": true,
+      "answer": "copper-838 before indigo-858",
+      "kind": "positive_exact",
+      "value": "copper-838 before indigo-858"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011838\n\tBEFORE\n\tINDIGO\u2011858**.",
+      "kind": "positive_wrapped",
+      "value": "copper-838 before indigo-858"
+    },
+    {
+      "accept": false,
+      "answer": "copper-938 before indigo-858",
+      "kind": "changed_digit",
+      "value": "copper-838 before indigo-858"
+    },
+    {
+      "accept": false,
+      "answer": "copper-838 indigo-858",
+      "kind": "omitted_token",
+      "value": "copper-838 before indigo-858"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-858 before copper-838",
+      "kind": "swapped_relation",
+      "value": "copper-838 before indigo-858"
+    },
+    {
+      "accept": false,
+      "answer": "copper-838 after indigo-858",
+      "kind": "changed_relation",
+      "value": "copper-838 before indigo-858"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-838 before indigo-858.",
+      "kind": "negation",
+      "value": "copper-838 before indigo-858"
+    },
+    {
+      "accept": false,
+      "answer": "copper-838 before indigo-858 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-838 before indigo-858"
+    },
+    {
+      "accept": false,
+      "answer": "copper-838 before indigo-8580",
+      "kind": "token_boundary",
+      "value": "copper-838 before indigo-858"
+    },
+    {
+      "accept": true,
+      "answer": "copper-739 before indigo-859",
+      "kind": "positive_exact",
+      "value": "copper-739 before indigo-859"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011739\n\tBEFORE\n\tINDIGO\u2011859**.",
+      "kind": "positive_wrapped",
+      "value": "copper-739 before indigo-859"
+    },
+    {
+      "accept": false,
+      "answer": "copper-939 before indigo-859",
+      "kind": "changed_digit",
+      "value": "copper-739 before indigo-859"
+    },
+    {
+      "accept": false,
+      "answer": "copper-739 indigo-859",
+      "kind": "omitted_token",
+      "value": "copper-739 before indigo-859"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-859 before copper-739",
+      "kind": "swapped_relation",
+      "value": "copper-739 before indigo-859"
+    },
+    {
+      "accept": false,
+      "answer": "copper-739 after indigo-859",
+      "kind": "changed_relation",
+      "value": "copper-739 before indigo-859"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-739 before indigo-859.",
+      "kind": "negation",
+      "value": "copper-739 before indigo-859"
+    },
+    {
+      "accept": false,
+      "answer": "copper-739 before indigo-859 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-739 before indigo-859"
+    },
+    {
+      "accept": false,
+      "answer": "copper-739 before indigo-8590",
+      "kind": "token_boundary",
+      "value": "copper-739 before indigo-859"
+    },
+    {
+      "accept": true,
+      "answer": "copper-839 before indigo-859",
+      "kind": "positive_exact",
+      "value": "copper-839 before indigo-859"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011839\n\tBEFORE\n\tINDIGO\u2011859**.",
+      "kind": "positive_wrapped",
+      "value": "copper-839 before indigo-859"
+    },
+    {
+      "accept": false,
+      "answer": "copper-939 before indigo-859",
+      "kind": "changed_digit",
+      "value": "copper-839 before indigo-859"
+    },
+    {
+      "accept": false,
+      "answer": "copper-839 indigo-859",
+      "kind": "omitted_token",
+      "value": "copper-839 before indigo-859"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-859 before copper-839",
+      "kind": "swapped_relation",
+      "value": "copper-839 before indigo-859"
+    },
+    {
+      "accept": false,
+      "answer": "copper-839 after indigo-859",
+      "kind": "changed_relation",
+      "value": "copper-839 before indigo-859"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-839 before indigo-859.",
+      "kind": "negation",
+      "value": "copper-839 before indigo-859"
+    },
+    {
+      "accept": false,
+      "answer": "copper-839 before indigo-859 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-839 before indigo-859"
+    },
+    {
+      "accept": false,
+      "answer": "copper-839 before indigo-8590",
+      "kind": "token_boundary",
+      "value": "copper-839 before indigo-859"
+    },
+    {
+      "accept": true,
+      "answer": "copper-740 before indigo-860",
+      "kind": "positive_exact",
+      "value": "copper-740 before indigo-860"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011740\n\tBEFORE\n\tINDIGO\u2011860**.",
+      "kind": "positive_wrapped",
+      "value": "copper-740 before indigo-860"
+    },
+    {
+      "accept": false,
+      "answer": "copper-940 before indigo-860",
+      "kind": "changed_digit",
+      "value": "copper-740 before indigo-860"
+    },
+    {
+      "accept": false,
+      "answer": "copper-740 indigo-860",
+      "kind": "omitted_token",
+      "value": "copper-740 before indigo-860"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-860 before copper-740",
+      "kind": "swapped_relation",
+      "value": "copper-740 before indigo-860"
+    },
+    {
+      "accept": false,
+      "answer": "copper-740 after indigo-860",
+      "kind": "changed_relation",
+      "value": "copper-740 before indigo-860"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-740 before indigo-860.",
+      "kind": "negation",
+      "value": "copper-740 before indigo-860"
+    },
+    {
+      "accept": false,
+      "answer": "copper-740 before indigo-860 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-740 before indigo-860"
+    },
+    {
+      "accept": false,
+      "answer": "copper-740 before indigo-8600",
+      "kind": "token_boundary",
+      "value": "copper-740 before indigo-860"
+    },
+    {
+      "accept": true,
+      "answer": "copper-840 before indigo-860",
+      "kind": "positive_exact",
+      "value": "copper-840 before indigo-860"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011840\n\tBEFORE\n\tINDIGO\u2011860**.",
+      "kind": "positive_wrapped",
+      "value": "copper-840 before indigo-860"
+    },
+    {
+      "accept": false,
+      "answer": "copper-940 before indigo-860",
+      "kind": "changed_digit",
+      "value": "copper-840 before indigo-860"
+    },
+    {
+      "accept": false,
+      "answer": "copper-840 indigo-860",
+      "kind": "omitted_token",
+      "value": "copper-840 before indigo-860"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-860 before copper-840",
+      "kind": "swapped_relation",
+      "value": "copper-840 before indigo-860"
+    },
+    {
+      "accept": false,
+      "answer": "copper-840 after indigo-860",
+      "kind": "changed_relation",
+      "value": "copper-840 before indigo-860"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-840 before indigo-860.",
+      "kind": "negation",
+      "value": "copper-840 before indigo-860"
+    },
+    {
+      "accept": false,
+      "answer": "copper-840 before indigo-860 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-840 before indigo-860"
+    },
+    {
+      "accept": false,
+      "answer": "copper-840 before indigo-8600",
+      "kind": "token_boundary",
+      "value": "copper-840 before indigo-860"
+    },
+    {
+      "accept": true,
+      "answer": "copper-741 before indigo-861",
+      "kind": "positive_exact",
+      "value": "copper-741 before indigo-861"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011741\n\tBEFORE\n\tINDIGO\u2011861**.",
+      "kind": "positive_wrapped",
+      "value": "copper-741 before indigo-861"
+    },
+    {
+      "accept": false,
+      "answer": "copper-941 before indigo-861",
+      "kind": "changed_digit",
+      "value": "copper-741 before indigo-861"
+    },
+    {
+      "accept": false,
+      "answer": "copper-741 indigo-861",
+      "kind": "omitted_token",
+      "value": "copper-741 before indigo-861"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-861 before copper-741",
+      "kind": "swapped_relation",
+      "value": "copper-741 before indigo-861"
+    },
+    {
+      "accept": false,
+      "answer": "copper-741 after indigo-861",
+      "kind": "changed_relation",
+      "value": "copper-741 before indigo-861"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-741 before indigo-861.",
+      "kind": "negation",
+      "value": "copper-741 before indigo-861"
+    },
+    {
+      "accept": false,
+      "answer": "copper-741 before indigo-861 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-741 before indigo-861"
+    },
+    {
+      "accept": false,
+      "answer": "copper-741 before indigo-8610",
+      "kind": "token_boundary",
+      "value": "copper-741 before indigo-861"
+    },
+    {
+      "accept": true,
+      "answer": "copper-841 before indigo-861",
+      "kind": "positive_exact",
+      "value": "copper-841 before indigo-861"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011841\n\tBEFORE\n\tINDIGO\u2011861**.",
+      "kind": "positive_wrapped",
+      "value": "copper-841 before indigo-861"
+    },
+    {
+      "accept": false,
+      "answer": "copper-941 before indigo-861",
+      "kind": "changed_digit",
+      "value": "copper-841 before indigo-861"
+    },
+    {
+      "accept": false,
+      "answer": "copper-841 indigo-861",
+      "kind": "omitted_token",
+      "value": "copper-841 before indigo-861"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-861 before copper-841",
+      "kind": "swapped_relation",
+      "value": "copper-841 before indigo-861"
+    },
+    {
+      "accept": false,
+      "answer": "copper-841 after indigo-861",
+      "kind": "changed_relation",
+      "value": "copper-841 before indigo-861"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-841 before indigo-861.",
+      "kind": "negation",
+      "value": "copper-841 before indigo-861"
+    },
+    {
+      "accept": false,
+      "answer": "copper-841 before indigo-861 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-841 before indigo-861"
+    },
+    {
+      "accept": false,
+      "answer": "copper-841 before indigo-8610",
+      "kind": "token_boundary",
+      "value": "copper-841 before indigo-861"
+    },
+    {
+      "accept": true,
+      "answer": "copper-742 before indigo-862",
+      "kind": "positive_exact",
+      "value": "copper-742 before indigo-862"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011742\n\tBEFORE\n\tINDIGO\u2011862**.",
+      "kind": "positive_wrapped",
+      "value": "copper-742 before indigo-862"
+    },
+    {
+      "accept": false,
+      "answer": "copper-942 before indigo-862",
+      "kind": "changed_digit",
+      "value": "copper-742 before indigo-862"
+    },
+    {
+      "accept": false,
+      "answer": "copper-742 indigo-862",
+      "kind": "omitted_token",
+      "value": "copper-742 before indigo-862"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-862 before copper-742",
+      "kind": "swapped_relation",
+      "value": "copper-742 before indigo-862"
+    },
+    {
+      "accept": false,
+      "answer": "copper-742 after indigo-862",
+      "kind": "changed_relation",
+      "value": "copper-742 before indigo-862"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-742 before indigo-862.",
+      "kind": "negation",
+      "value": "copper-742 before indigo-862"
+    },
+    {
+      "accept": false,
+      "answer": "copper-742 before indigo-862 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-742 before indigo-862"
+    },
+    {
+      "accept": false,
+      "answer": "copper-742 before indigo-8620",
+      "kind": "token_boundary",
+      "value": "copper-742 before indigo-862"
+    },
+    {
+      "accept": true,
+      "answer": "copper-842 before indigo-862",
+      "kind": "positive_exact",
+      "value": "copper-842 before indigo-862"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011842\n\tBEFORE\n\tINDIGO\u2011862**.",
+      "kind": "positive_wrapped",
+      "value": "copper-842 before indigo-862"
+    },
+    {
+      "accept": false,
+      "answer": "copper-942 before indigo-862",
+      "kind": "changed_digit",
+      "value": "copper-842 before indigo-862"
+    },
+    {
+      "accept": false,
+      "answer": "copper-842 indigo-862",
+      "kind": "omitted_token",
+      "value": "copper-842 before indigo-862"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-862 before copper-842",
+      "kind": "swapped_relation",
+      "value": "copper-842 before indigo-862"
+    },
+    {
+      "accept": false,
+      "answer": "copper-842 after indigo-862",
+      "kind": "changed_relation",
+      "value": "copper-842 before indigo-862"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-842 before indigo-862.",
+      "kind": "negation",
+      "value": "copper-842 before indigo-862"
+    },
+    {
+      "accept": false,
+      "answer": "copper-842 before indigo-862 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-842 before indigo-862"
+    },
+    {
+      "accept": false,
+      "answer": "copper-842 before indigo-8620",
+      "kind": "token_boundary",
+      "value": "copper-842 before indigo-862"
+    },
+    {
+      "accept": true,
+      "answer": "copper-743 before indigo-863",
+      "kind": "positive_exact",
+      "value": "copper-743 before indigo-863"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011743\n\tBEFORE\n\tINDIGO\u2011863**.",
+      "kind": "positive_wrapped",
+      "value": "copper-743 before indigo-863"
+    },
+    {
+      "accept": false,
+      "answer": "copper-943 before indigo-863",
+      "kind": "changed_digit",
+      "value": "copper-743 before indigo-863"
+    },
+    {
+      "accept": false,
+      "answer": "copper-743 indigo-863",
+      "kind": "omitted_token",
+      "value": "copper-743 before indigo-863"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-863 before copper-743",
+      "kind": "swapped_relation",
+      "value": "copper-743 before indigo-863"
+    },
+    {
+      "accept": false,
+      "answer": "copper-743 after indigo-863",
+      "kind": "changed_relation",
+      "value": "copper-743 before indigo-863"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-743 before indigo-863.",
+      "kind": "negation",
+      "value": "copper-743 before indigo-863"
+    },
+    {
+      "accept": false,
+      "answer": "copper-743 before indigo-863 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-743 before indigo-863"
+    },
+    {
+      "accept": false,
+      "answer": "copper-743 before indigo-8630",
+      "kind": "token_boundary",
+      "value": "copper-743 before indigo-863"
+    },
+    {
+      "accept": true,
+      "answer": "copper-843 before indigo-863",
+      "kind": "positive_exact",
+      "value": "copper-843 before indigo-863"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011843\n\tBEFORE\n\tINDIGO\u2011863**.",
+      "kind": "positive_wrapped",
+      "value": "copper-843 before indigo-863"
+    },
+    {
+      "accept": false,
+      "answer": "copper-943 before indigo-863",
+      "kind": "changed_digit",
+      "value": "copper-843 before indigo-863"
+    },
+    {
+      "accept": false,
+      "answer": "copper-843 indigo-863",
+      "kind": "omitted_token",
+      "value": "copper-843 before indigo-863"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-863 before copper-843",
+      "kind": "swapped_relation",
+      "value": "copper-843 before indigo-863"
+    },
+    {
+      "accept": false,
+      "answer": "copper-843 after indigo-863",
+      "kind": "changed_relation",
+      "value": "copper-843 before indigo-863"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-843 before indigo-863.",
+      "kind": "negation",
+      "value": "copper-843 before indigo-863"
+    },
+    {
+      "accept": false,
+      "answer": "copper-843 before indigo-863 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-843 before indigo-863"
+    },
+    {
+      "accept": false,
+      "answer": "copper-843 before indigo-8630",
+      "kind": "token_boundary",
+      "value": "copper-843 before indigo-863"
+    },
+    {
+      "accept": true,
+      "answer": "copper-744 before indigo-864",
+      "kind": "positive_exact",
+      "value": "copper-744 before indigo-864"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011744\n\tBEFORE\n\tINDIGO\u2011864**.",
+      "kind": "positive_wrapped",
+      "value": "copper-744 before indigo-864"
+    },
+    {
+      "accept": false,
+      "answer": "copper-944 before indigo-864",
+      "kind": "changed_digit",
+      "value": "copper-744 before indigo-864"
+    },
+    {
+      "accept": false,
+      "answer": "copper-744 indigo-864",
+      "kind": "omitted_token",
+      "value": "copper-744 before indigo-864"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-864 before copper-744",
+      "kind": "swapped_relation",
+      "value": "copper-744 before indigo-864"
+    },
+    {
+      "accept": false,
+      "answer": "copper-744 after indigo-864",
+      "kind": "changed_relation",
+      "value": "copper-744 before indigo-864"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-744 before indigo-864.",
+      "kind": "negation",
+      "value": "copper-744 before indigo-864"
+    },
+    {
+      "accept": false,
+      "answer": "copper-744 before indigo-864 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-744 before indigo-864"
+    },
+    {
+      "accept": false,
+      "answer": "copper-744 before indigo-8640",
+      "kind": "token_boundary",
+      "value": "copper-744 before indigo-864"
+    },
+    {
+      "accept": true,
+      "answer": "copper-844 before indigo-864",
+      "kind": "positive_exact",
+      "value": "copper-844 before indigo-864"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011844\n\tBEFORE\n\tINDIGO\u2011864**.",
+      "kind": "positive_wrapped",
+      "value": "copper-844 before indigo-864"
+    },
+    {
+      "accept": false,
+      "answer": "copper-944 before indigo-864",
+      "kind": "changed_digit",
+      "value": "copper-844 before indigo-864"
+    },
+    {
+      "accept": false,
+      "answer": "copper-844 indigo-864",
+      "kind": "omitted_token",
+      "value": "copper-844 before indigo-864"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-864 before copper-844",
+      "kind": "swapped_relation",
+      "value": "copper-844 before indigo-864"
+    },
+    {
+      "accept": false,
+      "answer": "copper-844 after indigo-864",
+      "kind": "changed_relation",
+      "value": "copper-844 before indigo-864"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-844 before indigo-864.",
+      "kind": "negation",
+      "value": "copper-844 before indigo-864"
+    },
+    {
+      "accept": false,
+      "answer": "copper-844 before indigo-864 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-844 before indigo-864"
+    },
+    {
+      "accept": false,
+      "answer": "copper-844 before indigo-8640",
+      "kind": "token_boundary",
+      "value": "copper-844 before indigo-864"
+    },
+    {
+      "accept": true,
+      "answer": "copper-745 before indigo-865",
+      "kind": "positive_exact",
+      "value": "copper-745 before indigo-865"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011745\n\tBEFORE\n\tINDIGO\u2011865**.",
+      "kind": "positive_wrapped",
+      "value": "copper-745 before indigo-865"
+    },
+    {
+      "accept": false,
+      "answer": "copper-945 before indigo-865",
+      "kind": "changed_digit",
+      "value": "copper-745 before indigo-865"
+    },
+    {
+      "accept": false,
+      "answer": "copper-745 indigo-865",
+      "kind": "omitted_token",
+      "value": "copper-745 before indigo-865"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-865 before copper-745",
+      "kind": "swapped_relation",
+      "value": "copper-745 before indigo-865"
+    },
+    {
+      "accept": false,
+      "answer": "copper-745 after indigo-865",
+      "kind": "changed_relation",
+      "value": "copper-745 before indigo-865"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-745 before indigo-865.",
+      "kind": "negation",
+      "value": "copper-745 before indigo-865"
+    },
+    {
+      "accept": false,
+      "answer": "copper-745 before indigo-865 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-745 before indigo-865"
+    },
+    {
+      "accept": false,
+      "answer": "copper-745 before indigo-8650",
+      "kind": "token_boundary",
+      "value": "copper-745 before indigo-865"
+    },
+    {
+      "accept": true,
+      "answer": "copper-845 before indigo-865",
+      "kind": "positive_exact",
+      "value": "copper-845 before indigo-865"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011845\n\tBEFORE\n\tINDIGO\u2011865**.",
+      "kind": "positive_wrapped",
+      "value": "copper-845 before indigo-865"
+    },
+    {
+      "accept": false,
+      "answer": "copper-945 before indigo-865",
+      "kind": "changed_digit",
+      "value": "copper-845 before indigo-865"
+    },
+    {
+      "accept": false,
+      "answer": "copper-845 indigo-865",
+      "kind": "omitted_token",
+      "value": "copper-845 before indigo-865"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-865 before copper-845",
+      "kind": "swapped_relation",
+      "value": "copper-845 before indigo-865"
+    },
+    {
+      "accept": false,
+      "answer": "copper-845 after indigo-865",
+      "kind": "changed_relation",
+      "value": "copper-845 before indigo-865"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-845 before indigo-865.",
+      "kind": "negation",
+      "value": "copper-845 before indigo-865"
+    },
+    {
+      "accept": false,
+      "answer": "copper-845 before indigo-865 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-845 before indigo-865"
+    },
+    {
+      "accept": false,
+      "answer": "copper-845 before indigo-8650",
+      "kind": "token_boundary",
+      "value": "copper-845 before indigo-865"
+    },
+    {
+      "accept": true,
+      "answer": "copper-746 before indigo-866",
+      "kind": "positive_exact",
+      "value": "copper-746 before indigo-866"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011746\n\tBEFORE\n\tINDIGO\u2011866**.",
+      "kind": "positive_wrapped",
+      "value": "copper-746 before indigo-866"
+    },
+    {
+      "accept": false,
+      "answer": "copper-946 before indigo-866",
+      "kind": "changed_digit",
+      "value": "copper-746 before indigo-866"
+    },
+    {
+      "accept": false,
+      "answer": "copper-746 indigo-866",
+      "kind": "omitted_token",
+      "value": "copper-746 before indigo-866"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-866 before copper-746",
+      "kind": "swapped_relation",
+      "value": "copper-746 before indigo-866"
+    },
+    {
+      "accept": false,
+      "answer": "copper-746 after indigo-866",
+      "kind": "changed_relation",
+      "value": "copper-746 before indigo-866"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-746 before indigo-866.",
+      "kind": "negation",
+      "value": "copper-746 before indigo-866"
+    },
+    {
+      "accept": false,
+      "answer": "copper-746 before indigo-866 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-746 before indigo-866"
+    },
+    {
+      "accept": false,
+      "answer": "copper-746 before indigo-8660",
+      "kind": "token_boundary",
+      "value": "copper-746 before indigo-866"
+    },
+    {
+      "accept": true,
+      "answer": "copper-846 before indigo-866",
+      "kind": "positive_exact",
+      "value": "copper-846 before indigo-866"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011846\n\tBEFORE\n\tINDIGO\u2011866**.",
+      "kind": "positive_wrapped",
+      "value": "copper-846 before indigo-866"
+    },
+    {
+      "accept": false,
+      "answer": "copper-946 before indigo-866",
+      "kind": "changed_digit",
+      "value": "copper-846 before indigo-866"
+    },
+    {
+      "accept": false,
+      "answer": "copper-846 indigo-866",
+      "kind": "omitted_token",
+      "value": "copper-846 before indigo-866"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-866 before copper-846",
+      "kind": "swapped_relation",
+      "value": "copper-846 before indigo-866"
+    },
+    {
+      "accept": false,
+      "answer": "copper-846 after indigo-866",
+      "kind": "changed_relation",
+      "value": "copper-846 before indigo-866"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-846 before indigo-866.",
+      "kind": "negation",
+      "value": "copper-846 before indigo-866"
+    },
+    {
+      "accept": false,
+      "answer": "copper-846 before indigo-866 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-846 before indigo-866"
+    },
+    {
+      "accept": false,
+      "answer": "copper-846 before indigo-8660",
+      "kind": "token_boundary",
+      "value": "copper-846 before indigo-866"
+    },
+    {
+      "accept": true,
+      "answer": "copper-747 before indigo-867",
+      "kind": "positive_exact",
+      "value": "copper-747 before indigo-867"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011747\n\tBEFORE\n\tINDIGO\u2011867**.",
+      "kind": "positive_wrapped",
+      "value": "copper-747 before indigo-867"
+    },
+    {
+      "accept": false,
+      "answer": "copper-947 before indigo-867",
+      "kind": "changed_digit",
+      "value": "copper-747 before indigo-867"
+    },
+    {
+      "accept": false,
+      "answer": "copper-747 indigo-867",
+      "kind": "omitted_token",
+      "value": "copper-747 before indigo-867"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-867 before copper-747",
+      "kind": "swapped_relation",
+      "value": "copper-747 before indigo-867"
+    },
+    {
+      "accept": false,
+      "answer": "copper-747 after indigo-867",
+      "kind": "changed_relation",
+      "value": "copper-747 before indigo-867"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-747 before indigo-867.",
+      "kind": "negation",
+      "value": "copper-747 before indigo-867"
+    },
+    {
+      "accept": false,
+      "answer": "copper-747 before indigo-867 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-747 before indigo-867"
+    },
+    {
+      "accept": false,
+      "answer": "copper-747 before indigo-8670",
+      "kind": "token_boundary",
+      "value": "copper-747 before indigo-867"
+    },
+    {
+      "accept": true,
+      "answer": "copper-847 before indigo-867",
+      "kind": "positive_exact",
+      "value": "copper-847 before indigo-867"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011847\n\tBEFORE\n\tINDIGO\u2011867**.",
+      "kind": "positive_wrapped",
+      "value": "copper-847 before indigo-867"
+    },
+    {
+      "accept": false,
+      "answer": "copper-849 before indigo-867",
+      "kind": "changed_digit",
+      "value": "copper-847 before indigo-867"
+    },
+    {
+      "accept": false,
+      "answer": "copper-847 indigo-867",
+      "kind": "omitted_token",
+      "value": "copper-847 before indigo-867"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-867 before copper-847",
+      "kind": "swapped_relation",
+      "value": "copper-847 before indigo-867"
+    },
+    {
+      "accept": false,
+      "answer": "copper-847 after indigo-867",
+      "kind": "changed_relation",
+      "value": "copper-847 before indigo-867"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-847 before indigo-867.",
+      "kind": "negation",
+      "value": "copper-847 before indigo-867"
+    },
+    {
+      "accept": false,
+      "answer": "copper-847 before indigo-867 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-847 before indigo-867"
+    },
+    {
+      "accept": false,
+      "answer": "copper-847 before indigo-8670",
+      "kind": "token_boundary",
+      "value": "copper-847 before indigo-867"
+    },
+    {
+      "accept": true,
+      "answer": "copper-748 before indigo-868",
+      "kind": "positive_exact",
+      "value": "copper-748 before indigo-868"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011748\n\tBEFORE\n\tINDIGO\u2011868**.",
+      "kind": "positive_wrapped",
+      "value": "copper-748 before indigo-868"
+    },
+    {
+      "accept": false,
+      "answer": "copper-948 before indigo-868",
+      "kind": "changed_digit",
+      "value": "copper-748 before indigo-868"
+    },
+    {
+      "accept": false,
+      "answer": "copper-748 indigo-868",
+      "kind": "omitted_token",
+      "value": "copper-748 before indigo-868"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-868 before copper-748",
+      "kind": "swapped_relation",
+      "value": "copper-748 before indigo-868"
+    },
+    {
+      "accept": false,
+      "answer": "copper-748 after indigo-868",
+      "kind": "changed_relation",
+      "value": "copper-748 before indigo-868"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-748 before indigo-868.",
+      "kind": "negation",
+      "value": "copper-748 before indigo-868"
+    },
+    {
+      "accept": false,
+      "answer": "copper-748 before indigo-868 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-748 before indigo-868"
+    },
+    {
+      "accept": false,
+      "answer": "copper-748 before indigo-8680",
+      "kind": "token_boundary",
+      "value": "copper-748 before indigo-868"
+    },
+    {
+      "accept": true,
+      "answer": "copper-848 before indigo-868",
+      "kind": "positive_exact",
+      "value": "copper-848 before indigo-868"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011848\n\tBEFORE\n\tINDIGO\u2011868**.",
+      "kind": "positive_wrapped",
+      "value": "copper-848 before indigo-868"
+    },
+    {
+      "accept": false,
+      "answer": "copper-948 before indigo-868",
+      "kind": "changed_digit",
+      "value": "copper-848 before indigo-868"
+    },
+    {
+      "accept": false,
+      "answer": "copper-848 indigo-868",
+      "kind": "omitted_token",
+      "value": "copper-848 before indigo-868"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-868 before copper-848",
+      "kind": "swapped_relation",
+      "value": "copper-848 before indigo-868"
+    },
+    {
+      "accept": false,
+      "answer": "copper-848 after indigo-868",
+      "kind": "changed_relation",
+      "value": "copper-848 before indigo-868"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-848 before indigo-868.",
+      "kind": "negation",
+      "value": "copper-848 before indigo-868"
+    },
+    {
+      "accept": false,
+      "answer": "copper-848 before indigo-868 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-848 before indigo-868"
+    },
+    {
+      "accept": false,
+      "answer": "copper-848 before indigo-8680",
+      "kind": "token_boundary",
+      "value": "copper-848 before indigo-868"
+    },
+    {
+      "accept": true,
+      "answer": "copper-749 before indigo-869",
+      "kind": "positive_exact",
+      "value": "copper-749 before indigo-869"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011749\n\tBEFORE\n\tINDIGO\u2011869**.",
+      "kind": "positive_wrapped",
+      "value": "copper-749 before indigo-869"
+    },
+    {
+      "accept": false,
+      "answer": "copper-949 before indigo-869",
+      "kind": "changed_digit",
+      "value": "copper-749 before indigo-869"
+    },
+    {
+      "accept": false,
+      "answer": "copper-749 indigo-869",
+      "kind": "omitted_token",
+      "value": "copper-749 before indigo-869"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-869 before copper-749",
+      "kind": "swapped_relation",
+      "value": "copper-749 before indigo-869"
+    },
+    {
+      "accept": false,
+      "answer": "copper-749 after indigo-869",
+      "kind": "changed_relation",
+      "value": "copper-749 before indigo-869"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-749 before indigo-869.",
+      "kind": "negation",
+      "value": "copper-749 before indigo-869"
+    },
+    {
+      "accept": false,
+      "answer": "copper-749 before indigo-869 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-749 before indigo-869"
+    },
+    {
+      "accept": false,
+      "answer": "copper-749 before indigo-8690",
+      "kind": "token_boundary",
+      "value": "copper-749 before indigo-869"
+    },
+    {
+      "accept": true,
+      "answer": "copper-849 before indigo-869",
+      "kind": "positive_exact",
+      "value": "copper-849 before indigo-869"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011849\n\tBEFORE\n\tINDIGO\u2011869**.",
+      "kind": "positive_wrapped",
+      "value": "copper-849 before indigo-869"
+    },
+    {
+      "accept": false,
+      "answer": "copper-949 before indigo-869",
+      "kind": "changed_digit",
+      "value": "copper-849 before indigo-869"
+    },
+    {
+      "accept": false,
+      "answer": "copper-849 indigo-869",
+      "kind": "omitted_token",
+      "value": "copper-849 before indigo-869"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-869 before copper-849",
+      "kind": "swapped_relation",
+      "value": "copper-849 before indigo-869"
+    },
+    {
+      "accept": false,
+      "answer": "copper-849 after indigo-869",
+      "kind": "changed_relation",
+      "value": "copper-849 before indigo-869"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-849 before indigo-869.",
+      "kind": "negation",
+      "value": "copper-849 before indigo-869"
+    },
+    {
+      "accept": false,
+      "answer": "copper-849 before indigo-869 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-849 before indigo-869"
+    },
+    {
+      "accept": false,
+      "answer": "copper-849 before indigo-8690",
+      "kind": "token_boundary",
+      "value": "copper-849 before indigo-869"
+    },
+    {
+      "accept": true,
+      "answer": "copper-750 before indigo-870",
+      "kind": "positive_exact",
+      "value": "copper-750 before indigo-870"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011750\n\tBEFORE\n\tINDIGO\u2011870**.",
+      "kind": "positive_wrapped",
+      "value": "copper-750 before indigo-870"
+    },
+    {
+      "accept": false,
+      "answer": "copper-950 before indigo-870",
+      "kind": "changed_digit",
+      "value": "copper-750 before indigo-870"
+    },
+    {
+      "accept": false,
+      "answer": "copper-750 indigo-870",
+      "kind": "omitted_token",
+      "value": "copper-750 before indigo-870"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-870 before copper-750",
+      "kind": "swapped_relation",
+      "value": "copper-750 before indigo-870"
+    },
+    {
+      "accept": false,
+      "answer": "copper-750 after indigo-870",
+      "kind": "changed_relation",
+      "value": "copper-750 before indigo-870"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-750 before indigo-870.",
+      "kind": "negation",
+      "value": "copper-750 before indigo-870"
+    },
+    {
+      "accept": false,
+      "answer": "copper-750 before indigo-870 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-750 before indigo-870"
+    },
+    {
+      "accept": false,
+      "answer": "copper-750 before indigo-8700",
+      "kind": "token_boundary",
+      "value": "copper-750 before indigo-870"
+    },
+    {
+      "accept": true,
+      "answer": "copper-850 before indigo-870",
+      "kind": "positive_exact",
+      "value": "copper-850 before indigo-870"
+    },
+    {
+      "accept": true,
+      "answer": "The ordering is **COPPER\u2011850\n\tBEFORE\n\tINDIGO\u2011870**.",
+      "kind": "positive_wrapped",
+      "value": "copper-850 before indigo-870"
+    },
+    {
+      "accept": false,
+      "answer": "copper-850 before indigo-890",
+      "kind": "changed_digit",
+      "value": "copper-850 before indigo-870"
+    },
+    {
+      "accept": false,
+      "answer": "copper-850 indigo-870",
+      "kind": "omitted_token",
+      "value": "copper-850 before indigo-870"
+    },
+    {
+      "accept": false,
+      "answer": "indigo-870 before copper-850",
+      "kind": "swapped_relation",
+      "value": "copper-850 before indigo-870"
+    },
+    {
+      "accept": false,
+      "answer": "copper-850 after indigo-870",
+      "kind": "changed_relation",
+      "value": "copper-850 before indigo-870"
+    },
+    {
+      "accept": false,
+      "answer": "The ordering is not copper-850 before indigo-870.",
+      "kind": "negation",
+      "value": "copper-850 before indigo-870"
+    },
+    {
+      "accept": false,
+      "answer": "copper-850 before indigo-870 is incorrect.",
+      "kind": "negation_suffix",
+      "value": "copper-850 before indigo-870"
+    },
+    {
+      "accept": false,
+      "answer": "copper-850 before indigo-8700",
+      "kind": "token_boundary",
+      "value": "copper-850 before indigo-870"
+    },
+    {
+      "accept": true,
+      "answer": "Answer: **not in memory**.",
+      "kind": "refusal_positive",
+      "refusal": true,
+      "value": "not in memory"
+    },
+    {
+      "accept": false,
+      "answer": "It is not true that not in memory",
+      "kind": "refusal_negation",
+      "refusal": true,
+      "value": "not in memory"
+    },
+    {
+      "accept": true,
+      "answer": "Answer: **i don't know**.",
+      "kind": "refusal_positive",
+      "refusal": true,
+      "value": "i don't know"
+    },
+    {
+      "accept": false,
+      "answer": "It is not true that i don't know",
+      "kind": "refusal_negation",
+      "refusal": true,
+      "value": "i don't know"
+    },
+    {
+      "accept": true,
+      "answer": "Answer: **i do not know**.",
+      "kind": "refusal_positive",
+      "refusal": true,
+      "value": "i do not know"
+    },
+    {
+      "accept": false,
+      "answer": "It is not true that i do not know",
+      "kind": "refusal_negation",
+      "refusal": true,
+      "value": "i do not know"
+    },
+    {
+      "accept": true,
+      "answer": "Answer: **i cannot**.",
+      "kind": "refusal_positive",
+      "refusal": true,
+      "value": "i cannot"
+    },
+    {
+      "accept": false,
+      "answer": "It is not true that i cannot",
+      "kind": "refusal_negation",
+      "refusal": true,
+      "value": "i cannot"
+    },
+    {
+      "accept": true,
+      "answer": "Answer: **i can't**.",
+      "kind": "refusal_positive",
+      "refusal": true,
+      "value": "i can't"
+    },
+    {
+      "accept": false,
+      "answer": "It is not true that i can't",
+      "kind": "refusal_negation",
+      "refusal": true,
+      "value": "i can't"
+    },
+    {
+      "accept": true,
+      "answer": "Answer: **unknown**.",
+      "kind": "refusal_positive",
+      "refusal": true,
+      "value": "unknown"
+    },
+    {
+      "accept": false,
+      "answer": "It is not true that unknown",
+      "kind": "refusal_negation",
+      "refusal": true,
+      "value": "unknown"
+    }
+  ],
+  "evidence_class": "reasoning; registered before CPU tests"
+}

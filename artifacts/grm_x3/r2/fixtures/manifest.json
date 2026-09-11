@@ -1,0 +1,132 @@
+{
+  "counts": {
+    "correct": 8,
+    "decoy": 6,
+    "refusal": 6
+  },
+  "fixtures": [
+    {
+      "path": "artifacts/grm_x3/r2/fixtures/x3_r2_00.json",
+      "sha256": "e9e5513dc0cd4d63d1d045d1e80f3ec1c667c2afbe5a023853d44351e5c5ae2e"
+    },
+    {
+      "path": "artifacts/grm_x3/r2/fixtures/x3_r2_01.json",
+      "sha256": "93df659c417d440ff720c2841f6dcf84cd47c644d7cf205470a8bb4253c0b435"
+    },
+    {
+      "path": "artifacts/grm_x3/r2/fixtures/x3_r2_02.json",
+      "sha256": "e2a08295d23b0a68f34eba871a1aad57dfef7ff321233bebfa2927ab0628c932"
+    },
+    {
+      "path": "artifacts/grm_x3/r2/fixtures/x3_r2_03.json",
+      "sha256": "794397ecee9fb82c12f8ea1c50914cda9736a06f645da73f271cd7e8b51fc3a7"
+    },
+    {
+      "path": "artifacts/grm_x3/r2/fixtures/x3_r2_04.json",
+      "sha256": "a9f8f17d17725f950033e7876cf6575122472f24147005c918e43a9f546ff62f"
+    },
+    {
+      "path": "artifacts/grm_x3/r2/fixtures/x3_r2_05.json",
+      "sha256": "ab8e50cf1be7dc3bdcd03a1aeaaf7b1220d8b0514e763d37c146323c6cb32c38"
+    },
+    {
+      "path": "artifacts/grm_x3/r2/fixtures/x3_r2_06.json",
+      "sha256": "756c6006f8701ca272045240bb5411f1ba6b73cf5e11b5ec4729b02d974939f2"
+    },
+    {
+      "path": "artifacts/grm_x3/r2/fixtures/x3_r2_07.json",
+      "sha256": "8934f5378bdbb353fec892e1ea3e7af27856db5df237b317fe1e588f3288d186"
+    },
+    {
+      "path": "artifacts/grm_x3/r2/fixtures/x3_r2_08.json",
+      "sha256": "6b2f2b3cf33a53cd0bc85db75902827d964296362b43ef3a1aa512e2c2eaef24"
+    },
+    {
+      "path": "artifacts/grm_x3/r2/fixtures/x3_r2_09.json",
+      "sha256": "3a59d462cdb2158d4ad59c57b7b9678a72dd3f359c9dd381a6189ecb83c152e1"
+    },
+    {
+      "path": "artifacts/grm_x3/r2/fixtures/x3_r2_10.json",
+      "sha256": "62a43b9fd792b633437ee7bfb7621c8b8ed557917b967887fb28d89789f868fd"
+    },
+    {
+      "path": "artifacts/grm_x3/r2/fixtures/x3_r2_11.json",
+      "sha256": "607fe13fad9b92c36fd28fc9972018c5c1a6681e635b3b53c7e7046358f48fb2"
+    },
+    {
+      "path": "artifacts/grm_x3/r2/fixtures/x3_r2_12.json",
+      "sha256": "3b033b1dc54e9d2c3c4e5bf0371d8124e90cc7433d14c064a82d5a428ab28bdd"
+    },
+    {
+      "path": "artifacts/grm_x3/r2/fixtures/x3_r2_13.json",
+      "sha256": "cf5087e7addfbee515e7cc7d033a7e1b36d865ece80aa9e3704d46fdeb8f6fe1"
+    },
+    {
+      "path": "artifacts/grm_x3/r2/fixtures/x3_r2_14.json",
+      "sha256": "4a8b7152f3c789c47b6378846d600c3188f475c6f6ebfdb244862acb820bf6dc"
+    },
+    {
+      "path": "artifacts/grm_x3/r2/fixtures/x3_r2_15.json",
+      "sha256": "03e2ee8e08db19b994beb7f36161c69e7c4e1d95414a93c20b394ba307997b81"
+    },
+    {
+      "path": "artifacts/grm_x3/r2/fixtures/x3_r2_16.json",
+      "sha256": "7c44d2610ac50d3652f4c7dd0aad27f37da0f679da2f4770c82c4abe8f9cc605"
+    },
+    {
+      "path": "artifacts/grm_x3/r2/fixtures/x3_r2_17.json",
+      "sha256": "c1be6cc5e87ea95b947cb66553ec9a63831ff1e070a4b256721c2d0c006fc928"
+    },
+    {
+      "path": "artifacts/grm_x3/r2/fixtures/x3_r2_18.json",
+      "sha256": "ae834ad594c2e08de90d2386de54c464f4b070f18eba6b98e2536e9cf02fe81d"
+    },
+    {
+      "path": "artifacts/grm_x3/r2/fixtures/x3_r2_19.json",
+      "sha256": "6538c5c8e8fb6042410560d4d3d6bb7914459b71fdbbde77aadc63d94ba0d251"
+    }
+  ],
+  "registration": {
+    "path": "artifacts/grm_x3/r2/registration.json",
+    "sha256": "99abd4dfbed92df335135cdb08f5180bba32a6cbfa8ff2e37b8d1190d236af33"
+  },
+  "schema": "grm.x3.fixture_manifest.r2.v1",
+  "source_pins": [
+    {
+      "path": "config/grm_live_registered_baselines.json",
+      "sha256": "48609fa2e179c14401c4cbeb35c03157a8d8b241af90f15ae9568b23826da708"
+    },
+    {
+      "path": "config/grm_demand_registered.json",
+      "sha256": "1408d0b1c2ecd91ce89172add0f7d25248953f55e0dd1594cf8d54eab8a14a98"
+    },
+    {
+      "path": "core/grm_frame.py",
+      "sha256": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2"
+    },
+    {
+      "path": "core/graft_arena.py",
+      "sha256": "e03a44b5e0155fc10a0be5c56e66e117c768a67993fab76df3ecf3aa62cdb20b"
+    },
+    {
+      "path": "core/gpt_oss20b_tc.py",
+      "sha256": "da8ca3bc8c961d731d9e32bf4558702ad1b8b10c8ecc37b18326e7df4ade74a1"
+    },
+    {
+      "path": "scripts/grm_det1_3_snapshot.py",
+      "sha256": "1da5c10d1ff658f3f09f6649ab0dc849f182c171d045bfea149f440ab4f2035b"
+    },
+    {
+      "path": "scripts/grm_det1_3_gpu.py",
+      "sha256": "fef8442aa9cb17e194982b92ae53d8d4f2a7a65fd100ed28bdc8a7da7e29c58f"
+    },
+    {
+      "path": "scripts/grm_det1_common.py",
+      "sha256": "f13f44cfa6f87dc57cec4ae9bf7fe509a6fbd0be983746202ad64da18a4d8343"
+    },
+    {
+      "path": "scripts/grm_e2e_session.py",
+      "sha256": "74434dbb750e8e7635afa2f55709ae0533a3562f5b63aa54fc1f81d664bfd450"
+    }
+  ]
+}
