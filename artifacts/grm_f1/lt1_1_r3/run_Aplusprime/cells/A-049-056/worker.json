@@ -1,0 +1,509 @@
+{
+  "admission_rule": "margin_first",
+  "binding": {
+    "admission_rule": "margin_first",
+    "alias_fold_merge": true,
+    "amendment1_sha256": "0a5754cd3e5bc91c4c5428228ed4164534c5d281d2aa0c7410e8c7f8b145ce0e",
+    "arm": "A",
+    "campaign_arm": "A+",
+    "fixture_sha256": "470da44b3a570684bd24c9f3b96f434468d7914094222ed5867c1382fbc94d26",
+    "label": "A",
+    "rebound_core_shas": {
+      "core/graft_arena.py": "3c97a3ea3afc7c2f6f8dce75bcc43e24e8e03ce535f14eec669fa6277ad02a62",
+      "core/graft_repository.py": "758c62dc49ed89ddec7a0c6b78c1d36c55b9bae38fb7553a806036ddc4c7771c",
+      "core/grm_admission.py": "7912f29108f0aaa9bc8f51d7a613b2866596aa6b93f99f4fa0b5bde69b2c3494",
+      "core/grm_alias_fold.py": "8e3810106d0e93a5da7bcf1c09dc80bcc4c561c5c334b634a96419ce475c97a5",
+      "core/grm_fold_alias_guard.py": "45b5640cb6e2138f3b26b8d45ae2e36cbdbee052ea71437dac6b805ca27962ed",
+      "core/grm_fold_retain.py": "f1d1df10743bf6c15df33d2644a234ba582cf6478211ae482583d4a4be3d6fa7",
+      "core/grm_runtime.py": "973addc491a29eda9bac611a9c3f0cc25cd1033395ecc39b84b19c6f1b8f0646",
+      "core/grm_text_norm.py": "e968d68791950adb3a59bc83f43d75a75e31879a2f77c379b44bf711ccecc30a"
+    },
+    "registration_sha256": "02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8"
+  },
+  "capture": {
+    "rows": [
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 0
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 1
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 2
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 3
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 4
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 5
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 6
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 7
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 8
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 9
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 10
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 11
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 12
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 13
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 14
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 15
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 16
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 17
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 18
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 19
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 20
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 21
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 22
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 23
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 24
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 25
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 26
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 27
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 28
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 29
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 30
+      },
+      {
+        "capture": {
+          "arena_width": 96,
+          "capture_pin": "live",
+          "capture_shift": 115,
+          "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+          "capture_shift_observed": 115,
+          "live_shift": 115,
+          "n_sink": 19
+        },
+        "grade": "FRESH_LIVE_PINNED",
+        "node": 31
+      }
+    ],
+    "valid": true
+  },
+  "cell": {
+    "arm": "A",
+    "cooldown_seconds": 30,
+    "depends": "A-041-048",
+    "estimate_seconds": 227.39427402590363,
+    "id": "A-049-056",
+    "lease_seconds": 285,
+    "outer_seconds": 590,
+    "restart_sentinel_calls": 0,
+    "start": 49,
+    "stop": 56,
+    "worker_seconds": 280
+  },
+  "checkpoint_sha256": "05555f34fa8c1944cea5fd357bc63fba42611ba73a3d5054db77fef1d1ad8b44",
+  "evidence_class": "GPU worker E2E",
+  "execution_amendment_sha256": "cbde1678f65310fec5dbdc0195dd58812b007af3454ab51cc8513013dc839c5d",
+  "metadata_retained": true,
+  "model_info": {
+    "expert_mode": "resident_packed_mxfp4",
+    "framework": "tensor_cuda GptOss20B_TC",
+    "full_attention_layers": [
+      1,
+      3,
+      5,
+      7,
+      9,
+      11,
+      13,
+      15,
+      17,
+      19,
+      21,
+      23
+    ],
+    "head_dim": 64,
+    "hidden_dim": 2880,
+    "layers": 24,
+    "loaded": "GPT-OSS-20B (resident_packed_mxfp4)",
+    "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+    "num_heads": 64,
+    "num_kv_heads": 8,
+    "repository": "openai/gpt-oss-20b",
+    "revision": "6cee5e81ee83917806bbde320786a8fb61efebee",
+    "sliding_attention_layers": [
+      0,
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      16,
+      18,
+      20,
+      22
+    ]
+  },
+  "pid": 3585983,
+  "previous_pid": 3585766,
+  "previous_process_id": "1853837d-be84-4f36-b4b3-4107e0a66a81",
+  "process_id": "bbde423f-b57d-4fea-9732-76c5acee408b",
+  "restart_before": null,
+  "restart_retained_scores": null,
+  "rows": 0
+}
