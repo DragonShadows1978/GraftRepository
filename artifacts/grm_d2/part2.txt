@@ -1,0 +1,373 @@
+........................................................................ [  9%]
+........................................................................ [ 19%]
+........................................................................ [ 29%]
+................FF.s...........sFFFFF......F..FFFFF.............s.ss.... [ 39%]
+............................................s....ssss................... [ 49%]
+sssssssssssssss........s.ss..sssss.....ss.s............................. [ 59%]
+........................................................................ [ 69%]
+.......................................ss.s....ssssssss...ss....sssss.F. [ 79%]
+ssssssssss.ss...........sssss.sss..ssssss..sss..s.......s......sssssssss [ 89%]
+sssss........sss........................................................ [ 99%]
+..                                                                       [100%]
+=================================== FAILURES ===================================
+_____________ test_run_cell_spawns_a_child_that_writes_receipts[A] _____________
+
+arm = 'A'
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x78941805a690>
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_run_cell_spawns_a_child_t0')
+
+    @pytest.mark.parametrize('arm', ['A', 'A+'])
+    def test_run_cell_spawns_a_child_that_writes_receipts(arm, monkeypatch,
+                                                          tmp_path):
+        """Cells 1-2 through the REAL `run_cell`, lease and model stubbed.
+    
+        This is the gate the lead asked for: it exercises the spawn that
+        `--dry-lease` stops before and that `--fake-cell` bypasses.
+        """
+        _stub_lease(monkeypatch, tmp_path)
+        root = tmp_path / ('run_' + arm.replace('+', 'plus'))
+        reg = runner.registration(arm)
+    
+        with runner.lt1_1_seams(arm), runner.pinned_arm(arm):
+            monkeypatch.setattr(worker, 'RUN', root)
+            # The child runs the CPU double; everything else is the real route.
+            monkeypatch.setattr(worker, 'spawn_argv',
+                                _child_argv_using_the_cpu_double)
+            monkeypatch.setattr(worker, 'accounting', lambda *a, **k: 0.0)
+            monkeypatch.setattr(worker.time, 'sleep', lambda *_: None)
+            for cell in reg['cells'][:2]:
+>               assert worker.run_cell(cell, reg) is True, cell['id']
+E               AssertionError: A-001-008
+E               assert False is True
+E                +  where False = <function run_cell at 0x78941bebbd80>({'arm': 'A', 'cooldown_seconds': 30, 'depends': None, 'estimate_seconds': 199.40821250870405, ...}, {'admission_rule': 'margin_first', 'arms': {'A': {'admission_rule': 'margin_first', 'flags': {'adm_decisive': True, 'a...dth': 96, 'capture_pin': 'live', ...}, 'status': 'NON_FIT'}}, 'budget_gpu_hours': 1.7, 'budget_gpu_seconds': 6120, ...})
+E                +    where <function run_cell at 0x78941bebbd80> = worker.run_cell
+
+tests/test_grm_lt1_1_child_spawn.py:243: AssertionError
+____________ test_run_cell_spawns_a_child_that_writes_receipts[A+] _____________
+
+arm = 'A+'
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7894180ffe00>
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_run_cell_spawns_a_child_t1')
+
+    @pytest.mark.parametrize('arm', ['A', 'A+'])
+    def test_run_cell_spawns_a_child_that_writes_receipts(arm, monkeypatch,
+                                                          tmp_path):
+        """Cells 1-2 through the REAL `run_cell`, lease and model stubbed.
+    
+        This is the gate the lead asked for: it exercises the spawn that
+        `--dry-lease` stops before and that `--fake-cell` bypasses.
+        """
+        _stub_lease(monkeypatch, tmp_path)
+        root = tmp_path / ('run_' + arm.replace('+', 'plus'))
+        reg = runner.registration(arm)
+    
+        with runner.lt1_1_seams(arm), runner.pinned_arm(arm):
+            monkeypatch.setattr(worker, 'RUN', root)
+            # The child runs the CPU double; everything else is the real route.
+            monkeypatch.setattr(worker, 'spawn_argv',
+                                _child_argv_using_the_cpu_double)
+            monkeypatch.setattr(worker, 'accounting', lambda *a, **k: 0.0)
+            monkeypatch.setattr(worker.time, 'sleep', lambda *_: None)
+            for cell in reg['cells'][:2]:
+>               assert worker.run_cell(cell, reg) is True, cell['id']
+E               AssertionError: A-001-008
+E               assert False is True
+E                +  where False = <function run_cell at 0x78941bebbd80>({'arm': 'A', 'cooldown_seconds': 30, 'depends': None, 'estimate_seconds': 199.40821250870405, ...}, {'admission_rule': 'margin_first', 'arms': {'A': {'admission_rule': 'margin_first', 'flags': {'adm_decisive': True, 'a...dth': 96, 'capture_pin': 'live', ...}, 'status': 'NON_FIT'}}, 'budget_gpu_hours': 1.7, 'budget_gpu_seconds': 6120, ...})
+E                +    where <function run_cell at 0x78941bebbd80> = worker.run_cell
+
+tests/test_grm_lt1_1_child_spawn.py:243: AssertionError
+______________ test_the_chain_preflight_is_ready_on_this_tree[A] _______________
+
+arm = 'A'
+
+    @pytest.mark.parametrize('arm', ['A', 'A+'])
+    def test_the_chain_preflight_is_ready_on_this_tree(arm):
+        with runner.pinned_arm(arm):
+            gate = runner.lt1_1_preflight(arm)
+>       assert gate['status'] == 'READY', gate['reasons']
+E       AssertionError: ['INPUT_SHA_MISMATCH: core/grm_admission.py', 'INPUT_SHA_MISMATCH: core/grm_alias_fold.py', 'INPUT_SHA_MISMATCH: core/grm_fold_alias_guard.py', 'INPUT_SHA_MISMATCH: core/grm_fold_retain.py', 'RUNNER_SHA_MISMATCH: scripts/grm_lt1_1.py']
+E       assert 'BLOCKED' == 'READY'
+E         
+E         - READY
+E         + BLOCKED
+
+tests/test_grm_lt1_1_preflight.py:137: AssertionError
+______________ test_the_chain_preflight_is_ready_on_this_tree[A+] ______________
+
+arm = 'A+'
+
+    @pytest.mark.parametrize('arm', ['A', 'A+'])
+    def test_the_chain_preflight_is_ready_on_this_tree(arm):
+        with runner.pinned_arm(arm):
+            gate = runner.lt1_1_preflight(arm)
+>       assert gate['status'] == 'READY', gate['reasons']
+E       AssertionError: ['INPUT_SHA_MISMATCH: core/grm_admission.py', 'INPUT_SHA_MISMATCH: core/grm_alias_fold.py', 'INPUT_SHA_MISMATCH: core/grm_fold_alias_guard.py', 'INPUT_SHA_MISMATCH: core/grm_fold_retain.py', 'RUNNER_SHA_MISMATCH: scripts/grm_lt1_1.py']
+E       assert 'BLOCKED' == 'READY'
+E         
+E         - READY
+E         + BLOCKED
+
+tests/test_grm_lt1_1_preflight.py:137: AssertionError
+_____________________ test_no_input_sha_mismatch_anywhere ______________________
+
+pinned = None
+
+    def test_no_input_sha_mismatch_anywhere(pinned):
+        """The blocker the ruling resolves must be gone, by name."""
+        gate = runner.lt1_1_preflight('A')
+>       assert not any('INPUT_SHA_MISMATCH' in r for r in gate['reasons'])
+E       assert not True
+E        +  where True = any(<generator object test_no_input_sha_mismatch_anywhere.<locals>.<genexpr> at 0x78941808a190>)
+
+tests/test_grm_lt1_1_preflight.py:145: AssertionError
+_________________ test_it_checks_the_classes_the_ruling_names __________________
+GRM_ENV_LEAK: this test left the GRM_* environment modified. The variables have been restored so later tests are not mis-ruled, but the leak is attributed here, not hidden:
+  GRM_ALIAS_FOLD_MERGE: unset -> '0' (set and not cleaned up)
+Pin GRM_* with monkeypatch.setenv / a try-finally, never a bare os.environ assignment that an exception can skip.
+__________________ test_the_ruling_is_carried_in_the_receipt ___________________
+GRM_ENV_LEAK: this test left the GRM_* environment modified. The variables have been restored so later tests are not mis-ruled, but the leak is attributed here, not hidden:
+  GRM_ALIAS_FOLD_MERGE: unset -> '0' (set and not cleaned up)
+Pin GRM_* with monkeypatch.setenv / a try-finally, never a bare os.environ assignment that an exception can skip.
+___________________ test_lt1_identity_is_recorded_not_gated ____________________
+
+pinned = None
+
+    def test_lt1_identity_is_recorded_not_gated(pinned):
+        gate = runner.lt1_1_preflight('A')
+        parent = gate['parent']
+        assert parent['lt1_registration_sha256'] == runner.sha(
+            ROOT / 'artifacts/grm_lt1/registration.json')
+        assert parent['lt1_recorded_core_pins'] == 26
+        assert 'not gated' in parent['status']
+        inputs = {row['input'] for row in parent['drift_table']}
+        assert 'core/graft_arena.py' in inputs
+        assert 'core/grm_alias_fold.py' in inputs
+        for row in parent['drift_table']:
+            assert row['attribution']
+            # Our rebound sha is what is actually on the tree ...
+>           assert row['lt1_1_rebound'] == row['on_tree_now']
+E           AssertionError: assert '7912f29108f0...5bde69b2c3494' == 'bc5f79963023...886d6cd98e193'
+E             
+E             - bc5f799630235bf0db6b3412c61051f76f92dcdc56ce9ac4053886d6cd98e193
+E             + 7912f29108f0aaa9bc8f51d7a613b2866596aa6b93f99f4fa0b5bde69b2c3494
+
+tests/test_grm_lt1_1_preflight.py:269: AssertionError
+_________________ test_the_amendment3_host_blocker_is_resolved _________________
+
+    def test_the_amendment3_host_blocker_is_resolved():
+        """Inverts `test_the_host_blocker_claim_is_true_right_now`.
+    
+        Amendment 3 recorded an OPEN blocker: the real `--resume` stopped at
+        `INPUT_SHA_MISMATCH: core/graft_arena.py`. Under the ruling that check is
+        no longer a gate, so the blocker is resolved. Both halves are asserted:
+        the underlying LT1 condition is UNCHANGED (still drifted -- we did not
+        paper over it), and the LT1.1 route is now green anyway.
+        """
+        # 1. The underlying condition is untouched: LT1's own gate still refuses.
+        with pytest.raises(ValueError, match='INPUT_SHA_MISMATCH'):
+            lt.preflight()
+        # 2. And LT1.1's gate, which is the one that governs, is READY.
+        with runner.pinned_arm('A+'):
+            gate = runner.lt1_1_preflight('A+')
+>       assert gate['status'] == 'READY', gate['reasons']
+E       AssertionError: ['INPUT_SHA_MISMATCH: core/grm_admission.py', 'INPUT_SHA_MISMATCH: core/grm_alias_fold.py', 'INPUT_SHA_MISMATCH: core/grm_fold_alias_guard.py', 'INPUT_SHA_MISMATCH: core/grm_fold_retain.py', 'RUNNER_SHA_MISMATCH: scripts/grm_lt1_1.py']
+E       assert 'BLOCKED' == 'READY'
+E         
+E         - READY
+E         + BLOCKED
+
+tests/test_grm_lt1_1_preflight.py:326: AssertionError
+________________ test_dry_lease_passes_with_the_host_gate_on[A] ________________
+
+arm = 'A'
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_dry_lease_passes_with_the0')
+
+    @pytest.mark.parametrize('arm', ['A', 'A+'])
+    def test_dry_lease_passes_with_the_host_gate_on(arm, tmp_path):
+        """The gate the lead asked for: both arms, real route, no escape hatch."""
+>       value = runner.resume(arm, root=tmp_path / arm.replace('+', 'plus'),
+                              dry_lease=True)          # host_gate defaults True
+
+tests/test_grm_lt1_1_preflight.py:340: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'A'
+
+    def resume(arm, *, root=None, dry_lease=False, host_gate=True):
+        """Registered GPU campaign for one arm. Reuses LT1's controller loop.
+    
+        `dry_lease=True` walks THE SAME code path -- amendment loading, `apply4`,
+        binding, preflight, seam redirection, arm pin, campaign-owner file, cell
+        selection via `worker.pending` -- and stops at the lease boundary instead
+        of calling `worker.run_cell`. That is the only substitution: nothing about
+        the route before it is mocked, which is what makes it a gate rather than a
+        rehearsal. It is how `--resume --dry-lease` reproduces on CPU the failure
+        the lead hit on the card.
+    
+        `host_gate=False` skips the chain preflight. Since the lead's ruling that
+        gate is `lt1_1_preflight` -- LT1.1's OWN chain, which passes on this tree
+        -- so the escape hatch is no longer needed to get a green route and is
+        kept only for isolating the route from its documents in tests. The GPU
+        path always runs the gate.
+        """
+        reg = registration(arm)
+        root_override = root
+        root = Path(root) if root else out_dir(arm)
+        # The chain preflight runs OUTSIDE the seams -- `lt1_1_preflight` hashes
+        # documents directly and must not see redirected module state -- but
+        # INSIDE the arm pin, because one of its checks is that the registered
+        # admission rule is actually in force. LT1's `preflight` reads the same
+        # variable for the same reason.
+        with pinned_arm(arm):
+            gate = (lt1_1_preflight(arm) if host_gate
+                    else dict(status='SKIPPED', reasons=['host_gate=False']))
+        if host_gate and gate['status'] != 'READY':
+>           raise ValueError(json.dumps(gate))
+E           ValueError: {"status": "BLOCKED", "reasons": ["INPUT_SHA_MISMATCH: core/grm_admission.py", "INPUT_SHA_MISMATCH: core/grm_alias_fold.py", "INPUT_SHA_MISMATCH: core/grm_fold_alias_guard.py", "INPUT_SHA_MISMATCH: core/grm_fold_retain.py", "RUNNER_SHA_MISMATCH: scripts/grm_lt1_1.py"], "arm": "A", "gpu_executed": false, "document_sha256": {"registration.json": "02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8", "amendment1.json": "0a5754cd3e5bc91c4c5428228ed4164534c5d281d2aa0c7410e8c7f8b145ce0e", "amendment10.json": "d1a24b45db241a8cf837250c7b13f9acd1cb098b8e7cc995fcde1dc7188355fc", "amendment11.json": "7e0562f6d65bf0d3e9bb46d8054d23ef0fe1a663c62dbab463e45f1d31e84302", "amendment12.json": "cee143a51112819eee599d4c63f52f378696140856d6ebac7b163527780ca6e6", "amendment13.json": "438d06acc4f6673b6fc2a1bf66ad46e97c0c9862923b2e139dd5c0032f26d1ed", "amendment2.json": "3bf21605058c86b15d3cb91784ea39409844838f20130b262dbadf1948417380", "amendment3.json": "09680a0567d2d74f0a9a491823cc627c1a8d609451fdf165b36384dc97e89a08", "amendment4.json": "0b5da2387791e871759cf1d11c5ad27c4e4559642d81200a01bb2d9e7c85659d", "amendment5.json": "c823e9e02b326c78434f589e4c996beb797450d65f19c246555cd7e26d0bbd0d", "amendment6.json": "89d26556ade25ea05de2101929c22ac0d7374c8eb59c6f057119b776d393a0ba", "amendment7.json": "46bb7fd83e048999a6316bfcf488740f0e7163eb97480320b183eeca2a130af5", "amendment8.json": "1ea99e96c7fc089d434ed7b0d7aa1371189103c664c6fdf052cbbd3718abe542", "amendment9.json": "b0e0ef432897a0f8203ad3804ab892ecfbac179e7d301ca3242a185bf6b81923"}, "inputs_checked": 9, "fixture_sha256": "470da44b3a570684bd24c9f3b96f434468d7914094222ed5867c1382fbc94d26", "cells": 26, "reservation_seconds": 7410, "budget_gpu_seconds": 7410, "free_bytes": 347517829120, "minimum_free_bytes": 20000000000, "ruling": "LT1's original registration is a frozen receipt of its day; it is NOT re-validated against today's core. LT1.1's host preflight must validate LT1.1's own chain \u2014 registration 02b44d02 + amendments 1\u20133, whose core pins were rebound to this tree with attribution \u2014 using the same verification functions (`grm_lt1.verify`-class checks: sha-bound inputs, fixture sha, cell schedule, budget) but pointed at LT1.1's registration/amendment set. LT1's registration sha and its recorded core pins are carried as `parent` lineage in the LT1.1 receipt (recorded, with the drift table you already attributed), not as a gate.", "parent": {"lt1_registration": "artifacts/grm_lt1/registration.json", "lt1_registration_sha256": "e1913b144087ea79e6eea4a0b8eceae0bedd2a4853cd931db5f24c795488300c", "lt1_core_binding": "artifacts/grm_lt1/amendment3/registration_amendment_r3.json", "lt1_core_binding_sha256": "809f906c5e7d057f8cffcf067d4eee7ec990a996f62a05f789916d2f8d47e193", "lt1_recorded_core_pins": 26, "lt1_amendment4_protocol_binding": {"admission_rule": "margin_first", "amendment_sha256": "809f906c5e7d057f8cffcf067d4eee7ec990a996f62a05f789916d2f8d47e193", "arm": "CPU", "core_shas": {"core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "core/deepseek_v2_lite_tc.py": "96e371754496eb2ca467ad199bebed07c354cf5eae4b0a08daf571c6f04f0d07", "core/gemma4_tc.py": "c9a8cc1d01c30bb2b20e9c2e477d4bedf21072d0b1b6b157f3ba75c78a271d8b", "core/gpt_oss20b_tc.py": "da8ca3bc8c961d731d9e32bf4558702ad1b8b10c8ecc37b18326e7df4ade74a1", "core/graft_arena.py": "83a2d4a2bc0ed2c8e0fc06f937f59d94f48ca5a70a65a96c33b1ba6eaa2e6aed", "core/graft_quant.py": "ebe40790286a719db38de403210aa20e17e7e4d2699f7b7dae452e014f4fa130", "core/graft_repository.py": "fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db", "core/grm_admission.py": "d1afc26a68b4b1c8236fc01c7db62065ab49173a89d7f2853989eedfadb48fe0", "core/grm_cuda_router.py": "8dfd7a6ff5395eb846996c67b1570c9fb0e8b26dd78e84f28059f1b291766ce5", "core/grm_demand.py": "daf787a95abbfd206638f5fbf74de2ee57efaaa54b4eac39509402e1386650e0", "core/grm_frame.py": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2", "core/grm_native.py": "1f5a69716d751c670f37328cf012544b800f86226ad4549a0781bac654aaf3df", "core/grm_runtime.py": "39f823cbdb98e32528fb5240777cb8c0144f3be77fa86466a67f1f636505c13e", "core/grm_supersession.py": "c8e9baf7c69e41ebdcf05fda84a2895ed7d2b6f7ff67903fdb655924510fdd5e", "core/grm_text_norm.py": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8", "core/grm_three_pass.py": "312f4bc0e4922449b9231ea2d9c3e6fff3a116aef6d0a48712f530d9c419742f", "core/kv_graft.py": "d8d44d032c5398c4606b1b6f1b547a94baa2415e36225cb04dd6ef313622ef2d", "core/minicpm3_tc.py": "3d19734f51d28eb48dc20a62658f2bfc250fdac4fce2cb906116d034b1371a69", "core/mistral7b_tc.py": "49430e5920508d740a2f8be7b6ba0caadd0442c7798454cf6fa2a808204bf1c4", "core/paging_telemetry.py": "4eb484b1f6b512962b18d08cb714dd61346980a8af550c1fd814bcbad474097c", "core/qwen35_tc.py": "3f84f8e99f5cf8932440e5d6ff29df41cbf3fdaf13d27f3bbe8fb1dc3a7ec41b", "core/qwen35_translation_poc.py": "5a7f364aa7a4ff24bb9299671fc945626037cff44595f0b80364ebe9d1cfa3d1", "core/qwen38_tc.py": "39875f97f09906ccdfcdf6f510c9ed2f7cad01e85007363a8d7ad00869f9d67e", "core/qwen3_1p7b_tc.py": "1a563f502753a86b57abff8710440ae0e1921ed083481dee8232872704093c0f", "core/qwen3_tc.py": "ba0e2d9ab68716922b9f942bc4bb8cd2c4a791abe2a2fabd42a65799212d95aa", "core/qwen_tc.py": "1353e44f727fc24d1638e4e238d160619fea561602c921259b010af5f63478e3"}, "fixture_sha256": "ad61c9488f722ae7ce248aee34cda688c13a5f0d3ec47b62954da2a3c146855c", "registration_sha256": "e1913b144087ea79e6eea4a0b8eceae0bedd2a4853cd931db5f24c795488300c"}, "drift_table": [{"input": "core/graft_arena.py", "lt1_recorded": "83a2d4a2bc0ed2c8e0fc06f937f59d94f48ca5a70a65a96c33b1ba6eaa2e6aed", "lt1_1_rebound": "3c97a3ea3afc7c2f6f8dce75bcc43e24e8e03ce535f14eec669fa6277ad02a62", "on_tree_now": "3c97a3ea3afc7c2f6f8dce75bcc43e24e8e03ce535f14eec669fa6277ad02a62", "attribution": "GRM-F1 + GRM-F2. F1: `_deposit_consolidation(..., retain=)` and the once-resolved `fold_retain_sources`. F2: the `fold_attribution_guard` hook and `_fold_attribution_ok`, which rejects on BOTH fold paths before `_deposit_consolidation` is reached. Verified at the code site by this seat: the attribution check returns (None, None) ahead of every deposit, so an F2 rejection can never leave F1 lineage behind.", "rebound_by_amendment": 13}, {"input": "core/graft_repository.py", "lt1_recorded": "fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db", "lt1_1_rebound": "758c62dc49ed89ddec7a0c6b78c1d36c55b9bae38fb7553a806036ddc4c7771c", "on_tree_now": "758c62dc49ed89ddec7a0c6b78c1d36c55b9bae38fb7553a806036ddc4c7771c", "attribution": "GRM-F1 + GRM-F2, merge resolved by this seat. F1: `_fold_once` retain lifecycle + fold-event lineage; `_alias_consolidate` pins retain=False so A1 keeps retiring its alias edge. F2: `_guard_fold_windows` on BOTH `_librarian_jobs` return paths, the attribution hook install, and `fold_guard_history`. Composition: F2 excludes from the window BEFORE job selection; F1 applies its lifecycle to whatever the guarded window folded; the shared abort branch absorbs an attribution rejection before any F1 lineage is written.", "rebound_by_amendment": 13}, {"input": "core/grm_admission.py", "lt1_recorded": "d1afc26a68b4b1c8236fc01c7db62065ab49173a89d7f2853989eedfadb48fe0", "lt1_1_rebound": "7912f29108f0aaa9bc8f51d7a613b2866596aa6b93f99f4fa0b5bde69b2c3494", "on_tree_now": "bc5f799630235bf0db6b3412c61051f76f92dcdc56ce9ac4053886d6cd98e193", "attribution": "GRM-F5. `GRM_ROUTE_SOLE_BINDER_INSURANCE` inserts the sole binder into the k=3 rank plan. Not modified by this seat; pinned here because r3 must run on the merged tree and an unpinned input is an unnoticed input.", "rebound_by_amendment": 13}, {"input": "core/grm_runtime.py", "lt1_recorded": "39f823cbdb98e32528fb5240777cb8c0144f3be77fa86466a67f1f636505c13e", "lt1_1_rebound": "973addc491a29eda9bac611a9c3f0cc25cd1033395ecc39b84b19c6f1b8f0646", "on_tree_now": "973addc491a29eda9bac611a9c3f0cc25cd1033395ecc39b84b19c6f1b8f0646", "attribution": "A1 (alias fold-merge hooks)", "rebound_by_amendment": 13}, {"input": "core/grm_text_norm.py", "lt1_recorded": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8", "lt1_1_rebound": "e968d68791950adb3a59bc83f43d75a75e31879a2f77c379b44bf711ccecc30a", "on_tree_now": "e968d68791950adb3a59bc83f43d75a75e31879a2f77c379b44bf711ccecc30a", "attribution": "pre-A1 drift on grm-merge, not attributable to A1", "rebound_by_amendment": 13}, {"input": "core/grm_alias_fold.py", "lt1_recorded": null, "lt1_1_rebound": "8e3810106d0e93a5da7bcf1c09dc80bcc4c561c5c334b634a96419ce475c97a5", "on_tree_now": "ec65530fde46b55718d881659d50951960af2ccc8bde97079158def7639a0eb8", "attribution": "A1 (new module; did not exist at the LT1 run)", "rebound_by_amendment": 13}], "status": "RECORDED as parent lineage, not gated (see RULING)"}}
+
+scripts/grm_lt1_1.py:1336: ValueError
+_______________ test_dry_lease_passes_with_the_host_gate_on[A+] ________________
+
+arm = 'A+'
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_dry_lease_passes_with_the1')
+
+    @pytest.mark.parametrize('arm', ['A', 'A+'])
+    def test_dry_lease_passes_with_the_host_gate_on(arm, tmp_path):
+        """The gate the lead asked for: both arms, real route, no escape hatch."""
+>       value = runner.resume(arm, root=tmp_path / arm.replace('+', 'plus'),
+                              dry_lease=True)          # host_gate defaults True
+
+tests/test_grm_lt1_1_preflight.py:340: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'A+'
+
+    def resume(arm, *, root=None, dry_lease=False, host_gate=True):
+        """Registered GPU campaign for one arm. Reuses LT1's controller loop.
+    
+        `dry_lease=True` walks THE SAME code path -- amendment loading, `apply4`,
+        binding, preflight, seam redirection, arm pin, campaign-owner file, cell
+        selection via `worker.pending` -- and stops at the lease boundary instead
+        of calling `worker.run_cell`. That is the only substitution: nothing about
+        the route before it is mocked, which is what makes it a gate rather than a
+        rehearsal. It is how `--resume --dry-lease` reproduces on CPU the failure
+        the lead hit on the card.
+    
+        `host_gate=False` skips the chain preflight. Since the lead's ruling that
+        gate is `lt1_1_preflight` -- LT1.1's OWN chain, which passes on this tree
+        -- so the escape hatch is no longer needed to get a green route and is
+        kept only for isolating the route from its documents in tests. The GPU
+        path always runs the gate.
+        """
+        reg = registration(arm)
+        root_override = root
+        root = Path(root) if root else out_dir(arm)
+        # The chain preflight runs OUTSIDE the seams -- `lt1_1_preflight` hashes
+        # documents directly and must not see redirected module state -- but
+        # INSIDE the arm pin, because one of its checks is that the registered
+        # admission rule is actually in force. LT1's `preflight` reads the same
+        # variable for the same reason.
+        with pinned_arm(arm):
+            gate = (lt1_1_preflight(arm) if host_gate
+                    else dict(status='SKIPPED', reasons=['host_gate=False']))
+        if host_gate and gate['status'] != 'READY':
+>           raise ValueError(json.dumps(gate))
+E           ValueError: {"status": "BLOCKED", "reasons": ["INPUT_SHA_MISMATCH: core/grm_admission.py", "INPUT_SHA_MISMATCH: core/grm_alias_fold.py", "INPUT_SHA_MISMATCH: core/grm_fold_alias_guard.py", "INPUT_SHA_MISMATCH: core/grm_fold_retain.py", "RUNNER_SHA_MISMATCH: scripts/grm_lt1_1.py"], "arm": "A+", "gpu_executed": false, "document_sha256": {"registration.json": "02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8", "amendment1.json": "0a5754cd3e5bc91c4c5428228ed4164534c5d281d2aa0c7410e8c7f8b145ce0e", "amendment10.json": "d1a24b45db241a8cf837250c7b13f9acd1cb098b8e7cc995fcde1dc7188355fc", "amendment11.json": "7e0562f6d65bf0d3e9bb46d8054d23ef0fe1a663c62dbab463e45f1d31e84302", "amendment12.json": "cee143a51112819eee599d4c63f52f378696140856d6ebac7b163527780ca6e6", "amendment13.json": "438d06acc4f6673b6fc2a1bf66ad46e97c0c9862923b2e139dd5c0032f26d1ed", "amendment2.json": "3bf21605058c86b15d3cb91784ea39409844838f20130b262dbadf1948417380", "amendment3.json": "09680a0567d2d74f0a9a491823cc627c1a8d609451fdf165b36384dc97e89a08", "amendment4.json": "0b5da2387791e871759cf1d11c5ad27c4e4559642d81200a01bb2d9e7c85659d", "amendment5.json": "c823e9e02b326c78434f589e4c996beb797450d65f19c246555cd7e26d0bbd0d", "amendment6.json": "89d26556ade25ea05de2101929c22ac0d7374c8eb59c6f057119b776d393a0ba", "amendment7.json": "46bb7fd83e048999a6316bfcf488740f0e7163eb97480320b183eeca2a130af5", "amendment8.json": "1ea99e96c7fc089d434ed7b0d7aa1371189103c664c6fdf052cbbd3718abe542", "amendment9.json": "b0e0ef432897a0f8203ad3804ab892ecfbac179e7d301ca3242a185bf6b81923"}, "inputs_checked": 9, "fixture_sha256": "470da44b3a570684bd24c9f3b96f434468d7914094222ed5867c1382fbc94d26", "cells": 26, "reservation_seconds": 7410, "budget_gpu_seconds": 7410, "free_bytes": 347517825024, "minimum_free_bytes": 20000000000, "ruling": "LT1's original registration is a frozen receipt of its day; it is NOT re-validated against today's core. LT1.1's host preflight must validate LT1.1's own chain \u2014 registration 02b44d02 + amendments 1\u20133, whose core pins were rebound to this tree with attribution \u2014 using the same verification functions (`grm_lt1.verify`-class checks: sha-bound inputs, fixture sha, cell schedule, budget) but pointed at LT1.1's registration/amendment set. LT1's registration sha and its recorded core pins are carried as `parent` lineage in the LT1.1 receipt (recorded, with the drift table you already attributed), not as a gate.", "parent": {"lt1_registration": "artifacts/grm_lt1/registration.json", "lt1_registration_sha256": "e1913b144087ea79e6eea4a0b8eceae0bedd2a4853cd931db5f24c795488300c", "lt1_core_binding": "artifacts/grm_lt1/amendment3/registration_amendment_r3.json", "lt1_core_binding_sha256": "809f906c5e7d057f8cffcf067d4eee7ec990a996f62a05f789916d2f8d47e193", "lt1_recorded_core_pins": 26, "lt1_amendment4_protocol_binding": {"admission_rule": "margin_first", "amendment_sha256": "809f906c5e7d057f8cffcf067d4eee7ec990a996f62a05f789916d2f8d47e193", "arm": "CPU", "core_shas": {"core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "core/deepseek_v2_lite_tc.py": "96e371754496eb2ca467ad199bebed07c354cf5eae4b0a08daf571c6f04f0d07", "core/gemma4_tc.py": "c9a8cc1d01c30bb2b20e9c2e477d4bedf21072d0b1b6b157f3ba75c78a271d8b", "core/gpt_oss20b_tc.py": "da8ca3bc8c961d731d9e32bf4558702ad1b8b10c8ecc37b18326e7df4ade74a1", "core/graft_arena.py": "83a2d4a2bc0ed2c8e0fc06f937f59d94f48ca5a70a65a96c33b1ba6eaa2e6aed", "core/graft_quant.py": "ebe40790286a719db38de403210aa20e17e7e4d2699f7b7dae452e014f4fa130", "core/graft_repository.py": "fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db", "core/grm_admission.py": "d1afc26a68b4b1c8236fc01c7db62065ab49173a89d7f2853989eedfadb48fe0", "core/grm_cuda_router.py": "8dfd7a6ff5395eb846996c67b1570c9fb0e8b26dd78e84f28059f1b291766ce5", "core/grm_demand.py": "daf787a95abbfd206638f5fbf74de2ee57efaaa54b4eac39509402e1386650e0", "core/grm_frame.py": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2", "core/grm_native.py": "1f5a69716d751c670f37328cf012544b800f86226ad4549a0781bac654aaf3df", "core/grm_runtime.py": "39f823cbdb98e32528fb5240777cb8c0144f3be77fa86466a67f1f636505c13e", "core/grm_supersession.py": "c8e9baf7c69e41ebdcf05fda84a2895ed7d2b6f7ff67903fdb655924510fdd5e", "core/grm_text_norm.py": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8", "core/grm_three_pass.py": "312f4bc0e4922449b9231ea2d9c3e6fff3a116aef6d0a48712f530d9c419742f", "core/kv_graft.py": "d8d44d032c5398c4606b1b6f1b547a94baa2415e36225cb04dd6ef313622ef2d", "core/minicpm3_tc.py": "3d19734f51d28eb48dc20a62658f2bfc250fdac4fce2cb906116d034b1371a69", "core/mistral7b_tc.py": "49430e5920508d740a2f8be7b6ba0caadd0442c7798454cf6fa2a808204bf1c4", "core/paging_telemetry.py": "4eb484b1f6b512962b18d08cb714dd61346980a8af550c1fd814bcbad474097c", "core/qwen35_tc.py": "3f84f8e99f5cf8932440e5d6ff29df41cbf3fdaf13d27f3bbe8fb1dc3a7ec41b", "core/qwen35_translation_poc.py": "5a7f364aa7a4ff24bb9299671fc945626037cff44595f0b80364ebe9d1cfa3d1", "core/qwen38_tc.py": "39875f97f09906ccdfcdf6f510c9ed2f7cad01e85007363a8d7ad00869f9d67e", "core/qwen3_1p7b_tc.py": "1a563f502753a86b57abff8710440ae0e1921ed083481dee8232872704093c0f", "core/qwen3_tc.py": "ba0e2d9ab68716922b9f942bc4bb8cd2c4a791abe2a2fabd42a65799212d95aa", "core/qwen_tc.py": "1353e44f727fc24d1638e4e238d160619fea561602c921259b010af5f63478e3"}, "fixture_sha256": "ad61c9488f722ae7ce248aee34cda688c13a5f0d3ec47b62954da2a3c146855c", "registration_sha256": "e1913b144087ea79e6eea4a0b8eceae0bedd2a4853cd931db5f24c795488300c"}, "drift_table": [{"input": "core/graft_arena.py", "lt1_recorded": "83a2d4a2bc0ed2c8e0fc06f937f59d94f48ca5a70a65a96c33b1ba6eaa2e6aed", "lt1_1_rebound": "3c97a3ea3afc7c2f6f8dce75bcc43e24e8e03ce535f14eec669fa6277ad02a62", "on_tree_now": "3c97a3ea3afc7c2f6f8dce75bcc43e24e8e03ce535f14eec669fa6277ad02a62", "attribution": "GRM-F1 + GRM-F2. F1: `_deposit_consolidation(..., retain=)` and the once-resolved `fold_retain_sources`. F2: the `fold_attribution_guard` hook and `_fold_attribution_ok`, which rejects on BOTH fold paths before `_deposit_consolidation` is reached. Verified at the code site by this seat: the attribution check returns (None, None) ahead of every deposit, so an F2 rejection can never leave F1 lineage behind.", "rebound_by_amendment": 13}, {"input": "core/graft_repository.py", "lt1_recorded": "fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db", "lt1_1_rebound": "758c62dc49ed89ddec7a0c6b78c1d36c55b9bae38fb7553a806036ddc4c7771c", "on_tree_now": "758c62dc49ed89ddec7a0c6b78c1d36c55b9bae38fb7553a806036ddc4c7771c", "attribution": "GRM-F1 + GRM-F2, merge resolved by this seat. F1: `_fold_once` retain lifecycle + fold-event lineage; `_alias_consolidate` pins retain=False so A1 keeps retiring its alias edge. F2: `_guard_fold_windows` on BOTH `_librarian_jobs` return paths, the attribution hook install, and `fold_guard_history`. Composition: F2 excludes from the window BEFORE job selection; F1 applies its lifecycle to whatever the guarded window folded; the shared abort branch absorbs an attribution rejection before any F1 lineage is written.", "rebound_by_amendment": 13}, {"input": "core/grm_admission.py", "lt1_recorded": "d1afc26a68b4b1c8236fc01c7db62065ab49173a89d7f2853989eedfadb48fe0", "lt1_1_rebound": "7912f29108f0aaa9bc8f51d7a613b2866596aa6b93f99f4fa0b5bde69b2c3494", "on_tree_now": "bc5f799630235bf0db6b3412c61051f76f92dcdc56ce9ac4053886d6cd98e193", "attribution": "GRM-F5. `GRM_ROUTE_SOLE_BINDER_INSURANCE` inserts the sole binder into the k=3 rank plan. Not modified by this seat; pinned here because r3 must run on the merged tree and an unpinned input is an unnoticed input.", "rebound_by_amendment": 13}, {"input": "core/grm_runtime.py", "lt1_recorded": "39f823cbdb98e32528fb5240777cb8c0144f3be77fa86466a67f1f636505c13e", "lt1_1_rebound": "973addc491a29eda9bac611a9c3f0cc25cd1033395ecc39b84b19c6f1b8f0646", "on_tree_now": "973addc491a29eda9bac611a9c3f0cc25cd1033395ecc39b84b19c6f1b8f0646", "attribution": "A1 (alias fold-merge hooks)", "rebound_by_amendment": 13}, {"input": "core/grm_text_norm.py", "lt1_recorded": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8", "lt1_1_rebound": "e968d68791950adb3a59bc83f43d75a75e31879a2f77c379b44bf711ccecc30a", "on_tree_now": "e968d68791950adb3a59bc83f43d75a75e31879a2f77c379b44bf711ccecc30a", "attribution": "pre-A1 drift on grm-merge, not attributable to A1", "rebound_by_amendment": 13}, {"input": "core/grm_alias_fold.py", "lt1_recorded": null, "lt1_1_rebound": "8e3810106d0e93a5da7bcf1c09dc80bcc4c561c5c334b634a96419ce475c97a5", "on_tree_now": "ec65530fde46b55718d881659d50951960af2ccc8bde97079158def7639a0eb8", "attribution": "A1 (new module; did not exist at the LT1 run)", "rebound_by_amendment": 13}], "status": "RECORDED as parent lineage, not gated (see RULING)"}}
+
+scripts/grm_lt1_1.py:1336: ValueError
+__________ test_dry_lease_passes_from_the_cli_without_no_host_gate[A] __________
+
+arm = 'A'
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_dry_lease_passes_from_the0')
+
+    @pytest.mark.parametrize('arm', ['A', 'A+'])
+    def test_dry_lease_passes_from_the_cli_without_no_host_gate(arm, tmp_path):
+        result = subprocess.run(
+            [sys.executable, 'scripts/grm_lt1_1.py', '--arm', arm, '--resume',
+             '--dry-lease', '--out', str(tmp_path / arm.replace('+', 'plus'))],
+            cwd=ROOT, capture_output=True, text=True, timeout=300)
+>       assert result.returncode == 0, result.stdout + result.stderr
+E       AssertionError: Traceback (most recent call last):
+E           File "/mnt/ForgeRealm/wt/grm-d2/scripts/grm_lt1_1.py", line 1560, in <module>
+E             raise SystemExit(main())
+E                              ^^^^^^
+E           File "/mnt/ForgeRealm/wt/grm-d2/scripts/grm_lt1_1.py", line 1542, in main
+E             print(json.dumps(resume(args.arm, root=args.out, dry_lease=True,
+E                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           File "/mnt/ForgeRealm/wt/grm-d2/scripts/grm_lt1_1.py", line 1336, in resume
+E             raise ValueError(json.dumps(gate))
+E         ValueError: {"status": "BLOCKED", "reasons": ["INPUT_SHA_MISMATCH: core/grm_admission.py", "INPUT_SHA_MISMATCH: core/grm_alias_fold.py", "INPUT_SHA_MISMATCH: core/grm_fold_alias_guard.py", "INPUT_SHA_MISMATCH: core/grm_fold_retain.py", "RUNNER_SHA_MISMATCH: scripts/grm_lt1_1.py"], "arm": "A", "gpu_executed": false, "document_sha256": {"registration.json": "02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8", "amendment1.json": "0a5754cd3e5bc91c4c5428228ed4164534c5d281d2aa0c7410e8c7f8b145ce0e", "amendment10.json": "d1a24b45db241a8cf837250c7b13f9acd1cb098b8e7cc995fcde1dc7188355fc", "amendment11.json": "7e0562f6d65bf0d3e9bb46d8054d23ef0fe1a663c62dbab463e45f1d31e84302", "amendment12.json": "cee143a51112819eee599d4c63f52f378696140856d6ebac7b163527780ca6e6", "amendment13.json": "438d06acc4f6673b6fc2a1bf66ad46e97c0c9862923b2e139dd5c0032f26d1ed", "amendment2.json": "3bf21605058c86b15d3cb91784ea39409844838f20130b262dbadf1948417380", "amendment3.json": "09680a0567d2d74f0a9a491823cc627c1a8d609451fdf165b36384dc97e89a08", "amendment4.json": "0b5da2387791e871759cf1d11c5ad27c4e4559642d81200a01bb2d9e7c85659d", "amendment5.json": "c823e9e02b326c78434f589e4c996beb797450d65f19c246555cd7e26d0bbd0d", "amendment6.json": "89d26556ade25ea05de2101929c22ac0d7374c8eb59c6f057119b776d393a0ba", "amendment7.json": "46bb7fd83e048999a6316bfcf488740f0e7163eb97480320b183eeca2a130af5", "amendment8.json": "1ea99e96c7fc089d434ed7b0d7aa1371189103c664c6fdf052cbbd3718abe542", "amendment9.json": "b0e0ef432897a0f8203ad3804ab892ecfbac179e7d301ca3242a185bf6b81923"}, "inputs_checked": 9, "fixture_sha256": "470da44b3a570684bd24c9f3b96f434468d7914094222ed5867c1382fbc94d26", "cells": 26, "reservation_seconds": 7410, "budget_gpu_seconds": 7410, "free_bytes": 347517816832, "minimum_free_bytes": 20000000000, "ruling": "LT1's original registration is a frozen receipt of its day; it is NOT re-validated against today's core. LT1.1's host preflight must validate LT1.1's own chain \u2014 registration 02b44d02 + amendments 1\u20133, whose core pins were rebound to this tree with attribution \u2014 using the same verification functions (`grm_lt1.verify`-class checks: sha-bound inputs, fixture sha, cell schedule, budget) but pointed at LT1.1's registration/amendment set. LT1's registration sha and its recorded core pins are carried as `parent` lineage in the LT1.1 receipt (recorded, with the drift table you already attributed), not as a gate.", "parent": {"lt1_registration": "artifacts/grm_lt1/registration.json", "lt1_registration_sha256": "e1913b144087ea79e6eea4a0b8eceae0bedd2a4853cd931db5f24c795488300c", "lt1_core_binding": "artifacts/grm_lt1/amendment3/registration_amendment_r3.json", "lt1_core_binding_sha256": "809f906c5e7d057f8cffcf067d4eee7ec990a996f62a05f789916d2f8d47e193", "lt1_recorded_core_pins": 26, "lt1_amendment4_protocol_binding": {"admission_rule": "margin_first", "amendment_sha256": "809f906c5e7d057f8cffcf067d4eee7ec990a996f62a05f789916d2f8d47e193", "arm": "CPU", "core_shas": {"core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "core/deepseek_v2_lite_tc.py": "96e371754496eb2ca467ad199bebed07c354cf5eae4b0a08daf571c6f04f0d07", "core/gemma4_tc.py": "c9a8cc1d01c30bb2b20e9c2e477d4bedf21072d0b1b6b157f3ba75c78a271d8b", "core/gpt_oss20b_tc.py": "da8ca3bc8c961d731d9e32bf4558702ad1b8b10c8ecc37b18326e7df4ade74a1", "core/graft_arena.py": "83a2d4a2bc0ed2c8e0fc06f937f59d94f48ca5a70a65a96c33b1ba6eaa2e6aed", "core/graft_quant.py": "ebe40790286a719db38de403210aa20e17e7e4d2699f7b7dae452e014f4fa130", "core/graft_repository.py": "fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db", "core/grm_admission.py": "d1afc26a68b4b1c8236fc01c7db62065ab49173a89d7f2853989eedfadb48fe0", "core/grm_cuda_router.py": "8dfd7a6ff5395eb846996c67b1570c9fb0e8b26dd78e84f28059f1b291766ce5", "core/grm_demand.py": "daf787a95abbfd206638f5fbf74de2ee57efaaa54b4eac39509402e1386650e0", "core/grm_frame.py": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2", "core/grm_native.py": "1f5a69716d751c670f37328cf012544b800f86226ad4549a0781bac654aaf3df", "core/grm_runtime.py": "39f823cbdb98e32528fb5240777cb8c0144f3be77fa86466a67f1f636505c13e", "core/grm_supersession.py": "c8e9baf7c69e41ebdcf05fda84a2895ed7d2b6f7ff67903fdb655924510fdd5e", "core/grm_text_norm.py": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8", "core/grm_three_pass.py": "312f4bc0e4922449b9231ea2d9c3e6fff3a116aef6d0a48712f530d9c419742f", "core/kv_graft.py": "d8d44d032c5398c4606b1b6f1b547a94baa2415e36225cb04dd6ef313622ef2d", "core/minicpm3_tc.py": "3d19734f51d28eb48dc20a62658f2bfc250fdac4fce2cb906116d034b1371a69", "core/mistral7b_tc.py": "49430e5920508d740a2f8be7b6ba0caadd0442c7798454cf6fa2a808204bf1c4", "core/paging_telemetry.py": "4eb484b1f6b512962b18d08cb714dd61346980a8af550c1fd814bcbad474097c", "core/qwen35_tc.py": "3f84f8e99f5cf8932440e5d6ff29df41cbf3fdaf13d27f3bbe8fb1dc3a7ec41b", "core/qwen35_translation_poc.py": "5a7f364aa7a4ff24bb9299671fc945626037cff44595f0b80364ebe9d1cfa3d1", "core/qwen38_tc.py": "39875f97f09906ccdfcdf6f510c9ed2f7cad01e85007363a8d7ad00869f9d67e", "core/qwen3_1p7b_tc.py": "1a563f502753a86b57abff8710440ae0e1921ed083481dee8232872704093c0f", "core/qwen3_tc.py": "ba0e2d9ab68716922b9f942bc4bb8cd2c4a791abe2a2fabd42a65799212d95aa", "core/qwen_tc.py": "1353e44f727fc24d1638e4e238d160619fea561602c921259b010af5f63478e3"}, "fixture_sha256": "ad61c9488f722ae7ce248aee34cda688c13a5f0d3ec47b62954da2a3c146855c", "registration_sha256": "e1913b144087ea79e6eea4a0b8eceae0bedd2a4853cd931db5f24c795488300c"}, "drift_table": [{"input": "core/graft_arena.py", "lt1_recorded": "83a2d4a2bc0ed2c8e0fc06f937f59d94f48ca5a70a65a96c33b1ba6eaa2e6aed", "lt1_1_rebound": "3c97a3ea3afc7c2f6f8dce75bcc43e24e8e03ce535f14eec669fa6277ad02a62", "on_tree_now": "3c97a3ea3afc7c2f6f8dce75bcc43e24e8e03ce535f14eec669fa6277ad02a62", "attribution": "GRM-F1 + GRM-F2. F1: `_deposit_consolidation(..., retain=)` and the once-resolved `fold_retain_sources`. F2: the `fold_attribution_guard` hook and `_fold_attribution_ok`, which rejects on BOTH fold paths before `_deposit_consolidation` is reached. Verified at the code site by this seat: the attribution check returns (None, None) ahead of every deposit, so an F2 rejection can never leave F1 lineage behind.", "rebound_by_amendment": 13}, {"input": "core/graft_repository.py", "lt1_recorded": "fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db", "lt1_1_rebound": "758c62dc49ed89ddec7a0c6b78c1d36c55b9bae38fb7553a806036ddc4c7771c", "on_tree_now": "758c62dc49ed89ddec7a0c6b78c1d36c55b9bae38fb7553a806036ddc4c7771c", "attribution": "GRM-F1 + GRM-F2, merge resolved by this seat. F1: `_fold_once` retain lifecycle + fold-event lineage; `_alias_consolidate` pins retain=False so A1 keeps retiring its alias edge. F2: `_guard_fold_windows` on BOTH `_librarian_jobs` return paths, the attribution hook install, and `fold_guard_history`. Composition: F2 excludes from the window BEFORE job selection; F1 applies its lifecycle to whatever the guarded window folded; the shared abort branch absorbs an attribution rejection before any F1 lineage is written.", "rebound_by_amendment": 13}, {"input": "core/grm_admission.py", "lt1_recorded": "d1afc26a68b4b1c8236fc01c7db62065ab49173a89d7f2853989eedfadb48fe0", "lt1_1_rebound": "7912f29108f0aaa9bc8f51d7a613b2866596aa6b93f99f4fa0b5bde69b2c3494", "on_tree_now": "bc5f799630235bf0db6b3412c61051f76f92dcdc56ce9ac4053886d6cd98e193", "attribution": "GRM-F5. `GRM_ROUTE_SOLE_BINDER_INSURANCE` inserts the sole binder into the k=3 rank plan. Not modified by this seat; pinned here because r3 must run on the merged tree and an unpinned input is an unnoticed input.", "rebound_by_amendment": 13}, {"input": "core/grm_runtime.py", "lt1_recorded": "39f823cbdb98e32528fb5240777cb8c0144f3be77fa86466a67f1f636505c13e", "lt1_1_rebound": "973addc491a29eda9bac611a9c3f0cc25cd1033395ecc39b84b19c6f1b8f0646", "on_tree_now": "973addc491a29eda9bac611a9c3f0cc25cd1033395ecc39b84b19c6f1b8f0646", "attribution": "A1 (alias fold-merge hooks)", "rebound_by_amendment": 13}, {"input": "core/grm_text_norm.py", "lt1_recorded": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8", "lt1_1_rebound": "e968d68791950adb3a59bc83f43d75a75e31879a2f77c379b44bf711ccecc30a", "on_tree_now": "e968d68791950adb3a59bc83f43d75a75e31879a2f77c379b44bf711ccecc30a", "attribution": "pre-A1 drift on grm-merge, not attributable to A1", "rebound_by_amendment": 13}, {"input": "core/grm_alias_fold.py", "lt1_recorded": null, "lt1_1_rebound": "8e3810106d0e93a5da7bcf1c09dc80bcc4c561c5c334b634a96419ce475c97a5", "on_tree_now": "ec65530fde46b55718d881659d50951960af2ccc8bde97079158def7639a0eb8", "attribution": "A1 (new module; did not exist at the LT1 run)", "rebound_by_amendment": 13}], "status": "RECORDED as parent lineage, not gated (see RULING)"}}
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/usr/bin/python3', 'scripts/grm_lt1_1.py', '--arm', 'A', '--resume', '--dry-lease', '--out', '...st at the LT1 run)", "rebound_by_amendment": 13}], "status": "RECORDED as parent lineage, not gated (see RULING)"}}\n').returncode
+
+tests/test_grm_lt1_1_preflight.py:356: AssertionError
+_________ test_dry_lease_passes_from_the_cli_without_no_host_gate[A+] __________
+
+arm = 'A+'
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_dry_lease_passes_from_the1')
+
+    @pytest.mark.parametrize('arm', ['A', 'A+'])
+    def test_dry_lease_passes_from_the_cli_without_no_host_gate(arm, tmp_path):
+        result = subprocess.run(
+            [sys.executable, 'scripts/grm_lt1_1.py', '--arm', arm, '--resume',
+             '--dry-lease', '--out', str(tmp_path / arm.replace('+', 'plus'))],
+            cwd=ROOT, capture_output=True, text=True, timeout=300)
+>       assert result.returncode == 0, result.stdout + result.stderr
+E       AssertionError: Traceback (most recent call last):
+E           File "/mnt/ForgeRealm/wt/grm-d2/scripts/grm_lt1_1.py", line 1560, in <module>
+E             raise SystemExit(main())
+E                              ^^^^^^
+E           File "/mnt/ForgeRealm/wt/grm-d2/scripts/grm_lt1_1.py", line 1542, in main
+E             print(json.dumps(resume(args.arm, root=args.out, dry_lease=True,
+E                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           File "/mnt/ForgeRealm/wt/grm-d2/scripts/grm_lt1_1.py", line 1336, in resume
+E             raise ValueError(json.dumps(gate))
+E         ValueError: {"status": "BLOCKED", "reasons": ["INPUT_SHA_MISMATCH: core/grm_admission.py", "INPUT_SHA_MISMATCH: core/grm_alias_fold.py", "INPUT_SHA_MISMATCH: core/grm_fold_alias_guard.py", "INPUT_SHA_MISMATCH: core/grm_fold_retain.py", "RUNNER_SHA_MISMATCH: scripts/grm_lt1_1.py"], "arm": "A+", "gpu_executed": false, "document_sha256": {"registration.json": "02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e81f3f760d80e8", "amendment1.json": "0a5754cd3e5bc91c4c5428228ed4164534c5d281d2aa0c7410e8c7f8b145ce0e", "amendment10.json": "d1a24b45db241a8cf837250c7b13f9acd1cb098b8e7cc995fcde1dc7188355fc", "amendment11.json": "7e0562f6d65bf0d3e9bb46d8054d23ef0fe1a663c62dbab463e45f1d31e84302", "amendment12.json": "cee143a51112819eee599d4c63f52f378696140856d6ebac7b163527780ca6e6", "amendment13.json": "438d06acc4f6673b6fc2a1bf66ad46e97c0c9862923b2e139dd5c0032f26d1ed", "amendment2.json": "3bf21605058c86b15d3cb91784ea39409844838f20130b262dbadf1948417380", "amendment3.json": "09680a0567d2d74f0a9a491823cc627c1a8d609451fdf165b36384dc97e89a08", "amendment4.json": "0b5da2387791e871759cf1d11c5ad27c4e4559642d81200a01bb2d9e7c85659d", "amendment5.json": "c823e9e02b326c78434f589e4c996beb797450d65f19c246555cd7e26d0bbd0d", "amendment6.json": "89d26556ade25ea05de2101929c22ac0d7374c8eb59c6f057119b776d393a0ba", "amendment7.json": "46bb7fd83e048999a6316bfcf488740f0e7163eb97480320b183eeca2a130af5", "amendment8.json": "1ea99e96c7fc089d434ed7b0d7aa1371189103c664c6fdf052cbbd3718abe542", "amendment9.json": "b0e0ef432897a0f8203ad3804ab892ecfbac179e7d301ca3242a185bf6b81923"}, "inputs_checked": 9, "fixture_sha256": "470da44b3a570684bd24c9f3b96f434468d7914094222ed5867c1382fbc94d26", "cells": 26, "reservation_seconds": 7410, "budget_gpu_seconds": 7410, "free_bytes": 347517812736, "minimum_free_bytes": 20000000000, "ruling": "LT1's original registration is a frozen receipt of its day; it is NOT re-validated against today's core. LT1.1's host preflight must validate LT1.1's own chain \u2014 registration 02b44d02 + amendments 1\u20133, whose core pins were rebound to this tree with attribution \u2014 using the same verification functions (`grm_lt1.verify`-class checks: sha-bound inputs, fixture sha, cell schedule, budget) but pointed at LT1.1's registration/amendment set. LT1's registration sha and its recorded core pins are carried as `parent` lineage in the LT1.1 receipt (recorded, with the drift table you already attributed), not as a gate.", "parent": {"lt1_registration": "artifacts/grm_lt1/registration.json", "lt1_registration_sha256": "e1913b144087ea79e6eea4a0b8eceae0bedd2a4853cd931db5f24c795488300c", "lt1_core_binding": "artifacts/grm_lt1/amendment3/registration_amendment_r3.json", "lt1_core_binding_sha256": "809f906c5e7d057f8cffcf067d4eee7ec990a996f62a05f789916d2f8d47e193", "lt1_recorded_core_pins": 26, "lt1_amendment4_protocol_binding": {"admission_rule": "margin_first", "amendment_sha256": "809f906c5e7d057f8cffcf067d4eee7ec990a996f62a05f789916d2f8d47e193", "arm": "CPU", "core_shas": {"core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "core/deepseek_v2_lite_tc.py": "96e371754496eb2ca467ad199bebed07c354cf5eae4b0a08daf571c6f04f0d07", "core/gemma4_tc.py": "c9a8cc1d01c30bb2b20e9c2e477d4bedf21072d0b1b6b157f3ba75c78a271d8b", "core/gpt_oss20b_tc.py": "da8ca3bc8c961d731d9e32bf4558702ad1b8b10c8ecc37b18326e7df4ade74a1", "core/graft_arena.py": "83a2d4a2bc0ed2c8e0fc06f937f59d94f48ca5a70a65a96c33b1ba6eaa2e6aed", "core/graft_quant.py": "ebe40790286a719db38de403210aa20e17e7e4d2699f7b7dae452e014f4fa130", "core/graft_repository.py": "fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db", "core/grm_admission.py": "d1afc26a68b4b1c8236fc01c7db62065ab49173a89d7f2853989eedfadb48fe0", "core/grm_cuda_router.py": "8dfd7a6ff5395eb846996c67b1570c9fb0e8b26dd78e84f28059f1b291766ce5", "core/grm_demand.py": "daf787a95abbfd206638f5fbf74de2ee57efaaa54b4eac39509402e1386650e0", "core/grm_frame.py": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2", "core/grm_native.py": "1f5a69716d751c670f37328cf012544b800f86226ad4549a0781bac654aaf3df", "core/grm_runtime.py": "39f823cbdb98e32528fb5240777cb8c0144f3be77fa86466a67f1f636505c13e", "core/grm_supersession.py": "c8e9baf7c69e41ebdcf05fda84a2895ed7d2b6f7ff67903fdb655924510fdd5e", "core/grm_text_norm.py": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8", "core/grm_three_pass.py": "312f4bc0e4922449b9231ea2d9c3e6fff3a116aef6d0a48712f530d9c419742f", "core/kv_graft.py": "d8d44d032c5398c4606b1b6f1b547a94baa2415e36225cb04dd6ef313622ef2d", "core/minicpm3_tc.py": "3d19734f51d28eb48dc20a62658f2bfc250fdac4fce2cb906116d034b1371a69", "core/mistral7b_tc.py": "49430e5920508d740a2f8be7b6ba0caadd0442c7798454cf6fa2a808204bf1c4", "core/paging_telemetry.py": "4eb484b1f6b512962b18d08cb714dd61346980a8af550c1fd814bcbad474097c", "core/qwen35_tc.py": "3f84f8e99f5cf8932440e5d6ff29df41cbf3fdaf13d27f3bbe8fb1dc3a7ec41b", "core/qwen35_translation_poc.py": "5a7f364aa7a4ff24bb9299671fc945626037cff44595f0b80364ebe9d1cfa3d1", "core/qwen38_tc.py": "39875f97f09906ccdfcdf6f510c9ed2f7cad01e85007363a8d7ad00869f9d67e", "core/qwen3_1p7b_tc.py": "1a563f502753a86b57abff8710440ae0e1921ed083481dee8232872704093c0f", "core/qwen3_tc.py": "ba0e2d9ab68716922b9f942bc4bb8cd2c4a791abe2a2fabd42a65799212d95aa", "core/qwen_tc.py": "1353e44f727fc24d1638e4e238d160619fea561602c921259b010af5f63478e3"}, "fixture_sha256": "ad61c9488f722ae7ce248aee34cda688c13a5f0d3ec47b62954da2a3c146855c", "registration_sha256": "e1913b144087ea79e6eea4a0b8eceae0bedd2a4853cd931db5f24c795488300c"}, "drift_table": [{"input": "core/graft_arena.py", "lt1_recorded": "83a2d4a2bc0ed2c8e0fc06f937f59d94f48ca5a70a65a96c33b1ba6eaa2e6aed", "lt1_1_rebound": "3c97a3ea3afc7c2f6f8dce75bcc43e24e8e03ce535f14eec669fa6277ad02a62", "on_tree_now": "3c97a3ea3afc7c2f6f8dce75bcc43e24e8e03ce535f14eec669fa6277ad02a62", "attribution": "GRM-F1 + GRM-F2. F1: `_deposit_consolidation(..., retain=)` and the once-resolved `fold_retain_sources`. F2: the `fold_attribution_guard` hook and `_fold_attribution_ok`, which rejects on BOTH fold paths before `_deposit_consolidation` is reached. Verified at the code site by this seat: the attribution check returns (None, None) ahead of every deposit, so an F2 rejection can never leave F1 lineage behind.", "rebound_by_amendment": 13}, {"input": "core/graft_repository.py", "lt1_recorded": "fc6b9448efb45c29d5d2271fe929e3e4b6519867567cf1c69588b2a99e4773db", "lt1_1_rebound": "758c62dc49ed89ddec7a0c6b78c1d36c55b9bae38fb7553a806036ddc4c7771c", "on_tree_now": "758c62dc49ed89ddec7a0c6b78c1d36c55b9bae38fb7553a806036ddc4c7771c", "attribution": "GRM-F1 + GRM-F2, merge resolved by this seat. F1: `_fold_once` retain lifecycle + fold-event lineage; `_alias_consolidate` pins retain=False so A1 keeps retiring its alias edge. F2: `_guard_fold_windows` on BOTH `_librarian_jobs` return paths, the attribution hook install, and `fold_guard_history`. Composition: F2 excludes from the window BEFORE job selection; F1 applies its lifecycle to whatever the guarded window folded; the shared abort branch absorbs an attribution rejection before any F1 lineage is written.", "rebound_by_amendment": 13}, {"input": "core/grm_admission.py", "lt1_recorded": "d1afc26a68b4b1c8236fc01c7db62065ab49173a89d7f2853989eedfadb48fe0", "lt1_1_rebound": "7912f29108f0aaa9bc8f51d7a613b2866596aa6b93f99f4fa0b5bde69b2c3494", "on_tree_now": "bc5f799630235bf0db6b3412c61051f76f92dcdc56ce9ac4053886d6cd98e193", "attribution": "GRM-F5. `GRM_ROUTE_SOLE_BINDER_INSURANCE` inserts the sole binder into the k=3 rank plan. Not modified by this seat; pinned here because r3 must run on the merged tree and an unpinned input is an unnoticed input.", "rebound_by_amendment": 13}, {"input": "core/grm_runtime.py", "lt1_recorded": "39f823cbdb98e32528fb5240777cb8c0144f3be77fa86466a67f1f636505c13e", "lt1_1_rebound": "973addc491a29eda9bac611a9c3f0cc25cd1033395ecc39b84b19c6f1b8f0646", "on_tree_now": "973addc491a29eda9bac611a9c3f0cc25cd1033395ecc39b84b19c6f1b8f0646", "attribution": "A1 (alias fold-merge hooks)", "rebound_by_amendment": 13}, {"input": "core/grm_text_norm.py", "lt1_recorded": "c4e496848b0181e160a3f4788a60eb9a26aa8dcc7635f9bedd02e046c5c1daa8", "lt1_1_rebound": "e968d68791950adb3a59bc83f43d75a75e31879a2f77c379b44bf711ccecc30a", "on_tree_now": "e968d68791950adb3a59bc83f43d75a75e31879a2f77c379b44bf711ccecc30a", "attribution": "pre-A1 drift on grm-merge, not attributable to A1", "rebound_by_amendment": 13}, {"input": "core/grm_alias_fold.py", "lt1_recorded": null, "lt1_1_rebound": "8e3810106d0e93a5da7bcf1c09dc80bcc4c561c5c334b634a96419ce475c97a5", "on_tree_now": "ec65530fde46b55718d881659d50951960af2ccc8bde97079158def7639a0eb8", "attribution": "A1 (new module; did not exist at the LT1 run)", "rebound_by_amendment": 13}], "status": "RECORDED as parent lineage, not gated (see RULING)"}}
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/usr/bin/python3', 'scripts/grm_lt1_1.py', '--arm', 'A+', '--resume', '--dry-lease', '--out', ...st at the LT1 run)", "rebound_by_amendment": 13}], "status": "RECORDED as parent lineage, not gated (see RULING)"}}\n').returncode
+
+tests/test_grm_lt1_1_preflight.py:356: AssertionError
+___________________ test_both_amendments_rebinds_accumulate ____________________
+
+    def test_both_amendments_rebinds_accumulate():
+        """A later link wins, but an earlier link's rebind is not dropped."""
+        a = run.amendment()
+        rebound = a['rebound_inputs']
+        assert 'scripts/grm_r1_replay.py' in rebound
+        assert 'scripts/grm_r1_amend_1.py' in rebound     # from link 1
+        assert 'scripts/grm_r1_amend_2.py' in rebound     # from link 2
+>       assert rebound['scripts/grm_r1_replay.py'] == run.sha(
+            run.ROOT / 'scripts/grm_r1_replay.py')
+E       AssertionError: assert '176aa775ead3...0a54dab84a034' == '709d6cfc60cd...78e5900a57cd1'
+E         
+E         - 709d6cfc60cdd2f5383f3801a0d7cf5e6502116df98fa2b691f78e5900a57cd1
+E         + 176aa775ead3c7a89f603a5c735358c857d50a845c583d1d66b0a54dab84a034
+
+tests/test_grm_r1_amendment2.py:291: AssertionError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_grm_lt1_1_child_spawn.py::test_run_cell_spawns_a_child_that_writes_receipts[A]
+FAILED tests/test_grm_lt1_1_child_spawn.py::test_run_cell_spawns_a_child_that_writes_receipts[A+]
+FAILED tests/test_grm_lt1_1_preflight.py::test_the_chain_preflight_is_ready_on_this_tree[A]
+FAILED tests/test_grm_lt1_1_preflight.py::test_the_chain_preflight_is_ready_on_this_tree[A+]
+FAILED tests/test_grm_lt1_1_preflight.py::test_no_input_sha_mismatch_anywhere
+FAILED tests/test_grm_lt1_1_preflight.py::test_it_checks_the_classes_the_ruling_names
+FAILED tests/test_grm_lt1_1_preflight.py::test_the_ruling_is_carried_in_the_receipt
+FAILED tests/test_grm_lt1_1_preflight.py::test_lt1_identity_is_recorded_not_gated
+FAILED tests/test_grm_lt1_1_preflight.py::test_the_amendment3_host_blocker_is_resolved
+FAILED tests/test_grm_lt1_1_preflight.py::test_dry_lease_passes_with_the_host_gate_on[A]
+FAILED tests/test_grm_lt1_1_preflight.py::test_dry_lease_passes_with_the_host_gate_on[A+]
+FAILED tests/test_grm_lt1_1_preflight.py::test_dry_lease_passes_from_the_cli_without_no_host_gate[A]
+FAILED tests/test_grm_lt1_1_preflight.py::test_dry_lease_passes_from_the_cli_without_no_host_gate[A+]
+FAILED tests/test_grm_r1_amendment2.py::test_both_amendments_rebinds_accumulate
+14 failed, 606 passed, 102 skipped, 2 warnings in 536.67s (0:08:56)
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

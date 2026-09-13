@@ -36,6 +36,16 @@ def test_rule2_exact_reference_and_refusal(monkeypatch,margin):
 
 @pytest.mark.parametrize('value',[None,'','typo','all_tokens_bind'])
 def test_default_and_unknown_stay_rule0(monkeypatch,value):
+    """Rule 0 for the unset/empty/unknown cases, under the PRE-D2 default.
+
+    GRM-D2 (2026-09-11) made `margin_first` the shipped rule, so "unset"
+    and "unknown token" now resolve to rule 2 on a tree with no umbrella.
+    The assertions here are UNCHANGED and remain the receipt for rule 0's
+    reference pair; `GRM_LEGACY_DEFAULTS=1` is what makes `None` / `''` /
+    `'typo'` mean rule 0 again.  `'all_tokens_bind'` is an EXPLICIT pin and
+    would pass with or without the umbrella -- it outranks it.
+    """
+    monkeypatch.setenv('GRM_LEGACY_DEFAULTS','1')
     if value is None:monkeypatch.delenv('GRM_ADMISSION_RULE',raising=False)
     else:monkeypatch.setenv('GRM_ADMISSION_RULE',value)
     s=dict(question='What is at Harbor?',nodes=[dict(text='Harbor 12')],eligible=[0],ranking=[0],split_members=[],margin=0.,scores={'0':0.})

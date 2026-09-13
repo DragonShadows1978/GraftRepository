@@ -206,7 +206,15 @@ def test_rule_pin_per_arm_and_readback(monkeypatch):
     from core.grm_admission import admission_rule
     monkeypatch.setenv(run.RULE_ENV, 'some_ambient_leftover')
     assert run.pin_rule('off') == 'all_tokens_bind'
-    assert run.RULE_ENV not in os.environ
+    # GRM-D2 (2026-09-11) CHANGED THIS ASSERTION, and the change is real
+    # rather than a re-pin.  The OFF arm used to express itself by leaving
+    # the variable ABSENT -- a correct pin only while absent meant
+    # `all_tokens_bind`.  D2 made `margin_first` the shipped rule, so an
+    # absent variable would now give the OFF arm the ON rule; `pin_rule`
+    # therefore pins `all_tokens_bind` EXPLICITLY and its own read-back is
+    # what caught the regression.  The property tested is unchanged: the
+    # arm overrides an ambient leftover and the resolver agrees.
+    assert os.environ[run.RULE_ENV] == 'all_tokens_bind'
     assert admission_rule() == 'all_tokens_bind'
     assert run.pin_rule('on') == 'margin_first'
     assert os.environ[run.RULE_ENV] == 'margin_first'

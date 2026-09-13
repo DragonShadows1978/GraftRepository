@@ -145,8 +145,42 @@ TREATMENT_FLAGS = (
 RULE_ENV = 'GRM_ADMISSION_RULE'
 ARMS = ('A', 'A+')
 
-#: Arm -> alias flag value (None = unset). The ONLY difference between arms.
+#: Arm -> alias flag value (None = "the arm does not want A1"). The ONLY
+#: difference between arms.  Read the truth through ``arm_alias_on(arm)``
+#: and pin it through ``arm_alias_pin(arm)``; do NOT reintroduce "pop the
+#: variable" as the OFF pin -- see ``arm_alias_pin``.
 ARM_ALIAS = {'A': None, 'A+': '1'}
+
+
+def arm_alias_on(arm):
+    """True when this arm runs with A1's alias fold-merge ON."""
+    return ARM_ALIAS[arm] is not None
+
+
+def arm_alias_pin(arm):
+    """The EXPLICIT ``GRM_ALIAS_FOLD_MERGE`` value this arm must pin.
+
+    GRM-D2 (2026-09-11) FIX.  Every one of this runner's three pin sites
+    used to express the OFF arm as ``env.pop(ALIAS_ENV)`` -- correct only
+    while UNSET meant OFF.  D2 flipped A1's shipped default to ON, so the
+    pop silently handed arm A the TREATMENT, and ``pinned_arm``'s readback
+    caught it as ``LT11_ALIAS_PIN_FAILED: arm=A observed=True`` -- the
+    readback doing exactly the job its docstring claims ("a pin that did
+    not take must be RED, not silent").
+
+    An arm is a PIN, never an absence: a campaign arm that inherits a
+    default is not a controlled arm.  This returns ``'0'`` for the OFF arm
+    and ``'1'`` for the ON arm, so the arm holds under either shipped
+    default and under ``GRM_LEGACY_DEFAULTS=1``.
+
+    Prior art: R1 ``pin_rule`` (``scripts/grm_r1_replay.py``, GRM
+    contributors 2026) -- taken: pin-then-read-back, and its stance that an
+    experiment states its conditions rather than inheriting them.  Ours:
+    nothing but the application to this flag.  The general rule ("controls
+    are set, not defaulted") is ordinary experimental practice; no specific
+    prior art known to me.
+    """
+    return '1' if arm_alias_on(arm) else '0'
 
 #: LT1.1 inherits LT1's restart sentinels; the base registration is a delta
 #: over LT1's and does not restate them.
@@ -266,7 +300,7 @@ def binding(label):
                 amendment1_sha256=sha(AMENDMENT1),
                 fixture_sha256=sha(FIXTURE),
                 admission_rule='margin_first',
-                alias_fold_merge=(ARM_ALIAS[arm] is not None),
+                alias_fold_merge=arm_alias_on(arm),
                 rebound_core_shas=core)
 
 
@@ -293,7 +327,7 @@ def registration(arm):
     value['cells'] = spec['cells']
     value['effective_admission_rule'] = 'margin_first'
     value['restart_sentinels'] = list(RESTART_SENTINELS)
-    value['lt1_1'] = dict(arm=arm, alias_fold_merge=ARM_ALIAS[arm] is not None,
+    value['lt1_1'] = dict(arm=arm, alias_fold_merge=arm_alias_on(arm),
                           out_dir=_relative(out_dir(arm)),
                           amendment1_sha256=sha(AMENDMENT1))
     return value
@@ -314,14 +348,24 @@ def arm_environment(arm, flags):
     docstring already warns about for the arm pin. The flag is carried only
     when it is ACTUALLY set in the ambient environment: absent stays absent,
     so every pre-F1 caller's environment is byte-identical.
+
+    GRM-D2 (2026-09-11): "absent stays absent" no longer means "absent
+    stays OFF" -- F1/F2/F5 now SHIP ON. The carry rule is unchanged (an
+    explicitly set flag is carried; an unset one is not), but
+    ``GRM_LEGACY_DEFAULTS`` is carried on the SAME rail, so an operator who
+    launches a control arm under the umbrella gets a control arm inside the
+    stripped frame instead of the treatment. Pinning the three flags here
+    unconditionally was the alternative and was REJECTED: this runner's
+    contract is that the arm's flags come from the launcher, and a runner
+    that overrode them would silently re-label the operator's arm.
     """
     from scripts.grm_c2_cells import environment
-    carried = {f: os.environ.get(f) for f in TREATMENT_FLAGS}
+    from core import grm_legacy_defaults as legacy_defaults
+    carried = {f: os.environ.get(f)
+               for f in TREATMENT_FLAGS + (legacy_defaults.ENV_NAME,)}
     env = environment(flags)
     env[RULE_ENV] = 'margin_first'
-    env.pop(ALIAS_ENV, None)
-    if ARM_ALIAS[arm] is not None:
-        env[ALIAS_ENV] = ARM_ALIAS[arm]
+    env[ALIAS_ENV] = arm_alias_pin(arm)
     for flag, value in carried.items():
         env.pop(flag, None)
         if value is not None:
@@ -341,14 +385,12 @@ def pinned_arm(arm):
     previous = {k: os.environ.get(k) for k in (RULE_ENV, ALIAS_ENV)}
     try:
         os.environ[RULE_ENV] = 'margin_first'
-        os.environ.pop(ALIAS_ENV, None)
-        if ARM_ALIAS[arm] is not None:
-            os.environ[ALIAS_ENV] = ARM_ALIAS[arm]
+        os.environ[ALIAS_ENV] = arm_alias_pin(arm)
         observed_rule = admission_rule()
         if observed_rule != 'margin_first':
             raise ValueError('LT11_RULE_PIN_FAILED: ' + observed_rule)
         observed_alias = alias_fold_enabled()
-        if observed_alias is not (ARM_ALIAS[arm] is not None):
+        if observed_alias is not arm_alias_on(arm):
             raise ValueError('LT11_ALIAS_PIN_FAILED: arm=%s observed=%s'
                              % (arm, observed_alias))
         # Hold the arm for `binding()`, which cannot take it as a parameter
@@ -799,11 +841,12 @@ def spawn_env(env, cell):
     """
     arm = current_arm()
     env[ARM_ENV] = arm
-    env.pop(ALIAS_ENV, None)
-    if ARM_ALIAS[arm] is not None:
-        env[ALIAS_ENV] = ARM_ALIAS[arm]
+    env[ALIAS_ENV] = arm_alias_pin(arm)
     env[RULE_ENV] = 'margin_first'
-    for flag in TREATMENT_FLAGS:
+    # GRM-D2: the umbrella rides the same carry rail as the treatment
+    # flags, so a leased child inherits the parent's rollback posture.
+    from core import grm_legacy_defaults as _legacy_defaults
+    for flag in TREATMENT_FLAGS + (_legacy_defaults.ENV_NAME,):
         value = os.environ.get(flag)
         env.pop(flag, None)
         if value is not None:

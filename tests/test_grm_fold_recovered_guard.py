@@ -45,6 +45,33 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from core.graft_repository import GraftRepository
 
 
+# --------------------------------------------------------- GRM-D2 re-pin
+#
+# GRM-D2 (2026-09-11) turned F1 (source retention) and F2 (fold attribution
+# guard) ON by default.  Both act INSIDE the fold this suite drives, and F2
+# reaches `ArenaCache._fact_set` -- a method `FakeArena` below never needed
+# and therefore never grew, because this double predates both flags and was
+# written for one job: reproduce the M11 WAL-placeholder indexing bug at its
+# real code site.
+#
+# THIS SUITE'S ASSERTIONS ARE UNCHANGED.  `GRM_LEGACY_DEFAULTS=1` puts the
+# fold back in the state the double was built against, so what the suite
+# proves -- that a recovered placeholder is never selected as a fold source,
+# on BOTH the Python-fallback and native-store paths -- stays exactly what
+# it proved.  Widening the double to satisfy F1/F2 would be re-scoping an
+# M11 regression suite into an F1/F2 one; the flags have their own suites
+# (tests/test_grm_f1_fold_retain.py, tests/test_grm_f2_alias_guard.py).
+#
+# Registered successor for the lead: a double that supports the shipped
+# fold path would let this guard be proved under the DEFAULT configuration
+# as well as the legacy one.  That is new coverage, not a re-pin, and is
+# out of this order's scope.
+@pytest.fixture(autouse=True)
+def _grm_d2_legacy_defaults(monkeypatch):
+    from core import grm_legacy_defaults as legacy_defaults
+    monkeypatch.setenv(legacy_defaults.ENV_NAME, "1")
+
+
 # ============================================================================
 # CPU fixtures
 # ============================================================================

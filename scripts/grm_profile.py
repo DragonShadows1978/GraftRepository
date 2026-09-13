@@ -1,16 +1,29 @@
 #!/usr/bin/env python3
 """GRM-P1 — ``GRM_PROFILE``: one switch that selects a registered profile.
 
-``GRM_PROFILE=eb1_c2`` selects the C2 registered profile entry
+``eb1_c2`` selects the C2 registered profile entry
 (``config/grm_eb1_profile_registered.json``, profile_id
 ``gpt-oss-20b-eb1-w96-live-rt1``): arena width 96, capture pin ``live``,
 seat-near-live ON, RT1 rule ON, plus ``GRM_ADMISSION_RULE=margin_first``
 (SCOUT-FIX-6, the rule the LT1 200-turn run used).
 
-UNSET IS TODAY'S BEHAVIOUR.  With no ``GRM_PROFILE`` the resolver returns
-the registry's ``default_flags`` — the shipped defaults — and does not pin
-an admission rule.  Shipped defaults stay the defaults; this module never
-changes what an unset environment does.
+GRM-D2 (2026-09-11): ``eb1_c2`` IS THE SHIPPED DEFAULT.  Order
+``orders/GRM_D2_DEFAULTS.md``, flip 2.  Before D2 this module's headline
+was "UNSET IS TODAY'S BEHAVIOUR" and unset returned the registry's
+``default_flags``; that is now the NAMED profile ``legacy_256`` and unset
+returns C2.
+
+EVIDENCE FOR THE FLIP: C2 beat the shipped defaults on every battery and
+survived a restart, and every LT1/LT1.1 run -- including the r3 campaign
+this order's other flips rest on -- was taken under this profile.  The
+old defaults were never the measured configuration; they were the
+un-measured one.
+
+``legacy_256`` remains selectable (``GRM_PROFILE=legacy_256``), and
+``GRM_LEGACY_DEFAULTS=1`` selects it for you along with the other five
+round-2 rollbacks.  ``defaults`` is kept as an ALIAS for "whatever is
+shipped", so a caller that asked for the defaults by name keeps getting
+the defaults rather than silently getting the old ones.
 
 Prior art
 ---------
@@ -33,16 +46,34 @@ import os
 from pathlib import Path
 from typing import Any, Iterable, Mapping
 
+from core import grm_legacy_defaults as legacy_defaults
+
 ROOT = Path(__file__).resolve().parents[1]
 
 PROFILE_ENV = "GRM_PROFILE"
 
 #: Human-facing profile names -> the registered profile_id they select.
-#: ``None`` means "shipped defaults" (the registry's ``default_flags``).
+#: ``None`` means the registry's own ``default_flags`` (width 256, capture
+#: pin off, seat-near-live off) -- the PRE-D2 shipped set, which since
+#: GRM-D2 is a NAMED profile rather than the unnamed fallback it used to be.
 PROFILES: dict[str, str | None] = {
-    "defaults": None,
+    "legacy_256": None,
     "eb1_c2": "gpt-oss-20b-eb1-w96-live-rt1",
 }
+
+#: The profile an unset ``GRM_PROFILE`` resolves to, under the
+#: ``GRM_LEGACY_DEFAULTS`` umbrella's control.  Kept as a function rather
+#: than a constant because the umbrella is read at CALL time, exactly as
+#: ``core.grm_admission.admission_rule`` is.
+DEFAULT_PROFILE_ALIAS = "defaults"
+
+
+def default_profile(environ: Mapping[str, str] | None = None) -> str:
+    """The profile name an unset ``GRM_PROFILE`` selects.
+
+    ``eb1_c2`` since GRM-D2; ``legacy_256`` under ``GRM_LEGACY_DEFAULTS=1``.
+    """
+    return str(legacy_defaults.default_for(PROFILE_ENV, environ))
 
 #: Flags that are part of the profile but are not expressed as an
 #: environment variable by ``grm_c2_cells.environment``; they reach the
@@ -109,11 +140,23 @@ def resolve_profile(selection: str | None = None,
     from scripts.grm_c2_profile import select_profile
 
     raw = selection if selection is not None else env_in.get(PROFILE_ENV)
-    name = (raw or "defaults").strip().lower()
-    source = ("--profile" if selection is not None
-              else f"{PROFILE_ENV}={raw}" if raw else f"{PROFILE_ENV} unset")
+    name = (str(raw).strip().lower() if raw else default_profile(env_in))
+    # ``defaults`` is an ALIAS for "whatever is shipped", not a frozen
+    # snapshot of the pre-D2 set: a caller asking for the defaults by name
+    # must not be quietly handed last release's.
+    if name == DEFAULT_PROFILE_ALIAS:
+        name = default_profile(env_in)
+    if selection is not None:
+        source = "--profile"
+    elif raw:
+        source = f"{PROFILE_ENV}={raw}"
+    elif legacy_defaults.legacy_defaults_enabled(env_in):
+        source = (f"{PROFILE_ENV} unset, "
+                  f"{legacy_defaults.ENV_NAME}=1 -> {name}")
+    else:
+        source = f"{PROFILE_ENV} unset -> {name} (shipped default)"
     if name not in PROFILES:
-        known = ", ".join(sorted(PROFILES))
+        known = ", ".join(sorted(PROFILES) + [DEFAULT_PROFILE_ALIAS])
         raise ValueError(f"unknown {PROFILE_ENV}: {raw!r} (known: {known})")
 
     registry = _registry()
@@ -128,12 +171,28 @@ def resolve_profile(selection: str | None = None,
 
     # The admission rule is a profile property, not an arena flag: the C2
     # registry does not carry it, and LT1 registered margin_first as the
-    # rule its receipts were taken under.
+    # rule its receipts were taken under.  GRM-D2: the rule is now PINNED
+    # EXPLICITLY on BOTH sides rather than only on the C2 side.  Before D2,
+    # ``legacy_256``'s predecessor could POP the variable and let the
+    # resolver's unset default supply ``all_tokens_bind``; after D2 the
+    # unset default is ``margin_first``, so popping it would put a
+    # margin-first rule inside a legacy frame -- a half-applied profile,
+    # the exact failure the ambient strip above exists to prevent.
     admission_rule = "margin_first" if PROFILES[name] else "all_tokens_bind"
-    if admission_rule == "margin_first":
-        env["GRM_ADMISSION_RULE"] = "margin_first"
-    else:
-        env.pop("GRM_ADMISSION_RULE", None)
+    env["GRM_ADMISSION_RULE"] = admission_rule
+
+    # ``environment`` stripped EVERY ambient GRM_* key, ``GRM_LEGACY_DEFAULTS``
+    # included.  That is right for the frame flags -- a stale switch must not
+    # half-apply a profile -- but the umbrella is not a frame flag: it is the
+    # operator's rollback, and a rollback that a profile resolution silently
+    # cancels is not a rollback.  Carry it through verbatim when it was set,
+    # so the four round-2 flag flips resolve the same way inside a resolved
+    # profile as outside one.  The four flags themselves are deliberately NOT
+    # pinned here: they are independent switches with their own env escapes
+    # and their own ``--pin-flag`` channel, and a profile that pinned them
+    # would make ``--pin-flag GRM_ALIAS_FOLD_MERGE`` un-overridable.
+    if legacy_defaults.ENV_NAME in env_in:
+        env[legacy_defaults.ENV_NAME] = env_in[legacy_defaults.ENV_NAME]
     env[PROFILE_ENV] = name
 
     notes: list[str] = []
@@ -190,8 +249,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--describe", action="store_true")
     args = p.parse_args(argv)
     if args.describe:
-        print(json.dumps(describe_profile(args.profile or "eb1_c2"),
-                         indent=2, sort_keys=True))
+        print(json.dumps(
+            describe_profile(args.profile or default_profile()),
+            indent=2, sort_keys=True))
         return 0
     print(json.dumps(resolve_profile(selection=args.profile,
                                      pinned=args.pin_flag),

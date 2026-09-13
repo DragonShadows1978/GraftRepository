@@ -83,6 +83,8 @@ from typing import Any
 from core.grm_text_norm import normalize_glyphs
 
 
+from core import grm_legacy_defaults as legacy_defaults
+
 ENV_NAME = "GRM_ALIAS_FOLD_MERGE"
 _ENV_TRUE = frozenset(("1", "true", "yes", "on"))
 _ENV_FALSE = frozenset(("0", "false", "no", "off", ""))
@@ -113,10 +115,13 @@ def env_alias_fold_override(
 ) -> bool | None:
     """Return the explicit environment choice, or ``None`` when unset.
 
-    Unknown tokens fail CLOSED to OFF — the same contract as
-    ``grm_supersession.env_sup_resolve_override`` and
-    ``grm_admission.env_adm_decisive_override``, except that those two default
-    ON when unset and this one defaults OFF.
+    ``None`` is ALSO what an unknown token returns, and that is the GRM-D2
+    change: an unknown token used to return False (pinning OFF), which was
+    fail-closed only while OFF was the shipped default.  It now declines to
+    decide, so the caller falls through to the shipped default -- ON, or
+    OFF under ``GRM_LEGACY_DEFAULTS=1``.  Same rule as before ("a malformed
+    escape never silently selects a behaviour the operator may not have
+    meant"); the thing it points at moved.
     """
     env = os.environ if environ is None else environ
     if ENV_NAME not in env:
@@ -126,18 +131,43 @@ def env_alias_fold_override(
         return True
     if value in _ENV_FALSE:
         return False
-    return False
+    return None
 
 
 def alias_fold_enabled(
     explicit: bool | None = None,
     environ: Mapping[str, str] | None = None,
 ) -> bool:
-    """Resolve A1: explicit caller > env escape > permanent default OFF."""
+    """Resolve A1.  GRM-D2 (2026-09-11): DEFAULT ON.
+
+    EVIDENCE FOR THE FLIP (order ``orders/GRM_D2_DEFAULTS.md``, flip 3):
+    A1 ships ON **as a member of a SET** -- F1 + F2 + F5 + A1 -- never
+    alone.  LT1.1 r3 moved the four together: control 36/40 -> 38/40 on the
+    lead's c2 column, 33/40 -> 37/40 on the column this tree can recompute
+    (``artifacts/grm_f1/REPORT.md``).  The three-without-A1 arm REGRESSED
+    aliases 10/10 -> 7/10, so a SUBSET of this set is a measured regression
+    and must not be shipped.  If you turn one of the four off, turn all four
+    off -- that is what ``GRM_LEGACY_DEFAULTS=1`` does.
+
+    ``=0`` remains this flag's OFF setting, and the OFF arm of every A1
+    fixture still pins the pre-A1 behaviour byte-for-byte.
+
+    PRECEDENCE (``core.grm_legacy_defaults``, rungs 1-4): an explicit
+    caller value wins, then an explicitly set ``GRM_ALIAS_FOLD_MERGE``, then the
+    ``GRM_LEGACY_DEFAULTS`` umbrella, then ON.
+
+    FAIL-CLOSED DIRECTION, stated because D2 REVERSED it: an unknown token
+    now falls to the SHIPPED default (ON, or OFF under the umbrella), where
+    before D2 it fell to OFF.  The rule is unchanged -- a malformed escape
+    never silently selects a behaviour the operator may not have meant --
+    but what the shipped behaviour IS has changed.
+    """
     if explicit is not None:
         return bool(explicit)
     override = env_alias_fold_override(environ)
-    return False if override is None else override
+    if override is not None:
+        return override
+    return bool(legacy_defaults.default_for(ENV_NAME, environ))
 
 
 # ---------------------------------------------------------------- detection

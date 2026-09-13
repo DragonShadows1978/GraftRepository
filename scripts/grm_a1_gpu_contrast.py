@@ -613,6 +613,36 @@ def _load_fake(checkpoint_dir, registration, cache=None):
 
 # ------------------------------------------------------------- 4. the pins
 
+def _pin_is_load_bearing(name, observe):
+    """True when ``observe()`` actually follows the value of ``name``.
+
+    Reads back the pin as set, then writes the OPPOSITE token to the same
+    variable and reads back again.  A variable the resolver reads flips the
+    observation; one it does not read (a misspelt name, a name nothing
+    consults) leaves it unchanged, whichever way the shipped default
+    happens to point.  Restores the variable exactly, including on an
+    exception.  See ``pin_flags``'s docstring for why a plain "is it on?"
+    stopped being sufficient once the flag acquired a default.
+
+    Testing against the flag's OWN opposite token -- rather than against
+    its absence -- is what makes this default-independent: an explicitly
+    set value outranks both the default and the ``GRM_LEGACY_DEFAULTS``
+    umbrella by construction, so neither can mask the answer and no
+    umbrella handling is needed here.
+    """
+    if os.environ.get(name) != '1' or not observe():
+        return False
+    saved = os.environ.get(name)
+    os.environ[name] = '0'
+    try:
+        return not observe()
+    finally:
+        if saved is None:                                  # pragma: no cover
+            os.environ.pop(name, None)
+        else:
+            os.environ[name] = saved
+
+
 def pin_flags(environment, *, rule=None):
     """Apply ``environment(flags)`` THEN pin A1's flags, and verify.
 
@@ -620,6 +650,31 @@ def pin_flags(environment, *, rule=None):
     two pins below MUST come after it. The assertions are not decoration:
     pinning before ``environment()`` fails silently, and that exact mistake
     produced a wrong reading earlier in this arc.
+
+    GRM-D2 (2026-09-11) REPAIRED THE VERIFICATION, not the pin.  The check
+    used to be "after pinning, is A1 enabled?".  That detected a failed pin
+    only while A1 defaulted OFF: an enabled reading could then only have
+    come from the pin.  D2 made A1 a shipped default, so the same reading
+    became ambiguous -- a pin that never landed (a misspelt variable, a
+    name nothing reads) now looks exactly like one that did, and telling
+    those apart is this function's entire job.
+
+    The repair is DIFFERENTIAL: the pin is in force only if writing the
+    OPPOSITE token to the SAME variable flips the resolver's answer.  That
+    is independent of which way the shipped default points -- and of the
+    ``GRM_LEGACY_DEFAULTS`` umbrella, since an explicitly set value
+    outranks both -- so it will not rot the next time a default moves.
+
+    Prior art: R1 ``pin_rule`` (``scripts/grm_r1_replay.py``, GRM
+    contributors 2026) -- taken: pin-then-read-back.  What D2 adds is the
+    observation that reading back STATE stops being a read-back of the PIN
+    the moment that state has a default, and the differential probe that
+    fixes it.  The probe is the ordinary "vary only the treatment" control
+    and the mutation-testing stance that a check which passes with the
+    mechanism removed is not a check; no specific external prior art known
+    to me for this exact use -- unverified, lead to check.  Search terms:
+    ``assert the patch was applied not just its effect``, ``mutation
+    testing sanity check``, ``feature flag pin verification``.
     """
     from core.grm_admission import admission_rule
     from core.grm_alias_fold import alias_fold_enabled
@@ -629,7 +684,7 @@ def pin_flags(environment, *, rule=None):
     os.environ[FLAG_ENV] = '1'
     if rule:
         os.environ[RULE_ENV] = str(rule)
-    if not alias_fold_enabled():
+    if not _pin_is_load_bearing(FLAG_ENV, alias_fold_enabled):
         raise ContrastError('A1_FLAG_NOT_IN_FORCE_AFTER_PIN')
     if rule and admission_rule() != rule:
         raise ContrastError('A1_ADMISSION_RULE_NOT_IN_FORCE_AFTER_PIN')

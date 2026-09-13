@@ -129,7 +129,17 @@ class _ProfileArena:
         return set()
 
 
-def test_decisive_profile_reuses_route_laws_and_frozen_receipt():
+def test_decisive_profile_reuses_route_laws_and_frozen_receipt(monkeypatch):
+    """The A-DEC frozen-rule receipt, under the PRE-D2 admission rule.
+
+    GRM-D2 (2026-09-11) made ``margin_first`` the shipped rule; this test's
+    assertions are the ``all_tokens_bind`` branch's and are UNCHANGED, so
+    the module's pre-D2 default is pinned here rather than the expectations
+    rewritten.  ``_ProfileArena`` is a minimal double built for the
+    all-tokens-bind path (it has no ``_norm_text``), which is the other
+    reason the rule, not the fixture, is what moves.
+    """
+    monkeypatch.setenv("GRM_LEGACY_DEFAULTS", "1")
     profile = decisive_admission_profile(
         _ProfileArena(), "What is the current Praxis dock value?", exclude=set())
     assert profile["ranking"] == [0, 1, 2]

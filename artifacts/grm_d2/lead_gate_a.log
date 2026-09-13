@@ -1,0 +1,43 @@
+.............................................F.......................... [ 30%]
+........................................................................ [ 61%]
+........................................................................ [ 92%]
+..................                                                       [100%]
+=================================== FAILURES ===================================
+_______________ test_governing_amendment_rebinds_every_core_pin ________________
+
+    def test_governing_amendment_rebinds_every_core_pin():
+        """The rebind is what makes r3 runnable at all: LT1.1's preflight is
+        sha-bound, and F1/F2/F5 all move core inputs.
+    
+        Written against the GOVERNING amendment (the highest-numbered one
+        carrying a `core_rebind`), not a hard-coded number: amendment 10 was
+        F1's, amendment 11 rebinds the merged tree, and a later treatment will
+        add another. Every sha is checked against the tree, so the document
+        cannot claim one the tree lacks, and the pin set may only GROW.
+        """
+        import hashlib
+        from scripts import grm_lt1_1 as runner
+        number, block = runner.governing_core_rebind()
+        assert number >= 10
+        for name, entry in block['changed'].items():
+            on_tree = hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
+>           assert entry['after_sha256'] == on_tree, name
+E           AssertionError: core/grm_admission.py
+E           assert '7912f29108f0...5bde69b2c3494' == 'bc5f79963023...886d6cd98e193'
+E             
+E             - bc5f799630235bf0db6b3412c61051f76f92dcdc56ce9ac4053886d6cd98e193
+E             + 7912f29108f0aaa9bc8f51d7a613b2866596aa6b93f99f4fa0b5bde69b2c3494
+
+tests/test_grm_f1_fold_retain.py:698: AssertionError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_grm_f1_fold_retain.py::test_governing_amendment_rebinds_every_core_pin
+1 failed, 233 passed, 2 warnings in 8.18s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

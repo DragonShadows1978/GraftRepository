@@ -64,9 +64,35 @@ import re
 import pytest
 
 from core import grm_alias_fold as af
+from core import grm_legacy_defaults as legacy_defaults
 from scripts.grm_c7_diagnose import Model, repository
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+# --------------------------------------------------------- GRM-D2 re-pin
+#
+# GRM-D2 (2026-09-11) flipped TWO defaults this suite depends on: A1 itself
+# (OFF -> ON) and the admission rule (all_tokens_bind -> margin_first).
+# THIS SUITE'S ASSERTIONS ARE UNCHANGED -- it is the receipt for the pre-D2
+# world, including the A1-OFF byte-identity proof and the RED that shows
+# LT1's abstention belonged to the OLD default rule.  One autouse pin makes
+# "unset" mean pre-D2 again for every test here; ``legacy()`` does the same
+# for the resolver tests that pass an explicit ``environ=`` dict instead of
+# reading ``os.environ``.
+#
+# Tests below that PIN ``margin_first`` or ``GRM_ALIAS_FOLD_MERGE=1``
+# explicitly are unaffected: an explicitly set flag outranks the umbrella
+# by construction (core/grm_legacy_defaults.py, precedence rung 2).
+
+def legacy(**extra):
+    """An ``environ`` mapping pinned to the pre-D2 defaults."""
+    return {legacy_defaults.ENV_NAME: "1", **extra}
+
+
+@pytest.fixture(autouse=True)
+def _grm_d2_legacy_defaults(monkeypatch):
+    monkeypatch.setenv(legacy_defaults.ENV_NAME, "1")
 FIXTURE = json.loads(
     (ROOT / 'artifacts/grm_a1/alias_fixture.json').read_text())
 
@@ -229,18 +255,24 @@ def evidence_sufficient(text, *needles):
 # --------------------------------------------------------------- the flag
 
 def test_flag_default_off_and_fails_closed():
-    assert af.alias_fold_enabled(environ={}) is False
-    assert af.alias_fold_enabled(environ={'GRM_ALIAS_FOLD_MERGE': '1'}) is True
-    assert af.alias_fold_enabled(environ={'GRM_ALIAS_FOLD_MERGE': 'on'}) is True
-    assert af.alias_fold_enabled(environ={'GRM_ALIAS_FOLD_MERGE': '0'}) is False
-    # Unknown token fails CLOSED, matching L2 / A-DEC precedent.
+    assert af.alias_fold_enabled(environ=legacy()) is False
     assert af.alias_fold_enabled(
-        environ={'GRM_ALIAS_FOLD_MERGE': 'maybe'}) is False
+        environ=legacy(GRM_ALIAS_FOLD_MERGE='1')) is True
+    assert af.alias_fold_enabled(
+        environ=legacy(GRM_ALIAS_FOLD_MERGE='on')) is True
+    assert af.alias_fold_enabled(
+        environ=legacy(GRM_ALIAS_FOLD_MERGE='0')) is False
+    # Unknown token fails CLOSED, matching L2 / A-DEC precedent.  GRM-D2
+    # moved the rung it closes ON -- the override helper now returns None
+    # and the SHIPPED default decides -- but under this suite's legacy pin
+    # the shipped default is OFF, so the verdict is the same.
+    assert af.alias_fold_enabled(
+        environ=legacy(GRM_ALIAS_FOLD_MERGE='maybe')) is False
     # Explicit caller wins over the environment, in both directions.
     assert af.alias_fold_enabled(
-        True, environ={'GRM_ALIAS_FOLD_MERGE': '0'}) is True
+        True, environ=legacy(GRM_ALIAS_FOLD_MERGE='0')) is True
     assert af.alias_fold_enabled(
-        False, environ={'GRM_ALIAS_FOLD_MERGE': '1'}) is False
+        False, environ=legacy(GRM_ALIAS_FOLD_MERGE='1')) is False
 
 
 def test_flag_off_byte_identical(tmp_path, monkeypatch):
@@ -728,10 +760,16 @@ def test_lt1_default_rule_abstention_is_the_rule_not_the_repository(
         tmp_path, monkeypatch):
     """Why the earlier RED was wrong: the abstention is the RULE's, not A1's.
 
-    Under the DEFAULT ``all_tokens_bind`` the same repository abstains, and
-    it abstains IDENTICALLY with an ideal hand-written digest.  Pinning
-    ``margin_first`` — LT1's registered rule — admits both.  Holding the
-    repository fixed and moving only the rule is what isolates the cause.
+    Under ``all_tokens_bind`` the same repository abstains, and it abstains
+    IDENTICALLY with an ideal hand-written digest.  Pinning ``margin_first``
+    — LT1's registered rule — admits both.  Holding the repository fixed
+    and moving only the rule is what isolates the cause.
+
+    GRM-D2 (2026-09-11) made ``margin_first`` the shipped default precisely
+    because of this RED and LT1's 0/35.  ``rule is None`` below therefore
+    means "the PRE-D2 default", which the module's ``GRM_LEGACY_DEFAULTS=1``
+    pin supplies; the assertions are unchanged, and the comparison they
+    make — same repository, one rule apart — is the whole point.
     """
     lt1_seeds, seen = [], set()
     for row in LT1_ROWS:

@@ -11,6 +11,23 @@ import re
 import pytest
 
 from scripts.grm_c7_diagnose import Model, repository
+
+
+# --------------------------------------------------------- GRM-D2 re-pin
+#
+# GRM-D2 (2026-09-11) flipped the shipped admission rule to `margin_first`
+# and turned F1 / F2 / F5 / A1 ON.  FIX-5 IS the fold whose source lifecycle F1 changes: with retention ON the sources stay ACTIVE, so this suite's enumerated-fact receipts and its zero-fact byte-identity control describe the substituting fold that is no longer the default.
+#
+# THIS SUITE'S ASSERTIONS ARE UNCHANGED -- they are the receipt for the
+# pre-D2 behaviour this suite was written to pin, and `GRM_LEGACY_DEFAULTS=1`
+# restores exactly that world.  The flipped behaviours have their own suites
+# (tests/test_grm_f1_fold_retain.py, test_grm_f2_alias_guard.py,
+# test_grm_f5_sole_binder_insurance.py, test_grm_a1_alias_fold.py).
+@pytest.fixture(autouse=True)
+def _grm_d2_legacy_defaults(monkeypatch):
+    from core import grm_legacy_defaults as legacy_defaults
+    monkeypatch.setenv(legacy_defaults.ENV_NAME, "1")
+
 from scripts.grm_e2e_session import harmony_turn
 
 ROOT = Path(__file__).resolve().parents[1]

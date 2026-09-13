@@ -247,10 +247,18 @@ def test_treatment_flags_cross_into_the_leased_child(label, monkeypatch):
     assert env[runner.TREATMENT_FLAGS[1]] == spec['f2']
     assert env[runner.TREATMENT_FLAGS[2]] == spec['f5']
     assert env[runner.ARM_ENV] == spec['base']
-    if spec['alias'] is None:
-        assert runner.ALIAS_ENV not in env
-    else:
-        assert env[runner.ALIAS_ENV] == spec['alias']
+    # GRM-D2 (2026-09-11) CHANGED THIS ASSERTION, and the change is real
+    # rather than a re-pin: before D2 the OFF arm expressed itself by
+    # leaving the variable ABSENT, which was a correct pin only while
+    # absent meant OFF.  D2 made A1's shipped default ON, so an absent
+    # variable would now hand the CONTROL arm the treatment -- caught by
+    # `pinned_arm`'s readback as LT11_ALIAS_PIN_FAILED.  The arm is now
+    # pinned EXPLICITLY on both sides (`runner.arm_alias_pin`), so what
+    # this test pins is the arm's resolved value, not its absence.  The
+    # property being tested is unchanged: the arm survives the GRM_* strip
+    # into the leased child.
+    assert env[runner.ALIAS_ENV] == runner.arm_alias_pin(spec['base'])
+    assert env[runner.ALIAS_ENV] == ('1' if spec['alias'] else '0')
 
 
 def test_absent_flags_stay_absent_in_the_child(monkeypatch):

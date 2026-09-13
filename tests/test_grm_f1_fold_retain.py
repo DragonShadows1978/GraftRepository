@@ -31,9 +31,35 @@ import re
 import pytest
 
 from core import grm_fold_retain as fr
+from core import grm_legacy_defaults as legacy_defaults
 from scripts.grm_c7_diagnose import Model, repository
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+# --------------------------------------------------------- GRM-D2 re-pin
+#
+# GRM-D2 (2026-09-11) flipped F1's shipped default from OFF to ON.  THIS
+# SUITE'S ASSERTIONS ARE UNCHANGED: every one of them still pins the
+# pre-D2 behaviour, which is exactly what ``GRM_LEGACY_DEFAULTS=1``
+# selects, and pinning it here is what keeps this file a receipt for the
+# OFF branch rather than a stale expectation of a default that moved.
+#
+# Two pins, because this suite resolves the flag two ways:
+#   * ``_grm_d2_legacy_defaults`` pins the PROCESS environment, for every
+#     test that goes through ``repository()`` / the arena;
+#   * ``legacy()`` builds the explicit ``environ=`` dicts the resolver
+#     tests pass directly, since those never consult ``os.environ``.
+# Neither adds or removes an assertion.
+
+def legacy(**extra):
+    """An ``environ`` mapping pinned to the pre-D2 defaults."""
+    return {legacy_defaults.ENV_NAME: "1", **extra}
+
+
+@pytest.fixture(autouse=True)
+def _grm_d2_legacy_defaults(monkeypatch):
+    monkeypatch.setenv(legacy_defaults.ENV_NAME, "1")
 
 #: Four turns whose facts are identifiers FIX-5's `_fact_set` will demand, so
 #: the extractive digest below clears MIN_FOLD_KEEP and the fold is ACCEPTED
@@ -94,33 +120,42 @@ def route_base(arena):
 
 def test_flag_default_off():
     assert fr.retain_sources_enabled() is False
-    assert fr.retain_sources_enabled(environ={}) is False
-    assert fr.env_retain_sources_override(environ={}) is None
+    assert fr.retain_sources_enabled(environ=legacy()) is False
+    assert fr.env_retain_sources_override(environ=legacy()) is None
 
 
 @pytest.mark.parametrize('token', ['1', 'true', 'TRUE', 'yes', 'on', ' On '])
 def test_flag_env_on(token):
     assert fr.retain_sources_enabled(
-        environ={fr.ENV_NAME: token}) is True
+        environ=legacy(**{fr.ENV_NAME: token})) is True
 
 
 @pytest.mark.parametrize('token', ['0', 'false', 'no', 'off', '', '  '])
 def test_flag_env_off(token):
-    assert fr.retain_sources_enabled(environ={fr.ENV_NAME: token}) is False
+    assert fr.retain_sources_enabled(
+        environ=legacy(**{fr.ENV_NAME: token})) is False
 
 
 @pytest.mark.parametrize('token', ['maybe', '2', 'ON!', 'yes please', '-1'])
 def test_flag_unknown_token_fails_closed(token):
     """A malformed operator escape never silently enables the behaviour —
     the A1 / L2 / A-DEC precedent."""
-    assert fr.retain_sources_enabled(environ={fr.ENV_NAME: token}) is False
-    assert fr.env_retain_sources_override(environ={fr.ENV_NAME: token}) is False
+    assert fr.retain_sources_enabled(
+        environ=legacy(**{fr.ENV_NAME: token})) is False
+    # GRM-D2: an unknown token now returns None (decline to decide) rather
+    # than False (pin OFF), so the caller falls through to the SHIPPED
+    # default -- which under this suite's legacy pin is still OFF.  The
+    # behaviour this test names ("fails closed") is unchanged; the rung it
+    # falls closed ON moved from the override helper to the default.
+    assert fr.env_retain_sources_override(
+        environ=legacy(**{fr.ENV_NAME: token})) is None
 
 
 def test_explicit_beats_env():
-    env = {fr.ENV_NAME: '1'}
+    env = legacy(**{fr.ENV_NAME: '1'})
     assert fr.retain_sources_enabled(False, environ=env) is False
-    assert fr.retain_sources_enabled(True, environ={fr.ENV_NAME: '0'}) is True
+    assert fr.retain_sources_enabled(
+        True, environ=legacy(**{fr.ENV_NAME: '0'})) is True
 
 
 def test_arena_resolves_flag_once_at_construction(tmp_path, monkeypatch):
