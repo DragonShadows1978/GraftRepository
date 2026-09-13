@@ -302,10 +302,26 @@ def test_real_resume_route_through_pending_and_one_run_cell(
     _stub_lease(monkeypatch, tmp_path)
     out = tmp_path / ('run_' + label.replace('+', 'plus').replace("'", 'p'))
 
-    monkeypatch.setattr(worker, 'spawn_argv', _child_argv_using_the_cpu_double,
-                        raising=False)
     monkeypatch.setattr(worker, 'accounting', lambda *a, **k: 0.0)
     monkeypatch.setattr(worker.time, 'sleep', lambda *_: None)
+
+    # `spawn_argv` CANNOT be patched out here: `resume()` enters
+    # `lt1_1_seams`, which assigns `worker.spawn_argv = spawn_argv` (the real
+    # `--worker` argv) and restores its saved value on exit. A monkeypatch
+    # applied before `resume()` is therefore overwritten the moment the
+    # seams open, the child loads the real 20B model, and on a machine with
+    # no GPU it exits 1 -> WORKER_EXIT_1 -> rc 2.
+    #
+    # That is exactly the "flake" this file chased: NOT a race and NOT load
+    # sensitivity, but a seam that silently wins over the patch. It looked
+    # intermittent only because the model-load failure is fast when the
+    # weights are cold in page cache and slow when they are warm, so the
+    # cell sometimes outran the surrounding assertions.
+    #
+    # `runner.spawn_argv` is what the seams INSTALL, so patching it at the
+    # source survives the seams and keeps the child on the CPU double.
+    monkeypatch.setattr(runner, 'spawn_argv',
+                        _child_argv_using_the_cpu_double)
 
     real_run_cell = worker.run_cell
     calls = []

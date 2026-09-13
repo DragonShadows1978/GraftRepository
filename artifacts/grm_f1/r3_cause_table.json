@@ -1,0 +1,809 @@
+{
+  "recall_1_25": {
+    "arms": {
+      "A0": {
+        "admission_branch": "fit_margin_decisive_rank1",
+        "admission_identified": [
+          19
+        ],
+        "answer": "We decided to space the lamps along the Promenade at 9\u2011voxel intervals.",
+        "exact": false,
+        "fit_seated": [
+          19
+        ],
+        "mount_dropped_for_width": [],
+        "mount_plan": [
+          19
+        ],
+        "plan_seat_sum": 34,
+        "seated_texts": {
+          "19": "ARCHIVE NOTE. For the archive: the Galactic Hub should still feel like a social place, and the Promenade\u2019s lamp spacing "
+        },
+        "width": 96
+      },
+      "Aplusprime": {
+        "admission_branch": "margin_insurance_k3_identifier_tiebreak",
+        "admission_identified": [
+          23,
+          11,
+          6
+        ],
+        "answer": "We had agreed on a spacing of 9 voxels for the Promenade\u2019s lamp arrangement.",
+        "exact": true,
+        "fit_seated": [
+          11,
+          23
+        ],
+        "mount_dropped_for_width": [
+          6
+        ],
+        "mount_plan": [
+          23,
+          11,
+          6
+        ],
+        "plan_seat_sum": 136,
+        "seated_texts": {
+          "11": "system You are ChatGPT. Reasoning: low. Valid channel: final. user Promenade's lamp spacing will be 9 voxels. assistant ",
+          "23": "ARCHIVE NOTE. For the archive: the Galactic Hub should still feel like a social place, and the Promenade\u2019s lamp spacing "
+        },
+        "width": 96
+      },
+      "Aprime": {
+        "admission_branch": "margin_insurance_k3_identifier_tiebreak",
+        "admission_identified": [
+          19,
+          11,
+          6
+        ],
+        "answer": "We had agreed on a spacing of 9 voxels for the Promenade\u2019s lamp arrangement.",
+        "exact": true,
+        "fit_seated": [
+          11,
+          19
+        ],
+        "mount_dropped_for_width": [
+          6
+        ],
+        "mount_plan": [
+          19,
+          11,
+          6
+        ],
+        "plan_seat_sum": 136,
+        "seated_texts": {
+          "11": "system You are ChatGPT. Reasoning: low. Valid channel: final. user Promenade's lamp spacing will be 9 voxels. assistant ",
+          "19": "ARCHIVE NOTE. For the archive: the Galactic Hub should still feel like a social place, and the Promenade\u2019s lamp spacing "
+        },
+        "width": 96
+      }
+    },
+    "expected": "9 voxels"
+  },
+  "recall_1_50": {
+    "arms": {
+      "A0": {
+        "admission_branch": "fit_margin_decisive_rank1",
+        "admission_identified": [
+          19
+        ],
+        "answer": "We decided to space the lamps along the Promenade at 9\u2011voxel intervals.",
+        "exact": false,
+        "fit_seated": [
+          19
+        ],
+        "mount_dropped_for_width": [],
+        "mount_plan": [
+          19
+        ],
+        "plan_seat_sum": 34,
+        "seated_texts": {
+          "19": "ARCHIVE NOTE. For the archive: the Galactic Hub should still feel like a social place, and the Promenade\u2019s lamp spacing "
+        },
+        "width": 96
+      },
+      "Aplusprime": {
+        "admission_branch": "margin_insurance_k3_identifier_tiebreak",
+        "admission_identified": [
+          23,
+          11,
+          6
+        ],
+        "answer": "We had agreed on a spacing of 9 voxels for the Promenade\u2019s lamp arrangement.",
+        "exact": true,
+        "fit_seated": [
+          11,
+          23
+        ],
+        "mount_dropped_for_width": [
+          6
+        ],
+        "mount_plan": [
+          23,
+          11,
+          6
+        ],
+        "plan_seat_sum": 136,
+        "seated_texts": {
+          "11": "system You are ChatGPT. Reasoning: low. Valid channel: final. user Promenade's lamp spacing will be 9 voxels. assistant ",
+          "23": "ARCHIVE NOTE. For the archive: the Galactic Hub should still feel like a social place, and the Promenade\u2019s lamp spacing "
+        },
+        "width": 96
+      },
+      "Aprime": {
+        "admission_branch": "margin_insurance_k3_identifier_tiebreak",
+        "admission_identified": [
+          19,
+          11,
+          6
+        ],
+        "answer": "We had agreed on a spacing of 9 voxels for the Promenade\u2019s lamp arrangement.",
+        "exact": true,
+        "fit_seated": [
+          11,
+          19
+        ],
+        "mount_dropped_for_width": [
+          6
+        ],
+        "mount_plan": [
+          19,
+          11,
+          6
+        ],
+        "plan_seat_sum": 136,
+        "seated_texts": {
+          "11": "system You are ChatGPT. Reasoning: low. Valid channel: final. user Promenade's lamp spacing will be 9 voxels. assistant ",
+          "19": "ARCHIVE NOTE. For the archive: the Galactic Hub should still feel like a social place, and the Promenade\u2019s lamp spacing "
+        },
+        "width": 96
+      }
+    },
+    "expected": "9 voxels"
+  },
+  "recall_3_10": {
+    "arms": {
+      "A0": {
+        "admission_branch": "fit_margin_decisive_rank1",
+        "admission_identified": [
+          14
+        ],
+        "answer": "We agreed on a location for Breakwater: (-31, 48, 12).",
+        "exact": true,
+        "fit_seated": [
+          14
+        ],
+        "mount_dropped_for_width": [],
+        "mount_plan": [
+          14
+        ],
+        "plan_seat_sum": 53,
+        "seated_texts": {
+          "14": "system You are ChatGPT. Reasoning: low. Valid channel: final. user Breakwater's map position will be (-31, 48, 12). assi"
+        },
+        "width": 96
+      },
+      "Aplusprime": {
+        "admission_branch": "fit_margin_decisive_rank1",
+        "admission_identified": [
+          14
+        ],
+        "answer": "We agreed on a location for Breakwater: (-31, 48, 12).",
+        "exact": true,
+        "fit_seated": [
+          14
+        ],
+        "mount_dropped_for_width": [],
+        "mount_plan": [
+          14
+        ],
+        "plan_seat_sum": 53,
+        "seated_texts": {
+          "14": "system You are ChatGPT. Reasoning: low. Valid channel: final. user Breakwater's map position will be (-31, 48, 12). assi"
+        },
+        "width": 96
+      },
+      "Aprime": {
+        "admission_branch": "fit_margin_decisive_rank1",
+        "admission_identified": [
+          14
+        ],
+        "answer": "We\u2019re still working on that.",
+        "exact": false,
+        "fit_seated": [
+          5,
+          12
+        ],
+        "mount_dropped_for_width": [
+          10
+        ],
+        "mount_plan": [
+          12,
+          5,
+          10
+        ],
+        "plan_seat_sum": 146,
+        "seated_texts": {
+          "5": "system You are ChatGPT. Reasoning: low. Valid channel: final. user Lantern's launch date will be 18 October 2196. assist",
+          "12": "ARCHIVE NOTE. For the archive: the Kestrel's cargo allowance is 37 crates, and the Lantern's launch date is 18 October 2"
+        },
+        "width": 96
+      }
+    },
+    "expected": "(-31, 48, 12)"
+  },
+  "recall_3_100": {
+    "arms": {
+      "A0": {
+        "admission_branch": "margin_insurance_k3_identifier_tiebreak",
+        "admission_identified": [],
+        "answer": "We settled on **(64,\u202f\u201317,\u202f8)** for Breakwater\u2019s map position.",
+        "exact": false,
+        "fit_seated": [
+          41
+        ],
+        "mount_dropped_for_width": [],
+        "mount_plan": [
+          41
+        ],
+        "plan_seat_sum": 23,
+        "seated_texts": {
+          "41": "Actually, Spindle's map position will be (64, -17, 8), replacing the earlier choice."
+        },
+        "width": 96
+      },
+      "Aplusprime": {
+        "admission_branch": "fit_margin_decisive_rank1",
+        "admission_identified": [
+          14
+        ],
+        "answer": "We agreed on a location for Breakwater: (-31, 48, 12).",
+        "exact": true,
+        "fit_seated": [
+          14
+        ],
+        "mount_dropped_for_width": [],
+        "mount_plan": [
+          14
+        ],
+        "plan_seat_sum": 53,
+        "seated_texts": {
+          "14": "system You are ChatGPT. Reasoning: low. Valid channel: final. user Breakwater's map position will be (-31, 48, 12). assi"
+        },
+        "width": 96
+      },
+      "Aprime": {
+        "admission_branch": "margin_insurance_k3_identifier_tiebreak",
+        "admission_identified": [
+          55,
+          24,
+          14
+        ],
+        "answer": "We settled on **Breakwater\u2019s map position at coordinates \\((-31,\\;48,\\;12)\\)**.",
+        "exact": false,
+        "fit_seated": [
+          55
+        ],
+        "mount_dropped_for_width": [
+          24,
+          14
+        ],
+        "mount_plan": [
+          55,
+          24,
+          14
+        ],
+        "plan_seat_sum": 188,
+        "seated_texts": {
+          "55": "ARCHIVE NOTE. CHRONICLE \u2014 In this period, the Kestrel\u2019s cargo allowance is 37 crates, the Lantern\u2019s launch date is 18 Oc"
+        },
+        "width": 96
+      }
+    },
+    "expected": "(-31, 48, 12)"
+  },
+  "recall_5_25": {
+    "arms": {
+      "A0": {
+        "admission_branch": "fit_margin_decisive_rank1",
+        "admission_identified": [
+          16
+        ],
+        "answer": "We\u2019re still working on that. It\u2019s a good question to keep in mind as we design the rest of the game.",
+        "exact": false,
+        "fit_seated": [
+          19,
+          27
+        ],
+        "mount_dropped_for_width": [
+          12
+        ],
+        "mount_plan": [
+          19,
+          27,
+          12
+        ],
+        "plan_seat_sum": 121,
+        "seated_texts": {
+          "19": "ARCHIVE NOTE. For the archive: the Galactic Hub should still feel like a social place, and the Promenade\u2019s lamp spacing ",
+          "27": "system You are ChatGPT. Reasoning: low. Valid channel: final. user Orchard's water reserve will be 146 litres. assistant"
+        },
+        "width": 96
+      },
+      "Aplusprime": {
+        "admission_branch": "fit_margin_decisive_rank1",
+        "admission_identified": [
+          16,
+          10
+        ],
+        "answer": "We decided on **16 beds** for Medibay.",
+        "exact": true,
+        "fit_seated": [
+          16
+        ],
+        "mount_dropped_for_width": [],
+        "mount_plan": [
+          16
+        ],
+        "plan_seat_sum": 19,
+        "seated_texts": {
+          "16": "Actually, Medibay's bed count will be 16 beds, replacing the earlier choice."
+        },
+        "width": 96
+      },
+      "Aprime": {
+        "admission_branch": "fit_margin_decisive_rank1",
+        "admission_identified": [
+          16,
+          10
+        ],
+        "answer": "We decided on **16 beds** for Medibay.",
+        "exact": true,
+        "fit_seated": [
+          16
+        ],
+        "mount_dropped_for_width": [],
+        "mount_plan": [
+          16
+        ],
+        "plan_seat_sum": 19,
+        "seated_texts": {
+          "16": "Actually, Medibay's bed count will be 16 beds, replacing the earlier choice."
+        },
+        "width": 96
+      }
+    },
+    "expected": "16 beds"
+  },
+  "recall_5_50": {
+    "arms": {
+      "A0": {
+        "admission_branch": "fit_margin_decisive_rank1",
+        "admission_identified": [
+          16
+        ],
+        "answer": "We decided on **16 beds** for Medibay.",
+        "exact": true,
+        "fit_seated": [
+          16
+        ],
+        "mount_dropped_for_width": [],
+        "mount_plan": [
+          16
+        ],
+        "plan_seat_sum": 19,
+        "seated_texts": {
+          "16": "Actually, Medibay's bed count will be 16 beds, replacing the earlier choice."
+        },
+        "width": 96
+      },
+      "Aplusprime": {
+        "admission_branch": "fit_margin_decisive_rank1",
+        "admission_identified": [
+          16,
+          10
+        ],
+        "answer": "We decided on **16 beds** for Medibay.",
+        "exact": true,
+        "fit_seated": [
+          16
+        ],
+        "mount_dropped_for_width": [],
+        "mount_plan": [
+          16
+        ],
+        "plan_seat_sum": 19,
+        "seated_texts": {
+          "16": "Actually, Medibay's bed count will be 16 beds, replacing the earlier choice."
+        },
+        "width": 96
+      },
+      "Aprime": {
+        "admission_branch": "fit_margin_decisive_rank1",
+        "admission_identified": [
+          16,
+          10
+        ],
+        "answer": "We decided to keep it at 12.",
+        "exact": false,
+        "fit_seated": [
+          13,
+          24
+        ],
+        "mount_dropped_for_width": [
+          32
+        ],
+        "mount_plan": [
+          24,
+          13,
+          32
+        ],
+        "plan_seat_sum": 180,
+        "seated_texts": {
+          "13": "system You are ChatGPT. Reasoning: low. Valid channel: final. user Commtower's maintenance crew will be Iona Vale. assis",
+          "24": "ARCHIVE NOTE. For the archive: the maintenance crew of Commtower will be located at Iona Vale, and the map position of B"
+        },
+        "width": 96
+      }
+    },
+    "expected": "16 beds"
+  },
+  "recall_7_10": {
+    "arms": {
+      "A0": {
+        "admission_branch": "fit_margin_decisive_rank1",
+        "admission_identified": [
+          18
+        ],
+        "answer": "We had agreed that the Lantern\u2019s launch date would be **18\u202fOctober\u202f2196**.",
+        "exact": true,
+        "fit_seated": [
+          12
+        ],
+        "mount_dropped_for_width": [],
+        "mount_plan": [
+          12
+        ],
+        "plan_seat_sum": 35,
+        "seated_texts": {
+          "12": "ARCHIVE NOTE. For the archive: the Kestrel's cargo allowance is 37 crates, and the Lantern's launch date is 18 October 2"
+        },
+        "width": 96
+      },
+      "Aplusprime": {
+        "admission_branch": "fit_margin_decisive_rank1",
+        "admission_identified": [
+          20
+        ],
+        "answer": "The Beacon\u2019s launch date was set for **18\u202fOctober\u202f2196**.",
+        "exact": true,
+        "fit_seated": [
+          20
+        ],
+        "mount_dropped_for_width": [],
+        "mount_plan": [
+          20
+        ],
+        "plan_seat_sum": 48,
+        "seated_texts": {
+          "20": "ARCHIVE NOTE. CHRONICLE \u2014 In this period, the Kestrel\u2019s cargo allowance is 37 crates, and the Lantern\u2019s launch date is 1"
+        },
+        "width": 96
+      },
+      "Aprime": {
+        "admission_branch": "margin_insurance_k3_identifier_tiebreak",
+        "admission_identified": [
+          18
+        ],
+        "answer": "We\u2019re still working on that.",
+        "exact": false,
+        "fit_seated": [
+          5,
+          12
+        ],
+        "mount_dropped_for_width": [
+          18
+        ],
+        "mount_plan": [
+          12,
+          5,
+          18
+        ],
+        "plan_seat_sum": 154,
+        "seated_texts": {
+          "5": "system You are ChatGPT. Reasoning: low. Valid channel: final. user Lantern's launch date will be 18 October 2196. assist",
+          "12": "ARCHIVE NOTE. For the archive: the Kestrel's cargo allowance is 37 crates, and the Lantern's launch date is 18 October 2"
+        },
+        "width": 96
+      }
+    },
+    "expected": "18 October 2196"
+  },
+  "recall_7_25": {
+    "arms": {
+      "A0": {
+        "admission_branch": "fit_margin_decisive_rank1",
+        "admission_identified": [
+          24
+        ],
+        "answer": "We had agreed that the Lantern\u2019s launch date would be **18\u202fOctober\u202f2196**.",
+        "exact": true,
+        "fit_seated": [
+          12
+        ],
+        "mount_dropped_for_width": [],
+        "mount_plan": [
+          12
+        ],
+        "plan_seat_sum": 35,
+        "seated_texts": {
+          "12": "ARCHIVE NOTE. For the archive: the Kestrel's cargo allowance is 37 crates, and the Lantern's launch date is 18 October 2"
+        },
+        "width": 96
+      },
+      "Aplusprime": {
+        "admission_branch": "fit_margin_decisive_rank1",
+        "admission_identified": [
+          20
+        ],
+        "answer": "The Beacon\u2019s launch date was set for **18\u202fOctober\u202f2196**.",
+        "exact": true,
+        "fit_seated": [
+          20
+        ],
+        "mount_dropped_for_width": [],
+        "mount_plan": [
+          20
+        ],
+        "plan_seat_sum": 48,
+        "seated_texts": {
+          "20": "ARCHIVE NOTE. CHRONICLE \u2014 In this period, the Kestrel\u2019s cargo allowance is 37 crates, and the Lantern\u2019s launch date is 1"
+        },
+        "width": 96
+      },
+      "Aprime": {
+        "admission_branch": "margin_insurance_k3_identifier_tiebreak",
+        "admission_identified": [
+          18
+        ],
+        "answer": "We\u2019re still working on that.",
+        "exact": false,
+        "fit_seated": [
+          5,
+          12
+        ],
+        "mount_dropped_for_width": [
+          18
+        ],
+        "mount_plan": [
+          12,
+          5,
+          18
+        ],
+        "plan_seat_sum": 154,
+        "seated_texts": {
+          "5": "system You are ChatGPT. Reasoning: low. Valid channel: final. user Lantern's launch date will be 18 October 2196. assist",
+          "12": "ARCHIVE NOTE. For the archive: the Kestrel's cargo allowance is 37 crates, and the Lantern's launch date is 18 October 2"
+        },
+        "width": 96
+      }
+    },
+    "expected": "18 October 2196"
+  },
+  "recall_7_50": {
+    "arms": {
+      "A0": {
+        "admission_branch": "fit_margin_decisive_rank1",
+        "admission_identified": [
+          24
+        ],
+        "answer": "We had agreed that the Lantern\u2019s launch date would be **18\u202fOctober\u202f2196**.",
+        "exact": true,
+        "fit_seated": [
+          12
+        ],
+        "mount_dropped_for_width": [],
+        "mount_plan": [
+          12
+        ],
+        "plan_seat_sum": 35,
+        "seated_texts": {
+          "12": "ARCHIVE NOTE. For the archive: the Kestrel's cargo allowance is 37 crates, and the Lantern's launch date is 18 October 2"
+        },
+        "width": 96
+      },
+      "Aplusprime": {
+        "admission_branch": "fit_margin_decisive_rank1",
+        "admission_identified": [
+          20
+        ],
+        "answer": "The Beacon\u2019s launch date was set for **18\u202fOctober\u202f2196**.",
+        "exact": true,
+        "fit_seated": [
+          20
+        ],
+        "mount_dropped_for_width": [],
+        "mount_plan": [
+          20
+        ],
+        "plan_seat_sum": 48,
+        "seated_texts": {
+          "20": "ARCHIVE NOTE. CHRONICLE \u2014 In this period, the Kestrel\u2019s cargo allowance is 37 crates, and the Lantern\u2019s launch date is 1"
+        },
+        "width": 96
+      },
+      "Aprime": {
+        "admission_branch": "margin_insurance_k3_identifier_tiebreak",
+        "admission_identified": [
+          18
+        ],
+        "answer": "We\u2019re still working on that.",
+        "exact": false,
+        "fit_seated": [
+          5,
+          12
+        ],
+        "mount_dropped_for_width": [
+          18
+        ],
+        "mount_plan": [
+          12,
+          5,
+          18
+        ],
+        "plan_seat_sum": 154,
+        "seated_texts": {
+          "5": "system You are ChatGPT. Reasoning: low. Valid channel: final. user Lantern's launch date will be 18 October 2196. assist",
+          "12": "ARCHIVE NOTE. For the archive: the Kestrel's cargo allowance is 37 crates, and the Lantern's launch date is 18 October 2"
+        },
+        "width": 96
+      }
+    },
+    "expected": "18 October 2196"
+  },
+  "recap_2": {
+    "arms": {
+      "A0": {
+        "admission_branch": "fit_margin_decisive_rank1",
+        "admission_identified": [],
+        "answer": "The maintenance crew for the **Commtower** is the **Beacon\u2019s maintenance crew** located at **Iona Vale**.",
+        "exact": true,
+        "fit_seated": [
+          61
+        ],
+        "mount_dropped_for_width": [],
+        "mount_plan": [
+          61
+        ],
+        "plan_seat_sum": 89,
+        "seated_texts": {
+          "61": "ARCHIVE NOTE. CHRONICLE \u2014 In this period, the Kestrel\u2019s cargo allowance is 37 crates, the Lantern\u2019s launch date is 18 Oc"
+        },
+        "width": null
+      },
+      "Aplusprime": {
+        "admission_branch": "fit_margin_decisive_rank1",
+        "admission_identified": [
+          13
+        ],
+        "answer": "We went with the crew that handled the tower\u2019s upkeep.",
+        "exact": false,
+        "fit_seated": [
+          13
+        ],
+        "mount_dropped_for_width": [],
+        "mount_plan": [
+          13
+        ],
+        "plan_seat_sum": 49,
+        "seated_texts": {
+          "13": "system You are ChatGPT. Reasoning: low. Valid channel: final. user Commtower's maintenance crew will be Iona Vale. assis"
+        },
+        "width": null
+      },
+      "Aprime": {
+        "admission_branch": "margin_insurance_k3_identifier_tiebreak",
+        "admission_identified": [
+          55,
+          13,
+          24
+        ],
+        "answer": "The maintenance crew for the Commtower is located at Iona\u202fVale.",
+        "exact": true,
+        "fit_seated": [
+          55
+        ],
+        "mount_dropped_for_width": [
+          13,
+          24
+        ],
+        "mount_plan": [
+          55,
+          13,
+          24
+        ],
+        "plan_seat_sum": 184,
+        "seated_texts": {
+          "55": "ARCHIVE NOTE. CHRONICLE \u2014 In this period, the Kestrel\u2019s cargo allowance is 37 crates, the Lantern\u2019s launch date is 18 Oc"
+        },
+        "width": null
+      }
+    },
+    "expected": "Iona Vale"
+  },
+  "recap_3": {
+    "arms": {
+      "A0": {
+        "admission_branch": "margin_insurance_k3_identifier_tiebreak",
+        "admission_identified": [],
+        "answer": "The map position for **Breakwater** is **(19,\u202f83,\u202f\u201322)**.",
+        "exact": false,
+        "fit_seated": [
+          124
+        ],
+        "mount_dropped_for_width": [
+          61,
+          177
+        ],
+        "mount_plan": [
+          124,
+          61,
+          177
+        ],
+        "plan_seat_sum": 205,
+        "seated_texts": {
+          "124": "ARCHIVE NOTE. CHRONICLE \u2014 In this period, the archive records that the tool named Flint costs 34 credits, the event name"
+        },
+        "width": null
+      },
+      "Aplusprime": {
+        "admission_branch": "fit_margin_decisive_rank1",
+        "admission_identified": [
+          14
+        ],
+        "answer": "We went with (-31,\u202f48,\u202f12).",
+        "exact": true,
+        "fit_seated": [
+          14
+        ],
+        "mount_dropped_for_width": [],
+        "mount_plan": [
+          14
+        ],
+        "plan_seat_sum": 53,
+        "seated_texts": {
+          "14": "system You are ChatGPT. Reasoning: low. Valid channel: final. user Breakwater's map position will be (-31, 48, 12). assi"
+        },
+        "width": null
+      },
+      "Aprime": {
+        "admission_branch": "margin_insurance_k3_identifier_tiebreak",
+        "admission_identified": [
+          55,
+          24,
+          14
+        ],
+        "answer": "The map position for Breakwater is **(-31,\u202f48,\u202f12)**.",
+        "exact": true,
+        "fit_seated": [
+          55
+        ],
+        "mount_dropped_for_width": [
+          24,
+          14
+        ],
+        "mount_plan": [
+          55,
+          24,
+          14
+        ],
+        "plan_seat_sum": 188,
+        "seated_texts": {
+          "55": "ARCHIVE NOTE. CHRONICLE \u2014 In this period, the Kestrel\u2019s cargo allowance is 37 crates, the Lantern\u2019s launch date is 18 Oc"
+        },
+        "width": null
+      }
+    },
+    "expected": "(-31, 48, 12)"
+  }
+}

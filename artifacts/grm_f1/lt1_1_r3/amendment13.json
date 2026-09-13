@@ -1,0 +1,413 @@
+{
+  "amendment": 13,
+  "analysed_by": "GRM-F1 seat, CPU only, from the committed receipts",
+  "arm_receipts": {
+    "A'": {
+      "alias_fold_merge": false,
+      "cells_complete": 26,
+      "complete": true,
+      "measured": {
+        "alias": "7/10",
+        "correction": "9/10",
+        "fresh": "11/15",
+        "recap": "5/5"
+      },
+      "measured_recalls": 40,
+      "role": "TREATMENT",
+      "run_dir": "artifacts/grm_f1/lt1_1_r3/run_Aprime",
+      "summary_path": "artifacts/grm_f1/lt1_1_r3/lead_Aprime_summary.json",
+      "summary_sha256": "2e7ee64f574cd2a4239def3dac38df11dc10f9bd876929bb791268c08148b772"
+    },
+    "A+'": {
+      "alias_fold_merge": true,
+      "cells_complete": 26,
+      "complete": true,
+      "measured": {
+        "alias": "10/10",
+        "correction": "10/10",
+        "fresh": "13/15",
+        "recap": "4/5"
+      },
+      "measured_recalls": 40,
+      "role": "TREATMENT",
+      "run_dir": "artifacts/grm_f1/lt1_1_r3/run_Aplusprime",
+      "summary_path": "artifacts/grm_f1/lt1_1_r3/lead_Aplusprime_summary.json",
+      "summary_sha256": "5794f4f23916165c0281fce53813082a2edeeed55d3eec94d4aa9ab0fe6527f6"
+    },
+    "A0": {
+      "alias_fold_merge": false,
+      "cells_complete": 26,
+      "complete": true,
+      "measured": {
+        "alias": "10/10",
+        "correction": "9/10",
+        "fresh": "10/15",
+        "recap": "4/5"
+      },
+      "measured_recalls": 40,
+      "role": "CONTROL",
+      "run_dir": "artifacts/grm_f1/lt1_1_r3/run_A0",
+      "summary_path": "artifacts/grm_f1/lt1_1_r3/lead_A0_summary.json",
+      "summary_sha256": "f645f73c602ce2a29c2190175f88a612f464df18450a7c64d60143526e998d4b"
+    }
+  },
+  "arms": [
+    "A'",
+    "A+'",
+    "A0"
+  ],
+  "beacon_capture": {
+    "A'": {
+      "capture_present": false,
+      "detail": "only the raw alias edge (node 18, active). The same-index digest has sources [13,14] -- alias turns EXCLUDED -- and correctly names Commtower and Breakwater",
+      "nodes_mentioning_beacon": 1
+    },
+    "A+'": {
+      "capture_present": false,
+      "detail": "retired edge 19 plus A1 merged digest 20 (alias_merge=True, supersedes=[19])",
+      "nodes_mentioning_beacon": 2
+    },
+    "A0": {
+      "capture_present": true,
+      "detail": "digest 24 over sources [13,14,17,18]: \"the maintenance crew of the Beacon is located at Iona Vale, and the map position of the Beacon is (-31, 48, 12)\" -- two other entities' facts re-filed onto the alias, propagated into the ACTIVE era node 61",
+      "nodes_mentioning_beacon": 3
+    },
+    "verdict": "F2 ON prevented the capture in BOTH F2 arms; it is present only in the control. Verified by a same-window fold SOURCE LIST comparison, not by inference."
+  },
+  "cause_table": {
+    "path": "artifacts/grm_f1/r3_cause_table.json",
+    "rows": 11,
+    "sha256": "20cedf4616a0ad2bc39a70e28deea68974319c8bca9e4018dd7ac4c614e17a80",
+    "statement": "the per-row receipt for every differing row: mount plan, plan seat sum against width, fit_seated, mount_dropped_for_width, the admission branch and the TEXT of every seated node, per arm. Recomputed from probes.jsonl, not transcribed."
+  },
+  "core_rebind": {
+    "attribution_note": "CARRIED FORWARD VERBATIM from amendment 12 and re-measured against the tree. GRM-F1 follow-up 4 is analysis only: it reads the r3 receipts and writes documents. No core file moved.",
+    "changed": {
+      "core/graft_arena.py": {
+        "after_sha256": "3c97a3ea3afc7c2f6f8dce75bcc43e24e8e03ce535f14eec669fa6277ad02a62",
+        "attribution": "GRM-F1 + GRM-F2. F1: `_deposit_consolidation(..., retain=)` and the once-resolved `fold_retain_sources`. F2: the `fold_attribution_guard` hook and `_fold_attribution_ok`, which rejects on BOTH fold paths before `_deposit_consolidation` is reached. Verified at the code site by this seat: the attribution check returns (None, None) ahead of every deposit, so an F2 rejection can never leave F1 lineage behind.",
+        "before_sha256": "7f86633daca7c32f74967834018f3bb8853b9319464f0758273061eb907a7d72"
+      },
+      "core/graft_repository.py": {
+        "after_sha256": "758c62dc49ed89ddec7a0c6b78c1d36c55b9bae38fb7553a806036ddc4c7771c",
+        "attribution": "GRM-F1 + GRM-F2, merge resolved by this seat. F1: `_fold_once` retain lifecycle + fold-event lineage; `_alias_consolidate` pins retain=False so A1 keeps retiring its alias edge. F2: `_guard_fold_windows` on BOTH `_librarian_jobs` return paths, the attribution hook install, and `fold_guard_history`. Composition: F2 excludes from the window BEFORE job selection; F1 applies its lifecycle to whatever the guarded window folded; the shared abort branch absorbs an attribution rejection before any F1 lineage is written.",
+        "before_sha256": "c3aa3c92a20352016448467374e19bb409efd905248e0f4e02a81d218aa04920"
+      },
+      "core/grm_admission.py": {
+        "after_sha256": "7912f29108f0aaa9bc8f51d7a613b2866596aa6b93f99f4fa0b5bde69b2c3494",
+        "attribution": "GRM-F5. `GRM_ROUTE_SOLE_BINDER_INSURANCE` inserts the sole binder into the k=3 rank plan. Not modified by this seat; pinned here because r3 must run on the merged tree and an unpinned input is an unnoticed input.",
+        "before_sha256": "ebdfd84af435a163dfe4a37281d489047acd974bf76190b79622340c29af7ab6"
+      }
+    },
+    "new_inputs": {
+      "core/grm_fold_alias_guard.py": {
+        "attribution": "GRM-F2 NEW INPUT. The alias-guard flag resolver, the entity/clause vocabulary, `fold_window_excludes` and `attribution_violations`. Not authored by this seat.",
+        "sha256": "45b5640cb6e2138f3b26b8d45ae2e36cbdbee052ea71437dac6b805ca27962ed"
+      }
+    },
+    "source_binding": "artifacts/grm_d1/lt1_1/amendment11.json",
+    "source_binding_sha256": "7e0562f6d65bf0d3e9bb46d8054d23ef0fe1a663c62dbab463e45f1d31e84302",
+    "supersedes": "amendment12.core_rebind",
+    "unchanged": {
+      "core/grm_alias_fold.py": {
+        "attribution": "unchanged by the lc1-wip merge",
+        "sha256": "8e3810106d0e93a5da7bcf1c09dc80bcc4c561c5c334b634a96419ce475c97a5"
+      },
+      "core/grm_fold_retain.py": {
+        "attribution": "unchanged by the lc1-wip merge",
+        "sha256": "f1d1df10743bf6c15df33d2644a234ba582cf6478211ae482583d4a4be3d6fa7"
+      },
+      "core/grm_runtime.py": {
+        "attribution": "unchanged by the lc1-wip merge",
+        "sha256": "973addc491a29eda9bac611a9c3f0cc25cd1033395ecc39b84b19c6f1b8f0646"
+      },
+      "core/grm_text_norm.py": {
+        "attribution": "unchanged by the lc1-wip merge",
+        "sha256": "e968d68791950adb3a59bc83f43d75a75e31879a2f77c379b44bf711ccecc30a"
+      }
+    },
+    "unchanged_count": 4
+  },
+  "differing_row_count": 11,
+  "differing_row_note": "ELEVEN rows differ, not the nine named in the dispatch: recall_1_25 and recall_1_50 are two further A-prime/A+prime gains that the class totals absorb.",
+  "differing_rows": [
+    {
+      "A0": false,
+      "Ap": true,
+      "App": true,
+      "cause": "F1 GAIN: retained raw source seats alongside the digest",
+      "row": "recall_1_25"
+    },
+    {
+      "A0": false,
+      "Ap": true,
+      "App": true,
+      "cause": "F1 GAIN: same",
+      "row": "recall_1_50"
+    },
+    {
+      "A0": false,
+      "Ap": true,
+      "App": true,
+      "cause": "F1 GAIN: correction node 16 plans alone and seats",
+      "row": "recall_5_25"
+    },
+    {
+      "A0": false,
+      "Ap": true,
+      "App": true,
+      "cause": "era index serves; A0's plan head was the wrong node",
+      "row": "recap_3"
+    },
+    {
+      "A0": true,
+      "Ap": false,
+      "App": true,
+      "cause": "A' plan [12,5,10] = 146 seats vs width 96 -> DROP 10 (mount_dropped_for_width)",
+      "row": "recall_3_10"
+    },
+    {
+      "A0": true,
+      "Ap": false,
+      "App": true,
+      "cause": "A' plan [24,13,32] = 180 -> DROP 32; seated 13+24 mention no Medibay; the served \"12\" is the z-coordinate of Breakwater (-31,48,12) inside node 24 -- a cross-entity numeric leak",
+      "row": "recall_5_50"
+    },
+    {
+      "A0": true,
+      "Ap": false,
+      "App": true,
+      "cause": "A' plan [12,5,18] = 35+56+63 = 154 -> DROP 18, the ONLY node holding the alias relation; admission had IDENTIFIED it. The abstention is honest: nothing mounted said Beacon IS Lantern",
+      "row": "recall_7_10"
+    },
+    {
+      "A0": true,
+      "Ap": false,
+      "App": true,
+      "cause": "same as 7_10",
+      "row": "recall_7_25"
+    },
+    {
+      "A0": true,
+      "Ap": false,
+      "App": true,
+      "cause": "same as 7_10",
+      "row": "recall_7_50"
+    },
+    {
+      "A0": false,
+      "Ap": false,
+      "App": true,
+      "cause": "A+' plans [14] alone (53 seats); A' plan [55,24,14] = 188 drops both fact-bearing members",
+      "row": "recall_3_100"
+    },
+    {
+      "A0": true,
+      "Ap": true,
+      "App": false,
+      "cause": "A+' plans raw turn 13, whose assistant half is vague; A0/A' mount the era index whose prose names Iona Vale",
+      "row": "recap_2"
+    }
+  ],
+  "executed_by": "the lead, on the card",
+  "finding": {
+    "a1_removes_it": "Node 20 carries alias_merge=True, supersedes=[19], and states relation AND value in ONE 48-seat node, so a single mount answers the Beacon question. A+' scores aliases 10/10.",
+    "evidence": [
+      "route_info.mount_dropped_for_width on all five A-prime losses",
+      "fold source lists: A0 [13,14,17,18] vs A-prime [13,14]",
+      "node 20 metadata alias_merge/supersedes in run_Aplusprime"
+    ],
+    "id": "F1-R3-1",
+    "mechanism": "(1) F2 removes fact-less alias/rename turns from every fold window -- correct, and it kills the capture defect that IS present in A0 (digest 24 over sources [13,14,17,18] filed Commtower's crew and Breakwater's coordinates both onto \"the Beacon\", and it propagated into the ACTIVE era node 61). (2) Never folded therefore never superseded: the alias edge ends A' active=True, digest_of=None, source of nothing -- a lone raw turn holding a relation and no value. (3) F1 inflates the rank plan from one member to three. (4) The lone edge is admitted, ranked third, and evicted for width: 154 seats planned against a width of 96.",
+    "merge_guidance": "DO NOT merge F1+F2 without A1 on the strength of A'. The receipts license \"the SET A1+F1+F2+F5 beats the control on this fixture\", never a single-flag claim -- four flags moved together in A+'.",
+    "statement": "A' (F1+F2+F5, A1 OFF) scored aliases 7/10 against the control's 10/10. F1+F2 without A1 is therefore NOT a partial improvement: it is an alias REGRESSION produced by two individually-correct treatments interacting.",
+    "title": "The four flags are a SET at this arena width",
+    "what_a_prime_would_need": [
+      "co-mount of the alias edge WITH its base (63+35 = 98 > 96; FIX-7 was already STOPPED as impossible at this width)",
+      "plan-head protection so an identifier-bearing plan member is never the one evicted for width",
+      "a two-hop read resolving the alias before routing, which the A1 design deliberately rejected in favour of the write-time join"
+    ]
+  },
+  "follow_up_instruction": "Amendment 13 supersedes amendment 12 as the governing document. It changes NO core file and NO runner: both blocks are carried forward verbatim and re-verified. It is a RESULT amendment.",
+  "gate_defect_found": {
+    "fix": "patch runner.spawn_argv, the function the seams INSTALL, so the patch survives them. The gate now runs in 15.9 s and genuinely exercises the CPU double.",
+    "id": "F1-R3-RED1",
+    "method_note": "five hypotheses were ruled out by check before anyone asked what the child actually did; the worker.log was on disk the whole time. \"Ruled out by check\" is not \"diagnosed\".",
+    "root_cause": "the test patched worker.spawn_argv BEFORE calling resume(); resume() then enters lt1_1_seams, which assigns worker.spawn_argv = spawn_argv (the real --worker argv) and restores its saved value on exit. The seam silently overwrote the patch, so the leased child took the --worker branch and loaded the REAL GptOss20B_TC model instead of the CPU double. Captured traceback: grm_lt1_1.py:880 -> gpu_loader -> grm_e2e_session.py:2197 GptOss20B_TC.from_pretrained.",
+    "status": "ROOT-CAUSED AND FIXED",
+    "successor": "F1-R3-S5: audit every other test that patches a worker.* seam outside lt1_1_seams -- a patch the seams overwrite is a test that silently exercises production behaviour.",
+    "symptom": "rc == 2 (WORKER_EXIT_1) on one run in ten; all three arms on the reproducing run, in 32.78 s vs 102 s",
+    "test": "tests/test_grm_f1_resume_out_root.py::test_real_resume_route_through_pending_and_one_run_cell",
+    "why_it_looked_intermittent": "not a race and not load sensitivity: EVERY run spawned a real model load, and whether it failed fast enough to surface as WORKER_EXIT_1 varied with page-cache state. The tell was the timing -- 102 s for a CPU-double spawn."
+  },
+  "gpu_executed": true,
+  "ledger": "docs/GRM_F1_FOLD_RETAIN_LEDGER.md",
+  "order": "orders/GRM_F1_FOLD_RETAIN_SOURCES.md",
+  "order_sha256": "1d307c41e12356bf7181b073d8002bba36d103491a231cb51fa4c1de20a82bd5",
+  "prediction_verdicts": {
+    "A'": {
+      "aliases": {
+        "measured": "7/10",
+        "predicted": "10/10 (must not move at all)",
+        "verdict": "FAILED -- the registered falsifier fired"
+      },
+      "corrections": {
+        "measured": "9/10",
+        "predicted": ">= 9/10",
+        "verdict": "MET"
+      },
+      "fresh": {
+        "measured": "11/15 (c2 12)",
+        "predicted": ">= 14/15",
+        "verdict": "REFUTED as stated"
+      },
+      "recap": {
+        "measured": "5/5",
+        "predicted": ">= 4/5",
+        "verdict": "MET"
+      }
+    },
+    "A+'": {
+      "aliases": {
+        "measured": "10/10",
+        "predicted": "10/10",
+        "verdict": "MET"
+      },
+      "corrections": {
+        "measured": "10/10",
+        "predicted": ">= 9/10",
+        "verdict": "MET"
+      },
+      "fresh": {
+        "measured": "13/15 primary, 14/15 c2",
+        "predicted": ">= 14/15",
+        "verdict": "MET on c2, missed on the primary scorer"
+      },
+      "recap": {
+        "measured": "4/5",
+        "predicted": ">= 4/5",
+        "verdict": "MET"
+      }
+    },
+    "A0": {
+      "measured": "fresh 10/15 corr 9/10 alias 10/10 recap 4/5 = EXACT match to r2 arm A",
+      "predicted": "within +/-1 of r2 arm A on every class",
+      "verdict": "MET -- attribution licensed for the treatment arms"
+    }
+  },
+  "previous_amendment": "amendment12.json",
+  "previous_amendment_sha256": "cee143a51112819eee599d4c63f52f378696140856d6ebac7b163527780ca6e6",
+  "process_safety": {
+    "core_writes": "none -- follow-up 4 is analysis only",
+    "display": "no windowed gate; CPU gates only",
+    "git": "the lead commits; the seat never runs git",
+    "gpu": "the CAMPAIGN was run by the lead on the card; this seat analysed the committed receipts on CPU and ran no GPU work",
+    "scratch": "pytest uses --basetemp artifacts/grm_f1/tmp and the directory is removed afterwards",
+    "subagents": "none spawned"
+  },
+  "purpose": "Bind the completed LT1.1 r3 receipts (three arms, 26/26 cells each) by sha, record MEASURED results against every registered prediction, and register the finding that F1+F2 without A1 is an alias regression at this arena width.",
+  "registration_bound": {
+    "path": "artifacts/grm_f1/lt1_1_r3/registration_merged.json",
+    "sha256": "cc8ba32a1644f931ca3074b731c03811c15cb296f25973afa11f0506159d9627"
+  },
+  "report": "artifacts/grm_f1/REPORT.md",
+  "residency": {
+    "A'": {
+      "active": 213,
+      "max_summed_token_seats": 95,
+      "nodes": 228,
+      "retained_source": 156,
+      "rows": 322
+    },
+    "A+'": {
+      "active": 175,
+      "max_summed_token_seats": 94,
+      "nodes": 200,
+      "retained_source": 113,
+      "rows": 309
+    },
+    "A0": {
+      "active": 36,
+      "max_summed_token_seats": 94,
+      "nodes": 199,
+      "retained_source": 0,
+      "rows": 323
+    },
+    "bound_exceeded_rows": 0,
+    "reading": "The registered residency prediction HOLDS in all three arms. But A'-s routable base of 213 active nodes against 96 seats does not overflow the BOUND -- it overflows the PLAN, and the eviction lands on the node the question named. Residency bounds were the wrong instrument for this failure; mount_dropped_for_width was the right one, and it lives only in route_info, not in the residency rows.",
+    "width": 96
+  },
+  "runner": {
+    "carried_from": "amendment12.json",
+    "change": "UNCHANGED since amendment 12. Both shas re-measured against the tree. Follow-up 4 wrote only REPORT/LEDGER/this amendment and a test file; the runner and the worker are byte-identical to the binaries that produced the r3 receipts bound below.",
+    "path": "scripts/grm_lt1_1.py",
+    "red_receipts": [
+      "artifacts/grm_f1/red/red_resume_drops_out.log",
+      "artifacts/grm_f1/red/red_child_env_strip.json"
+    ],
+    "sha256": "3725dc3fe2a34e9a31f652e4f009e490ae125d7f6df3b30fd6b0acef420737b4",
+    "superseded_sha256": "c9874c41f46e95493c78d76cab8eccf62544647350a0d6172ea0e9aa5447c5d4",
+    "tests": [
+      "tests/test_grm_lt1_1_runner.py",
+      "tests/test_grm_lt1_1_resume_route.py",
+      "tests/test_grm_lt1_1_preflight.py",
+      "tests/test_grm_lt1_1_child_spawn.py",
+      "tests/test_grm_lt1_1_idle_wait.py",
+      "tests/test_grm_lt1_1_production_turns.py"
+    ],
+    "tests_added_by_f1": [
+      "tests/test_grm_f1_fold_retain.py"
+    ],
+    "tests_added_by_follow_up_3": [
+      "tests/test_grm_f1_resume_out_root.py"
+    ],
+    "worker": "scripts/grm_lt1_worker.py",
+    "worker_change": "UNCHANGED by follow-up 3; amendment 11's worker sha re-measured against the tree and carried verbatim.",
+    "worker_sha256": "79492eafe9176510a649c5477bf78bf1eb5c129ecaeaf4094221c67e22646c71"
+  },
+  "scorer_columns": {
+    "column_2": {
+      "bound_by": "amendment9.json",
+      "note": "NOT PERSISTED in any r3 artifact: probes.jsonl score objects carry exact_correct/category/abstention fields and no col2_* key, and lead_*_summary.json carries only correct/n/expected_n/exact_rate. These figures are RECORDED AS REPORTED and no finding in this amendment rests on them.",
+      "reported_by_lead": {
+        "A' fresh": 12,
+        "A+' fresh": "14/15",
+        "A+' total": "38/40",
+        "A0 fresh": 13
+      },
+      "verifiable_from_receipts": false
+    },
+    "primary": {
+      "note": "recomputed by the analysing seat from run_*/cells/*/probes.jsonl. A' is a NET REGRESSION against the control on this column.",
+      "scorer": "scripts/grm_lt1.score",
+      "totals": {
+        "A'": "32/40",
+        "A+'": "37/40",
+        "A0": "33/40"
+      },
+      "verifiable_from_receipts": true
+    }
+  },
+  "successors": [
+    {
+      "id": "F1-R3-S1",
+      "what": "persist fold_guard_history into worker.json",
+      "why": "F2's window exclusions and attribution rejections cannot be counted from the r3 receipts; the finding above had to be established from fold SOURCE LISTS instead. A future campaign should be able to count them directly."
+    },
+    {
+      "id": "F1-R3-S2",
+      "what": "surface plan-eviction counts in the residency row",
+      "why": "every A-prime loss is a mount_dropped_for_width event, and the residency rows -- the thing the registration bounds -- cannot see it."
+    },
+    {
+      "id": "F1-R3-S4",
+      "what": "persist the column-2 verdict into probes.jsonl and the summary",
+      "why": "amendment 9 bound c2 as a registered scoring column, but the r3 campaign left no receipt for it, so a seat reading these artifacts reaches a different total than the dispatch reported and cannot audit the column at all."
+    },
+    {
+      "id": "F1-R3-S3",
+      "what": "plan-head protection for identifier-bearing members",
+      "why": "the narrowest fix that would let an alias-merge-OFF arm serve aliases; see finding F1-R3-1."
+    }
+  ]
+}

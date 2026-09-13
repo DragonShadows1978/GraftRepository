@@ -624,3 +624,224 @@ taken in follow-up 2 was removed after verifying the canonical repo still
 holds it; `/mnt/ForgeRealm/GraftRepository` was never written. Every pytest
 run used `--basetemp /mnt/ForgeRealm/wt/grm-f1/artifacts/grm_f1/tmp`,
 removed afterwards. All Bash calls foreground, under 10 minutes.
+
+---
+
+# FOLLOW-UP 4 (lead, 2026-09-11): r3 ran; the cause table
+
+Follow-up 3 was committed; the lead ran all three arms to completion on the
+card, 26/26 cells each. This entry is the analysis of those receipts. No core
+was read-modified; this seat wrote no campaign.
+
+## 21. Scores, re-read from the receipts
+
+Verified against `lead_{A0,Aprime,Aplusprime}_summary.json`, not copied from
+the dispatch note: A0 fresh 10/15 corr 9/10 alias 10/10 recap 4/5; A′ 11/15,
+9/10, **7/10**, 5/5; A+′ 13/15, 10/10, 10/10, 4/5. `complete=True`, 26/26,
+`alias_fold_merge` false/false/true respectively.
+
+**A0 reproduces r2 arm A exactly on every class**, so the registration's
+`attribution_rule` is satisfied and the flags are attributable.
+
+## 22. Eleven differing rows, not nine
+
+The dispatch named 9. The receipts show **11**: `recall_1_25` and
+`recall_1_50` are two further A′/A+′ gains the class totals absorb. Full
+table in `artifacts/grm_f1/REPORT.md` §r3.
+
+## 23. ONE mechanism behind all five A′ losses
+
+`route_info.mount_dropped_for_width`, present on every one. F1's retention
+puts the retained raw source into the rank plan, so plans grow from ONE
+member to THREE and the seat sum runs **146–188 against width 96**. The fit
+seats two and drops the third, which on these rows is the only node holding
+the queried identifier.
+
+`recall_7_10`: A0 plans `[12]` (35 seats); A′ plans `[12, 5, 18]` =
+35+56+63 = 154, seats `[5, 12]`, **drops 18** — the alias edge; A+′ plans
+`[20]` (48). Admission IDENTIFIED 18 in A′ and the fit evicted it, so the
+abstention is HONEST: nothing mounted said Beacon IS Lantern. Not a
+grounding bug — a width eviction.
+
+`recall_5_50`: A′ seats 13 and 24, neither mentioning Medibay, and answers
+"keep it at 12". The "12" is the **z-coordinate of Breakwater's
+(-31, 48, 12)** inside node 24 — a cross-entity numeric leak from a
+co-mounted node, not a model prior. Node 16 ("16 beds") was identified and
+never planned.
+
+`recap_2` (A+′'s only loss): A0/A′ mount the ERA INDEX (61/55) whose prose
+names "Iona Vale"; A+′ plans `[13]`, the raw turn, whose assistant half is
+"That gives this area a clearer identity". A raw turn is a worse reader than
+a digest when the fact lives only in the user half.
+
+## 24. The Beacon node per arm — F2 vindicated by a same-window comparison
+
+A0 holds THREE Beacon nodes, including digest 24 over sources
+`[13, 14, 17, 18]`: *"the maintenance crew of the Beacon is located at Iona
+Vale, and the map position of the Beacon is (-31, 48, 12)"* — Commtower's
+crew and Breakwater's coordinates both re-filed onto "the Beacon", and it
+propagated into the ACTIVE era node 61. That is the capture defect F2 exists
+to prevent, **present in the control arm**.
+
+In A′ the digest at the same index has sources `[13, 14]` — alias turns 17
+and 18 EXCLUDED from the window — and reads "the maintenance crew of
+**Commtower** … the map position of **Breakwater**". Same fold, same cell,
+correct attribution. A′ holds exactly ONE Beacon node (the raw edge); A+′
+holds two (the retired edge and A1's merged digest).
+
+**Correction to my own first reading.** I initially proposed `no_fold=True`
+as the marker of F2's exclusion. That is WRONG and I checked it before
+relying on it: F1's retention sets `no_fold` on every retained source (174
+nodes in A′), so it does not isolate F2 at all. The discriminator is the
+fold's SOURCE LIST — `[13,14,17,18]` vs `[13,14]` — which is what the table
+above uses.
+
+`fold_guard_history` is not persisted into the cell receipts, so F2's guard
+events cannot be counted directly from this campaign. The source-list
+comparison is the receipt. **Successor: persist `fold_guard_history` into
+`worker.json`** so a future campaign can count exclusions and attribution
+rejections without reconstructing them from node state.
+
+## 25. The interaction, stated from receipts
+
+1. F2 removes fact-less alias turns from every fold window (correct; kills
+   the capture).
+2. Never folded therefore never superseded: in A′ the Beacon edge ends the
+   campaign `active=True`, `digest_of=None`, **source of nothing** — a lone
+   raw turn with a relation and no value.
+3. F1 inflates rank plans from one member to three.
+4. The lone edge is admitted, ranked third, evicted for width.
+
+A1 removes exactly that failure: node 20 carries `alias_merge=True`,
+`supersedes=[19]`, and states relation AND value in ONE 48-seat node.
+
+**Registered finding: the four flags are a SET at this arena width.** F1+F2
+without A1 is not a partial improvement — it is an alias REGRESSION (10/10 →
+7/10) produced by two individually-correct treatments interacting. **Do not
+merge F1+F2 without A1 on the strength of A′.** What A′ would need instead:
+co-mount of edge with base (63+35 = 98 > 96, and FIX-7 was STOPPED as
+impossible at this width), plan-head protection so an identifier-bearing
+member is never the evicted one, or a two-hop read that A1 deliberately
+rejected in favour of the write-time join.
+
+## 26. Residency — bounded everywhere, and the real warning
+
+A0 323 rows max 94; A′ 322 rows max **95**; A+′ 309 rows max 94. Width 96.
+No `RESIDENCY_BOUND_EXCEEDED` anywhere: the registered prediction HOLDS.
+
+The warning the prediction could not anticipate: A′'s routable base of 213
+active nodes against 96 seats does not overflow the BOUND — it overflows the
+PLAN, and the eviction lands on the node the question named. Residency
+bounds were the wrong instrument for this failure; `mount_dropped_for_width`
+was the right one, and it is only in `route_info`, not in the residency
+rows. **Successor: surface plan-eviction counts in the residency row.**
+
+## 27. Verdict against the registered predictions
+
+A0 MET (exact match, all classes). A′: fresh REFUTED as stated (11/15 vs
+≥14/15), corrections MET, **aliases FAILED (7/10 vs "must not move at
+all")**, recap MET. A+′: fresh MET on c2 (14/15) and missed on the primary
+scorer (13/15), corrections MET (10/10), aliases MET, recap MET.
+
+The A′ alias row is the registered falsifier firing verbatim. It fired on
+A′, not A+′, and the separation is now diagnosed rather than merely detected.
+
+Honest reading of A+′'s 38/40: real, but FOUR flags moved together. The
+receipts license "the SET A1+F1+F2+F5 beats the control on this fixture",
+never a single-flag claim.
+
+## 28. Follow-up 4 process safety
+
+No GPU (analysis only; this seat ran no campaign). No process killed or
+signalled. Git never run. No subagents. No symlinks. **Core read-only — not
+one core file was modified in this follow-up.** `/mnt/ForgeRealm/
+GraftRepository` not written. Every pytest run used `--basetemp
+/mnt/ForgeRealm/wt/grm-f1/artifacts/grm_f1/tmp`, removed afterwards. All Bash
+calls foreground, under 10 minutes.
+
+## 29. ROOT-CAUSED: the follow-up-3 gate was never running the CPU double
+
+RED, then diagnosed. Reported in full because my first two write-ups of this
+were wrong and the corrections are the useful part.
+
+**Symptom.** On one run of the full F1 battery,
+`tests/test_grm_f1_resume_out_root.py::
+test_real_resume_route_through_pending_and_one_run_cell[A0]` failed with
+`rc == 2` (`worker.run_cell` returned falsy => the leased child exited
+non-zero). It passed on ten other runs. I first recorded it as an
+unexplained ~1-in-6 flake, then as "weak evidence of absence" after a
+four-iteration hunt came back clean. **Both of those write-ups were wrong.**
+
+**Iteration 5 of the hunt reproduced it with the evidence attached**: all
+THREE arms failed, in 32.78 s instead of 102 s, and the captured
+`worker.log` files (2074 bytes each, identical) gave the real traceback:
+
+    scripts/grm_lt1_1.py:880   lt1_1_worker -> worker.execute(..., gpu_loader)
+    scripts/grm_lt1_1.py:891   gpu_loader -> e2e.load_model_and_repo(...)
+    scripts/grm_e2e_session.py:2197  GptOss20B_TC.from_pretrained(...)
+
+**The child was loading the real GPT-OSS-20B model.** It was never running
+the CPU double.
+
+**Cause.** The test patched `worker.spawn_argv` BEFORE calling `resume()`.
+`resume()` then enters `lt1_1_seams`, which assigns
+`worker.spawn_argv = spawn_argv` — the real `--worker` argv — and restores
+its own saved value on exit. The seam silently wins over the patch, so the
+spawned child took `main()`'s `--worker` branch (real model) instead of
+`--worker-cpu`. The passing test in
+`tests/test_grm_lt1_1_child_spawn.py` does not have this bug because it
+patches INSIDE `with runner.lt1_1_seams(...)` and calls `worker.run_cell`
+directly rather than going through `resume()`.
+
+**Why it looked intermittent.** It was not a race and not load sensitivity.
+Every "passing" run was also spawning a real 20B load; the cell took ~85 s
+doing it and then happened to satisfy the surrounding assertions. Whether
+the model-load path failed fast enough to surface as `WORKER_EXIT_1` varied
+with page-cache state. The tell was in the timings all along: 102 s per
+battery iteration for what should be a CPU-double spawn.
+
+**Fix.** Patch `runner.spawn_argv` — the function the seams INSTALL — so the
+patch survives the seams. The gate now runs in **15.9 s instead of 102 s**
+and genuinely exercises the CPU double.
+
+**What I got wrong, recorded so the pattern is visible.** I ruled out five
+hypotheses by check (ordering, flag values, the SIGALRM deadline, RUN_ENV
+leakage, shared roots) and each of those checks was sound — but I never
+asked the first question, which is *what did the child actually do*. The
+`worker.log` was always there to be read; two of my three isolated
+reproduction attempts captured one and I did not open it until the hunt
+handed me three at once. "Ruled out by check" is not the same as "diagnosed",
+and I twice wrote a status line implying progress toward the latter.
+
+Successor F1-R3-S5: audit every other test that patches a `worker.*` seam
+outside `lt1_1_seams`. A patch that the seams overwrite is a test that
+silently exercises production behaviour.
+## 30. CORRECTION: the column-2 figures are NOT verifiable from the receipts
+
+I carried the dispatch's c2 numbers (A0 fresh 13, A′ 12, A+′ 14/15, A+′ total
+38/40) into a first draft of REPORT §r3 before checking whether any r3
+artifact contains them. **It does not.** `probes.jsonl` score objects carry
+`exact_correct`, `category` and the abstention fields — no `col2_*` key — and
+`lead_*_summary.json` carries only `correct` / `n` / `expected_n` /
+`exact_rate` per class. Amendment 9 bound c2 as a registered scoring column,
+but the campaign left no receipt for it.
+
+Corrected in the REPORT: the c2 figures are now labelled **reported by the
+lead, unverified by this seat**, and no conclusion rests on them.
+
+On the column I CAN recompute, the totals are:
+
+| arm | primary total |
+|---|---|
+| A0 (control) | **33/40** |
+| A′ (F1+F2+F5) | **32/40** — a NET REGRESSION against the control |
+| A+′ (A1+F1+F2+F5) | **37/40** |
+
+A′ being a net regression on the verifiable column strengthens the
+flag-set finding rather than weakening it: the alias column does not merely
+fail to improve, it costs more than the fresh/recap gains return.
+
+**Successor F1-R3-S4: persist the column-2 verdict into `probes.jsonl` and
+the summary.** A registered scoring column that leaves no receipt cannot be
+audited from the artifacts the campaign produced, and a later seat reading
+these receipts would reach a different total than the dispatch reported.
