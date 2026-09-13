@@ -1,0 +1,902 @@
+{
+  "answer_to_david": "UNRESOLVED: no same-token cross-model causal claim follows from the historical RS4 source sets.",
+  "evidence_class": "GPU measured cells",
+  "mode": "gpu",
+  "models": [
+    {
+      "limits": "Historical source-text contrast; not same-token equivalence. Refusal detector lexical; inspect raw served answers.",
+      "model": "gpt-oss",
+      "pairs": 5,
+      "statuses": [
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS"
+      ],
+      "verdict": "NOT_FALSIFIED_ON_PANEL"
+    },
+    {
+      "limits": "Historical source-text contrast; not same-token equivalence. Refusal detector lexical; inspect raw served answers.",
+      "model": "qwen35",
+      "pairs": 0,
+      "statuses": [
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING"
+      ],
+      "verdict": "INCOMPLETE"
+    },
+    {
+      "limits": "Historical source-text contrast; not same-token equivalence. Refusal detector lexical; inspect raw served answers.",
+      "model": "minicpm3",
+      "pairs": 0,
+      "statuses": [
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING"
+      ],
+      "verdict": "INCOMPLETE"
+    },
+    {
+      "limits": "Historical source-text contrast; not same-token equivalence. Refusal detector lexical; inspect raw served answers.",
+      "model": "trinity",
+      "pairs": 0,
+      "statuses": [
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING"
+      ],
+      "verdict": "INCOMPLETE"
+    },
+    {
+      "limits": "Historical source-text contrast; not same-token equivalence. Refusal detector lexical; inspect raw served answers.",
+      "model": "olmoe",
+      "pairs": 0,
+      "statuses": [
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING"
+      ],
+      "verdict": "INCOMPLETE"
+    },
+    {
+      "limits": "Historical source-text contrast; not same-token equivalence. Refusal detector lexical; inspect raw served answers.",
+      "model": "gemma4",
+      "pairs": 0,
+      "statuses": [
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING"
+      ],
+      "verdict": "INCOMPLETE"
+    }
+  ],
+  "reference_barrier": {
+    "differences": {},
+    "missing": [],
+    "status": "PASS"
+  },
+  "registration_sha256": "758fd3ac1231ed44937714a86009b557f554f026e9d85773cb730074e04439e8",
+  "rows": [
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.4129519179049465,
+          "receipt": "cells/gpu/gpt-oss/C3l__sup_harbor_restatement.json",
+          "served": "The Harbor token is currently **Nacre‑6‑Blue**.",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "nacre-6-blue"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.4436121770077282,
+          "receipt": "cells/gpu/gpt-oss/C5__sup_harbor_restatement.json",
+          "served": "The current Harbor token is **Nacre‑6‑Blue**.",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "nacre-6-blue"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": 0.030660259102781695,
+      "gap_exceeds_0_10": false,
+      "historical_source_texts_equal": false,
+      "model": "gpt-oss",
+      "probe": "sup_harbor_restatement",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.3938651598679523,
+          "receipt": "cells/gpu/gpt-oss/C3l__sup_praxis_fresh.json",
+          "served": "The current Praxis dock value is **Quartz‑8‑Jade**.",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "quartz-8-jade"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.44534459483681943,
+          "receipt": "cells/gpu/gpt-oss/C5__sup_praxis_fresh.json",
+          "served": "The current Praxis dock value is **Raven-9-Ivory**.",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": [
+              "raven-9-ivory"
+            ]
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": 0.051479434968867144,
+      "gap_exceeds_0_10": false,
+      "historical_source_texts_equal": false,
+      "model": "gpt-oss",
+      "probe": "sup_praxis_fresh",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.4524627501765887,
+          "receipt": "cells/gpu/gpt-oss/C3l__sup_reserve_meridian_docket.json",
+          "served": "Delta‑4‑Drift.",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "Delta-4-Drift"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.4234250755980611,
+          "receipt": "cells/gpu/gpt-oss/C5__sup_reserve_meridian_docket.json",
+          "served": "The current Meridian docket value is **Delta‑4‑Drift**.",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "Delta-4-Drift"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": -0.029037674578527628,
+      "gap_exceeds_0_10": false,
+      "historical_source_texts_equal": false,
+      "model": "gpt-oss",
+      "probe": "sup_reserve_meridian_docket",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.4395621062290889,
+          "receipt": "cells/gpu/gpt-oss/C3l__sup_reserve_tundra_ledger.json",
+          "served": "The current Tundra ledger value is **Sable‑0‑Copper**.",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "Sable-0-Copper"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.4188124812035649,
+          "receipt": "cells/gpu/gpt-oss/C5__sup_reserve_tundra_ledger.json",
+          "served": "The current Tundra ledger value is **Sable‑0‑Copper**.",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "Sable-0-Copper"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": -0.02074962502552402,
+      "gap_exceeds_0_10": false,
+      "historical_source_texts_equal": false,
+      "model": "gpt-oss",
+      "probe": "sup_reserve_tundra_ledger",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.41242587397044356,
+          "receipt": "cells/gpu/gpt-oss/C3l__sup_solace_fresh.json",
+          "served": "The Solace key is 0‑Copper.",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.4378284659857552,
+          "receipt": "cells/gpu/gpt-oss/C5__sup_solace_fresh.json",
+          "served": "The current Solace key value is **Raven‑9‑Ivory**.",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "raven-9-ivory"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": 0.025402592015311642,
+      "gap_exceeds_0_10": false,
+      "historical_source_texts_equal": false,
+      "model": "gpt-oss",
+      "probe": "sup_solace_fresh",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/qwen35/C3l__sup_harbor_restatement.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/qwen35/C5__sup_harbor_restatement.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "qwen35",
+      "probe": "sup_harbor_restatement",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/qwen35/C3l__sup_praxis_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/qwen35/C5__sup_praxis_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "qwen35",
+      "probe": "sup_praxis_fresh",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/qwen35/C3l__sup_reserve_meridian_docket.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/qwen35/C5__sup_reserve_meridian_docket.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "qwen35",
+      "probe": "sup_reserve_meridian_docket",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/qwen35/C3l__sup_reserve_tundra_ledger.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/qwen35/C5__sup_reserve_tundra_ledger.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "qwen35",
+      "probe": "sup_reserve_tundra_ledger",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/qwen35/C3l__sup_solace_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/qwen35/C5__sup_solace_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "qwen35",
+      "probe": "sup_solace_fresh",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/minicpm3/C3l__sup_harbor_restatement.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/minicpm3/C5__sup_harbor_restatement.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "minicpm3",
+      "probe": "sup_harbor_restatement",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/minicpm3/C3l__sup_praxis_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/minicpm3/C5__sup_praxis_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "minicpm3",
+      "probe": "sup_praxis_fresh",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/minicpm3/C3l__sup_reserve_meridian_docket.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/minicpm3/C5__sup_reserve_meridian_docket.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "minicpm3",
+      "probe": "sup_reserve_meridian_docket",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/minicpm3/C3l__sup_reserve_tundra_ledger.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/minicpm3/C5__sup_reserve_tundra_ledger.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "minicpm3",
+      "probe": "sup_reserve_tundra_ledger",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/minicpm3/C3l__sup_solace_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/minicpm3/C5__sup_solace_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "minicpm3",
+      "probe": "sup_solace_fresh",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/trinity/C3l__sup_harbor_restatement.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/trinity/C5__sup_harbor_restatement.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "trinity",
+      "probe": "sup_harbor_restatement",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/trinity/C3l__sup_praxis_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/trinity/C5__sup_praxis_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "trinity",
+      "probe": "sup_praxis_fresh",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/trinity/C3l__sup_reserve_meridian_docket.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/trinity/C5__sup_reserve_meridian_docket.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "trinity",
+      "probe": "sup_reserve_meridian_docket",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/trinity/C3l__sup_reserve_tundra_ledger.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/trinity/C5__sup_reserve_tundra_ledger.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "trinity",
+      "probe": "sup_reserve_tundra_ledger",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/trinity/C3l__sup_solace_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/trinity/C5__sup_solace_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "trinity",
+      "probe": "sup_solace_fresh",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/olmoe/C3l__sup_harbor_restatement.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/olmoe/C5__sup_harbor_restatement.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "olmoe",
+      "probe": "sup_harbor_restatement",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/olmoe/C3l__sup_praxis_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/olmoe/C5__sup_praxis_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "olmoe",
+      "probe": "sup_praxis_fresh",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/olmoe/C3l__sup_reserve_meridian_docket.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/olmoe/C5__sup_reserve_meridian_docket.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "olmoe",
+      "probe": "sup_reserve_meridian_docket",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/olmoe/C3l__sup_reserve_tundra_ledger.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/olmoe/C5__sup_reserve_tundra_ledger.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "olmoe",
+      "probe": "sup_reserve_tundra_ledger",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/olmoe/C3l__sup_solace_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/olmoe/C5__sup_solace_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "olmoe",
+      "probe": "sup_solace_fresh",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/gemma4/C3l__sup_harbor_restatement.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/gemma4/C5__sup_harbor_restatement.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "gemma4",
+      "probe": "sup_harbor_restatement",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/gemma4/C3l__sup_praxis_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/gemma4/C5__sup_praxis_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "gemma4",
+      "probe": "sup_praxis_fresh",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/gemma4/C3l__sup_reserve_meridian_docket.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/gemma4/C5__sup_reserve_meridian_docket.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "gemma4",
+      "probe": "sup_reserve_meridian_docket",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/gemma4/C3l__sup_reserve_tundra_ledger.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/gemma4/C5__sup_reserve_tundra_ledger.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "gemma4",
+      "probe": "sup_reserve_tundra_ledger",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/gemma4/C3l__sup_solace_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/gemma4/C5__sup_solace_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "gemma4",
+      "probe": "sup_solace_fresh",
+      "role": "refuser"
+    }
+  ],
+  "schema": "grm.xm1.results.v1"
+}

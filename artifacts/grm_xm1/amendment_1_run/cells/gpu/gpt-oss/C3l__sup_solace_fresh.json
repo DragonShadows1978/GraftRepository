@@ -1,0 +1,4405 @@
+{
+  "binding": {
+    "amendment_sha256": "a50046f9f790825503893613468cf9de40c0b3a8243204fc85ed626652a5de8d",
+    "cell": {
+      "arm": "C3l",
+      "estimate_s": 150,
+      "model": "gpt-oss",
+      "probe": "sup_solace_fresh"
+    },
+    "implementation_sha256": "b7165ac968e844959714b59443082442f57be2b283e9d72b3526ca5de331a92b",
+    "mode": "gpu",
+    "registration_sha256": "758fd3ac1231ed44937714a86009b557f554f026e9d85773cb730074e04439e8"
+  },
+  "elapsed_s": 85.22836952609941,
+  "evidence_class": "GPU end-to-end cell",
+  "gpu_executed": true,
+  "memory": {
+    "after": {
+      "kind": "device-wide snapshot MiB; not per-process/peak",
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "0, GPU-2f47351d-ae1f-15ab-b5e0-e931e397b0cb, 12282, 11003, 872"
+    },
+    "before": {
+      "kind": "device-wide snapshot MiB; not per-process/peak",
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "0, GPU-2f47351d-ae1f-15ab-b5e0-e931e397b0cb, 12282, 317, 11558"
+    },
+    "peak": null
+  },
+  "result": {
+    "parity_barrier": "PASS",
+    "per_layer": {
+      "full_attention": {
+        "answer_positions": 11,
+        "layer_type": "full_attention",
+        "layers_observed": 12,
+        "mean_over_answer_positions": {
+          "answer_mass": 0.13522306609560142,
+          "fed_text_mass": 0.0,
+          "learned_sink_mass": 0.2541706701176185,
+          "live_mass": 0.3092539135479566,
+          "mounted_mass": 0.41242587397044356,
+          "physical_sink_mass": 0.02409933635852102,
+          "prior_live_mass": 0.0,
+          "question_mass": 0.17403084841189964
+        },
+        "partition_sum": 0.9999497949540842,
+        "partition_sums_to_one": true,
+        "per_layer_mean": [
+          {
+            "answer_mass": 0.16481376845728268,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 0,
+            "learned_sink_mass": 0.33207942003553564,
+            "live_mass": 0.36411305178295483,
+            "mounted_mass": 0.2646181447939439,
+            "physical_sink_mass": 0.03915535980327563,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.19929929077625275
+          },
+          {
+            "answer_mass": 0.12603045322678305,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 1,
+            "learned_sink_mass": 0.4419747563925656,
+            "live_mass": 0.2899134145541625,
+            "mounted_mass": 0.2550590553066947,
+            "physical_sink_mass": 0.012955536833032966,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.16388296539133246
+          },
+          {
+            "answer_mass": 0.13665318353609604,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 2,
+            "learned_sink_mass": 0.4159556437622417,
+            "live_mass": 0.30421535806222394,
+            "mounted_mass": 0.2717308009212667,
+            "physical_sink_mass": 0.008090760072015903,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.16756217723542993
+          },
+          {
+            "answer_mass": 0.15410827032544397,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 3,
+            "learned_sink_mass": 0.15361586687239734,
+            "live_mass": 0.29292048649354413,
+            "mounted_mass": 0.5170125175606121,
+            "physical_sink_mass": 0.03643979589370164,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.1388122168454257
+          },
+          {
+            "answer_mass": 0.14646256376396527,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 4,
+            "learned_sink_mass": 0.15966446833177048,
+            "live_mass": 0.33507594195279206,
+            "mounted_mass": 0.4766177155754783,
+            "physical_sink_mass": 0.028511228039860725,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.1886133781888268
+          },
+          {
+            "answer_mass": 0.09512482380325143,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 5,
+            "learned_sink_mass": 0.05412744933908636,
+            "live_mass": 0.2759152813391252,
+            "mounted_mass": 0.6396830461241982,
+            "physical_sink_mass": 0.030205143615603447,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.18079046024517578
+          },
+          {
+            "answer_mass": 0.15882110223174095,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 6,
+            "learned_sink_mass": 0.04183065044608983,
+            "live_mass": 0.33859905329617584,
+            "mounted_mass": 0.5937542238018729,
+            "physical_sink_mass": 0.02569943835789507,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.17977795004844666
+          },
+          {
+            "answer_mass": 0.16775821962139822,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 7,
+            "learned_sink_mass": 0.1596673442558809,
+            "live_mass": 0.3943556465885856,
+            "mounted_mass": 0.41727734153920953,
+            "physical_sink_mass": 0.02859285744753751,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.22659743238579144
+          },
+          {
+            "answer_mass": 0.11577973921190608,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 8,
+            "learned_sink_mass": 0.15364463491873306,
+            "live_mass": 0.3176832849329168,
+            "mounted_mass": 0.48800631815736945,
+            "physical_sink_mass": 0.04071005620062351,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.2019035436890342
+          },
+          {
+            "answer_mass": 0.13424829292026433,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 9,
+            "learned_sink_mass": 0.34824334491382947,
+            "live_mass": 0.31393875588070264,
+            "mounted_mass": 0.3309043131091378,
+            "physical_sink_mass": 0.0068789614279839125,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.17969045788049698
+          },
+          {
+            "answer_mass": 0.08730526607144963,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 10,
+            "learned_sink_mass": 0.39354450323364953,
+            "live_mass": 0.21411328559572046,
+            "mounted_mass": 0.37958947095004,
+            "physical_sink_mass": 0.012689579955556175,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.12680801546031778
+          },
+          {
+            "answer_mass": 0.13557110997763547,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 11,
+            "learned_sink_mass": 0.3956999589096416,
+            "live_mass": 0.27020340209657495,
+            "mounted_mass": 0.31485753980549896,
+            "physical_sink_mass": 0.01926331865516576,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.13463229279626499
+          }
+        ],
+        "subbands_sum_to_live": true
+      },
+      "sliding_attention": {
+        "answer_positions": 11,
+        "layer_type": "sliding_attention",
+        "layers_observed": 12,
+        "mean_over_answer_positions": {
+          "answer_mass": 0.29491383537198557,
+          "fed_text_mass": 0.0,
+          "learned_sink_mass": 0.41251242070487054,
+          "live_mass": 0.5410808928762422,
+          "mounted_mass": 0.04485527094397129,
+          "physical_sink_mass": 0.0015122188076268437,
+          "prior_live_mass": 0.0,
+          "question_mass": 0.2461670619774271
+        },
+        "partition_sum": 0.9999608078058814,
+        "partition_sums_to_one": true,
+        "per_layer_mean": [
+          {
+            "answer_mass": 0.1712686981667172,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 0,
+            "learned_sink_mass": 0.5913629206744108,
+            "live_mass": 0.3519457917321812,
+            "mounted_mass": 0.056021047586744484,
+            "physical_sink_mass": 0.0007372359819286926,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.18067709559744055
+          },
+          {
+            "answer_mass": 0.22092997215010904,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 1,
+            "learned_sink_mass": 0.5472681468183344,
+            "live_mass": 0.41038581458005036,
+            "mounted_mass": 0.040783663195642555,
+            "physical_sink_mass": 0.001583725266920572,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.1894558397206393
+          },
+          {
+            "answer_mass": 0.22766940092498605,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 2,
+            "learned_sink_mass": 0.5064225196838379,
+            "live_mass": 0.43372693116014654,
+            "mounted_mass": 0.05875281820243055,
+            "physical_sink_mass": 0.0010174364036753434,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.20605753294446252
+          },
+          {
+            "answer_mass": 0.3115000629966909,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 3,
+            "learned_sink_mass": 0.4063212654807351,
+            "live_mass": 0.5459544306451624,
+            "mounted_mass": 0.04729866795241833,
+            "physical_sink_mass": 0.0004383805062389001,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.23445437103509903
+          },
+          {
+            "answer_mass": 0.3641148724339225,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 4,
+            "learned_sink_mass": 0.28572492707859387,
+            "live_mass": 0.6737610751932318,
+            "mounted_mass": 0.039042029191147194,
+            "physical_sink_mass": 0.00122660768895664,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.30964620275930926
+          },
+          {
+            "answer_mass": 0.3075366345318881,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 5,
+            "learned_sink_mass": 0.2561796578493985,
+            "live_mass": 0.655478526245464,
+            "mounted_mass": 0.08341063203459437,
+            "physical_sink_mass": 0.0048121428566942495,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.3479418876496228
+          },
+          {
+            "answer_mass": 0.3302645710381595,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 6,
+            "learned_sink_mass": 0.28144435449080035,
+            "live_mass": 0.6825074607675726,
+            "mounted_mass": 0.03274499447169629,
+            "physical_sink_mass": 0.0032379041526424276,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.3522428992119702
+          },
+          {
+            "answer_mass": 0.3604523634368723,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 7,
+            "learned_sink_mass": 0.27998226339166815,
+            "live_mass": 0.6774776740507646,
+            "mounted_mass": 0.04211084239862182,
+            "physical_sink_mass": 0.0005759122508276381,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.31702531400051986
+          },
+          {
+            "answer_mass": 0.31010438908230176,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 8,
+            "learned_sink_mass": 0.3197877921841361,
+            "live_mass": 0.6412858421152289,
+            "mounted_mass": 0.03830234824933789,
+            "physical_sink_mass": 0.000613926363505677,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.3311814747073434
+          },
+          {
+            "answer_mass": 0.3643342500383204,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 9,
+            "learned_sink_mass": 0.3387831855903972,
+            "live_mass": 0.6109029000455682,
+            "mounted_mass": 0.0500385808673772,
+            "physical_sink_mass": 0.00016997527663162063,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.2465686486525969
+          },
+          {
+            "answer_mass": 0.29674102095040406,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 10,
+            "learned_sink_mass": 0.5345673832026395,
+            "live_mass": 0.4311432323672555,
+            "mounted_mass": 0.03225508586249568,
+            "physical_sink_mass": 0.0019657780807888644,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.134402220222083
+          },
+          {
+            "answer_mass": 0.2740497887134552,
+            "fed_text_mass": 0.0,
+            "layer_ordinal": 11,
+            "learned_sink_mass": 0.6023046320134943,
+            "live_mass": 0.3784010356122797,
+            "mounted_mass": 0.017502541315149178,
+            "physical_sink_mass": 0.0017676008627114986,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.10435125722803852
+          }
+        ],
+        "subbands_sum_to_live": true
+      }
+    },
+    "raw_rs4": {
+      "arena_width": 96,
+      "arm": "C3l",
+      "deposit_protocol": "CHRONOLOGICAL_ARENA_FEED (grm_det1_3_gpu._install_lived_nodes), the LIVED arm; under the SPEC frame that call reaches ArenaCache.deposit(text) through feed's ephemeral branch",
+      "fixture_node_to_idx": {
+        "praxis_fact": 0,
+        "sable_competitor": 2,
+        "solace_fact": 1
+      },
+      "frame": {
+        "ephemeral": true,
+        "escape_active": false,
+        "escape_env": null
+      },
+      "geometry_observed": {
+        "arena_width": 96,
+        "live_shift": 115,
+        "n_sink": 19
+      },
+      "instrument": "scripts/grm_rs4_ceiling_gpu.RowSplitMassObserver — a SUBCLASS of RS2's LayerTypeMassObserver that adds recording wrappers OUTSIDE the base class's own and modifies none of its arithmetic; the base partition is carried verbatim on every row.",
+      "layer_inventory": {
+        "arena_width": 96,
+        "counts_by_type": {
+          "full_attention": 12,
+          "sliding_attention": 12
+        },
+        "indices_by_type": {
+          "full_attention": [
+            1,
+            3,
+            5,
+            7,
+            9,
+            11,
+            13,
+            15,
+            17,
+            19,
+            21,
+            23
+          ],
+          "sliding_attention": [
+            0,
+            2,
+            4,
+            6,
+            8,
+            10,
+            12,
+            14,
+            16,
+            18,
+            20,
+            22
+          ]
+        },
+        "layers": 24,
+        "live_shift": 115,
+        "n_sink": 19,
+        "sliding_windows_observed": [
+          128
+        ]
+      },
+      "levers": {
+        "capture_pin": "live",
+        "label": "pin 'live' + seat ON",
+        "levers_read_from": "artifacts/grm_rs3/registration.json",
+        "seat_near_live": true
+      },
+      "live_graft_ids_after_install": [],
+      "model": {
+        "expert_mode": "resident_packed_mxfp4",
+        "framework": "tensor_cuda GptOss20B_TC",
+        "full_attention_layers": [
+          1,
+          3,
+          5,
+          7,
+          9,
+          11,
+          13,
+          15,
+          17,
+          19,
+          21,
+          23
+        ],
+        "head_dim": 64,
+        "hidden_dim": 2880,
+        "layers": 24,
+        "loaded": "GPT-OSS-20B (resident_packed_mxfp4)",
+        "model_dir": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee",
+        "num_heads": 64,
+        "num_kv_heads": 8,
+        "repository": "openai/gpt-oss-20b",
+        "revision": "6cee5e81ee83917806bbde320786a8fb61efebee",
+        "sliding_attention_layers": [
+          0,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16,
+          18,
+          20,
+          22
+        ]
+      },
+      "order": "orders/GRM_RS4_CEILING_REPARTITION.md",
+      "phase": "RS4",
+      "probes": [
+        {
+          "arena_cur_mount_n": 52,
+          "arm": "C3l",
+          "correct": true,
+          "eb1_lived_answer": "The current Praxis dock value is **Quartz‑8‑Jade**.",
+          "elapsed_ns": 18439402606,
+          "expected_values": [
+            "quartz-8-jade"
+          ],
+          "info": {
+            "evicted": 0,
+            "live_tokens": 51,
+            "mounts": [
+              6
+            ],
+            "resident": 122,
+            "rs4_arena_width": 96,
+            "rs4_c0_prelude": {
+              "arm_mount_ids": [
+                0
+              ],
+              "fit_split_children": [
+                3,
+                4
+              ],
+              "fit_split_parent": 2,
+              "grafts_after_prelude": 5,
+              "mounted_ids": [
+                0
+              ],
+              "served_answer": "I’m sorry, but I don’t have that information.",
+              "why": "C0's own ladder was run first so this arm's repository is the one C0 had at this probe — including any PERSISTED fit-time split whose child the registered mount ids name"
+            },
+            "rs4_capture": {
+              "all_payloads_identical": false,
+              "arm": "C3l",
+              "capture_pin": "live",
+              "fresh_graft_ids": [
+                5
+              ],
+              "per_node": [
+                {
+                  "capture_receipt": {
+                    "arena_width": 96,
+                    "capture_pin": "live",
+                    "capture_shift": 115,
+                    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+                    "capture_shift_observed": 115,
+                    "live_shift": 115,
+                    "n_sink": 19
+                  },
+                  "capture_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current Praxis dock value is Quartz-8-Jade.<|end|><|start|>assistant<|channel|>final<|message|>Recorded: Praxis dock is Quartz-8-Jade.<|end|>",
+                  "capture_text_sha256": "3822904c083dd79e2e9f45caaa7d535245bcfad9494561284216f0c7c8b59a1e",
+                  "capture_text_source": "registration.capture_nodes.capture_text_B0_B1",
+                  "deposit_path": "ArenaCache.deposit(text, capture_pin=...)",
+                  "deposit_path_is_production": true,
+                  "fresh_graft_id": 5,
+                  "fresh_native_node_id": 5,
+                  "installed_graft_id": 0,
+                  "installed_payload": {
+                    "available": true,
+                    "layers": 24,
+                    "ntok": 52,
+                    "per_layer_sha256": [
+                      "6761449e2562a7dec12b7810eeeece111798ef23dd89ce7775f709e3d1ac566c",
+                      "5cb99b23dace56e162bd4ed2e9283f52ea2af7960b0a47656868514cb3e88656",
+                      "6f6c3635ac05e3b96a94d8982864cefb6ee3fab808ef29fca953b7f6564ce536",
+                      "bc2817f7fb29d6b269ef1e8d793463f58724f712a33e8065e0aa0eba3cfbb6c9",
+                      "d52caeb6162a5a71776cd67cb4a36150c3101adf29cb10732d4bf6813644bd37",
+                      "c1f1ce6bcfd007770a50d4780657f9e8e7384e46cac5e97bbc1063c430cb5d4d",
+                      "68bac7f108ae38ef96ddf32276ca4f8072a53c9051796fd9ad5d1d083f0b1b50",
+                      "4f12a0788b09f49e2fdcc8ece50198f0116c8a918ed6c6aa1c99555137d26932",
+                      "d62ba52c3607e33bd53c3ecd2ef8f0cbb72da8fd9d45e3bc5c7ddc2b84635039",
+                      "ed0132d7e86199b3a0b027e6606caaa9aefbfe03965f37fe700483b067d766c5",
+                      "e246ab50288e70f728ae8646bf67f6e67ffaca8ed119fd77bfdcf6bc5ae20cb9",
+                      "3277d5218059658aa97c5d9c0542ac5f68ec23283e8cc45265d2ed5853f2b41a",
+                      "cfce8aef6bfdf1ebae1e4505d54659b68cc7b3bc1e8ffca7054a25d63a16b3c7",
+                      "5ead0ca483a266399a573a27eeb5cfd2163c685df4152d035d18c32015f8bd05",
+                      "53a1e791dd90998e4c44d755343b21dd95b8c07e5c789311b0989ade50ab7115",
+                      "fa0b79a8e8c3ad372943469cc3c12a24832218feeafef4e53df9f9a73de37e19",
+                      "dbbdeecf42e0467ba529b2d6c7172b4b880c90b63fe2fbf87027a96b25b1a72b",
+                      "57f7e76fcbcfc0e2c76ca6e8a827f0a2095942d6ad57ad97aa608954d4fb272e",
+                      "c6d05368c69410018554dc916d597f686f85c393cc391f7452bb8b331eeb614b",
+                      "2422211290849702fc6ece6d7ff5b8f63a13abb2ec58c62e93b1d9a53b375a8c",
+                      "71be760b256b67f54635d30921049cfa0761816d796d46b0e981a10bf76e24aa",
+                      "1bae6c2b4af9eda03eefb05f211174ae12477f4617a617e3c9a30614d010d00e",
+                      "d51a342de4d92566d2fb1753069b54c64df4310a5477db194dc342076751198e",
+                      "a483be11bd73dde41a173a03234a072b1f8520656f9bee4399ebb78a84e40103"
+                    ],
+                    "sha256": "199b287e199b0a5b1d99adb91a9dcbde8eb4c13c1ff10eb92c155a81ef599d54"
+                  },
+                  "native_sync_call": "GraftRepository._native_sync_node",
+                  "node_id": "praxis_fact",
+                  "ntok_identical": true,
+                  "payload_identical": false,
+                  "recaptured_payload": {
+                    "available": true,
+                    "layers": 24,
+                    "ntok": 52,
+                    "per_layer_sha256": [
+                      "6761449e2562a7dec12b7810eeeece111798ef23dd89ce7775f709e3d1ac566c",
+                      "c163ce617460c2785297d96ce795f1a1a41765035532fd930440aa2475492065",
+                      "874933abc569493e4d98b71aa3831a628843cff112a89ecd64eb822f90686834",
+                      "9d913659a9114c1bf37c0276fc7b86bd60a04c2be567791032cab5182152d042",
+                      "5a88082c98920f5708e740d3fec5d2de525402c3c4a5034b5cb50a5c52d5c735",
+                      "080e671fad7e99ab65d0d7611d7a8ab4f8d2c485a905f983f40739ffbb1adc12",
+                      "d718e9c98c8c2c3286319f47b111afd0df5da2cacb06a5e694eff4f5f47225a3",
+                      "b75e05f24206a54444dc2946b9082c781d54dd8a3fba601cdce27c6b959c2a9f",
+                      "89697a993a509bb4b73d925b9056a6df3ed76b221135a3cff8b559d712975668",
+                      "1456a52ae00fc6686c247d45fcab6fbf8e71b756e0634540936d28eeae558ec1",
+                      "59326cf3be5d208ccc836750c615d187c242f2c4266cf5996a63e47f3c81476c",
+                      "4781bd21767f0c21d249348a11930a1d364c1c77ebcc18fcd93c2897214ce0e9",
+                      "4822daeeb8791e74cd3ae5b3f2267d92a91e0c79714d344f80b707baa71fd2f5",
+                      "fc1c3ef536d00cd2520a567702513796fa4216f868e180e34dac7e4d00f1e9c8",
+                      "96320cdfe939ab9dd143aee06fc704e2dc3b6aa9d9aed14cf198cdc2f4e85cd5",
+                      "0611731e2a783676f3ed98634a366df47e89e5553ce8dbcfda56124ff640666f",
+                      "600e7628806ad100301c0bdae7e6b2b366409d639a3477e9d7e9a630f12dc16f",
+                      "4d60d665c04df0ab8dfc75ecd74c1c6c2e84d1b4a08a1f35843dc18edc170af3",
+                      "eb4df28cfc9aeaaee2ec9bb3601115f3865849a145ef508c1ee794b362eef33c",
+                      "e269ee7efaab29cb9b7761cea6704fe815d9e51154fb79153e8778ba38d1ea24",
+                      "535cc6730de96ba17a387a6a3f0415ac378cefb014d1139e7a129fa95accb1f3",
+                      "22a7658b7eb80624b8ba2007e21d95bffbcc2ba720296bf097220ecf7c47ce8e",
+                      "8cb7b0a253e871ffba10c924f47169f3d88d824b0a80a57d59e060cceba67647",
+                      "c5fa0276dcb7ea62f4d2f2f08b6be17c2e1d0534d34d2144de5a1f5dc60cb4e7"
+                    ],
+                    "sha256": "131b9be3dd1d126175a9354539c62807218a364c47ce6da0d0f02e7b78a5082e"
+                  }
+                }
+              ]
+            },
+            "rs4_cur_mount_n_at_serve": 52,
+            "rs4_fit_dropped": [],
+            "rs4_fit_requested": [
+              5
+            ],
+            "rs4_fit_seated": [
+              5
+            ],
+            "rs4_grounded": true,
+            "rs4_levers": {
+              "capture_pin": "live",
+              "label": "pin 'live' + seat ON",
+              "levers_read_from": "artifacts/grm_rs3/registration.json",
+              "seat_near_live": true
+            },
+            "rs4_seating": {
+              "arena_width": 96,
+              "delta_positions": 44,
+              "live_shift": 115,
+              "mount_ntok": 52,
+              "mount_pos0": 63,
+              "mount_pos0_legacy": 19,
+              "n_sink": 19,
+              "plan_head": 5,
+              "plan_head_adjacent_to_live_shift": true,
+              "plan_head_last_position": 114,
+              "plan_head_ntok": 52,
+              "seat_near_live": true,
+              "seat_offset_plan_head": 63,
+              "seat_order": [
+                5
+              ],
+              "seat_order_legacy": [
+                5
+              ],
+              "seat_rule": "GRM_SEAT_NEAR_LIVE: the block is filled from the TOP DOWN — the plan head (picks[0]) is seated LAST so its final token sits at live_shift - 1, immediately below the first live token; filler and the other mounts sit below it; the sink stays at [0, n_sink)"
+            },
+            "rs4_serving_path": "ArenaCache._attempt (routing disabled) — PRODUCTION, including the bootstrap seating branch the seat lever lives in"
+          },
+          "levers": {
+            "capture_pin": "live",
+            "label": "pin 'live' + seat ON",
+            "levers_read_from": "artifacts/grm_rs3/registration.json",
+            "seat_near_live": true
+          },
+          "live_feed": null,
+          "mass": {
+            "answer_positions": 16,
+            "base_partition_UNMODIFIED": {
+              "answer_positions": 16,
+              "by_layer_type": {
+                "full_attention": {
+                  "answer_positions": 16,
+                  "layer_type": "full_attention",
+                  "layers_observed": 12,
+                  "mean_over_answer_positions": {
+                    "learned_sink_mass": 0.27378186990002484,
+                    "live_mass": 0.3105574116731683,
+                    "mounted_mass": 0.3938651598679523,
+                    "physical_sink_mass": 0.021750425758606674
+                  },
+                  "partition_sum": 0.9999548671997521,
+                  "partition_sums_to_one": true,
+                  "per_layer_mean": [
+                    {
+                      "layer_ordinal": 0,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.3167773652821779,
+                      "live_mass": 0.332461204379797,
+                      "mounted_mass": 0.3213840862736106,
+                      "physical_sink_mass": 0.029241485171951354
+                    },
+                    {
+                      "layer_ordinal": 1,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.4419138450175524,
+                      "live_mass": 0.27547553926706314,
+                      "mounted_mass": 0.27318656723946333,
+                      "physical_sink_mass": 0.009360721378470771
+                    },
+                    {
+                      "layer_ordinal": 2,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.40758624486625195,
+                      "live_mass": 0.35535126365721226,
+                      "mounted_mass": 0.22995641361922026,
+                      "physical_sink_mass": 0.007018142961896956
+                    },
+                    {
+                      "layer_ordinal": 3,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.1497620651498437,
+                      "live_mass": 0.3061486314982176,
+                      "mounted_mass": 0.5070976298302412,
+                      "physical_sink_mass": 0.03692861064337194
+                    },
+                    {
+                      "layer_ordinal": 4,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.1556852557696402,
+                      "live_mass": 0.38253440521657467,
+                      "mounted_mass": 0.43340110778808594,
+                      "physical_sink_mass": 0.028378585469909012
+                    },
+                    {
+                      "layer_ordinal": 5,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.06728997593745589,
+                      "live_mass": 0.22048855479806662,
+                      "mounted_mass": 0.6809538193047047,
+                      "physical_sink_mass": 0.031259826268069446
+                    },
+                    {
+                      "layer_ordinal": 6,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.038774878601543605,
+                      "live_mass": 0.31953107472509146,
+                      "mounted_mass": 0.6154875718057156,
+                      "physical_sink_mass": 0.0262593106017448
+                    },
+                    {
+                      "layer_ordinal": 7,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.15866597974672914,
+                      "live_mass": 0.38287883438169956,
+                      "mounted_mass": 0.44154153019189835,
+                      "physical_sink_mass": 0.016865112935192883
+                    },
+                    {
+                      "layer_ordinal": 8,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.1361582800745964,
+                      "live_mass": 0.3796194549649954,
+                      "mounted_mass": 0.44524219259619713,
+                      "physical_sink_mass": 0.038955764030106366
+                    },
+                    {
+                      "layer_ordinal": 9,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.45219268463552,
+                      "live_mass": 0.29689733777195215,
+                      "mounted_mass": 0.2445876020938158,
+                      "physical_sink_mass": 0.006301748886471614
+                    },
+                    {
+                      "layer_ordinal": 10,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.4458395466208458,
+                      "live_mass": 0.2160447584465146,
+                      "mounted_mass": 0.3269229088909924,
+                      "physical_sink_mass": 0.01111284425132908
+                    },
+                    {
+                      "layer_ordinal": 11,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.5147363170981407,
+                      "live_mass": 0.2592578809708357,
+                      "mounted_mass": 0.20662048878148198,
+                      "physical_sink_mass": 0.019322956504765898
+                    }
+                  ],
+                  "top_contributing_layer": {
+                    "layer_ordinal": 5,
+                    "mounted_mass": 0.6809538193047047
+                  }
+                },
+                "sliding_attention": {
+                  "answer_positions": 16,
+                  "layer_type": "sliding_attention",
+                  "layers_observed": 12,
+                  "mean_over_answer_positions": {
+                    "learned_sink_mass": 0.42234515693659586,
+                    "live_mass": 0.531418860812361,
+                    "mounted_mass": 0.04054162833078105,
+                    "physical_sink_mass": 0.005673609858301157
+                  },
+                  "partition_sum": 0.999979255938039,
+                  "partition_sums_to_one": true,
+                  "per_layer_mean": [
+                    {
+                      "layer_ordinal": 0,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.577490171417594,
+                      "live_mass": 0.3542585028335452,
+                      "mounted_mass": 0.06567267538048327,
+                      "physical_sink_mass": 0.002625846966111567
+                    },
+                    {
+                      "layer_ordinal": 1,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.5799814574420452,
+                      "live_mass": 0.3696658443659544,
+                      "mounted_mass": 0.048075614497065544,
+                      "physical_sink_mass": 0.002249729928735178
+                    },
+                    {
+                      "layer_ordinal": 2,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.5167322549968958,
+                      "live_mass": 0.4125295374542475,
+                      "mounted_mass": 0.05992834363132715,
+                      "physical_sink_mass": 0.010771446228318382
+                    },
+                    {
+                      "layer_ordinal": 3,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.388334721326828,
+                      "live_mass": 0.5713848639279604,
+                      "mounted_mass": 0.03745796007569879,
+                      "physical_sink_mass": 0.0027883316797669977
+                    },
+                    {
+                      "layer_ordinal": 4,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.2682840805500746,
+                      "live_mass": 0.6805270835757256,
+                      "mounted_mass": 0.047743913950398564,
+                      "physical_sink_mass": 0.00346633190929424
+                    },
+                    {
+                      "layer_ordinal": 5,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.3384615629911423,
+                      "live_mass": 0.5838527176529169,
+                      "mounted_mass": 0.0680982475169003,
+                      "physical_sink_mass": 0.009533183329040185
+                    },
+                    {
+                      "layer_ordinal": 6,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.2076384276151657,
+                      "live_mass": 0.7470499500632286,
+                      "mounted_mass": 0.036369101726450026,
+                      "physical_sink_mass": 0.008963948013843037
+                    },
+                    {
+                      "layer_ordinal": 7,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.29681968316435814,
+                      "live_mass": 0.6712203547358513,
+                      "mounted_mass": 0.02881054294994101,
+                      "physical_sink_mass": 0.0031899048772174865
+                    },
+                    {
+                      "layer_ordinal": 8,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.3698301613330841,
+                      "live_mass": 0.6017872896045446,
+                      "mounted_mass": 0.021955518634058535,
+                      "physical_sink_mass": 0.006398824029020034
+                    },
+                    {
+                      "layer_ordinal": 9,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.39021894708275795,
+                      "live_mass": 0.5772113986313343,
+                      "mounted_mass": 0.0318095920374617,
+                      "physical_sink_mass": 0.0007154311460908502
+                    },
+                    {
+                      "layer_ordinal": 10,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.5330580547451973,
+                      "live_mass": 0.42688582092523575,
+                      "mounted_mass": 0.026057701266836375,
+                      "physical_sink_mass": 0.014006410056026652
+                    },
+                    {
+                      "layer_ordinal": 11,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.601292360574007,
+                      "live_mass": 0.38065296597778797,
+                      "mounted_mass": 0.014520328302751295,
+                      "physical_sink_mass": 0.0033739301361492835
+                    }
+                  ],
+                  "top_contributing_layer": {
+                    "layer_ordinal": 5,
+                    "mounted_mass": 0.0680982475169003
+                  }
+                }
+              },
+              "geometry": {
+                "arena_width": 96,
+                "layer_counts": {
+                  "full_attention": 12,
+                  "sliding_attention": 12
+                },
+                "live_shift": 115,
+                "n_sink": 19,
+                "sliding_window": 128
+              },
+              "per_token_mounted_mass_full": [
+                0.44514397035042447,
+                0.42732807000478107,
+                0.42683572446306545,
+                0.43345961595575017,
+                0.3795620631426573,
+                0.3746832956870397,
+                0.4138723524908225,
+                0.39154240613182384,
+                0.4463467051585515,
+                0.38733312611778575,
+                0.3821149518092473,
+                0.3776695132255554,
+                0.3739959808687369,
+                0.3161319165180127,
+                0.3562453053891659,
+                0.3695775605738163
+              ],
+              "per_token_mounted_mass_sliding": [
+                0.0534223021628956,
+                0.043956178395698466,
+                0.048671342277278505,
+                0.04520383873023093,
+                0.044395917716125645,
+                0.03907685560019066,
+                0.035481182703127466,
+                0.03920829063281417,
+                0.048822055803611875,
+                0.030304011267920334,
+                0.03734373363355795,
+                0.03504805996393164,
+                0.06384429599468906,
+                0.031483835560114436,
+                0.02394977700896561,
+                0.028454375841344397
+              ],
+              "production_full_layer_mean": {
+                "learned_sink_mass": 0.27378186990002484,
+                "live_mass": 0.3105574116731683,
+                "mounted_mass": 0.3938651598679523,
+                "physical_sink_mass": 0.021750425758606674
+              },
+              "production_vs_recomputed_abs_delta": {
+                "learned_sink_mass": 0.0,
+                "live_mass": 0.0,
+                "mounted_mass": 0.0,
+                "physical_sink_mass": 0.0
+              },
+              "sliding_window_reach": {
+                "S_max": 122,
+                "S_min": 107,
+                "always_reaches_mount": true,
+                "fraction_of_mount_band_visible_max": 1.0,
+                "fraction_of_mount_band_visible_min": 1.0,
+                "k0_max": 0,
+                "k0_min": 0,
+                "mount_band_width_max": 52,
+                "mount_band_width_min": 52,
+                "mount_rows_in_window_max": 52,
+                "mount_rows_in_window_min": 52,
+                "never_reaches_mount": false,
+                "observed_rows": 192,
+                "reaching_rows": 192,
+                "sliding_window": 128
+              }
+            },
+            "bounds_first_seen": {
+              "S": 107,
+              "answer_band": [
+                107,
+                107
+              ],
+              "answer_rows": 0,
+              "bands_are_contiguous_and_cover_live": true,
+              "cur_mount_n": 52,
+              "fed_text_band": [
+                71,
+                71
+              ],
+              "fed_text_rows": 0,
+              "live0": 71,
+              "live_band": [
+                71,
+                107
+              ],
+              "live_rows": 36,
+              "mount_band": [
+                19,
+                71
+              ],
+              "n_sink": 19,
+              "prior_live_band": [
+                71,
+                71
+              ],
+              "prior_live_rows": 0,
+              "question_band": [
+                71,
+                107
+              ],
+              "question_rows": 36,
+              "sink_band": [
+                0,
+                19
+              ]
+            },
+            "bounds_last_seen": {
+              "S": 122,
+              "answer_band": [
+                107,
+                122
+              ],
+              "answer_rows": 15,
+              "bands_are_contiguous_and_cover_live": true,
+              "cur_mount_n": 52,
+              "fed_text_band": [
+                71,
+                71
+              ],
+              "fed_text_rows": 0,
+              "live0": 71,
+              "live_band": [
+                71,
+                122
+              ],
+              "live_rows": 51,
+              "mount_band": [
+                19,
+                71
+              ],
+              "n_sink": 19,
+              "prior_live_band": [
+                71,
+                71
+              ],
+              "prior_live_rows": 0,
+              "question_band": [
+                71,
+                107
+              ],
+              "question_rows": 36,
+              "sink_band": [
+                0,
+                19
+              ]
+            },
+            "by_layer_type": {
+              "full_attention": {
+                "answer_positions": 16,
+                "layer_type": "full_attention",
+                "layers_observed": 12,
+                "mean_over_answer_positions": {
+                  "answer_mass": 0.1685255280074974,
+                  "fed_text_mass": 0.0,
+                  "learned_sink_mass": 0.27378186990002484,
+                  "live_mass": 0.3105574116731683,
+                  "mounted_mass": 0.3938651598679523,
+                  "physical_sink_mass": 0.021750425758606674,
+                  "prior_live_mass": 0.0,
+                  "question_mass": 0.14203188352985308
+                },
+                "partition_sum": 0.9999548670639343,
+                "partition_sums_to_one": true,
+                "per_layer_mean": [
+                  {
+                    "answer_mass": 0.17942764004692435,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 0,
+                    "learned_sink_mass": 0.3167773652821779,
+                    "live_mass": 0.332461204379797,
+                    "mounted_mass": 0.3213840862736106,
+                    "physical_sink_mass": 0.029241485171951354,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.15303356386721134
+                  },
+                  {
+                    "answer_mass": 0.14842464402318,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 1,
+                    "learned_sink_mass": 0.4419138450175524,
+                    "live_mass": 0.27547553926706314,
+                    "mounted_mass": 0.27318656723946333,
+                    "physical_sink_mass": 0.009360721378470771,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.12705089431256056
+                  },
+                  {
+                    "answer_mass": 0.18421781156212091,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 2,
+                    "learned_sink_mass": 0.40758624486625195,
+                    "live_mass": 0.35535126365721226,
+                    "mounted_mass": 0.22995641361922026,
+                    "physical_sink_mass": 0.007018142961896956,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.17113345209509134
+                  },
+                  {
+                    "answer_mass": 0.1853066678158939,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 3,
+                    "learned_sink_mass": 0.1497620651498437,
+                    "live_mass": 0.3061486314982176,
+                    "mounted_mass": 0.5070976298302412,
+                    "physical_sink_mass": 0.03692861064337194,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.12084196088835597
+                  },
+                  {
+                    "answer_mass": 0.18875948898494244,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 4,
+                    "learned_sink_mass": 0.1556852557696402,
+                    "live_mass": 0.38253440521657467,
+                    "mounted_mass": 0.43340110778808594,
+                    "physical_sink_mass": 0.028378585469909012,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.1937749097123742
+                  },
+                  {
+                    "answer_mass": 0.09225307404994965,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 5,
+                    "learned_sink_mass": 0.06728997593745589,
+                    "live_mass": 0.22048855479806662,
+                    "mounted_mass": 0.6809538193047047,
+                    "physical_sink_mass": 0.031259826268069446,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.12823547678999603
+                  },
+                  {
+                    "answer_mass": 0.18701516324654222,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 6,
+                    "learned_sink_mass": 0.038774878601543605,
+                    "live_mass": 0.31953107472509146,
+                    "mounted_mass": 0.6154875718057156,
+                    "physical_sink_mass": 0.0262593106017448,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.13251591846346855
+                  },
+                  {
+                    "answer_mass": 0.21809218917042017,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 7,
+                    "learned_sink_mass": 0.15866597974672914,
+                    "live_mass": 0.38287883438169956,
+                    "mounted_mass": 0.44154153019189835,
+                    "physical_sink_mass": 0.016865112935192883,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.16478664730675519
+                  },
+                  {
+                    "answer_mass": 0.21032502874732018,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 8,
+                    "learned_sink_mass": 0.1361582800745964,
+                    "live_mass": 0.3796194549649954,
+                    "mounted_mass": 0.44524219259619713,
+                    "physical_sink_mass": 0.038955764030106366,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.1692944336682558
+                  },
+                  {
+                    "answer_mass": 0.1677267150953412,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 9,
+                    "learned_sink_mass": 0.45219268463552,
+                    "live_mass": 0.29689733777195215,
+                    "mounted_mass": 0.2445876020938158,
+                    "physical_sink_mass": 0.006301748886471614,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.12917061988264322
+                  },
+                  {
+                    "answer_mass": 0.11002176953479648,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 10,
+                    "learned_sink_mass": 0.4458395466208458,
+                    "live_mass": 0.2160447584465146,
+                    "mounted_mass": 0.3269229088909924,
+                    "physical_sink_mass": 0.01111284425132908,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.10602298681624234
+                  },
+                  {
+                    "answer_mass": 0.1507361438125372,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 11,
+                    "learned_sink_mass": 0.5147363170981407,
+                    "live_mass": 0.2592578809708357,
+                    "mounted_mass": 0.20662048878148198,
+                    "physical_sink_mass": 0.019322956504765898,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.10852173855528235
+                  }
+                ],
+                "subbands_sum_to_live": true
+              },
+              "sliding_attention": {
+                "answer_positions": 16,
+                "layer_type": "sliding_attention",
+                "layers_observed": 12,
+                "mean_over_answer_positions": {
+                  "answer_mass": 0.34972792405945563,
+                  "fed_text_mass": 0.0,
+                  "learned_sink_mass": 0.42234515693659586,
+                  "live_mass": 0.531418860812361,
+                  "mounted_mass": 0.04054162833078105,
+                  "physical_sink_mass": 0.005673609858301157,
+                  "prior_live_mass": 0.0,
+                  "question_mass": 0.1816909362532897
+                },
+                "partition_sum": 0.9999792554384234,
+                "partition_sums_to_one": true,
+                "per_layer_mean": [
+                  {
+                    "answer_mass": 0.2119139526039362,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 0,
+                    "learned_sink_mass": 0.577490171417594,
+                    "live_mass": 0.3542585028335452,
+                    "mounted_mass": 0.06567267538048327,
+                    "physical_sink_mass": 0.002625846966111567,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.14234454580582678
+                  },
+                  {
+                    "answer_mass": 0.23951186332851648,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 1,
+                    "learned_sink_mass": 0.5799814574420452,
+                    "live_mass": 0.3696658443659544,
+                    "mounted_mass": 0.048075614497065544,
+                    "physical_sink_mass": 0.002249729928735178,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.13015398033894598
+                  },
+                  {
+                    "answer_mass": 0.26019279658794403,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 2,
+                    "learned_sink_mass": 0.5167322549968958,
+                    "live_mass": 0.4125295374542475,
+                    "mounted_mass": 0.05992834363132715,
+                    "physical_sink_mass": 0.010771446228318382,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.15233673993498087
+                  },
+                  {
+                    "answer_mass": 0.38841464184224606,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 3,
+                    "learned_sink_mass": 0.388334721326828,
+                    "live_mass": 0.5713848639279604,
+                    "mounted_mass": 0.03745796007569879,
+                    "physical_sink_mass": 0.0027883316797669977,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.1829702160321176
+                  },
+                  {
+                    "answer_mass": 0.43912022560834885,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 4,
+                    "learned_sink_mass": 0.2682840805500746,
+                    "live_mass": 0.6805270835757256,
+                    "mounted_mass": 0.047743913950398564,
+                    "physical_sink_mass": 0.00346633190929424,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.24140685936436057
+                  },
+                  {
+                    "answer_mass": 0.3435983918607235,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 5,
+                    "learned_sink_mass": 0.3384615629911423,
+                    "live_mass": 0.5838527176529169,
+                    "mounted_mass": 0.0680982475169003,
+                    "physical_sink_mass": 0.009533183329040185,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.24025432765483856
+                  },
+                  {
+                    "answer_mass": 0.44544548727571964,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 6,
+                    "learned_sink_mass": 0.2076384276151657,
+                    "live_mass": 0.7470499500632286,
+                    "mounted_mass": 0.036369101726450026,
+                    "physical_sink_mass": 0.008963948013843037,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.3016044548712671
+                  },
+                  {
+                    "answer_mass": 0.4096425399184227,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 7,
+                    "learned_sink_mass": 0.29681968316435814,
+                    "live_mass": 0.6712203547358513,
+                    "mounted_mass": 0.02881054294994101,
+                    "physical_sink_mass": 0.0031899048772174865,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.26157781295478344
+                  },
+                  {
+                    "answer_mass": 0.3913154359906912,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 8,
+                    "learned_sink_mass": 0.3698301613330841,
+                    "live_mass": 0.6017872896045446,
+                    "mounted_mass": 0.021955518634058535,
+                    "physical_sink_mass": 0.006398824029020034,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.21047186525538564
+                  },
+                  {
+                    "answer_mass": 0.42849644646048546,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 9,
+                    "learned_sink_mass": 0.39021894708275795,
+                    "live_mass": 0.5772113986313343,
+                    "mounted_mass": 0.0318095920374617,
+                    "physical_sink_mass": 0.0007154311460908502,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.14871495100669563
+                  },
+                  {
+                    "answer_mass": 0.33142026513814926,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 10,
+                    "learned_sink_mass": 0.5330580547451973,
+                    "live_mass": 0.42688582092523575,
+                    "mounted_mass": 0.026057701266836375,
+                    "physical_sink_mass": 0.014006410056026652,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.09546555788256228
+                  },
+                  {
+                    "answer_mass": 0.30766304209828377,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 11,
+                    "learned_sink_mass": 0.601292360574007,
+                    "live_mass": 0.38065296597778797,
+                    "mounted_mass": 0.014520328302751295,
+                    "physical_sink_mass": 0.0033739301361492835,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.07298992393771186
+                  }
+                ],
+                "subbands_sum_to_live": true
+              }
+            },
+            "recut_vs_base_abs_delta": {
+              "full_attention": {
+                "learned_sink_mass": 0.0,
+                "live_mass": 0.0,
+                "mounted_mass": 0.0,
+                "physical_sink_mass": 0.0
+              },
+              "sliding_attention": {
+                "learned_sink_mass": 0.0,
+                "live_mass": 0.0,
+                "mounted_mass": 0.0,
+                "physical_sink_mass": 0.0
+              }
+            },
+            "row_split_inputs": {
+              "baseline_ntok": 0,
+              "baseline_receipt": {
+                "S_first_forward": 107,
+                "arena_pos_before_first_forward": 0,
+                "baseline_ntok_derived": 0,
+                "fed_ntok_from_feed_receipt": 0,
+                "live0": 71,
+                "prior_ntok": 0,
+                "question_ntok": 36,
+                "two_derivations_agree": true,
+                "why_not_pos_at_observer_entry": "ArenaCache.eb1_begin_turn's ephemeral branch clears the boat (caches, pos, live_segs = None, 0, []) at every production turn-open, so rows present at observer entry may not be in the cache the kernel scores. MEASURED on RS4's first C0 run."
+              },
+              "derived_by": "baseline = S_first - (n_sink + cur_mount_n) - question_ntok, cross-checked against arena.pos as the first observed forward began; fed off the arm's feed receipt; prior = baseline - fed; question through the model tokenizer over arena._format_step_prompt; S, n_sink and cur_mount_n read per forward off the live call and the live arena",
+              "fed_ntok": 0,
+              "pos_at_observer_entry": 0,
+              "prior_ntok": 0,
+              "question_ntok": 36
+            },
+            "sliding_fed_text_reach": {
+              "always_reaches_fed_text": false,
+              "ever_reaches_fed_text": false,
+              "fed_text_band_width_max": 0,
+              "observed_rows": 192,
+              "reaching_rows": 0,
+              "structurally_invisible_rows": 0
+            }
+          },
+          "mounted_ids": [
+            5
+          ],
+          "picks_requested": [
+            5
+          ],
+          "probe_id": "sup_praxis_fresh",
+          "question": "What is the current Praxis dock value?",
+          "registered_probe": true,
+          "rejected_values": [
+            "sable-0-copper",
+            "raven-9-ivory"
+          ],
+          "served_answer": "The current Praxis dock value is **Quartz‑8‑Jade**.",
+          "session_id": "fresh_fact_controls",
+          "variant": "registered",
+          "verdict": {
+            "correct": true,
+            "expected_hits": [
+              "quartz-8-jade"
+            ],
+            "rejected_hits": []
+          }
+        },
+        {
+          "arena_cur_mount_n": 75,
+          "arm": "C3l",
+          "correct": false,
+          "eb1_lived_answer": "The current Solace key value is **Raven‑9‑Ivory**.",
+          "elapsed_ns": 13825668714,
+          "expected_values": [
+            "raven-9-ivory"
+          ],
+          "info": {
+            "evicted": 0,
+            "live_tokens": 47,
+            "mounts": [
+              6
+            ],
+            "resident": 141,
+            "rs4_arena_width": 96,
+            "rs4_c0_prelude": {
+              "arm_mount_ids": [
+                4
+              ],
+              "fit_split_children": [],
+              "fit_split_parent": null,
+              "grafts_after_prelude": 5,
+              "mounted_ids": [
+                1
+              ],
+              "served_answer": "I’m sorry, but I don’t have that information.",
+              "why": "C0's own ladder was run first so this arm's repository is the one C0 had at this probe — including any PERSISTED fit-time split whose child the registered mount ids name"
+            },
+            "rs4_capture": {
+              "all_payloads_identical": false,
+              "arm": "C3l",
+              "capture_pin": "live",
+              "fresh_graft_ids": [
+                5
+              ],
+              "per_node": [
+                {
+                  "capture_receipt": {
+                    "arena_width": 96,
+                    "capture_pin": "live",
+                    "capture_shift": 115,
+                    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+                    "capture_shift_observed": 115,
+                    "live_shift": 115,
+                    "n_sink": 19
+                  },
+                  "capture_text": "After that background they recorded the independent fact that the current Tundra ledger value is Sable-0-Copper. Preserve Sable-0-Copper for Tundra ledger only; the Praxis dock and Solace key references are index context.<|end|><|start|>assistant<|channel|>final<|message|>Archived Tundra ledger as Sable-0-Copper and kept the planning context.<|end|>",
+                  "capture_text_sha256": "e231b288ad17a2a126d82cbb23508472209e7ffcac8480faa466c5a524b831e1",
+                  "capture_text_source": "graft_own_text (fit-time split child)",
+                  "deposit_path": "ArenaCache.deposit(text, capture_pin=...)",
+                  "deposit_path_is_production": true,
+                  "fresh_graft_id": 5,
+                  "fresh_native_node_id": 6,
+                  "installed_graft_id": 4,
+                  "installed_payload": {
+                    "available": false,
+                    "reason": "graft payload is not resident"
+                  },
+                  "native_sync_call": "GraftRepository._native_sync_node",
+                  "node_id": null,
+                  "ntok_identical": false,
+                  "payload_identical": false,
+                  "recaptured_payload": {
+                    "available": true,
+                    "layers": 24,
+                    "ntok": 75,
+                    "per_layer_sha256": [
+                      "6cf0187f339693662b1aadf8f659c9b60132e6c42a117655c684467bcc316d0b",
+                      "f721e07b4aead865119fd2b443fab2c7bf22a4c9289715d45c3ea411b2f718a0",
+                      "ad7d128d0b1c3f8d0c6e6ec8115656b59a6ca82b861f12b8a66424f102ecb2b4",
+                      "705bdfd97da5b4dd94514f243706cd359b00a70db660f6ca74f825a715ae2fd6",
+                      "c84eda17b2d9df0180b079efdb7fbd8c7ce13cd2ed07616b03d8671bd64f71ae",
+                      "f774385eae30c0a8282e972288535a6f9868f11c030312546ecae988116cbbc1",
+                      "104ea0ae29d05cca54610fad0113e72047bb98c10b337f2c248c6f2ba7923f96",
+                      "eb0e3160b0c24b207d618fdaeac103c7140f26e12d438a58914d3274d291a9e2",
+                      "631c5c87c14493f0c0995bccb8373e3cd8c935c1c4d530394292d060df87f5f9",
+                      "48582c46b7af169713184f96641a19bfc36787020a1454ccea20b826cc337ffe",
+                      "8b7c2cee9a56b8df6a1caf6e44f3f3d43c8b191f6c5402949d200667b7596b9a",
+                      "c7acab067450ca5a92e39e61e4224bee47092653d1539afbbd2691088e61b280",
+                      "badd36f444e5b6ddd42986e1f1032ae5ff53af14f7ebc73722086e5773bef3d9",
+                      "1e11d4e448d03f12449d285887c48e3869ba13564fc8da0fc3dbf2fb3fbd7072",
+                      "f28dcd8f1587d853d80002a52f79947687ab4c8f33035a4917d6f5478a64ce28",
+                      "8c6e11aebf2917e2cc9953ee82b4c69e00df828e1428cc96a1a3e97a8d8edbe1",
+                      "1ace5503a20196a980dfd0cca70e825b8cb2c5e29aaad2c764efb2d3248df2a2",
+                      "30a7149be9aee08ec39943cd966d50e299e7c32c73257ab0216ec56d98813d8a",
+                      "ec5a9d3604a24476ad2b18e03d9f7f857a2e9d049ee274385cd53710ae30a177",
+                      "b51db2ffd94121fe4f206b38db98b4daf5fada56d3db9e4980c97dc2a8fb3678",
+                      "6dc089049e24235f5cd471e4f91f832fd137b1512bfce9a134bb2f71837137f2",
+                      "58cbfdf8c38ff127eb1ae3e2d6f56133716228fa060d234898057f31daee463b",
+                      "345043436ef155e07a4357f7012984907e63fba7c26362c8e8fd725f6211d133",
+                      "059284d7def96b178a7121d5ae0a89e017cf1c6356719fc14147e82a61005da4"
+                    ],
+                    "sha256": "f515f5144cb0153bbf8c87d22a6b27fd606a668074efd6ec887e59e4f717d4f2"
+                  }
+                }
+              ]
+            },
+            "rs4_cur_mount_n_at_serve": 75,
+            "rs4_fit_dropped": [],
+            "rs4_fit_requested": [
+              5
+            ],
+            "rs4_fit_seated": [
+              5
+            ],
+            "rs4_grounded": false,
+            "rs4_levers": {
+              "capture_pin": "live",
+              "label": "pin 'live' + seat ON",
+              "levers_read_from": "artifacts/grm_rs3/registration.json",
+              "seat_near_live": true
+            },
+            "rs4_seating": {
+              "arena_width": 96,
+              "delta_positions": 21,
+              "live_shift": 115,
+              "mount_ntok": 75,
+              "mount_pos0": 40,
+              "mount_pos0_legacy": 19,
+              "n_sink": 19,
+              "plan_head": 5,
+              "plan_head_adjacent_to_live_shift": true,
+              "plan_head_last_position": 114,
+              "plan_head_ntok": 75,
+              "seat_near_live": true,
+              "seat_offset_plan_head": 40,
+              "seat_order": [
+                5
+              ],
+              "seat_order_legacy": [
+                5
+              ],
+              "seat_rule": "GRM_SEAT_NEAR_LIVE: the block is filled from the TOP DOWN — the plan head (picks[0]) is seated LAST so its final token sits at live_shift - 1, immediately below the first live token; filler and the other mounts sit below it; the sink stays at [0, n_sink)"
+            },
+            "rs4_serving_path": "ArenaCache._attempt (routing disabled) — PRODUCTION, including the bootstrap seating branch the seat lever lives in"
+          },
+          "levers": {
+            "capture_pin": "live",
+            "label": "pin 'live' + seat ON",
+            "levers_read_from": "artifacts/grm_rs3/registration.json",
+            "seat_near_live": true
+          },
+          "live_feed": null,
+          "mass": {
+            "answer_positions": 11,
+            "base_partition_UNMODIFIED": {
+              "answer_positions": 11,
+              "by_layer_type": {
+                "full_attention": {
+                  "answer_positions": 11,
+                  "layer_type": "full_attention",
+                  "layers_observed": 12,
+                  "mean_over_answer_positions": {
+                    "learned_sink_mass": 0.2541706701176185,
+                    "live_mass": 0.3092539135479566,
+                    "mounted_mass": 0.41242587397044356,
+                    "physical_sink_mass": 0.02409933635852102
+                  },
+                  "partition_sum": 0.9999497939945398,
+                  "partition_sums_to_one": true,
+                  "per_layer_mean": [
+                    {
+                      "layer_ordinal": 0,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.33207942003553564,
+                      "live_mass": 0.36411305178295483,
+                      "mounted_mass": 0.2646181447939439,
+                      "physical_sink_mass": 0.03915535980327563
+                    },
+                    {
+                      "layer_ordinal": 1,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.4419747563925656,
+                      "live_mass": 0.2899134145541625,
+                      "mounted_mass": 0.2550590553066947,
+                      "physical_sink_mass": 0.012955536833032966
+                    },
+                    {
+                      "layer_ordinal": 2,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.4159556437622417,
+                      "live_mass": 0.30421535806222394,
+                      "mounted_mass": 0.2717308009212667,
+                      "physical_sink_mass": 0.008090760072015903
+                    },
+                    {
+                      "layer_ordinal": 3,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.15361586687239734,
+                      "live_mass": 0.29292048649354413,
+                      "mounted_mass": 0.5170125175606121,
+                      "physical_sink_mass": 0.03643979589370164
+                    },
+                    {
+                      "layer_ordinal": 4,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.15966446833177048,
+                      "live_mass": 0.33507594195279206,
+                      "mounted_mass": 0.4766177155754783,
+                      "physical_sink_mass": 0.028511228039860725
+                    },
+                    {
+                      "layer_ordinal": 5,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.05412744933908636,
+                      "live_mass": 0.2759152813391252,
+                      "mounted_mass": 0.6396830461241982,
+                      "physical_sink_mass": 0.030205143615603447
+                    },
+                    {
+                      "layer_ordinal": 6,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.04183065044608983,
+                      "live_mass": 0.33859905329617584,
+                      "mounted_mass": 0.5937542238018729,
+                      "physical_sink_mass": 0.02569943835789507
+                    },
+                    {
+                      "layer_ordinal": 7,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.1596673442558809,
+                      "live_mass": 0.3943556465885856,
+                      "mounted_mass": 0.41727734153920953,
+                      "physical_sink_mass": 0.02859285744753751
+                    },
+                    {
+                      "layer_ordinal": 8,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.15364463491873306,
+                      "live_mass": 0.3176832849329168,
+                      "mounted_mass": 0.48800631815736945,
+                      "physical_sink_mass": 0.04071005620062351
+                    },
+                    {
+                      "layer_ordinal": 9,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.34824334491382947,
+                      "live_mass": 0.31393875588070264,
+                      "mounted_mass": 0.3309043131091378,
+                      "physical_sink_mass": 0.0068789614279839125
+                    },
+                    {
+                      "layer_ordinal": 10,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.39354450323364953,
+                      "live_mass": 0.21411328559572046,
+                      "mounted_mass": 0.37958947095004,
+                      "physical_sink_mass": 0.012689579955556175
+                    },
+                    {
+                      "layer_ordinal": 11,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.3956999589096416,
+                      "live_mass": 0.27020340209657495,
+                      "mounted_mass": 0.31485753980549896,
+                      "physical_sink_mass": 0.01926331865516576
+                    }
+                  ],
+                  "top_contributing_layer": {
+                    "layer_ordinal": 5,
+                    "mounted_mass": 0.6396830461241982
+                  }
+                },
+                "sliding_attention": {
+                  "answer_positions": 11,
+                  "layer_type": "sliding_attention",
+                  "layers_observed": 12,
+                  "mean_over_answer_positions": {
+                    "learned_sink_mass": 0.41251242070487054,
+                    "live_mass": 0.5410808928762422,
+                    "mounted_mass": 0.04485527094397129,
+                    "physical_sink_mass": 0.0015122188076268437
+                  },
+                  "partition_sum": 0.9999608033327109,
+                  "partition_sums_to_one": true,
+                  "per_layer_mean": [
+                    {
+                      "layer_ordinal": 0,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.5913629206744108,
+                      "live_mass": 0.3519457917321812,
+                      "mounted_mass": 0.056021047586744484,
+                      "physical_sink_mass": 0.0007372359819286926
+                    },
+                    {
+                      "layer_ordinal": 1,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.5472681468183344,
+                      "live_mass": 0.41038581458005036,
+                      "mounted_mass": 0.040783663195642555,
+                      "physical_sink_mass": 0.001583725266920572
+                    },
+                    {
+                      "layer_ordinal": 2,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.5064225196838379,
+                      "live_mass": 0.43372693116014654,
+                      "mounted_mass": 0.05875281820243055,
+                      "physical_sink_mass": 0.0010174364036753434
+                    },
+                    {
+                      "layer_ordinal": 3,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.4063212654807351,
+                      "live_mass": 0.5459544306451624,
+                      "mounted_mass": 0.04729866795241833,
+                      "physical_sink_mass": 0.0004383805062389001
+                    },
+                    {
+                      "layer_ordinal": 4,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.28572492707859387,
+                      "live_mass": 0.6737610751932318,
+                      "mounted_mass": 0.039042029191147194,
+                      "physical_sink_mass": 0.00122660768895664
+                    },
+                    {
+                      "layer_ordinal": 5,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.2561796578493985,
+                      "live_mass": 0.655478526245464,
+                      "mounted_mass": 0.08341063203459437,
+                      "physical_sink_mass": 0.0048121428566942495
+                    },
+                    {
+                      "layer_ordinal": 6,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.28144435449080035,
+                      "live_mass": 0.6825074607675726,
+                      "mounted_mass": 0.03274499447169629,
+                      "physical_sink_mass": 0.0032379041526424276
+                    },
+                    {
+                      "layer_ordinal": 7,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.27998226339166815,
+                      "live_mass": 0.6774776740507646,
+                      "mounted_mass": 0.04211084239862182,
+                      "physical_sink_mass": 0.0005759122508276381
+                    },
+                    {
+                      "layer_ordinal": 8,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.3197877921841361,
+                      "live_mass": 0.6412858421152289,
+                      "mounted_mass": 0.03830234824933789,
+                      "physical_sink_mass": 0.000613926363505677
+                    },
+                    {
+                      "layer_ordinal": 9,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.3387831855903972,
+                      "live_mass": 0.6109029000455682,
+                      "mounted_mass": 0.0500385808673772,
+                      "physical_sink_mass": 0.00016997527663162063
+                    },
+                    {
+                      "layer_ordinal": 10,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.5345673832026395,
+                      "live_mass": 0.4311432323672555,
+                      "mounted_mass": 0.03225508586249568,
+                      "physical_sink_mass": 0.0019657780807888644
+                    },
+                    {
+                      "layer_ordinal": 11,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.6023046320134943,
+                      "live_mass": 0.3784010356122797,
+                      "mounted_mass": 0.017502541315149178,
+                      "physical_sink_mass": 0.0017676008627114986
+                    }
+                  ],
+                  "top_contributing_layer": {
+                    "layer_ordinal": 5,
+                    "mounted_mass": 0.08341063203459437
+                  }
+                }
+              },
+              "geometry": {
+                "arena_width": 96,
+                "layer_counts": {
+                  "full_attention": 12,
+                  "sliding_attention": 12
+                },
+                "live_shift": 115,
+                "n_sink": 19,
+                "sliding_window": 128
+              },
+              "per_token_mounted_mass_full": [
+                0.4572261869907379,
+                0.42076626668373746,
+                0.43202202518781024,
+                0.42516686394810677,
+                0.4158894841869672,
+                0.4090221623579661,
+                0.40022310987114906,
+                0.4066898686190446,
+                0.37489260733127594,
+                0.4109209092954795,
+                0.3838651292026043
+              ],
+              "per_token_mounted_mass_sliding": [
+                0.05023726091409723,
+                0.04536273687457045,
+                0.05708417156711221,
+                0.0442408601132532,
+                0.051592510348806776,
+                0.04259195031287769,
+                0.042675646875674524,
+                0.04635595716536045,
+                0.03424996075530847,
+                0.04824530736853679,
+                0.030771618088086445
+              ],
+              "production_full_layer_mean": {
+                "learned_sink_mass": 0.2541706701176185,
+                "live_mass": 0.3092539135479566,
+                "mounted_mass": 0.41242587397044356,
+                "physical_sink_mass": 0.02409933635852102
+              },
+              "production_vs_recomputed_abs_delta": {
+                "learned_sink_mass": 0.0,
+                "live_mass": 0.0,
+                "mounted_mass": 0.0,
+                "physical_sink_mass": 0.0
+              },
+              "sliding_window_reach": {
+                "S_max": 141,
+                "S_min": 131,
+                "always_reaches_mount": true,
+                "fraction_of_mount_band_visible_max": 1.0,
+                "fraction_of_mount_band_visible_min": 1.0,
+                "k0_max": 13,
+                "k0_min": 3,
+                "mount_band_width_max": 75,
+                "mount_band_width_min": 75,
+                "mount_rows_in_window_max": 75,
+                "mount_rows_in_window_min": 75,
+                "never_reaches_mount": false,
+                "observed_rows": 132,
+                "reaching_rows": 132,
+                "sliding_window": 128
+              }
+            },
+            "bounds_first_seen": {
+              "S": 131,
+              "answer_band": [
+                131,
+                131
+              ],
+              "answer_rows": 0,
+              "bands_are_contiguous_and_cover_live": true,
+              "cur_mount_n": 75,
+              "fed_text_band": [
+                94,
+                94
+              ],
+              "fed_text_rows": 0,
+              "live0": 94,
+              "live_band": [
+                94,
+                131
+              ],
+              "live_rows": 37,
+              "mount_band": [
+                19,
+                94
+              ],
+              "n_sink": 19,
+              "prior_live_band": [
+                94,
+                94
+              ],
+              "prior_live_rows": 0,
+              "question_band": [
+                94,
+                131
+              ],
+              "question_rows": 37,
+              "sink_band": [
+                0,
+                19
+              ]
+            },
+            "bounds_last_seen": {
+              "S": 141,
+              "answer_band": [
+                131,
+                141
+              ],
+              "answer_rows": 10,
+              "bands_are_contiguous_and_cover_live": true,
+              "cur_mount_n": 75,
+              "fed_text_band": [
+                94,
+                94
+              ],
+              "fed_text_rows": 0,
+              "live0": 94,
+              "live_band": [
+                94,
+                141
+              ],
+              "live_rows": 47,
+              "mount_band": [
+                19,
+                94
+              ],
+              "n_sink": 19,
+              "prior_live_band": [
+                94,
+                94
+              ],
+              "prior_live_rows": 0,
+              "question_band": [
+                94,
+                131
+              ],
+              "question_rows": 37,
+              "sink_band": [
+                0,
+                19
+              ]
+            },
+            "by_layer_type": {
+              "full_attention": {
+                "answer_positions": 11,
+                "layer_type": "full_attention",
+                "layers_observed": 12,
+                "mean_over_answer_positions": {
+                  "answer_mass": 0.13522306609560142,
+                  "fed_text_mass": 0.0,
+                  "learned_sink_mass": 0.2541706701176185,
+                  "live_mass": 0.3092539135479566,
+                  "mounted_mass": 0.41242587397044356,
+                  "physical_sink_mass": 0.02409933635852102,
+                  "prior_live_mass": 0.0,
+                  "question_mass": 0.17403084841189964
+                },
+                "partition_sum": 0.9999497949540842,
+                "partition_sums_to_one": true,
+                "per_layer_mean": [
+                  {
+                    "answer_mass": 0.16481376845728268,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 0,
+                    "learned_sink_mass": 0.33207942003553564,
+                    "live_mass": 0.36411305178295483,
+                    "mounted_mass": 0.2646181447939439,
+                    "physical_sink_mass": 0.03915535980327563,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.19929929077625275
+                  },
+                  {
+                    "answer_mass": 0.12603045322678305,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 1,
+                    "learned_sink_mass": 0.4419747563925656,
+                    "live_mass": 0.2899134145541625,
+                    "mounted_mass": 0.2550590553066947,
+                    "physical_sink_mass": 0.012955536833032966,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.16388296539133246
+                  },
+                  {
+                    "answer_mass": 0.13665318353609604,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 2,
+                    "learned_sink_mass": 0.4159556437622417,
+                    "live_mass": 0.30421535806222394,
+                    "mounted_mass": 0.2717308009212667,
+                    "physical_sink_mass": 0.008090760072015903,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.16756217723542993
+                  },
+                  {
+                    "answer_mass": 0.15410827032544397,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 3,
+                    "learned_sink_mass": 0.15361586687239734,
+                    "live_mass": 0.29292048649354413,
+                    "mounted_mass": 0.5170125175606121,
+                    "physical_sink_mass": 0.03643979589370164,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.1388122168454257
+                  },
+                  {
+                    "answer_mass": 0.14646256376396527,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 4,
+                    "learned_sink_mass": 0.15966446833177048,
+                    "live_mass": 0.33507594195279206,
+                    "mounted_mass": 0.4766177155754783,
+                    "physical_sink_mass": 0.028511228039860725,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.1886133781888268
+                  },
+                  {
+                    "answer_mass": 0.09512482380325143,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 5,
+                    "learned_sink_mass": 0.05412744933908636,
+                    "live_mass": 0.2759152813391252,
+                    "mounted_mass": 0.6396830461241982,
+                    "physical_sink_mass": 0.030205143615603447,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.18079046024517578
+                  },
+                  {
+                    "answer_mass": 0.15882110223174095,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 6,
+                    "learned_sink_mass": 0.04183065044608983,
+                    "live_mass": 0.33859905329617584,
+                    "mounted_mass": 0.5937542238018729,
+                    "physical_sink_mass": 0.02569943835789507,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.17977795004844666
+                  },
+                  {
+                    "answer_mass": 0.16775821962139822,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 7,
+                    "learned_sink_mass": 0.1596673442558809,
+                    "live_mass": 0.3943556465885856,
+                    "mounted_mass": 0.41727734153920953,
+                    "physical_sink_mass": 0.02859285744753751,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.22659743238579144
+                  },
+                  {
+                    "answer_mass": 0.11577973921190608,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 8,
+                    "learned_sink_mass": 0.15364463491873306,
+                    "live_mass": 0.3176832849329168,
+                    "mounted_mass": 0.48800631815736945,
+                    "physical_sink_mass": 0.04071005620062351,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.2019035436890342
+                  },
+                  {
+                    "answer_mass": 0.13424829292026433,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 9,
+                    "learned_sink_mass": 0.34824334491382947,
+                    "live_mass": 0.31393875588070264,
+                    "mounted_mass": 0.3309043131091378,
+                    "physical_sink_mass": 0.0068789614279839125,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.17969045788049698
+                  },
+                  {
+                    "answer_mass": 0.08730526607144963,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 10,
+                    "learned_sink_mass": 0.39354450323364953,
+                    "live_mass": 0.21411328559572046,
+                    "mounted_mass": 0.37958947095004,
+                    "physical_sink_mass": 0.012689579955556175,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.12680801546031778
+                  },
+                  {
+                    "answer_mass": 0.13557110997763547,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 11,
+                    "learned_sink_mass": 0.3956999589096416,
+                    "live_mass": 0.27020340209657495,
+                    "mounted_mass": 0.31485753980549896,
+                    "physical_sink_mass": 0.01926331865516576,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.13463229279626499
+                  }
+                ],
+                "subbands_sum_to_live": true
+              },
+              "sliding_attention": {
+                "answer_positions": 11,
+                "layer_type": "sliding_attention",
+                "layers_observed": 12,
+                "mean_over_answer_positions": {
+                  "answer_mass": 0.29491383537198557,
+                  "fed_text_mass": 0.0,
+                  "learned_sink_mass": 0.41251242070487054,
+                  "live_mass": 0.5410808928762422,
+                  "mounted_mass": 0.04485527094397129,
+                  "physical_sink_mass": 0.0015122188076268437,
+                  "prior_live_mass": 0.0,
+                  "question_mass": 0.2461670619774271
+                },
+                "partition_sum": 0.9999608078058814,
+                "partition_sums_to_one": true,
+                "per_layer_mean": [
+                  {
+                    "answer_mass": 0.1712686981667172,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 0,
+                    "learned_sink_mass": 0.5913629206744108,
+                    "live_mass": 0.3519457917321812,
+                    "mounted_mass": 0.056021047586744484,
+                    "physical_sink_mass": 0.0007372359819286926,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.18067709559744055
+                  },
+                  {
+                    "answer_mass": 0.22092997215010904,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 1,
+                    "learned_sink_mass": 0.5472681468183344,
+                    "live_mass": 0.41038581458005036,
+                    "mounted_mass": 0.040783663195642555,
+                    "physical_sink_mass": 0.001583725266920572,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.1894558397206393
+                  },
+                  {
+                    "answer_mass": 0.22766940092498605,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 2,
+                    "learned_sink_mass": 0.5064225196838379,
+                    "live_mass": 0.43372693116014654,
+                    "mounted_mass": 0.05875281820243055,
+                    "physical_sink_mass": 0.0010174364036753434,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.20605753294446252
+                  },
+                  {
+                    "answer_mass": 0.3115000629966909,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 3,
+                    "learned_sink_mass": 0.4063212654807351,
+                    "live_mass": 0.5459544306451624,
+                    "mounted_mass": 0.04729866795241833,
+                    "physical_sink_mass": 0.0004383805062389001,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.23445437103509903
+                  },
+                  {
+                    "answer_mass": 0.3641148724339225,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 4,
+                    "learned_sink_mass": 0.28572492707859387,
+                    "live_mass": 0.6737610751932318,
+                    "mounted_mass": 0.039042029191147194,
+                    "physical_sink_mass": 0.00122660768895664,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.30964620275930926
+                  },
+                  {
+                    "answer_mass": 0.3075366345318881,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 5,
+                    "learned_sink_mass": 0.2561796578493985,
+                    "live_mass": 0.655478526245464,
+                    "mounted_mass": 0.08341063203459437,
+                    "physical_sink_mass": 0.0048121428566942495,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.3479418876496228
+                  },
+                  {
+                    "answer_mass": 0.3302645710381595,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 6,
+                    "learned_sink_mass": 0.28144435449080035,
+                    "live_mass": 0.6825074607675726,
+                    "mounted_mass": 0.03274499447169629,
+                    "physical_sink_mass": 0.0032379041526424276,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.3522428992119702
+                  },
+                  {
+                    "answer_mass": 0.3604523634368723,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 7,
+                    "learned_sink_mass": 0.27998226339166815,
+                    "live_mass": 0.6774776740507646,
+                    "mounted_mass": 0.04211084239862182,
+                    "physical_sink_mass": 0.0005759122508276381,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.31702531400051986
+                  },
+                  {
+                    "answer_mass": 0.31010438908230176,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 8,
+                    "learned_sink_mass": 0.3197877921841361,
+                    "live_mass": 0.6412858421152289,
+                    "mounted_mass": 0.03830234824933789,
+                    "physical_sink_mass": 0.000613926363505677,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.3311814747073434
+                  },
+                  {
+                    "answer_mass": 0.3643342500383204,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 9,
+                    "learned_sink_mass": 0.3387831855903972,
+                    "live_mass": 0.6109029000455682,
+                    "mounted_mass": 0.0500385808673772,
+                    "physical_sink_mass": 0.00016997527663162063,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.2465686486525969
+                  },
+                  {
+                    "answer_mass": 0.29674102095040406,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 10,
+                    "learned_sink_mass": 0.5345673832026395,
+                    "live_mass": 0.4311432323672555,
+                    "mounted_mass": 0.03225508586249568,
+                    "physical_sink_mass": 0.0019657780807888644,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.134402220222083
+                  },
+                  {
+                    "answer_mass": 0.2740497887134552,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 11,
+                    "learned_sink_mass": 0.6023046320134943,
+                    "live_mass": 0.3784010356122797,
+                    "mounted_mass": 0.017502541315149178,
+                    "physical_sink_mass": 0.0017676008627114986,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.10435125722803852
+                  }
+                ],
+                "subbands_sum_to_live": true
+              }
+            },
+            "recut_vs_base_abs_delta": {
+              "full_attention": {
+                "learned_sink_mass": 0.0,
+                "live_mass": 0.0,
+                "mounted_mass": 0.0,
+                "physical_sink_mass": 0.0
+              },
+              "sliding_attention": {
+                "learned_sink_mass": 0.0,
+                "live_mass": 0.0,
+                "mounted_mass": 0.0,
+                "physical_sink_mass": 0.0
+              }
+            },
+            "row_split_inputs": {
+              "baseline_ntok": 0,
+              "baseline_receipt": {
+                "S_first_forward": 131,
+                "arena_pos_before_first_forward": 0,
+                "baseline_ntok_derived": 0,
+                "fed_ntok_from_feed_receipt": 0,
+                "live0": 94,
+                "prior_ntok": 0,
+                "question_ntok": 37,
+                "two_derivations_agree": true,
+                "why_not_pos_at_observer_entry": "ArenaCache.eb1_begin_turn's ephemeral branch clears the boat (caches, pos, live_segs = None, 0, []) at every production turn-open, so rows present at observer entry may not be in the cache the kernel scores. MEASURED on RS4's first C0 run."
+              },
+              "derived_by": "baseline = S_first - (n_sink + cur_mount_n) - question_ntok, cross-checked against arena.pos as the first observed forward began; fed off the arm's feed receipt; prior = baseline - fed; question through the model tokenizer over arena._format_step_prompt; S, n_sink and cur_mount_n read per forward off the live call and the live arena",
+              "fed_ntok": 0,
+              "pos_at_observer_entry": 0,
+              "prior_ntok": 0,
+              "question_ntok": 37
+            },
+            "sliding_fed_text_reach": {
+              "always_reaches_fed_text": false,
+              "ever_reaches_fed_text": false,
+              "fed_text_band_width_max": 0,
+              "observed_rows": 132,
+              "reaching_rows": 0,
+              "structurally_invisible_rows": 0
+            }
+          },
+          "mounted_ids": [
+            5
+          ],
+          "picks_requested": [
+            5
+          ],
+          "probe_id": "sup_solace_fresh",
+          "question": "What is the current Solace key value?",
+          "registered_probe": true,
+          "rejected_values": [
+            "sable-0-copper",
+            "quartz-8-jade"
+          ],
+          "served_answer": "The Solace key is 0‑Copper.",
+          "session_id": "fresh_fact_controls",
+          "variant": "registered",
+          "verdict": {
+            "correct": false,
+            "expected_hits": [],
+            "rejected_hits": []
+          }
+        },
+        {
+          "arena_cur_mount_n": 56,
+          "arm": "C3l",
+          "correct": true,
+          "eb1_lived_answer": "The current Solace key value is **Raven‑9‑Ivory**.",
+          "elapsed_ns": 13755886170,
+          "expected_values": [
+            "raven-9-ivory"
+          ],
+          "info": {
+            "evicted": 0,
+            "live_tokens": 53,
+            "mounts": [
+              6
+            ],
+            "resident": 128,
+            "rs4_arena_width": 96,
+            "rs4_c0_prelude": {
+              "arm_mount_ids": [
+                1
+              ],
+              "fit_split_children": [],
+              "fit_split_parent": null,
+              "grafts_after_prelude": 5,
+              "mounted_ids": [
+                1
+              ],
+              "served_answer": "I’m sorry, but I don’t have that information.",
+              "why": "C0's own ladder was run first so this arm's repository is the one C0 had at this probe — including any PERSISTED fit-time split whose child the registered mount ids name"
+            },
+            "rs4_capture": {
+              "all_payloads_identical": false,
+              "arm": "C3l",
+              "capture_pin": "live",
+              "fresh_graft_ids": [
+                5
+              ],
+              "per_node": [
+                {
+                  "capture_receipt": {
+                    "arena_width": 96,
+                    "capture_pin": "live",
+                    "capture_shift": 115,
+                    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+                    "capture_shift_observed": 115,
+                    "live_shift": 115,
+                    "n_sink": 19
+                  },
+                  "capture_text": "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current Solace key value is Raven-9-Ivory.<|end|><|start|>assistant<|channel|>final<|message|>Recorded: Solace key is Raven-9-Ivory.<|end|>",
+                  "capture_text_sha256": "62c26ef94b53fac739ec26538ecca15660204e52145a9274936afaeb6707395e",
+                  "capture_text_source": "registration.solace_fact_variant.capture_text",
+                  "deposit_path": "ArenaCache.deposit(text, capture_pin=...)",
+                  "deposit_path_is_production": true,
+                  "fresh_graft_id": 5,
+                  "fresh_native_node_id": 7,
+                  "installed_graft_id": 1,
+                  "installed_payload": {
+                    "available": true,
+                    "layers": 24,
+                    "ntok": 56,
+                    "per_layer_sha256": [
+                      "5fd6e51fe9ce96c6956ab05b2068955ec276c63d303b7a19f5bb50bb4e54ecff",
+                      "1ba7d47047b9b615fc42b4e274e514c7c0575b34c80d6c2fedbfc8c716380053",
+                      "598bcebfa8112fe55b50cce3be10ca5275ffa95afb97df42a2b1bcf0388193b2",
+                      "a380c0736030973df60799f05b5a735318369804aac9a5b3efceed8baf02fae3",
+                      "590da84756153a485da0ec7dabe53cfe5cd1f5388f0dba39baac5ad4d5e991c5",
+                      "18b88f8ccc0625932e6f345e7a6e3ca915ca966abe3d4648a4612dd3f0f00a25",
+                      "669d7efaf9b682f6f6ea2120d7b9e609fd9b1ebe787bf83bd6caacc7683c2b65",
+                      "8d4c16acf3c5e327f68ba284c179535e3301ed9ae53eb663c65e986322f262fc",
+                      "2a90e1f8171c00e0a537185baab0ab4c0ee2feaf609de60af3e7346ae84f5d66",
+                      "62e59aa15d57aa037d34346034a8e43e7f5728d5a0e7d2933c47cbb7b1618180",
+                      "bd2179225e963359dc8b757559e9b06d309b9e1624519b2349587659cb132536",
+                      "a7c9832d51dc514cd7dd3cb92fd1179d14546faefe59965c08dc1b42e949764f",
+                      "4c1f7e678359bee70acdc4d090497600eb983b139f9f5123aadf732ff2f61e76",
+                      "c3c879424f74d556bad06621ac740134ab77c5ead7c4efe6ef01844ed840553a",
+                      "50e461a19b821f39e45bf23c658c831e68fb57c7afd32b498c70d44872e36328",
+                      "ff7e6d3727e572935cb41ca9bc71ad10521ce6af57b8b3a3cd1453103b4f564e",
+                      "cf5b34bd34405fce596ef01e439c479abf45b355125f726f2fa6c7bc809787db",
+                      "10c1d55ee90fbabc9e5aa0717000394afedc65c09debcd007263696c8a326d33",
+                      "a92f38a12adb1cd86e0c6d5afd4c5e2b3c6d6355194d8be9a682ea05e1248538",
+                      "11123695c0cde55de6136ef34a383bf317a2f25ba441d34844c83ea56fbca6f3",
+                      "b7ca49dedd653b39e604c48d55fea22c86f38c92e6cc99ecae3f01c5e299ac9f",
+                      "526b70d56b925278c92c8c365f651a244ddd278af1befa93ea8e95ae10b4a5c0",
+                      "0e4df77a559f259e0f769c65abea46c639bf6166e40be65de9fd1f4d7581765e",
+                      "8e5cfddfd0839cefe126b31f3b68ccd815cbdcdb81bc1cff745a80973475933c"
+                    ],
+                    "sha256": "9a90c41faaf335f7726cefb1aa7f9398d19b1daac9b5e24b0627c5a5e157ae68"
+                  },
+                  "native_sync_call": "GraftRepository._native_sync_node",
+                  "node_id": "solace_fact",
+                  "ntok_identical": true,
+                  "payload_identical": false,
+                  "recaptured_payload": {
+                    "available": true,
+                    "layers": 24,
+                    "ntok": 56,
+                    "per_layer_sha256": [
+                      "5fd6e51fe9ce96c6956ab05b2068955ec276c63d303b7a19f5bb50bb4e54ecff",
+                      "f88fb6a972723503cc32b670c41a207561e7e555b4bcefd8401421bb9cf269ca",
+                      "903e31c9a62ee2e244423b475e89432bc4c009114264416ca8ceb878af7561d2",
+                      "78f6f09d6cfbc6aeb814bd7108cb1c8373681137ab1863b003051de8afbf8140",
+                      "d5ba0a2d199b94708df218f766b0e3f6b0d4d34cf62db2055dae1e1a912a536c",
+                      "433f06851eb1ac9f842062fa974226a5e523f986a45d4085b0be55940ae20951",
+                      "fed593fa8fd91b87010761c954f0608ec402854fac8b4b2b9a1553a578846def",
+                      "a722d267612f17a7f73d670433ceeb0c9635e279409b7ba93e4bcb3381e714ef",
+                      "ed05212989a3f17fc1bd2746ec0309218c1b89fe8f9a975f362c39d81ec69742",
+                      "c21ac9bc033c69584bcf0257463698866511245a21c1a540e4d7eb10f1a90966",
+                      "2c899b158dea1c292d40ffe26574c4ffd76f3ed9f1d063c13c81f48bf5025521",
+                      "9110f6e0850bc315457e18cd597f9ed9fd08893a35d2be2b5ba478be4d2265e7",
+                      "bcb3ea9ece9a4ecb3f7eb878ea923cc44d6a674be7208478b04a04c877a8a80e",
+                      "5932c485768679c50aa399ac6c6721ac1152ebcfc828ad5678dec8ce9830e79e",
+                      "622dca0e17da4cdc2708a767caa02e58d189f00d3f4762fa381a2d0da4baf56b",
+                      "2fab78e98a8a1fd098d1b906535a20b73ed2f122035fd039b1a2790683c128a9",
+                      "55b41b12377dba227e15383e5a1e0f021222f6813a35a82cbe1206c69621b7e8",
+                      "65044ea0a1832144ef815d8c26d51289623014787bf23bc9971941b7a4ca871a",
+                      "97f3bc7c14432513563c8ec5db7ac9198d1c361f909eb75875a1d203301cc017",
+                      "46bdeca3abcdecf7470a9cbbfe1dc1f25f18b9249c32e81f9ef99fcb49a9c23c",
+                      "ea06a82396c2a30252bcfbbe21a3ce407569a6f66b5ef18654466c6a9e4c4384",
+                      "076e48b49cf67d9661c1012a2a494e47aa22efa4470feae1bd566a0cf16c0f84",
+                      "06c6b1cb25fd4b5be330bc8eaf615d8de035c327e1f184a5a00783a0adc757a3",
+                      "7d857867d8e3635c654db8de23237ffd0df1045148bcd423db8545e1df336843"
+                    ],
+                    "sha256": "2f64af79cdcb243bb383a4de69a06f1fc4dc052df2955101f81b6e3846b10d21"
+                  }
+                }
+              ]
+            },
+            "rs4_cur_mount_n_at_serve": 56,
+            "rs4_fit_dropped": [],
+            "rs4_fit_requested": [
+              5
+            ],
+            "rs4_fit_seated": [
+              5
+            ],
+            "rs4_grounded": true,
+            "rs4_levers": {
+              "capture_pin": "live",
+              "label": "pin 'live' + seat ON",
+              "levers_read_from": "artifacts/grm_rs3/registration.json",
+              "seat_near_live": true
+            },
+            "rs4_seating": {
+              "arena_width": 96,
+              "delta_positions": 40,
+              "live_shift": 115,
+              "mount_ntok": 56,
+              "mount_pos0": 59,
+              "mount_pos0_legacy": 19,
+              "n_sink": 19,
+              "plan_head": 5,
+              "plan_head_adjacent_to_live_shift": true,
+              "plan_head_last_position": 114,
+              "plan_head_ntok": 56,
+              "seat_near_live": true,
+              "seat_offset_plan_head": 59,
+              "seat_order": [
+                5
+              ],
+              "seat_order_legacy": [
+                5
+              ],
+              "seat_rule": "GRM_SEAT_NEAR_LIVE: the block is filled from the TOP DOWN — the plan head (picks[0]) is seated LAST so its final token sits at live_shift - 1, immediately below the first live token; filler and the other mounts sit below it; the sink stays at [0, n_sink)"
+            },
+            "rs4_serving_path": "ArenaCache._attempt (routing disabled) — PRODUCTION, including the bootstrap seating branch the seat lever lives in"
+          },
+          "levers": {
+            "capture_pin": "live",
+            "label": "pin 'live' + seat ON",
+            "levers_read_from": "artifacts/grm_rs3/registration.json",
+            "seat_near_live": true
+          },
+          "live_feed": null,
+          "mass": {
+            "answer_positions": 17,
+            "base_partition_UNMODIFIED": {
+              "answer_positions": 17,
+              "by_layer_type": {
+                "full_attention": {
+                  "answer_positions": 17,
+                  "layer_type": "full_attention",
+                  "layers_observed": 12,
+                  "mean_over_answer_positions": {
+                    "learned_sink_mass": 0.2762659583103788,
+                    "live_mass": 0.2951632530665865,
+                    "mounted_mass": 0.40703061190159884,
+                    "physical_sink_mass": 0.021524216413644017
+                  },
+                  "partition_sum": 0.9999840396922082,
+                  "partition_sums_to_one": true,
+                  "per_layer_mean": [
+                    {
+                      "layer_ordinal": 0,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.31517162919044495,
+                      "live_mass": 0.3378004852463217,
+                      "mounted_mass": 0.3178114908583024,
+                      "physical_sink_mass": 0.029304109185057527
+                    },
+                    {
+                      "layer_ordinal": 1,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.4448884567793678,
+                      "live_mass": 0.28057457944926095,
+                      "mounted_mass": 0.2652623784892699,
+                      "physical_sink_mass": 0.00911410026909674
+                    },
+                    {
+                      "layer_ordinal": 2,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.4425335175850812,
+                      "live_mass": 0.31824513042674346,
+                      "mounted_mass": 0.23233434733222513,
+                      "physical_sink_mass": 0.006885789389557698
+                    },
+                    {
+                      "layer_ordinal": 3,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.14011140430674834,
+                      "live_mass": 0.28750262453275566,
+                      "mounted_mass": 0.5365536037613364,
+                      "physical_sink_mass": 0.03587747398106491
+                    },
+                    {
+                      "layer_ordinal": 4,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.14991323211613825,
+                      "live_mass": 0.3740912728449878,
+                      "mounted_mass": 0.44787189890356627,
+                      "physical_sink_mass": 0.028140195152338815
+                    },
+                    {
+                      "layer_ordinal": 5,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.06974696806248497,
+                      "live_mass": 0.22079356365344105,
+                      "mounted_mass": 0.6758252382278442,
+                      "physical_sink_mass": 0.03362845497972825
+                    },
+                    {
+                      "layer_ordinal": 6,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.037177633548922395,
+                      "live_mass": 0.3120748865253785,
+                      "mounted_mass": 0.6265582740306854,
+                      "physical_sink_mass": 0.024205795489251614
+                    },
+                    {
+                      "layer_ordinal": 7,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.16313140094280243,
+                      "live_mass": 0.36124854929306927,
+                      "mounted_mass": 0.45747260836993947,
+                      "physical_sink_mass": 0.018182883422602627
+                    },
+                    {
+                      "layer_ordinal": 8,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.1306192638242946,
+                      "live_mass": 0.3388956154094023,
+                      "mounted_mass": 0.49515436326756196,
+                      "physical_sink_mass": 0.035270675907240194
+                    },
+                    {
+                      "layer_ordinal": 9,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.4574832355274874,
+                      "live_mass": 0.27120880957911997,
+                      "mounted_mass": 0.2647469451322275,
+                      "physical_sink_mass": 0.006502408232978161
+                    },
+                    {
+                      "layer_ordinal": 10,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.45650824378518495,
+                      "live_mass": 0.19473365650457494,
+                      "mounted_mass": 0.3370773765970679,
+                      "physical_sink_mass": 0.011644495349815664
+                    },
+                    {
+                      "layer_ordinal": 11,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.5079065140555886,
+                      "live_mass": 0.2447898633339826,
+                      "mounted_mass": 0.22769881784915924,
+                      "physical_sink_mass": 0.01953421560499598
+                    }
+                  ],
+                  "top_contributing_layer": {
+                    "layer_ordinal": 5,
+                    "mounted_mass": 0.6758252382278442
+                  }
+                },
+                "sliding_attention": {
+                  "answer_positions": 17,
+                  "layer_type": "sliding_attention",
+                  "layers_observed": 12,
+                  "mean_over_answer_positions": {
+                    "learned_sink_mass": 0.4346355960941782,
+                    "live_mass": 0.5136645296040703,
+                    "mounted_mass": 0.04516384838030254,
+                    "physical_sink_mass": 0.006524835244835783
+                  },
+                  "partition_sum": 0.9999888093233867,
+                  "partition_sums_to_one": true,
+                  "per_layer_mean": [
+                    {
+                      "layer_ordinal": 0,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.589852594277438,
+                      "live_mass": 0.3517508401590235,
+                      "mounted_mass": 0.05582645579296,
+                      "physical_sink_mass": 0.0025881078190115444
+                    },
+                    {
+                      "layer_ordinal": 1,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.5791045953245724,
+                      "live_mass": 0.36483020291608925,
+                      "mounted_mass": 0.0538612021242871,
+                      "physical_sink_mass": 0.0021831402178470265
+                    },
+                    {
+                      "layer_ordinal": 2,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.5108968860962811,
+                      "live_mass": 0.41059965684133415,
+                      "mounted_mass": 0.0672536750926691,
+                      "physical_sink_mass": 0.011228096301612608
+                    },
+                    {
+                      "layer_ordinal": 3,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.40247942945536447,
+                      "live_mass": 0.5492104677593007,
+                      "mounted_mass": 0.044768578427679395,
+                      "physical_sink_mass": 0.003517182502786026
+                    },
+                    {
+                      "layer_ordinal": 4,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.28214457280495586,
+                      "live_mass": 0.6549616526154911,
+                      "mounted_mass": 0.05786370814723127,
+                      "physical_sink_mass": 0.00497654709033668
+                    },
+                    {
+                      "layer_ordinal": 5,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.3613343940061681,
+                      "live_mass": 0.5589397882713991,
+                      "mounted_mass": 0.06930208863580928,
+                      "physical_sink_mass": 0.010427751550998758
+                    },
+                    {
+                      "layer_ordinal": 6,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.22617400393766515,
+                      "live_mass": 0.7220573004554299,
+                      "mounted_mass": 0.04170615050722571,
+                      "physical_sink_mass": 0.010111855589510763
+                    },
+                    {
+                      "layer_ordinal": 7,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.2974897623062134,
+                      "live_mass": 0.6578191448660458,
+                      "mounted_mass": 0.039939999087330175,
+                      "physical_sink_mass": 0.004727220929720823
+                    },
+                    {
+                      "layer_ordinal": 8,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.3793315045973834,
+                      "live_mass": 0.5792696475982666,
+                      "mounted_mass": 0.03328668254920665,
+                      "physical_sink_mass": 0.008186334168867153
+                    },
+                    {
+                      "layer_ordinal": 9,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.40108652851160836,
+                      "live_mass": 0.5619232426671421,
+                      "mounted_mass": 0.036207278642584294,
+                      "physical_sink_mass": 0.0008140221111449029
+                    },
+                    {
+                      "layer_ordinal": 10,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.5539190015372109,
+                      "live_mass": 0.4007016297648935,
+                      "mounted_mass": 0.029835909413283363,
+                      "physical_sink_mass": 0.015428230426657726
+                    },
+                    {
+                      "layer_ordinal": 11,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.6318138802752775,
+                      "live_mass": 0.3519107813344282,
+                      "mounted_mass": 0.012114452143364093,
+                      "physical_sink_mass": 0.0041095342295353905
+                    }
+                  ],
+                  "top_contributing_layer": {
+                    "layer_ordinal": 5,
+                    "mounted_mass": 0.06930208863580928
+                  }
+                }
+              },
+              "geometry": {
+                "arena_width": 96,
+                "layer_counts": {
+                  "full_attention": 12,
+                  "sliding_attention": 12
+                },
+                "live_shift": 115,
+                "n_sink": 19,
+                "sliding_window": 128
+              },
+              "per_token_mounted_mass_full": [
+                0.4577818339069684,
+                0.4195258592565854,
+                0.42713190366824466,
+                0.476094884177049,
+                0.42623158916831017,
+                0.39585602407654125,
+                0.4005620976289113,
+                0.3875013055900733,
+                0.43423694496353465,
+                0.44005079194903374,
+                0.3745122005542119,
+                0.4040372048815091,
+                0.4122883006930351,
+                0.4028285617629687,
+                0.3274818876137336,
+                0.35473204279939335,
+                0.3786669696370761
+              ],
+              "per_token_mounted_mass_sliding": [
+                0.04920694798541566,
+                0.04072901948044697,
+                0.0464101933563749,
+                0.09046206328396995,
+                0.049681447291125856,
+                0.03626309513735274,
+                0.029794466216117144,
+                0.03709272985967497,
+                0.05319293774664402,
+                0.05496133274088303,
+                0.030416335600117844,
+                0.04510833144498368,
+                0.04359530184107522,
+                0.07320342581563939,
+                0.037605040318643056,
+                0.02483135275542736,
+                0.025231401591251295
+              ],
+              "production_full_layer_mean": {
+                "learned_sink_mass": 0.2762659583103788,
+                "live_mass": 0.2951632530665865,
+                "mounted_mass": 0.40703061190159884,
+                "physical_sink_mass": 0.021524216413644017
+              },
+              "production_vs_recomputed_abs_delta": {
+                "learned_sink_mass": 0.0,
+                "live_mass": 0.0,
+                "mounted_mass": 0.0,
+                "physical_sink_mass": 0.0
+              },
+              "sliding_window_reach": {
+                "S_max": 128,
+                "S_min": 112,
+                "always_reaches_mount": true,
+                "fraction_of_mount_band_visible_max": 1.0,
+                "fraction_of_mount_band_visible_min": 1.0,
+                "k0_max": 0,
+                "k0_min": 0,
+                "mount_band_width_max": 56,
+                "mount_band_width_min": 56,
+                "mount_rows_in_window_max": 56,
+                "mount_rows_in_window_min": 56,
+                "never_reaches_mount": false,
+                "observed_rows": 204,
+                "reaching_rows": 204,
+                "sliding_window": 128
+              }
+            },
+            "bounds_first_seen": {
+              "S": 112,
+              "answer_band": [
+                112,
+                112
+              ],
+              "answer_rows": 0,
+              "bands_are_contiguous_and_cover_live": true,
+              "cur_mount_n": 56,
+              "fed_text_band": [
+                75,
+                75
+              ],
+              "fed_text_rows": 0,
+              "live0": 75,
+              "live_band": [
+                75,
+                112
+              ],
+              "live_rows": 37,
+              "mount_band": [
+                19,
+                75
+              ],
+              "n_sink": 19,
+              "prior_live_band": [
+                75,
+                75
+              ],
+              "prior_live_rows": 0,
+              "question_band": [
+                75,
+                112
+              ],
+              "question_rows": 37,
+              "sink_band": [
+                0,
+                19
+              ]
+            },
+            "bounds_last_seen": {
+              "S": 128,
+              "answer_band": [
+                112,
+                128
+              ],
+              "answer_rows": 16,
+              "bands_are_contiguous_and_cover_live": true,
+              "cur_mount_n": 56,
+              "fed_text_band": [
+                75,
+                75
+              ],
+              "fed_text_rows": 0,
+              "live0": 75,
+              "live_band": [
+                75,
+                128
+              ],
+              "live_rows": 53,
+              "mount_band": [
+                19,
+                75
+              ],
+              "n_sink": 19,
+              "prior_live_band": [
+                75,
+                75
+              ],
+              "prior_live_rows": 0,
+              "question_band": [
+                75,
+                112
+              ],
+              "question_rows": 37,
+              "sink_band": [
+                0,
+                19
+              ]
+            },
+            "by_layer_type": {
+              "full_attention": {
+                "answer_positions": 17,
+                "layer_type": "full_attention",
+                "layers_observed": 12,
+                "mean_over_answer_positions": {
+                  "answer_mass": 0.16166853328582412,
+                  "fed_text_mass": 0.0,
+                  "learned_sink_mass": 0.2762659583103788,
+                  "live_mass": 0.2951632530665865,
+                  "mounted_mass": 0.40703061190159884,
+                  "physical_sink_mass": 0.021524216413644017,
+                  "prior_live_mass": 0.0,
+                  "question_mass": 0.13349471819203562
+                },
+                "partition_sum": 0.9999840381034814,
+                "partition_sums_to_one": true,
+                "per_layer_mean": [
+                  {
+                    "answer_mass": 0.18751008151208653,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 0,
+                    "learned_sink_mass": 0.31517162919044495,
+                    "live_mass": 0.3378004852463217,
+                    "mounted_mass": 0.3178114908583024,
+                    "physical_sink_mass": 0.029304109185057527,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.15029039540711572
+                  },
+                  {
+                    "answer_mass": 0.16020150044385126,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 1,
+                    "learned_sink_mass": 0.4448884567793678,
+                    "live_mass": 0.28057457944926095,
+                    "mounted_mass": 0.2652623784892699,
+                    "physical_sink_mass": 0.00911410026909674,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.12037307966281385
+                  },
+                  {
+                    "answer_mass": 0.1647822015425738,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 2,
+                    "learned_sink_mass": 0.4425335175850812,
+                    "live_mass": 0.31824513042674346,
+                    "mounted_mass": 0.23233434733222513,
+                    "physical_sink_mass": 0.006885789389557698,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.15346292537801406
+                  },
+                  {
+                    "answer_mass": 0.1745855194680831,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 3,
+                    "learned_sink_mass": 0.14011140430674834,
+                    "live_mass": 0.28750262453275566,
+                    "mounted_mass": 0.5365536037613364,
+                    "physical_sink_mass": 0.03587747398106491,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.11291710594121147
+                  },
+                  {
+                    "answer_mass": 0.18519100634490743,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 4,
+                    "learned_sink_mass": 0.14991323211613825,
+                    "live_mass": 0.3740912728449878,
+                    "mounted_mass": 0.44787189890356627,
+                    "physical_sink_mass": 0.028140195152338815,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.18890026781488867
+                  },
+                  {
+                    "answer_mass": 0.09079154449350693,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 5,
+                    "learned_sink_mass": 0.06974696806248497,
+                    "live_mass": 0.22079356365344105,
+                    "mounted_mass": 0.6758252382278442,
+                    "physical_sink_mass": 0.03362845497972825,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.1300020134624313
+                  },
+                  {
+                    "answer_mass": 0.19352431803503456,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 6,
+                    "learned_sink_mass": 0.037177633548922395,
+                    "live_mass": 0.3120748865253785,
+                    "mounted_mass": 0.6265582740306854,
+                    "physical_sink_mass": 0.024205795489251614,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.11855056750423767
+                  },
+                  {
+                    "answer_mass": 0.2144889152225326,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 7,
+                    "learned_sink_mass": 0.16313140094280243,
+                    "live_mass": 0.36124854929306927,
+                    "mounted_mass": 0.45747260836993947,
+                    "physical_sink_mass": 0.018182883422602627,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.1467596259625519
+                  },
+                  {
+                    "answer_mass": 0.1747293507351595,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 8,
+                    "learned_sink_mass": 0.1306192638242946,
+                    "live_mass": 0.3388956154094023,
+                    "mounted_mass": 0.49515436326756196,
+                    "physical_sink_mass": 0.035270675907240194,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.16416626226376085
+                  },
+                  {
+                    "answer_mass": 0.15187737542916746,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 9,
+                    "learned_sink_mass": 0.4574832355274874,
+                    "live_mass": 0.27120880957911997,
+                    "mounted_mass": 0.2647469451322275,
+                    "physical_sink_mass": 0.006502408232978161,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.11933143656043445
+                  },
+                  {
+                    "answer_mass": 0.09812756759278915,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 10,
+                    "learned_sink_mass": 0.45650824378518495,
+                    "live_mass": 0.19473365650457494,
+                    "mounted_mass": 0.3370773765970679,
+                    "physical_sink_mass": 0.011644495349815664,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.09660609143183511
+                  },
+                  {
+                    "answer_mass": 0.14421301861019695,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 11,
+                    "learned_sink_mass": 0.5079065140555886,
+                    "live_mass": 0.2447898633339826,
+                    "mounted_mass": 0.22769881784915924,
+                    "physical_sink_mass": 0.01953421560499598,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.10057684691513286
+                  }
+                ],
+                "subbands_sum_to_live": true
+              },
+              "sliding_attention": {
+                "answer_positions": 17,
+                "layer_type": "sliding_attention",
+                "layers_observed": 12,
+                "mean_over_answer_positions": {
+                  "answer_mass": 0.3385388975342115,
+                  "fed_text_mass": 0.0,
+                  "learned_sink_mass": 0.4346355960941782,
+                  "live_mass": 0.5136645296040703,
+                  "mounted_mass": 0.04516384838030254,
+                  "physical_sink_mass": 0.006524835244835783,
+                  "prior_live_mass": 0.0,
+                  "question_mass": 0.1751256346173
+                },
+                "partition_sum": 0.999988811870828,
+                "partition_sums_to_one": true,
+                "per_layer_mean": [
+                  {
+                    "answer_mass": 0.21536748943959966,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 0,
+                    "learned_sink_mass": 0.589852594277438,
+                    "live_mass": 0.3517508401590235,
+                    "mounted_mass": 0.05582645579296,
+                    "physical_sink_mass": 0.0025881078190115444,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.13638334546019049
+                  },
+                  {
+                    "answer_mass": 0.24231314396156983,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 1,
+                    "learned_sink_mass": 0.5791045953245724,
+                    "live_mass": 0.36483020291608925,
+                    "mounted_mass": 0.0538612021242871,
+                    "physical_sink_mass": 0.0021831402178470265,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.12251706530942637
+                  },
+                  {
+                    "answer_mass": 0.25668294990763946,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 2,
+                    "learned_sink_mass": 0.5108968860962811,
+                    "live_mass": 0.41059965684133415,
+                    "mounted_mass": 0.0672536750926691,
+                    "physical_sink_mass": 0.011228096301612608,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.1539167141651406
+                  },
+                  {
+                    "answer_mass": 0.3636818081140518,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 3,
+                    "learned_sink_mass": 0.40247942945536447,
+                    "live_mass": 0.5492104677593007,
+                    "mounted_mass": 0.044768578427679395,
+                    "physical_sink_mass": 0.003517182502786026,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.18552864737370434
+                  },
+                  {
+                    "answer_mass": 0.4230183433083927,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 4,
+                    "learned_sink_mass": 0.28214457280495586,
+                    "live_mass": 0.6549616526154911,
+                    "mounted_mass": 0.05786370814723127,
+                    "physical_sink_mass": 0.00497654709033668,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.23194331938729568
+                  },
+                  {
+                    "answer_mass": 0.32776349300847335,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 5,
+                    "learned_sink_mass": 0.3613343940061681,
+                    "live_mass": 0.5589397882713991,
+                    "mounted_mass": 0.06930208863580928,
+                    "physical_sink_mass": 0.010427751550998758,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.23117629657773411
+                  },
+                  {
+                    "answer_mass": 0.44420339079464183,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 6,
+                    "learned_sink_mass": 0.22617400393766515,
+                    "live_mass": 0.7220573004554299,
+                    "mounted_mass": 0.04170615050722571,
+                    "physical_sink_mass": 0.010111855589510763,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.2778539140434826
+                  },
+                  {
+                    "answer_mass": 0.40998196601867676,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 7,
+                    "learned_sink_mass": 0.2974897623062134,
+                    "live_mass": 0.6578191448660458,
+                    "mounted_mass": 0.039939999087330175,
+                    "physical_sink_mass": 0.004727220929720823,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.24783717797083013
+                  },
+                  {
+                    "answer_mass": 0.37391826247467713,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 8,
+                    "learned_sink_mass": 0.3793315045973834,
+                    "live_mass": 0.5792696475982666,
+                    "mounted_mass": 0.03328668254920665,
+                    "physical_sink_mass": 0.008186334168867153,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.20535138600012837
+                  },
+                  {
+                    "answer_mass": 0.4083230898660772,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 9,
+                    "learned_sink_mass": 0.40108652851160836,
+                    "live_mass": 0.5619232426671421,
+                    "mounted_mass": 0.036207278642584294,
+                    "physical_sink_mass": 0.0008140221111449029,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.1536001581698656
+                  },
+                  {
+                    "answer_mass": 0.3108935198363136,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 10,
+                    "learned_sink_mass": 0.5539190015372109,
+                    "live_mass": 0.4007016297648935,
+                    "mounted_mass": 0.029835909413283363,
+                    "physical_sink_mass": 0.015428230426657726,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.08980812154272023
+                  },
+                  {
+                    "answer_mass": 0.2863193136804244,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 11,
+                    "learned_sink_mass": 0.6318138802752775,
+                    "live_mass": 0.3519107813344282,
+                    "mounted_mass": 0.012114452143364093,
+                    "physical_sink_mass": 0.0041095342295353905,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.0655914694070816
+                  }
+                ],
+                "subbands_sum_to_live": true
+              }
+            },
+            "recut_vs_base_abs_delta": {
+              "full_attention": {
+                "learned_sink_mass": 0.0,
+                "live_mass": 0.0,
+                "mounted_mass": 0.0,
+                "physical_sink_mass": 0.0
+              },
+              "sliding_attention": {
+                "learned_sink_mass": 0.0,
+                "live_mass": 0.0,
+                "mounted_mass": 0.0,
+                "physical_sink_mass": 0.0
+              }
+            },
+            "row_split_inputs": {
+              "baseline_ntok": 0,
+              "baseline_receipt": {
+                "S_first_forward": 112,
+                "arena_pos_before_first_forward": 0,
+                "baseline_ntok_derived": 0,
+                "fed_ntok_from_feed_receipt": 0,
+                "live0": 75,
+                "prior_ntok": 0,
+                "question_ntok": 37,
+                "two_derivations_agree": true,
+                "why_not_pos_at_observer_entry": "ArenaCache.eb1_begin_turn's ephemeral branch clears the boat (caches, pos, live_segs = None, 0, []) at every production turn-open, so rows present at observer entry may not be in the cache the kernel scores. MEASURED on RS4's first C0 run."
+              },
+              "derived_by": "baseline = S_first - (n_sink + cur_mount_n) - question_ntok, cross-checked against arena.pos as the first observed forward began; fed off the arm's feed receipt; prior = baseline - fed; question through the model tokenizer over arena._format_step_prompt; S, n_sink and cur_mount_n read per forward off the live call and the live arena",
+              "fed_ntok": 0,
+              "pos_at_observer_entry": 0,
+              "prior_ntok": 0,
+              "question_ntok": 37
+            },
+            "sliding_fed_text_reach": {
+              "always_reaches_fed_text": false,
+              "ever_reaches_fed_text": false,
+              "fed_text_band_width_max": 0,
+              "observed_rows": 204,
+              "reaching_rows": 0,
+              "structurally_invisible_rows": 0
+            }
+          },
+          "mounted_ids": [
+            5
+          ],
+          "picks_requested": [
+            5
+          ],
+          "probe_id": "sup_solace_fresh",
+          "question": "What is the current Solace key value?",
+          "registered_probe": true,
+          "rejected_values": [
+            "sable-0-copper",
+            "quartz-8-jade"
+          ],
+          "served_answer": "The current Solace key is **Raven‑9‑Ivory**.",
+          "session_id": "fresh_fact_controls",
+          "variant": "solace_fact",
+          "verdict": {
+            "correct": true,
+            "expected_hits": [
+              "raven-9-ivory"
+            ],
+            "rejected_hits": []
+          }
+        },
+        {
+          "arena_cur_mount_n": 75,
+          "arm": "C3l",
+          "correct": true,
+          "eb1_lived_answer": "The current Tundra ledger value is **“Tundra‑42‑Eagle‑Blue‑Sapphire”**.",
+          "elapsed_ns": 11739396521,
+          "expected_values": [
+            "Sable-0-Copper"
+          ],
+          "info": {
+            "evicted": 0,
+            "live_tokens": 55,
+            "mounts": [
+              6
+            ],
+            "resident": 149,
+            "rs4_arena_width": 96,
+            "rs4_c0_prelude": {
+              "arm_mount_ids": [
+                4
+              ],
+              "fit_split_children": [
+                3,
+                4
+              ],
+              "fit_split_parent": 2,
+              "grafts_after_prelude": 5,
+              "mounted_ids": [
+                4
+              ],
+              "served_answer": "The current Tundra ledger value is **Sable‑0‑Copper**.",
+              "why": "C0's own ladder was run first so this arm's repository is the one C0 had at this probe — including any PERSISTED fit-time split whose child the registered mount ids name"
+            },
+            "rs4_capture": {
+              "all_payloads_identical": false,
+              "arm": "C3l",
+              "capture_pin": "live",
+              "fresh_graft_ids": [
+                5
+              ],
+              "per_node": [
+                {
+                  "capture_receipt": {
+                    "arena_width": 96,
+                    "capture_pin": "live",
+                    "capture_shift": 115,
+                    "capture_shift_derived_from": "arena.live_shift (= n_sink + arena_width)",
+                    "capture_shift_observed": 115,
+                    "live_shift": 115,
+                    "n_sink": 19
+                  },
+                  "capture_text": "After that background they recorded the independent fact that the current Tundra ledger value is Sable-0-Copper. Preserve Sable-0-Copper for Tundra ledger only; the Praxis dock and Solace key references are index context.<|end|><|start|>assistant<|channel|>final<|message|>Archived Tundra ledger as Sable-0-Copper and kept the planning context.<|end|>",
+                  "capture_text_sha256": "e231b288ad17a2a126d82cbb23508472209e7ffcac8480faa466c5a524b831e1",
+                  "capture_text_source": "graft_own_text (fit-time split child)",
+                  "deposit_path": "ArenaCache.deposit(text, capture_pin=...)",
+                  "deposit_path_is_production": true,
+                  "fresh_graft_id": 5,
+                  "fresh_native_node_id": 8,
+                  "installed_graft_id": 4,
+                  "installed_payload": {
+                    "available": true,
+                    "layers": 24,
+                    "ntok": 75,
+                    "per_layer_sha256": [
+                      "879dea309e610b35eb6dffa98d5d62ea846a76f83061286a61859afb4963d316",
+                      "1588ff2d85205c9d4c161fd0f582de980ef29327318e62abd8577e64a08f668e",
+                      "d37d9cf416da2e031919552c16e0d803149df87c6102d91a31ff47e9d3bd137f",
+                      "8c0a4983193dbd4f98c239654be57b1505531b27b61c2b01c323512e70cc6768",
+                      "4acb0da4ad0a6a1378227f7a0602def781b29ccadef046d9b6a0fb9cc2e17104",
+                      "3698e8aa10355680e3075cd2dfd349e75a91144e7490e29e28db458f09f31b54",
+                      "65b4389110ae17f100dd9edef6de5d208152f460498efd8ba6701031d6d3c31b",
+                      "962b97cd5e9b013d15425e20e9ac05b622d50ef1307239ce0870cbcb98b8c1a5",
+                      "8aea285ad64e530b5e88bb2051e3ba2738d00bc99c62975cba8e86c90c234c4e",
+                      "906760c4e494f1f5cddb1d2af20381565c9bf51900b70ae429c109be05b8d96a",
+                      "484df39713d1e3a28fa495314920cbe3820fd0b934fd212f7a366bbcda8a5da3",
+                      "a6160d2489c5c2ef7fa45fb345df2e73615b23ecd514d298bc18fd7666c1f15b",
+                      "a53ca8d14acbe58a3d5bb2b0a8f3cf90cb39178659802a84f814dfc4a5b5c6bb",
+                      "d5d7acaa089ed3b117504fff1de7ba1db54f87fb0178aa1e0874bb02cd3c6b62",
+                      "333f9f7767adb778b3f12291a901c1e0b8893eec14e9a9aaf94d913c03c093e7",
+                      "89bed7ae563ce63cd293b8c8b41d2a3cf37188f092159974d8be107f9515cf4e",
+                      "53e1a483aecf3dcf70f871e089da039f93ce8ec9f4e05b54bc8028cbb95024f0",
+                      "4858229d57e169cd3515f577539fed501608b6cdf5299ebc78e1142899abf6ca",
+                      "8fa6be56db5c3515808f4f7a954057b03babbfb0c253cfd86c28f1c0110fe07b",
+                      "635dba0dbed1529af76ec8b58dde44cb72cb57dfa46c27051bdd0cf0559af568",
+                      "76f0b60dee6124216251420e9b023b76080b1d2225f578fc8169032ae7d6367a",
+                      "bdd8a839ec2e546aa9550403c10b412f67d0b9f00223e8777248e32edb7d333b",
+                      "940a056dbbe72275156e225442b8599396facbcb1a61f7e3fc87ab58778bba05",
+                      "6becfeadc4c38f798ae1ebebad6b230ddd7856a1b8e7fc8440254a77e563b468"
+                    ],
+                    "sha256": "ce0407e342500fb373f1d99190272acb6a5337fdfab484fa1004ba58d169b89e"
+                  },
+                  "native_sync_call": "GraftRepository._native_sync_node",
+                  "node_id": null,
+                  "ntok_identical": true,
+                  "payload_identical": false,
+                  "recaptured_payload": {
+                    "available": true,
+                    "layers": 24,
+                    "ntok": 75,
+                    "per_layer_sha256": [
+                      "6cf0187f339693662b1aadf8f659c9b60132e6c42a117655c684467bcc316d0b",
+                      "f721e07b4aead865119fd2b443fab2c7bf22a4c9289715d45c3ea411b2f718a0",
+                      "ad7d128d0b1c3f8d0c6e6ec8115656b59a6ca82b861f12b8a66424f102ecb2b4",
+                      "705bdfd97da5b4dd94514f243706cd359b00a70db660f6ca74f825a715ae2fd6",
+                      "c84eda17b2d9df0180b079efdb7fbd8c7ce13cd2ed07616b03d8671bd64f71ae",
+                      "f774385eae30c0a8282e972288535a6f9868f11c030312546ecae988116cbbc1",
+                      "104ea0ae29d05cca54610fad0113e72047bb98c10b337f2c248c6f2ba7923f96",
+                      "eb0e3160b0c24b207d618fdaeac103c7140f26e12d438a58914d3274d291a9e2",
+                      "631c5c87c14493f0c0995bccb8373e3cd8c935c1c4d530394292d060df87f5f9",
+                      "48582c46b7af169713184f96641a19bfc36787020a1454ccea20b826cc337ffe",
+                      "8b7c2cee9a56b8df6a1caf6e44f3f3d43c8b191f6c5402949d200667b7596b9a",
+                      "c7acab067450ca5a92e39e61e4224bee47092653d1539afbbd2691088e61b280",
+                      "badd36f444e5b6ddd42986e1f1032ae5ff53af14f7ebc73722086e5773bef3d9",
+                      "1e11d4e448d03f12449d285887c48e3869ba13564fc8da0fc3dbf2fb3fbd7072",
+                      "f28dcd8f1587d853d80002a52f79947687ab4c8f33035a4917d6f5478a64ce28",
+                      "8c6e11aebf2917e2cc9953ee82b4c69e00df828e1428cc96a1a3e97a8d8edbe1",
+                      "1ace5503a20196a980dfd0cca70e825b8cb2c5e29aaad2c764efb2d3248df2a2",
+                      "30a7149be9aee08ec39943cd966d50e299e7c32c73257ab0216ec56d98813d8a",
+                      "ec5a9d3604a24476ad2b18e03d9f7f857a2e9d049ee274385cd53710ae30a177",
+                      "b51db2ffd94121fe4f206b38db98b4daf5fada56d3db9e4980c97dc2a8fb3678",
+                      "6dc089049e24235f5cd471e4f91f832fd137b1512bfce9a134bb2f71837137f2",
+                      "58cbfdf8c38ff127eb1ae3e2d6f56133716228fa060d234898057f31daee463b",
+                      "345043436ef155e07a4357f7012984907e63fba7c26362c8e8fd725f6211d133",
+                      "059284d7def96b178a7121d5ae0a89e017cf1c6356719fc14147e82a61005da4"
+                    ],
+                    "sha256": "f515f5144cb0153bbf8c87d22a6b27fd606a668074efd6ec887e59e4f717d4f2"
+                  }
+                }
+              ]
+            },
+            "rs4_cur_mount_n_at_serve": 75,
+            "rs4_fit_dropped": [],
+            "rs4_fit_requested": [
+              5
+            ],
+            "rs4_fit_seated": [
+              5
+            ],
+            "rs4_grounded": true,
+            "rs4_levers": {
+              "capture_pin": "live",
+              "label": "pin 'live' + seat ON",
+              "levers_read_from": "artifacts/grm_rs3/registration.json",
+              "seat_near_live": true
+            },
+            "rs4_seating": {
+              "arena_width": 96,
+              "delta_positions": 21,
+              "live_shift": 115,
+              "mount_ntok": 75,
+              "mount_pos0": 40,
+              "mount_pos0_legacy": 19,
+              "n_sink": 19,
+              "plan_head": 5,
+              "plan_head_adjacent_to_live_shift": true,
+              "plan_head_last_position": 114,
+              "plan_head_ntok": 75,
+              "seat_near_live": true,
+              "seat_offset_plan_head": 40,
+              "seat_order": [
+                5
+              ],
+              "seat_order_legacy": [
+                5
+              ],
+              "seat_rule": "GRM_SEAT_NEAR_LIVE: the block is filled from the TOP DOWN — the plan head (picks[0]) is seated LAST so its final token sits at live_shift - 1, immediately below the first live token; filler and the other mounts sit below it; the sink stays at [0, n_sink)"
+            },
+            "rs4_serving_path": "ArenaCache._attempt (routing disabled) — PRODUCTION, including the bootstrap seating branch the seat lever lives in"
+          },
+          "levers": {
+            "capture_pin": "live",
+            "label": "pin 'live' + seat ON",
+            "levers_read_from": "artifacts/grm_rs3/registration.json",
+            "seat_near_live": true
+          },
+          "live_feed": null,
+          "mass": {
+            "answer_positions": 18,
+            "base_partition_UNMODIFIED": {
+              "answer_positions": 18,
+              "by_layer_type": {
+                "full_attention": {
+                  "answer_positions": 18,
+                  "layer_type": "full_attention",
+                  "layers_observed": 12,
+                  "mean_over_answer_positions": {
+                    "learned_sink_mass": 0.24935970663231,
+                    "live_mass": 0.2894891599814098,
+                    "mounted_mass": 0.4395621062290889,
+                    "physical_sink_mass": 0.021566061927134995
+                  },
+                  "partition_sum": 0.9999770347699437,
+                  "partition_sums_to_one": true,
+                  "per_layer_mean": [
+                    {
+                      "layer_ordinal": 0,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.324375761879815,
+                      "live_mass": 0.3561418569750256,
+                      "mounted_mass": 0.2839364368054602,
+                      "physical_sink_mass": 0.03549938079797559
+                    },
+                    {
+                      "layer_ordinal": 1,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.43192750215530396,
+                      "live_mass": 0.26873324977027047,
+                      "mounted_mass": 0.28619775507185197,
+                      "physical_sink_mass": 0.013019827634303106
+                    },
+                    {
+                      "layer_ordinal": 2,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.37737606631384957,
+                      "live_mass": 0.3060513171884749,
+                      "mounted_mass": 0.3083938956260681,
+                      "physical_sink_mass": 0.00812498407645358
+                    },
+                    {
+                      "layer_ordinal": 3,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.1387547022766537,
+                      "live_mass": 0.27516643702983856,
+                      "mounted_mass": 0.5500066661172442,
+                      "physical_sink_mass": 0.03596422883371512
+                    },
+                    {
+                      "layer_ordinal": 4,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.15541579491562313,
+                      "live_mass": 0.31093984511163497,
+                      "mounted_mass": 0.5069925636053085,
+                      "physical_sink_mass": 0.026814890921943717
+                    },
+                    {
+                      "layer_ordinal": 5,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.06334209690491359,
+                      "live_mass": 0.2516302466392517,
+                      "mounted_mass": 0.6574345264169905,
+                      "physical_sink_mass": 0.027577330979208153
+                    },
+                    {
+                      "layer_ordinal": 6,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.03264984002129899,
+                      "live_mass": 0.2945854009853469,
+                      "mounted_mass": 0.6485467387570275,
+                      "physical_sink_mass": 0.02421828881940908
+                    },
+                    {
+                      "layer_ordinal": 7,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.14228365818659464,
+                      "live_mass": 0.3832176907194985,
+                      "mounted_mass": 0.4572676105631722,
+                      "physical_sink_mass": 0.017175737406230636
+                    },
+                    {
+                      "layer_ordinal": 8,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.12597407648960748,
+                      "live_mass": 0.30088575763834846,
+                      "mounted_mass": 0.5387813515133328,
+                      "physical_sink_mass": 0.03432362743963798
+                    },
+                    {
+                      "layer_ordinal": 9,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.3547728690836165,
+                      "live_mass": 0.2789611990253131,
+                      "mounted_mass": 0.3601452103919453,
+                      "physical_sink_mass": 0.006113998992885981
+                    },
+                    {
+                      "layer_ordinal": 10,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.3968980610370636,
+                      "live_mass": 0.19990637567308214,
+                      "mounted_mass": 0.3916228661934535,
+                      "physical_sink_mass": 0.011509201049597727
+                    },
+                    {
+                      "layer_ordinal": 11,
+                      "layer_type": "full_attention",
+                      "learned_sink_mass": 0.44854605032338035,
+                      "live_mass": 0.24765054302083123,
+                      "mounted_mass": 0.2854196536872122,
+                      "physical_sink_mass": 0.01845124617425932
+                    }
+                  ],
+                  "top_contributing_layer": {
+                    "layer_ordinal": 5,
+                    "mounted_mass": 0.6574345264169905
+                  }
+                },
+                "sliding_attention": {
+                  "answer_positions": 18,
+                  "layer_type": "sliding_attention",
+                  "layers_observed": 12,
+                  "mean_over_answer_positions": {
+                    "learned_sink_mass": 0.41045668196898916,
+                    "live_mass": 0.5356049330698119,
+                    "mounted_mass": 0.0528520627051842,
+                    "physical_sink_mass": 0.0010946374313873632
+                  },
+                  "partition_sum": 1.0000083151753727,
+                  "partition_sums_to_one": true,
+                  "per_layer_mean": [
+                    {
+                      "layer_ordinal": 0,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.6038611746496625,
+                      "live_mass": 0.3431565629111396,
+                      "mounted_mass": 0.05249105042053594,
+                      "physical_sink_mass": 0.0005351080467840398
+                    },
+                    {
+                      "layer_ordinal": 1,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.5616375207901001,
+                      "live_mass": 0.39432284070385826,
+                      "mounted_mass": 0.043165790744953685,
+                      "physical_sink_mass": 0.000794654704400778
+                    },
+                    {
+                      "layer_ordinal": 2,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.5109653075536092,
+                      "live_mass": 0.4240587999423345,
+                      "mounted_mass": 0.0641320316741864,
+                      "physical_sink_mass": 0.0008647348343705138
+                    },
+                    {
+                      "layer_ordinal": 3,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.3786211030350791,
+                      "live_mass": 0.5613522860738966,
+                      "mounted_mass": 0.059592077508568764,
+                      "physical_sink_mass": 0.0003525316426223273
+                    },
+                    {
+                      "layer_ordinal": 4,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.2755035658677419,
+                      "live_mass": 0.662386546532313,
+                      "mounted_mass": 0.06129620400153928,
+                      "physical_sink_mass": 0.0008732360428338223
+                    },
+                    {
+                      "layer_ordinal": 5,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.27208536863327026,
+                      "live_mass": 0.6089627295732498,
+                      "mounted_mass": 0.114574134349823,
+                      "physical_sink_mass": 0.004436816089865816
+                    },
+                    {
+                      "layer_ordinal": 6,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.21976818641026816,
+                      "live_mass": 0.7238288058174981,
+                      "mounted_mass": 0.054173433118396334,
+                      "physical_sink_mass": 0.002243955890460509
+                    },
+                    {
+                      "layer_ordinal": 7,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.26913147999180687,
+                      "live_mass": 0.6858195430702634,
+                      "mounted_mass": 0.044793906828595534,
+                      "physical_sink_mass": 0.0002827939217442892
+                    },
+                    {
+                      "layer_ordinal": 8,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.3451802863015069,
+                      "live_mass": 0.6170518928103976,
+                      "mounted_mass": 0.0373109521654745,
+                      "physical_sink_mass": 0.0005459236670806907
+                    },
+                    {
+                      "layer_ordinal": 9,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.34943492379453445,
+                      "live_mass": 0.6011313100655874,
+                      "mounted_mass": 0.04929302984641658,
+                      "physical_sink_mass": 0.00014128831071502646
+                    },
+                    {
+                      "layer_ordinal": 10,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.5322394238577949,
+                      "live_mass": 0.42762596739663017,
+                      "mounted_mass": 0.038958379119220704,
+                      "physical_sink_mass": 0.0011497077520188112
+                    },
+                    {
+                      "layer_ordinal": 11,
+                      "layer_type": "sliding_attention",
+                      "learned_sink_mass": 0.607051842742496,
+                      "live_mass": 0.37756191194057465,
+                      "mounted_mass": 0.014443762684499638,
+                      "physical_sink_mass": 0.0009148982737517346
+                    }
+                  ],
+                  "top_contributing_layer": {
+                    "layer_ordinal": 5,
+                    "mounted_mass": 0.114574134349823
+                  }
+                }
+              },
+              "geometry": {
+                "arena_width": 96,
+                "layer_counts": {
+                  "full_attention": 12,
+                  "sliding_attention": 12
+                },
+                "live_shift": 115,
+                "n_sink": 19,
+                "sliding_window": 128
+              },
+              "per_token_mounted_mass_full": [
+                0.46159981687863666,
+                0.43142443150281906,
+                0.44507238268852234,
+                0.5345030650496483,
+                0.5012033879756927,
+                0.48314715176820755,
+                0.4291962335507075,
+                0.40226874748865765,
+                0.4717555617292722,
+                0.4071817733347416,
+                0.46949227154254913,
+                0.46813823531071347,
+                0.39502155780792236,
+                0.42451947554945946,
+                0.4365548553566138,
+                0.37266500915090245,
+                0.3917228914797306,
+                0.38665106395880383
+              ],
+              "per_token_mounted_mass_sliding": [
+                0.048502795243014894,
+                0.0485243642081817,
+                0.061399327125400305,
+                0.10081309080123901,
+                0.11195596695567171,
+                0.06007101262609164,
+                0.0501720872707665,
+                0.043233025431012116,
+                0.04621401297238966,
+                0.038125790345172085,
+                0.05197407150020202,
+                0.05043278269780179,
+                0.03220980792927245,
+                0.04829455655999482,
+                0.044327648589387536,
+                0.05751141541986726,
+                0.03180317553536346,
+                0.025772197482486565
+              ],
+              "production_full_layer_mean": {
+                "learned_sink_mass": 0.24935970663231,
+                "live_mass": 0.2894891599814098,
+                "mounted_mass": 0.4395621062290889,
+                "physical_sink_mass": 0.021566061927134995
+              },
+              "production_vs_recomputed_abs_delta": {
+                "learned_sink_mass": 0.0,
+                "live_mass": 0.0,
+                "mounted_mass": 0.0,
+                "physical_sink_mass": 0.0
+              },
+              "sliding_window_reach": {
+                "S_max": 149,
+                "S_min": 132,
+                "always_reaches_mount": true,
+                "fraction_of_mount_band_visible_max": 1.0,
+                "fraction_of_mount_band_visible_min": 0.9733333333333334,
+                "k0_max": 21,
+                "k0_min": 4,
+                "mount_band_width_max": 75,
+                "mount_band_width_min": 75,
+                "mount_rows_in_window_max": 75,
+                "mount_rows_in_window_min": 73,
+                "never_reaches_mount": false,
+                "observed_rows": 216,
+                "reaching_rows": 216,
+                "sliding_window": 128
+              }
+            },
+            "bounds_first_seen": {
+              "S": 132,
+              "answer_band": [
+                132,
+                132
+              ],
+              "answer_rows": 0,
+              "bands_are_contiguous_and_cover_live": true,
+              "cur_mount_n": 75,
+              "fed_text_band": [
+                94,
+                94
+              ],
+              "fed_text_rows": 0,
+              "live0": 94,
+              "live_band": [
+                94,
+                132
+              ],
+              "live_rows": 38,
+              "mount_band": [
+                19,
+                94
+              ],
+              "n_sink": 19,
+              "prior_live_band": [
+                94,
+                94
+              ],
+              "prior_live_rows": 0,
+              "question_band": [
+                94,
+                132
+              ],
+              "question_rows": 38,
+              "sink_band": [
+                0,
+                19
+              ]
+            },
+            "bounds_last_seen": {
+              "S": 149,
+              "answer_band": [
+                132,
+                149
+              ],
+              "answer_rows": 17,
+              "bands_are_contiguous_and_cover_live": true,
+              "cur_mount_n": 75,
+              "fed_text_band": [
+                94,
+                94
+              ],
+              "fed_text_rows": 0,
+              "live0": 94,
+              "live_band": [
+                94,
+                149
+              ],
+              "live_rows": 55,
+              "mount_band": [
+                19,
+                94
+              ],
+              "n_sink": 19,
+              "prior_live_band": [
+                94,
+                94
+              ],
+              "prior_live_rows": 0,
+              "question_band": [
+                94,
+                132
+              ],
+              "question_rows": 38,
+              "sink_band": [
+                0,
+                19
+              ]
+            },
+            "by_layer_type": {
+              "full_attention": {
+                "answer_positions": 18,
+                "layer_type": "full_attention",
+                "layers_observed": 12,
+                "mean_over_answer_positions": {
+                  "answer_mass": 0.15558371253104675,
+                  "fed_text_mass": 0.0,
+                  "learned_sink_mass": 0.24935970663231,
+                  "live_mass": 0.2894891599814098,
+                  "mounted_mass": 0.4395621062290889,
+                  "physical_sink_mass": 0.021566061927134995,
+                  "prior_live_mass": 0.0,
+                  "question_mass": 0.13390544764007684
+                },
+                "partition_sum": 0.9999770349596575,
+                "partition_sums_to_one": true,
+                "per_layer_mean": [
+                  {
+                    "answer_mass": 0.19224619534280565,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 0,
+                    "learned_sink_mass": 0.324375761879815,
+                    "live_mass": 0.3561418569750256,
+                    "mounted_mass": 0.2839364368054602,
+                    "physical_sink_mass": 0.03549938079797559,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.16389566039045653
+                  },
+                  {
+                    "answer_mass": 0.14481465684043038,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 1,
+                    "learned_sink_mass": 0.43192750215530396,
+                    "live_mass": 0.26873324977027047,
+                    "mounted_mass": 0.28619775507185197,
+                    "physical_sink_mass": 0.013019827634303106,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.12391859458552466
+                  },
+                  {
+                    "answer_mass": 0.1668606855803066,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 2,
+                    "learned_sink_mass": 0.37737606631384957,
+                    "live_mass": 0.3060513171884749,
+                    "mounted_mass": 0.3083938956260681,
+                    "physical_sink_mass": 0.00812498407645358,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.13919062953856257
+                  },
+                  {
+                    "answer_mass": 0.1656193948454327,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 3,
+                    "learned_sink_mass": 0.1387547022766537,
+                    "live_mass": 0.27516643702983856,
+                    "mounted_mass": 0.5500066661172442,
+                    "physical_sink_mass": 0.03596422883371512,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.10954704611665672
+                  },
+                  {
+                    "answer_mass": 0.1634114624725448,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 4,
+                    "learned_sink_mass": 0.15541579491562313,
+                    "live_mass": 0.31093984511163497,
+                    "mounted_mass": 0.5069925636053085,
+                    "physical_sink_mass": 0.026814890921943717,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.14752838305301136
+                  },
+                  {
+                    "answer_mass": 0.09510179340011543,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 5,
+                    "learned_sink_mass": 0.06334209690491359,
+                    "live_mass": 0.2516302466392517,
+                    "mounted_mass": 0.6574345264169905,
+                    "physical_sink_mass": 0.027577330979208153,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.15652845510178143
+                  },
+                  {
+                    "answer_mass": 0.15572195375959078,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 6,
+                    "learned_sink_mass": 0.03264984002129899,
+                    "live_mass": 0.2945854009853469,
+                    "mounted_mass": 0.6485467387570275,
+                    "physical_sink_mass": 0.02421828881940908,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.13886344929536185
+                  },
+                  {
+                    "answer_mass": 0.20978964575462872,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 7,
+                    "learned_sink_mass": 0.14228365818659464,
+                    "live_mass": 0.3832176907194985,
+                    "mounted_mass": 0.4572676105631722,
+                    "physical_sink_mass": 0.017175737406230636,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.17342804041173723
+                  },
+                  {
+                    "answer_mass": 0.15458597222136128,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 8,
+                    "learned_sink_mass": 0.12597407648960748,
+                    "live_mass": 0.30088575763834846,
+                    "mounted_mass": 0.5387813515133328,
+                    "physical_sink_mass": 0.03432362743963798,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.14629978562394777
+                  },
+                  {
+                    "answer_mass": 0.15769608173933294,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 9,
+                    "learned_sink_mass": 0.3547728690836165,
+                    "live_mass": 0.2789611990253131,
+                    "mounted_mass": 0.3601452103919453,
+                    "physical_sink_mass": 0.006113998992885981,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.12126511242240667
+                  },
+                  {
+                    "answer_mass": 0.10651732443107499,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 10,
+                    "learned_sink_mass": 0.3968980610370636,
+                    "live_mass": 0.19990637567308214,
+                    "mounted_mass": 0.3916228661934535,
+                    "physical_sink_mass": 0.011509201049597727,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.0933890561055806
+                  },
+                  {
+                    "answer_mass": 0.1546393839849366,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 11,
+                    "learned_sink_mass": 0.44854605032338035,
+                    "live_mass": 0.24765054302083123,
+                    "mounted_mass": 0.2854196536872122,
+                    "physical_sink_mass": 0.01845124617425932,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.0930111590358946
+                  }
+                ],
+                "subbands_sum_to_live": true
+              },
+              "sliding_attention": {
+                "answer_positions": 18,
+                "layer_type": "sliding_attention",
+                "layers_observed": 12,
+                "mean_over_answer_positions": {
+                  "answer_mass": 0.3407325035444012,
+                  "fed_text_mass": 0.0,
+                  "learned_sink_mass": 0.41045668196898916,
+                  "live_mass": 0.5356049330698119,
+                  "mounted_mass": 0.0528520627051842,
+                  "physical_sink_mass": 0.0010946374313873632,
+                  "prior_live_mass": 0.0,
+                  "question_mass": 0.19487243106036825
+                },
+                "partition_sum": 1.0000083167103302,
+                "partition_sums_to_one": true,
+                "per_layer_mean": [
+                  {
+                    "answer_mass": 0.2081622009476026,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 0,
+                    "learned_sink_mass": 0.6038611746496625,
+                    "live_mass": 0.3431565629111396,
+                    "mounted_mass": 0.05249105042053594,
+                    "physical_sink_mass": 0.0005351080467840398,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.13499435265031126
+                  },
+                  {
+                    "answer_mass": 0.25668060614003074,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 1,
+                    "learned_sink_mass": 0.5616375207901001,
+                    "live_mass": 0.39432284070385826,
+                    "mounted_mass": 0.043165790744953685,
+                    "physical_sink_mass": 0.000794654704400778,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.13764223104549778
+                  },
+                  {
+                    "answer_mass": 0.27487561520602966,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 2,
+                    "learned_sink_mass": 0.5109653075536092,
+                    "live_mass": 0.4240587999423345,
+                    "mounted_mass": 0.0641320316741864,
+                    "physical_sink_mass": 0.0008647348343705138,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.14918319177296427
+                  },
+                  {
+                    "answer_mass": 0.3779161158535216,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 3,
+                    "learned_sink_mass": 0.3786211030350791,
+                    "live_mass": 0.5613522860738966,
+                    "mounted_mass": 0.059592077508568764,
+                    "physical_sink_mass": 0.0003525316426223273,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.18343617601527107
+                  },
+                  {
+                    "answer_mass": 0.4070556362469991,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 4,
+                    "learned_sink_mass": 0.2755035658677419,
+                    "live_mass": 0.662386546532313,
+                    "mounted_mass": 0.06129620400153928,
+                    "physical_sink_mass": 0.0008732360428338223,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.2553309284978443
+                  },
+                  {
+                    "answer_mass": 0.31527762363354367,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 5,
+                    "learned_sink_mass": 0.27208536863327026,
+                    "live_mass": 0.6089627295732498,
+                    "mounted_mass": 0.114574134349823,
+                    "physical_sink_mass": 0.004436816089865816,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.29368510180049473
+                  },
+                  {
+                    "answer_mass": 0.40688329852289623,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 6,
+                    "learned_sink_mass": 0.21976818641026816,
+                    "live_mass": 0.7238288058174981,
+                    "mounted_mass": 0.054173433118396334,
+                    "physical_sink_mass": 0.002243955890460509,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.31694549653265214
+                  },
+                  {
+                    "answer_mass": 0.4009672767586178,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 7,
+                    "learned_sink_mass": 0.26913147999180687,
+                    "live_mass": 0.6858195430702634,
+                    "mounted_mass": 0.044793906828595534,
+                    "physical_sink_mass": 0.0002827939217442892,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.284852282040649
+                  },
+                  {
+                    "answer_mass": 0.3780778663025962,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 8,
+                    "learned_sink_mass": 0.3451802863015069,
+                    "live_mass": 0.6170518928103976,
+                    "mounted_mass": 0.0373109521654745,
+                    "physical_sink_mass": 0.0005459236670806907,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.23897402733564377
+                  },
+                  {
+                    "answer_mass": 0.429498381084866,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 9,
+                    "learned_sink_mass": 0.34943492379453445,
+                    "live_mass": 0.6011313100655874,
+                    "mounted_mass": 0.04929302984641658,
+                    "physical_sink_mass": 0.00014128831071502646,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.1716329324990511
+                  },
+                  {
+                    "answer_mass": 0.3276543493072192,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 10,
+                    "learned_sink_mass": 0.5322394238577949,
+                    "live_mass": 0.42762596739663017,
+                    "mounted_mass": 0.038958379119220704,
+                    "physical_sink_mass": 0.0011497077520188112,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.09997161198407412
+                  },
+                  {
+                    "answer_mass": 0.3057410725288921,
+                    "fed_text_mass": 0.0,
+                    "layer_ordinal": 11,
+                    "learned_sink_mass": 0.607051842742496,
+                    "live_mass": 0.37756191194057465,
+                    "mounted_mass": 0.014443762684499638,
+                    "physical_sink_mass": 0.0009148982737517346,
+                    "prior_live_mass": 0.0,
+                    "question_mass": 0.0718208405499657
+                  }
+                ],
+                "subbands_sum_to_live": true
+              }
+            },
+            "recut_vs_base_abs_delta": {
+              "full_attention": {
+                "learned_sink_mass": 0.0,
+                "live_mass": 0.0,
+                "mounted_mass": 0.0,
+                "physical_sink_mass": 0.0
+              },
+              "sliding_attention": {
+                "learned_sink_mass": 0.0,
+                "live_mass": 0.0,
+                "mounted_mass": 0.0,
+                "physical_sink_mass": 0.0
+              }
+            },
+            "row_split_inputs": {
+              "baseline_ntok": 0,
+              "baseline_receipt": {
+                "S_first_forward": 132,
+                "arena_pos_before_first_forward": 0,
+                "baseline_ntok_derived": 0,
+                "fed_ntok_from_feed_receipt": 0,
+                "live0": 94,
+                "prior_ntok": 0,
+                "question_ntok": 38,
+                "two_derivations_agree": true,
+                "why_not_pos_at_observer_entry": "ArenaCache.eb1_begin_turn's ephemeral branch clears the boat (caches, pos, live_segs = None, 0, []) at every production turn-open, so rows present at observer entry may not be in the cache the kernel scores. MEASURED on RS4's first C0 run."
+              },
+              "derived_by": "baseline = S_first - (n_sink + cur_mount_n) - question_ntok, cross-checked against arena.pos as the first observed forward began; fed off the arm's feed receipt; prior = baseline - fed; question through the model tokenizer over arena._format_step_prompt; S, n_sink and cur_mount_n read per forward off the live call and the live arena",
+              "fed_ntok": 0,
+              "pos_at_observer_entry": 0,
+              "prior_ntok": 0,
+              "question_ntok": 38
+            },
+            "sliding_fed_text_reach": {
+              "always_reaches_fed_text": false,
+              "ever_reaches_fed_text": false,
+              "fed_text_band_width_max": 0,
+              "observed_rows": 216,
+              "reaching_rows": 0,
+              "structurally_invisible_rows": 0
+            }
+          },
+          "mounted_ids": [
+            5
+          ],
+          "picks_requested": [
+            5
+          ],
+          "probe_id": "sup_reserve_tundra_ledger",
+          "question": "What is the current Tundra ledger value?",
+          "registered_probe": true,
+          "rejected_values": [
+            "Quartz-8-Jade",
+            "Raven-9-Ivory"
+          ],
+          "served_answer": "The current Tundra ledger value is **Sable‑0‑Copper**.",
+          "session_id": "fresh_fact_controls",
+          "variant": "registered",
+          "verdict": {
+            "correct": true,
+            "expected_hits": [
+              "Sable-0-Copper"
+            ],
+            "rejected_hits": []
+          }
+        }
+      ],
+      "program": "GRM",
+      "question_ntok_checks": [
+        {
+          "agree": true,
+          "observed_question_ntok": 36,
+          "probe_id": "sup_praxis_fresh",
+          "registered_question_ntok": 36
+        },
+        {
+          "agree": true,
+          "observed_question_ntok": 37,
+          "probe_id": "sup_solace_fresh",
+          "registered_question_ntok": 37
+        },
+        {
+          "agree": true,
+          "observed_question_ntok": 38,
+          "probe_id": "sup_reserve_tundra_ledger",
+          "registered_question_ntok": 38
+        }
+      ],
+      "registered_probe_ids": [
+        "sup_praxis_fresh",
+        "sup_reserve_tundra_ledger",
+        "sup_solace_fresh"
+      ],
+      "registration": {
+        "bytes": 26087,
+        "path": "artifacts/grm_rs4/registration.json",
+        "sha256": "a6339454a1d5215e11e1fa25d78a609a5d1c55985faeb9fa451a78c2252d7707"
+      },
+      "rs3_registration": {
+        "bytes": 41413,
+        "path": "artifacts/grm_rs3/registration.json",
+        "sha256": "1f37c0eab788ed88c09012a6de8d539ceb531729f14ab9e3cbce0783ac2f7534"
+      },
+      "runtime_frame": {
+        "bytes": 2180,
+        "path": "artifacts/grm_det1/run_20260831T160525Z_2/runtime_frame_28b3196f8fb04a41.json",
+        "sha256": "28b3196f8fb04a4123fcf21b1e61f8bb1b8a0e64fadcfc6643801f3e19c4ac02"
+      },
+      "schema": "grm.rs4.arm.v1",
+      "session_id": "fresh_fact_controls",
+      "sources": {
+        "gpt_oss20b_tc": {
+          "bytes": 53672,
+          "path": "core/gpt_oss20b_tc.py",
+          "sha256": "da8ca3bc8c961d731d9e32bf4558702ad1b8b10c8ecc37b18326e7df4ade74a1"
+        },
+        "graft_arena": {
+          "bytes": 277842,
+          "path": "core/graft_arena.py",
+          "sha256": "3c97a3ea3afc7c2f6f8dce75bcc43e24e8e03ce535f14eec669fa6277ad02a62"
+        },
+        "grm_demand": {
+          "bytes": 29571,
+          "path": "core/grm_demand.py",
+          "sha256": "daf787a95abbfd206638f5fbf74de2ee57efaaa54b4eac39509402e1386650e0"
+        },
+        "grm_frame": {
+          "bytes": 9742,
+          "path": "core/grm_frame.py",
+          "sha256": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2"
+        },
+        "grm_rs1_read_strength_gpu": {
+          "bytes": 51278,
+          "path": "scripts/grm_rs1_read_strength_gpu.py",
+          "sha256": "dde95a2dc46683def3e13aeee439b6eb6f552a6325318e7365c0c656da05b284"
+        },
+        "grm_rs2_mount_read_gpu": {
+          "bytes": 73824,
+          "path": "scripts/grm_rs2_mount_read_gpu.py",
+          "sha256": "96c7efe99adf0ced6387b7697cd3a79ba0f7a1a50162dee86ae97d3fc3eb7bcb"
+        },
+        "grm_rs3_capture_seat_gpu": {
+          "bytes": 38391,
+          "path": "scripts/grm_rs3_capture_seat_gpu.py",
+          "sha256": "231b7b79424f9a1cd18ccffb328377ebf3667ab540279e9a473a8af6aefcda80"
+        },
+        "grm_rs4_ceiling_gpu": {
+          "bytes": 56729,
+          "path": "scripts/grm_rs4_ceiling_gpu.py",
+          "sha256": "7009821ad8caaa3357ca0c7316cf25dfe08a83f94c797a36e8036bde18fd547d"
+        },
+        "grm_rs4_registration": {
+          "bytes": 27747,
+          "path": "scripts/grm_rs4_registration.py",
+          "sha256": "ba6882075e3572a0cf998c40cf0bb524cf9bd5df3f9695e60060893f7a6b3487"
+        },
+        "grm_rs4_row_split": {
+          "bytes": 11223,
+          "path": "scripts/grm_rs4_row_split.py",
+          "sha256": "4c7d2a1dbf852f638d64c7c01adf9e75edc32577dc26ff26b535682a06f2f590"
+        }
+      },
+      "switches": {
+        "GRM_CAPTURE_PIN": null,
+        "GRM_DEMAND_NGH": "0",
+        "GRM_LSR_FIXES": "1",
+        "GRM_SEAT_NEAR_LIVE": null,
+        "levers_passed_explicitly": true,
+        "storage_bits": 8
+      },
+      "why_a_rerun": "RS3's receipts do not persist per-key-row attention: grm_demand._full_mass softmaxes and immediately sums into four scalars per layer, so the live band cannot be re-cut from disk."
+    },
+    "reference_diff": {},
+    "reference_row": {
+      "answer_mass_full_layers": 0.13522306609560142,
+      "answer_mass_sliding_layers": 0.29491383537198557,
+      "answer_positions": 11,
+      "arm": "C3l",
+      "correct": false,
+      "fed_text_mass_full_layers": 0.0,
+      "fed_text_mass_sliding_layers": 0.0,
+      "learned_sink_mass_full_layers": 0.2541706701176185,
+      "levers": {
+        "capture_pin": "live",
+        "label": "pin 'live' + seat ON",
+        "levers_read_from": "artifacts/grm_rs3/registration.json",
+        "seat_near_live": true
+      },
+      "live_mass_full_layers": 0.3092539135479566,
+      "live_mass_sliding_layers": 0.5410808928762422,
+      "mounted_ids": [
+        5
+      ],
+      "mounted_mass_full_layers": 0.41242587397044356,
+      "mounted_mass_sliding_layers": 0.04485527094397129,
+      "partition_sums_to_one_full": true,
+      "prior_live_mass_full_layers": 0.0,
+      "prior_live_mass_sliding_layers": 0.0,
+      "probe_id": "sup_solace_fresh",
+      "question_mass_full_layers": 0.17403084841189964,
+      "question_mass_sliding_layers": 0.2461670619774271,
+      "recut_vs_base_abs_delta": {
+        "full_attention": {
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.0,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0
+        },
+        "sliding_attention": {
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.0,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0
+        }
+      },
+      "row_bounds": {
+        "S": 131,
+        "answer_band": [
+          131,
+          131
+        ],
+        "answer_rows": 0,
+        "bands_are_contiguous_and_cover_live": true,
+        "cur_mount_n": 75,
+        "fed_text_band": [
+          94,
+          94
+        ],
+        "fed_text_rows": 0,
+        "live0": 94,
+        "live_band": [
+          94,
+          131
+        ],
+        "live_rows": 37,
+        "mount_band": [
+          19,
+          94
+        ],
+        "n_sink": 19,
+        "prior_live_band": [
+          94,
+          94
+        ],
+        "prior_live_rows": 0,
+        "question_band": [
+          94,
+          131
+        ],
+        "question_rows": 37,
+        "sink_band": [
+          0,
+          19
+        ]
+      },
+      "row_split_inputs": {
+        "baseline_ntok": 0,
+        "baseline_receipt": {
+          "S_first_forward": 131,
+          "arena_pos_before_first_forward": 0,
+          "baseline_ntok_derived": 0,
+          "fed_ntok_from_feed_receipt": 0,
+          "live0": 94,
+          "prior_ntok": 0,
+          "question_ntok": 37,
+          "two_derivations_agree": true,
+          "why_not_pos_at_observer_entry": "ArenaCache.eb1_begin_turn's ephemeral branch clears the boat (caches, pos, live_segs = None, 0, []) at every production turn-open, so rows present at observer entry may not be in the cache the kernel scores. MEASURED on RS4's first C0 run."
+        },
+        "derived_by": "baseline = S_first - (n_sink + cur_mount_n) - question_ntok, cross-checked against arena.pos as the first observed forward began; fed off the arm's feed receipt; prior = baseline - fed; question through the model tokenizer over arena._format_step_prompt; S, n_sink and cur_mount_n read per forward off the live call and the live arena",
+        "fed_ntok": 0,
+        "pos_at_observer_entry": 0,
+        "prior_ntok": 0,
+        "question_ntok": 37
+      },
+      "served": "The Solace key is 0‑Copper.",
+      "sink_mass_full_layers": 0.02409933635852102,
+      "sliding_fed_text_reach": {
+        "always_reaches_fed_text": false,
+        "ever_reaches_fed_text": false,
+        "fed_text_band_width_max": 0,
+        "observed_rows": 132,
+        "reaching_rows": 0,
+        "structurally_invisible_rows": 0
+      },
+      "subbands_sum_to_live_full": true,
+      "variant": "registered"
+    },
+    "served": "The Solace key is 0‑Copper.",
+    "value_span": {
+      "correct": false,
+      "expected_hits": [],
+      "refusal": false,
+      "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+      "rejected_hits": []
+    }
+  },
+  "status": "PASS"
+}

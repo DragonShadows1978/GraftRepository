@@ -1,0 +1,9 @@
+{
+  "cell": {
+    "arm": "C5",
+    "estimate_s": 150,
+    "model": "trinity",
+    "probe": "sup_praxis_fresh"
+  },
+  "reservation_s": 285
+}

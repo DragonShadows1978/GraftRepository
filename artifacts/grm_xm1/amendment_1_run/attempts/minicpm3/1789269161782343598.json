@@ -1,0 +1,9 @@
+{
+  "cell": {
+    "arm": "C5",
+    "estimate_s": 120,
+    "model": "minicpm3",
+    "probe": "sup_harbor_restatement"
+  },
+  "reservation_s": 285
+}

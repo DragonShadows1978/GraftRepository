@@ -1,0 +1,3 @@
+gpu_lease_acquired=/tmp/forge-gpu.lock cap_s=285
+gpu_lease_released_s=86.681
+{"status": "PASS", "cell": {"arm": "C3l", "estimate_s": 150, "model": "gpt-oss", "probe": "sup_reserve_tundra_ledger"}}

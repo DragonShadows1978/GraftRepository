@@ -1,0 +1,1136 @@
+{
+  "answer_to_david": "UNRESOLVED: no same-token cross-model causal claim follows from the historical RS4 source sets.",
+  "evidence_class": "GPU measured cells",
+  "mode": "gpu",
+  "models": [
+    {
+      "limits": "Historical source-text contrast; not same-token equivalence. Refusal detector lexical; inspect raw served answers.",
+      "model": "gpt-oss",
+      "pairs": 5,
+      "statuses": [
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS"
+      ],
+      "verdict": "NOT_FALSIFIED_ON_PANEL"
+    },
+    {
+      "limits": "Historical source-text contrast; not same-token equivalence. Refusal detector lexical; inspect raw served answers.",
+      "model": "qwen35",
+      "pairs": 5,
+      "statuses": [
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS"
+      ],
+      "verdict": "FALSIFIER_TRIGGERED"
+    },
+    {
+      "limits": "Historical source-text contrast; not same-token equivalence. Refusal detector lexical; inspect raw served answers.",
+      "model": "minicpm3",
+      "pairs": 5,
+      "statuses": [
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS"
+      ],
+      "verdict": "NOT_FALSIFIED_ON_PANEL"
+    },
+    {
+      "limits": "Historical source-text contrast; not same-token equivalence. Refusal detector lexical; inspect raw served answers.",
+      "model": "trinity",
+      "pairs": 5,
+      "statuses": [
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS",
+        "PASS"
+      ],
+      "verdict": "FALSIFIER_TRIGGERED"
+    },
+    {
+      "limits": "Historical source-text contrast; not same-token equivalence. Refusal detector lexical; inspect raw served answers.",
+      "model": "olmoe",
+      "pairs": 0,
+      "statuses": [
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING"
+      ],
+      "verdict": "INCOMPLETE"
+    },
+    {
+      "limits": "Historical source-text contrast; not same-token equivalence. Refusal detector lexical; inspect raw served answers.",
+      "model": "gemma4",
+      "pairs": 0,
+      "statuses": [
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING",
+        "MISSING"
+      ],
+      "verdict": "INCOMPLETE"
+    }
+  ],
+  "reference_barrier": {
+    "differences": {},
+    "missing": [],
+    "status": "PASS"
+  },
+  "registration_sha256": "758fd3ac1231ed44937714a86009b557f554f026e9d85773cb730074e04439e8",
+  "rows": [
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.4129519179049465,
+          "receipt": "cells/gpu/gpt-oss/C3l__sup_harbor_restatement.json",
+          "served": "The Harbor token is currently **Nacre‑6‑Blue**.",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "nacre-6-blue"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.4436121770077282,
+          "receipt": "cells/gpu/gpt-oss/C5__sup_harbor_restatement.json",
+          "served": "The current Harbor token is **Nacre‑6‑Blue**.",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "nacre-6-blue"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": 0.030660259102781695,
+      "gap_exceeds_0_10": false,
+      "historical_source_texts_equal": false,
+      "model": "gpt-oss",
+      "probe": "sup_harbor_restatement",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.3938651598679523,
+          "receipt": "cells/gpu/gpt-oss/C3l__sup_praxis_fresh.json",
+          "served": "The current Praxis dock value is **Quartz‑8‑Jade**.",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "quartz-8-jade"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.44534459483681943,
+          "receipt": "cells/gpu/gpt-oss/C5__sup_praxis_fresh.json",
+          "served": "The current Praxis dock value is **Raven-9-Ivory**.",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": [
+              "raven-9-ivory"
+            ]
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": 0.051479434968867144,
+      "gap_exceeds_0_10": false,
+      "historical_source_texts_equal": false,
+      "model": "gpt-oss",
+      "probe": "sup_praxis_fresh",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.4524627501765887,
+          "receipt": "cells/gpu/gpt-oss/C3l__sup_reserve_meridian_docket.json",
+          "served": "Delta‑4‑Drift.",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "Delta-4-Drift"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.4234250755980611,
+          "receipt": "cells/gpu/gpt-oss/C5__sup_reserve_meridian_docket.json",
+          "served": "The current Meridian docket value is **Delta‑4‑Drift**.",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "Delta-4-Drift"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": -0.029037674578527628,
+      "gap_exceeds_0_10": false,
+      "historical_source_texts_equal": false,
+      "model": "gpt-oss",
+      "probe": "sup_reserve_meridian_docket",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.4395621062290889,
+          "receipt": "cells/gpu/gpt-oss/C3l__sup_reserve_tundra_ledger.json",
+          "served": "The current Tundra ledger value is **Sable‑0‑Copper**.",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "Sable-0-Copper"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.4188124812035649,
+          "receipt": "cells/gpu/gpt-oss/C5__sup_reserve_tundra_ledger.json",
+          "served": "The current Tundra ledger value is **Sable‑0‑Copper**.",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "Sable-0-Copper"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": -0.02074962502552402,
+      "gap_exceeds_0_10": false,
+      "historical_source_texts_equal": false,
+      "model": "gpt-oss",
+      "probe": "sup_reserve_tundra_ledger",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.41242587397044356,
+          "receipt": "cells/gpu/gpt-oss/C3l__sup_solace_fresh.json",
+          "served": "The Solace key is 0‑Copper.",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.4378284659857552,
+          "receipt": "cells/gpu/gpt-oss/C5__sup_solace_fresh.json",
+          "served": "The current Solace key value is **Raven‑9‑Ivory**.",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "raven-9-ivory"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": 0.025402592015311642,
+      "gap_exceeds_0_10": false,
+      "historical_source_texts_equal": false,
+      "model": "gpt-oss",
+      "probe": "sup_solace_fresh",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.5131225498626009,
+          "receipt": "cells/gpu/qwen35/C3l__sup_harbor_restatement.json",
+          "served": "Okay, the user is asking about the current Harbor token value, specifically mentioning that it's Nacre-6-Blue replacing Morrow-5-Red. First",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [
+              "nacre-6-blue"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": [
+              "morrow-5-red"
+            ]
+          }
+        },
+        "C5": {
+          "mass": 0.4912522562663071,
+          "receipt": "cells/gpu/qwen35/C5__sup_harbor_restatement.json",
+          "served": "The user is asking for the current Harbor token value. I need to check the conversation history to see if this information was established or restated.\n\n1.",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": -0.021870293596293777,
+      "gap_exceeds_0_10": false,
+      "historical_source_texts_equal": false,
+      "model": "qwen35",
+      "probe": "sup_harbor_restatement",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.34800871583865955,
+          "receipt": "cells/gpu/qwen35/C3l__sup_praxis_fresh.json",
+          "served": "Here's a thinking process that leads to the suggested answer:\n\n1.  **Analyze the Request:**\n    *   **Question:** \"What is",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.5489529585465789,
+          "receipt": "cells/gpu/qwen35/C5__sup_praxis_fresh.json",
+          "served": "The user is asking for the current value of the \"Praxis dock\".\nI need to check my context window for any information regarding the \"Praxis dock",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": 0.20094424270791933,
+      "gap_exceeds_0_10": true,
+      "historical_source_texts_equal": false,
+      "model": "qwen35",
+      "probe": "sup_praxis_fresh",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.5307635628269054,
+          "receipt": "cells/gpu/qwen35/C3l__sup_reserve_meridian_docket.json",
+          "served": "Okay, the user is asking about the current Meridian docket value, specifically mentioning Delta-4-Drift and a Lumen seal reference. First,",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "Delta-4-Drift"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.4703469243249856,
+          "receipt": "cells/gpu/qwen35/C5__sup_reserve_meridian_docket.json",
+          "served": "Thinking Process:\n\n1.  **Analyze the Request:** The user is asking for the \"current Meridian docket value\".\n2.  **",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": -0.060416638501919806,
+      "gap_exceeds_0_10": false,
+      "historical_source_texts_equal": false,
+      "model": "qwen35",
+      "probe": "sup_reserve_meridian_docket",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.5372416445170529,
+          "receipt": "cells/gpu/qwen35/C3l__sup_reserve_tundra_ledger.json",
+          "served": "Okay, the user is asking about the current Tundra ledger value, specifically mentioning Sable-0-Copper. They also mention that the Praxis dock and Sol",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "Sable-0-Copper"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.5195417936774902,
+          "receipt": "cells/gpu/qwen35/C5__sup_reserve_tundra_ledger.json",
+          "served": "The user is asking for the current value of the Tundra ledger.\nI need to check the conversation history to see if this information was provided or established in",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": -0.017699850839562714,
+      "gap_exceeds_0_10": false,
+      "historical_source_texts_equal": false,
+      "model": "qwen35",
+      "probe": "sup_reserve_tundra_ledger",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.3372818332281895,
+          "receipt": "cells/gpu/qwen35/C3l__sup_solace_fresh.json",
+          "served": "Okay, the user is asking about the current Solace key value. Hmm, Solace... I remember that Solace is a messaging platform, but I'm",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.504934816097375,
+          "receipt": "cells/gpu/qwen35/C5__sup_solace_fresh.json",
+          "served": "The user is asking for the current Solace key value.\nI need to check the conversation history to see if this information was provided or updated.\nIn",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": 0.1676529828691855,
+      "gap_exceeds_0_10": true,
+      "historical_source_texts_equal": false,
+      "model": "qwen35",
+      "probe": "sup_solace_fresh",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.673374334484265,
+          "receipt": "cells/gpu/minicpm3/C3l__sup_harbor_restatement.json",
+          "served": "Harbor token is currently Nacre-6-Blue.",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "nacre-6-blue"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.741503499276627,
+          "receipt": "cells/gpu/minicpm3/C5__sup_harbor_restatement.json",
+          "served": "Nacre-6-Blue",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "nacre-6-blue"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": 0.06812916479236197,
+      "gap_exceeds_0_10": false,
+      "historical_source_texts_equal": false,
+      "model": "minicpm3",
+      "probe": "sup_harbor_restatement",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.6674676093202765,
+          "receipt": "cells/gpu/minicpm3/C3l__sup_praxis_fresh.json",
+          "served": "Praxis dock value is Quartz-8-Jade.",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "quartz-8-jade"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.6808896981510184,
+          "receipt": "cells/gpu/minicpm3/C5__sup_praxis_fresh.json",
+          "served": "The current Praxis dock value is not provided in the given information.",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [],
+            "refusal": true,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": 0.013422088830741918,
+      "gap_exceeds_0_10": false,
+      "historical_source_texts_equal": false,
+      "model": "minicpm3",
+      "probe": "sup_praxis_fresh",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.68118995368,
+          "receipt": "cells/gpu/minicpm3/C3l__sup_reserve_meridian_docket.json",
+          "served": "The current Meridian docket value is Delta-4-Drift.",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "Delta-4-Drift"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.738409043740361,
+          "receipt": "cells/gpu/minicpm3/C5__sup_reserve_meridian_docket.json",
+          "served": "Delta-4-Drift.",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "Delta-4-Drift"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": 0.057219090060360966,
+      "gap_exceeds_0_10": false,
+      "historical_source_texts_equal": false,
+      "model": "minicpm3",
+      "probe": "sup_reserve_meridian_docket",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.7273349582908615,
+          "receipt": "cells/gpu/minicpm3/C3l__sup_reserve_tundra_ledger.json",
+          "served": "Sable-0-Copper",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "Sable-0-Copper"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.7353458940769183,
+          "receipt": "cells/gpu/minicpm3/C5__sup_reserve_tundra_ledger.json",
+          "served": "Sable-0-Copper.",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "Sable-0-Copper"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": 0.008010935786056828,
+      "gap_exceeds_0_10": false,
+      "historical_source_texts_equal": false,
+      "model": "minicpm3",
+      "probe": "sup_reserve_tundra_ledger",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.6490447926699842,
+          "receipt": "cells/gpu/minicpm3/C3l__sup_solace_fresh.json",
+          "served": "The current Solace key value is not provided in the text.",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [],
+            "refusal": true,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.730134514743282,
+          "receipt": "cells/gpu/minicpm3/C5__sup_solace_fresh.json",
+          "served": "Raven-9-Ivory.",
+          "status": "PASS",
+          "value_span": {
+            "correct": true,
+            "expected_hits": [
+              "raven-9-ivory"
+            ],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": true,
+      "fed_minus_mount": 0.08108972207329779,
+      "gap_exceeds_0_10": false,
+      "historical_source_texts_equal": false,
+      "model": "minicpm3",
+      "probe": "sup_solace_fresh",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.7119934601443154,
+          "receipt": "cells/gpu/trinity/C3l__sup_harbor_restatement.json",
+          "served": "",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.8161229405419103,
+          "receipt": "cells/gpu/trinity/C5__sup_harbor_restatement.json",
+          "served": "lineAndnullstream.Stream.linerBreaker stretchnullstreamAsStreamection andlineAndnullnullstreamAsStreamection andliner With",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": 0.10412948039759484,
+      "gap_exceeds_0_10": true,
+      "historical_source_texts_equal": false,
+      "model": "trinity",
+      "probe": "sup_harbor_restatement",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.4589697755540588,
+          "receipt": "cells/gpu/trinity/C3l__sup_praxis_fresh.json",
+          "served": "",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.8031283787983869,
+          "receipt": "cells/gpu/trinity/C5__sup_praxis_fresh.json",
+          "served": "nullstreamAsStreamection andstream.nullerves \"",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": 0.3441586032443281,
+      "gap_exceeds_0_10": true,
+      "historical_source_texts_equal": false,
+      "model": "trinity",
+      "probe": "sup_praxis_fresh",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.6022017152447785,
+          "receipt": "cells/gpu/trinity/C3l__sup_reserve_meridian_docket.json",
+          "served": "",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.797181320110602,
+          "receipt": "cells/gpu/trinity/C5__sup_reserve_meridian_docket.json",
+          "served": "",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": 0.19497960486582355,
+      "gap_exceeds_0_10": true,
+      "historical_source_texts_equal": false,
+      "model": "trinity",
+      "probe": "sup_reserve_meridian_docket",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.6553098041165089,
+          "receipt": "cells/gpu/trinity/C3l__sup_reserve_tundra_ledger.json",
+          "served": "linehereThisnullstream.Stream,linehereAndscribe,linehereAndnullnullnullstream.Stream,route=\"0rangle,",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.8025248940102756,
+          "receipt": "cells/gpu/trinity/C5__sup_reserve_tundra_ledger.json",
+          "served": "liner Inliner Inliner Inliner In",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": 0.14721508989376675,
+      "gap_exceeds_0_10": true,
+      "historical_source_texts_equal": false,
+      "model": "trinity",
+      "probe": "sup_reserve_tundra_ledger",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": 0.6722172562565122,
+          "receipt": "cells/gpu/trinity/C3l__sup_solace_fresh.json",
+          "served": "lessmith oneinternet nothereInnoc onerroribia &nullnullnullandverity Elder Brothers AndAndAndnullnullnullnullnullnull",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        },
+        "C5": {
+          "mass": 0.7832510787328439,
+          "receipt": "cells/gpu/trinity/C5__sup_solace_fresh.json",
+          "served": "nullnullstream waterway Elder Inliner Inliner Buses Elder Inlines.nullafari innullnullstream.Stream,nullstream.Stream,nullstream.Stream,And",
+          "status": "PASS",
+          "value_span": {
+            "correct": false,
+            "expected_hits": [],
+            "refusal": false,
+            "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+            "rejected_hits": []
+          }
+        }
+      },
+      "correct_fed_to_refusal_mount": false,
+      "fed_minus_mount": 0.11103382247633176,
+      "gap_exceeds_0_10": true,
+      "historical_source_texts_equal": false,
+      "model": "trinity",
+      "probe": "sup_solace_fresh",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/olmoe/C3l__sup_harbor_restatement.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/olmoe/C5__sup_harbor_restatement.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "olmoe",
+      "probe": "sup_harbor_restatement",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/olmoe/C3l__sup_praxis_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/olmoe/C5__sup_praxis_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "olmoe",
+      "probe": "sup_praxis_fresh",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/olmoe/C3l__sup_reserve_meridian_docket.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/olmoe/C5__sup_reserve_meridian_docket.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "olmoe",
+      "probe": "sup_reserve_meridian_docket",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/olmoe/C3l__sup_reserve_tundra_ledger.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/olmoe/C5__sup_reserve_tundra_ledger.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "olmoe",
+      "probe": "sup_reserve_tundra_ledger",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/olmoe/C3l__sup_solace_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/olmoe/C5__sup_solace_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "olmoe",
+      "probe": "sup_solace_fresh",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/gemma4/C3l__sup_harbor_restatement.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/gemma4/C5__sup_harbor_restatement.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "gemma4",
+      "probe": "sup_harbor_restatement",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/gemma4/C3l__sup_praxis_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/gemma4/C5__sup_praxis_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "gemma4",
+      "probe": "sup_praxis_fresh",
+      "role": "refuser"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/gemma4/C3l__sup_reserve_meridian_docket.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/gemma4/C5__sup_reserve_meridian_docket.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "gemma4",
+      "probe": "sup_reserve_meridian_docket",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/gemma4/C3l__sup_reserve_tundra_ledger.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/gemma4/C5__sup_reserve_tundra_ledger.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "gemma4",
+      "probe": "sup_reserve_tundra_ledger",
+      "role": "control"
+    },
+    {
+      "arms": {
+        "C3l": {
+          "mass": null,
+          "receipt": "cells/gpu/gemma4/C3l__sup_solace_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        },
+        "C5": {
+          "mass": null,
+          "receipt": "cells/gpu/gemma4/C5__sup_solace_fresh.json",
+          "served": null,
+          "status": "MISSING",
+          "value_span": null
+        }
+      },
+      "fed_minus_mount": null,
+      "historical_source_texts_equal": false,
+      "model": "gemma4",
+      "probe": "sup_solace_fresh",
+      "role": "refuser"
+    }
+  ],
+  "schema": "grm.xm1.results.v1"
+}

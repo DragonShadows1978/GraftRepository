@@ -1,0 +1,24 @@
+{
+  "barrier": {
+    "differences": {},
+    "missing": [
+      "cells/gpu/gpt-oss/C3l__sup_reserve_tundra_ledger.json",
+      "cells/gpu/gpt-oss/C5__sup_reserve_tundra_ledger.json",
+      "cells/gpu/gpt-oss/C3l__sup_reserve_meridian_docket.json",
+      "cells/gpu/gpt-oss/C5__sup_reserve_meridian_docket.json"
+    ],
+    "status": "BLOCKED"
+  },
+  "binding": {
+    "amendment_sha256": "a50046f9f790825503893613468cf9de40c0b3a8243204fc85ed626652a5de8d",
+    "cell": {
+      "arm": "C5",
+      "estimate_s": 150,
+      "model": "gpt-oss",
+      "probe": "sup_solace_fresh"
+    },
+    "implementation_sha256": "b7165ac968e844959714b59443082442f57be2b283e9d72b3526ca5de331a92b",
+    "mode": "gpu",
+    "registration_sha256": "758fd3ac1231ed44937714a86009b557f554f026e9d85773cb730074e04439e8"
+  }
+}

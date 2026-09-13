@@ -1,0 +1,63 @@
+gpu_lease_acquired=/tmp/forge-gpu.lock cap_s=285
+    Trinity layer 1/56 loaded
+    Trinity layer 2/56 loaded
+    Trinity layer 3/56 loaded
+    Trinity layer 4/56 loaded
+    Trinity layer 5/56 loaded
+    Trinity layer 6/56 loaded
+    Trinity layer 7/56 loaded
+    Trinity layer 8/56 loaded
+    Trinity layer 9/56 loaded
+    Trinity layer 10/56 loaded
+    Trinity layer 11/56 loaded
+    Trinity layer 12/56 loaded
+    Trinity layer 13/56 loaded
+    Trinity layer 14/56 loaded
+    Trinity layer 15/56 loaded
+    Trinity layer 16/56 loaded
+    Trinity layer 17/56 loaded
+    Trinity layer 18/56 loaded
+    Trinity layer 19/56 loaded
+    Trinity layer 20/56 loaded
+    Trinity layer 21/56 loaded
+    Trinity layer 22/56 loaded
+    Trinity layer 23/56 loaded
+    Trinity layer 24/56 loaded
+    Trinity layer 25/56 loaded
+    Trinity layer 26/56 loaded
+    Trinity layer 27/56 loaded
+    Trinity layer 28/56 loaded
+    Trinity layer 29/56 loaded
+    Trinity layer 30/56 loaded
+    Trinity layer 31/56 loaded
+    Trinity layer 32/56 loaded
+    Trinity layer 33/56 loaded
+    Trinity layer 34/56 loaded
+    Trinity layer 35/56 loaded
+    Trinity layer 36/56 loaded
+    Trinity layer 37/56 loaded
+    Trinity layer 38/56 loaded
+    Trinity layer 39/56 loaded
+    Trinity layer 40/56 loaded
+    Trinity layer 41/56 loaded
+    Trinity layer 42/56 loaded
+    Trinity layer 43/56 loaded
+    Trinity layer 44/56 loaded
+    Trinity layer 45/56 loaded
+    Trinity layer 46/56 loaded
+    Trinity layer 47/56 loaded
+    Trinity layer 48/56 loaded
+    Trinity layer 49/56 loaded
+    Trinity layer 50/56 loaded
+    Trinity layer 51/56 loaded
+    Trinity layer 52/56 loaded
+    Trinity layer 53/56 loaded
+    Trinity layer 54/56 loaded
+    Trinity layer 55/56 loaded
+    Trinity layer 56/56 loaded
+[transformers] `layer_type_validation` is deprecated and will be removed in v5.20. Use `PreTrainedConfig.validate_layer_type` instead
+/home/vader/.local/lib/python3.12/site-packages/transformers/modeling_rope_utils.py:1036: FutureWarning: `rope_config_validation` is deprecated and has been removed. Its functionality has been moved to RotaryEmbeddingConfigMixin.validate_rope method. PreTrainedConfig inherits this class, so please call self.validate_rope() instead. Also, make sure to use the new rope_parameters syntax. You can call self.standardize_rope_params() in the meantime.
+  warnings.warn(
+[transformers] `layer_type_validation` is deprecated and will be removed in v5.20. Use `PreTrainedConfig.validate_layer_type` instead
+gpu_lease_released_s=46.100
+{"status": "PASS", "cell": {"arm": "C3l", "estimate_s": 150, "model": "trinity", "probe": "sup_solace_fresh"}}
