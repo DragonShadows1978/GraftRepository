@@ -1,0 +1,10 @@
+{
+  "binding": {
+    "implementation_sha256": "9298939093e3b0e801d315d53bc14d79f9839d0bf40839b9033e6366ce750dfd",
+    "probe": "sup_praxis_fresh",
+    "registration_sha256": "a29173ea186cbf13368c4b720dbd01c6d52600393f9f97ca584e784c5f3b5ea9",
+    "treatment": "C5"
+  },
+  "reservation_s": 120,
+  "reserved_at": 1789271671.7327662
+}

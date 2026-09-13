@@ -1,0 +1,14 @@
+{
+  "correction": "Registration numeric row count is a pre-audit estimate, not a gate criterion; audit will supply exact observed count.",
+  "immutable": true,
+  "pins": {
+    "artifacts/grm_xm3/lead_commands.txt": "e39ea862d7c2bb4adb71e4c4ed876bfb0b73d4004d88cf96ba5638caa022093c",
+    "scripts/grm_cmc1_gpu_arms.py": "663760d175bb35ed6c4df2b252bf909bcf52577f3ad5eb1c518167b6bb5e39ba",
+    "scripts/grm_cmc1_mechanism.py": "cef3a4bc9d8b5ca6d5951e5bdfcff048533914fee2e63e91afbcfc70058573c5",
+    "scripts/grm_xm1_trinity_audit.py": "3699243d7df2c608133bb5f55be7c33e954d036be0f2a904c18f4340869cce4f",
+    "scripts/grm_xm1_trinity_x3.py": "bde00b6bf69c9968f0be7ae73e7e9732db34da4d81a213b7fa89e2fdf5565ae2",
+    "tests/test_grm_xm3_trinity.py": "f0321618b1dc1ba4ca0cb82165605b077651135af37658b7dc4f3fe9bbdb2c9d"
+  },
+  "registration_sha256": "a29173ea186cbf13368c4b720dbd01c6d52600393f9f97ca584e784c5f3b5ea9",
+  "schema": "grm.xm3.implementation.v1"
+}
