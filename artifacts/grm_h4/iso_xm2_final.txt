@@ -1,0 +1,25 @@
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_det1/run_20260831T160525Z_2/runtime_frame_28b3196f8fb04a41.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+=============================== warnings summary ===============================
+tests/test_grm_xm2_final.py::test_recorded_thinking_traces_have_zero_final_positions
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+tests/test_grm_xm2_final.py::test_recorded_thinking_traces_have_zero_final_positions
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_grm_xm2_final.py::test_recorded_trace_continuation_selects_input_queries
+FAILED tests/test_grm_xm2_final.py::test_registration_matrix_budget_and_dry_run
+2 failed, 17 passed, 2 warnings in 5.67s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

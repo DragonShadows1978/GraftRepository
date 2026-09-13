@@ -1,0 +1,25 @@
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_det1/run_20260831T160525Z_2/runtime_frame_28b3196f8fb04a41.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+________________ test_lead_commands_all_accept_appended_dry_run ________________
+
+    def test_lead_commands_all_accept_appended_dry_run():
+        commands=[line for line in (xm.OUT/'lead_commands.txt').read_text().splitlines() if line and not line.startswith('#')]
+        assert len(commands)==60
+        for command in commands:
+            result=subprocess.run(shlex.split(command)+['--dry-run'],cwd=xm.ROOT,text=True,capture_output=True,timeout=20)
+>           assert result.returncode==0,(command,result.stdout,result.stderr)
+E           AssertionError: ('timeout 590s python3 scripts/grm_xm1_parity.py --model gpt-oss --arm C3l --probe sup_harbor_restatement --output art...ectory: \'/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_det1/run_20260831T160525Z_2/runtime_frame_28b3196f8fb04a41.json\'
+E             ')
+E           assert 1 == 0
+E            +  where 1 = CompletedProcess(args=['timeout', '590s', 'python3', 'scripts/grm_xm1_parity.py', '--model', 'gpt-oss', '--arm', 'C3l'...ectory: \'/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_det1/run_20260831T160525Z_2/runtime_frame_28b3196f8fb04a41.json\'\n').returncode
+
+tests/test_grm_xm1_parity.py:149: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_grm_xm1_parity.py::test_00_rs4_historical_reassembly_is_float_equal
+FAILED tests/test_grm_xm1_parity.py::test_registration_and_pins_are_immutable_and_relative
+FAILED tests/test_grm_xm1_parity.py::test_lead_commands_all_accept_appended_dry_run
+3 failed, 69 passed in 1.59s

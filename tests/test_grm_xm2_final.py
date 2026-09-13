@@ -37,6 +37,8 @@ def test_recorded_thinking_traces_have_zero_final_positions(tok):
         assert len(r['observed_rows'])==len(r['generated_token_ids'])==32
 
 
+# GRM-H4: artifact-bound: artifacts/grm_xm2/recorded_trace_cpu.json was lost
+@pytest.mark.campaign_receipt(registration='artifacts/grm_xm2/registration.json + artifacts/grm_xm2/registration_amendment_1.json')
 def test_recorded_trace_continuation_selects_input_queries(tok,monkeypatch):
     trace=read(OUT/'recorded_trace_cpu.json')
     assert trace['evidence_class']=='recorded GPU thinking prefix + synthetic CPU final continuation'
@@ -148,6 +150,8 @@ def test_source_diagnosis_is_exact_and_not_same_fact():
     assert all(x['fed_minus_mount']>0.10 for x in s['layers'][1:])
 
 
+# GRM-H4: sha-bound: registration source drift: core/grm_admission.py (D2 flip)
+@pytest.mark.campaign_receipt(registration='artifacts/grm_xm2/registration.json + artifacts/grm_xm2/registration_amendment_1.json')
 def test_registration_matrix_budget_and_dry_run():
     from scripts.grm_xm1_x2_run import validate
     reg,_=validate()

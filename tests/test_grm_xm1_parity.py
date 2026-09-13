@@ -34,6 +34,8 @@ def test_00_rs4_historical_reassembly_is_float_equal():
     assert checked==10
 
 
+# GRM-H4: sha-bound: registration source drift: core/grm_admission.py (D2 flip)
+@pytest.mark.campaign_receipt(registration='artifacts/grm_xm1/registration.json')
 def test_registration_and_pins_are_immutable_and_relative():
     assert xm.validate_registration()==REG
     assert len(REG['probes'])==5 and len(CELLS)==60
@@ -141,6 +143,8 @@ def test_value_spans_use_rs4_comparator():
     assert xm.value_score("I don't have that information.",p)['refusal']
 
 
+# GRM-H4: sha-bound: every pinned dry-run exits 1 on the same drift
+@pytest.mark.campaign_receipt(registration='artifacts/grm_xm1/registration.json')
 def test_lead_commands_all_accept_appended_dry_run():
     commands=[line for line in (xm.OUT/'lead_commands.txt').read_text().splitlines() if line and not line.startswith('#')]
     assert len(commands)==60

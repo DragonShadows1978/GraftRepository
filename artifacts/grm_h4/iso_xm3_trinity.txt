@@ -1,0 +1,25 @@
+
+    def validate():
+        reg = read(REG)
+        amendment = read(PINS)
+        if amendment['previous_amendment_2_sha256'] != sha(OUT / 'implementation_amendment_2.json'):
+            raise xm.XM1Error('X3 second amendment drift')
+        if amendment['previous_amendment_sha256'] != sha(OUT / 'implementation_amendment_1.json'):
+            raise xm.XM1Error('X3 previous amendment drift')
+        if amendment['previous_implementation_sha256'] != sha(OUT / 'implementation_pins.json'):
+            raise xm.XM1Error('X3 implementation chain drift')
+        if amendment['registration_sha256'] != sha(REG):
+            raise xm.XM1Error('X3 registration binding drift')
+        for rel, digest in {**reg['pins'], **amendment['pins']}.items():
+            p = Path(rel)
+            if p.is_absolute() or '..' in p.parts or sha(ROOT / p) != digest:
+>               raise xm.XM1Error(f'X3 source drift: {rel}')
+E               scripts.grm_xm1_parity.XM1Error: X3 source drift: scripts/grm_xm1_cpu.py
+
+scripts/grm_xm1_trinity_x3.py:44: XM1Error
+=========================== short test summary info ============================
+FAILED tests/test_grm_xm3_trinity.py::test_registration_dry_run_all_commands_no_gpu
+FAILED tests/test_grm_xm3_trinity.py::test_prerequisites_reject_missing_wrong_control_budget_gap
+FAILED tests/test_grm_xm3_trinity.py::test_pin_drift_fails_closed - scripts.g...
+FAILED tests/test_grm_xm3_trinity.py::test_gpu_entrypoint_mock_owns_lease_and_reservation
+4 failed, 15 passed in 0.81s

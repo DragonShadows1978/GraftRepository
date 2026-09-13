@@ -1,0 +1,2980 @@
+........................................................................ [ 11%]
+........................................................................ [ 22%]
+........................................................................ [ 33%]
+..............FFssFs..........FssssssFFF.FFsF.sssss....FFFFF.FF.s.ss.... [ 44%]
+.....FF....F..................FFFF.........Fs...FssssFFFFFFFFFFFFFFFFFFF [ 55%]
+sssssssssssssssFFFFFFF.s.ss.Fsssss.....ssFs............................. [ 66%]
+........................................................................ [ 77%]
+.......................................ss.s...FssssssssFFFss....sssss.s. [ 88%]
+ssssssssss.ss..........Fsssss.sssFFssssssF.sss..s.......s......sssssssss [ 99%]
+sss                                                                      [100%]
+=================================== FAILURES ===================================
+___________ test_the_child_entry_point_blocks_on_a_drifted_chain[A] ____________
+
+arm = 'A'
+
+    @pytest.mark.parametrize('arm', ['A', 'A+'])
+    def test_the_child_entry_point_blocks_on_a_drifted_chain(arm):
+        """A drifted LT1.1 chain must stop the CHILD, not just the parent."""
+        env = dict(os.environ)
+        env[runner.ARM_ENV] = arm
+        env['GRM_LT1_LEASE_PARENT'] = str(os.getpid())
+        env.pop(runner.ALIAS_ENV, None)
+        # An unpinned rule is the cheapest drift to inject without touching files.
+        env['GRM_ADMISSION_RULE'] = 'all_tokens_bind'
+        result = subprocess.run(
+            [sys.executable, '-m', 'scripts.grm_lt1_1', '--arm', arm,
+             '--worker', 'A-001-008'],
+            cwd=ROOT, env=env, capture_output=True, text=True, timeout=300)
+        assert result.returncode != 0
+>       assert 'LT11_CHILD_PREFLIGHT_BLOCKED' in result.stderr
+E       assert 'LT11_CHILD_PREFLIGHT_BLOCKED' in 'Traceback (most recent call last):\n  File "<frozen runpy>", line 198, in _run_module_as_main\n  File "<frozen runpy>...No such file or directory: \'/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json\'\n'
+E        +  where 'Traceback (most recent call last):\n  File "<frozen runpy>", line 198, in _run_module_as_main\n  File "<frozen runpy>...No such file or directory: \'/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json\'\n' = CompletedProcess(args=['/usr/bin/python3', '-m', 'scripts.grm_lt1_1', '--arm', 'A', '--worker', 'A-001-008'], returnco...o such file or directory: \'/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json\'\n').stderr
+
+tests/test_grm_lt1_1_child_spawn.py:218: AssertionError
+___________ test_the_child_entry_point_blocks_on_a_drifted_chain[A+] ___________
+
+arm = 'A+'
+
+    @pytest.mark.parametrize('arm', ['A', 'A+'])
+    def test_the_child_entry_point_blocks_on_a_drifted_chain(arm):
+        """A drifted LT1.1 chain must stop the CHILD, not just the parent."""
+        env = dict(os.environ)
+        env[runner.ARM_ENV] = arm
+        env['GRM_LT1_LEASE_PARENT'] = str(os.getpid())
+        env.pop(runner.ALIAS_ENV, None)
+        # An unpinned rule is the cheapest drift to inject without touching files.
+        env['GRM_ADMISSION_RULE'] = 'all_tokens_bind'
+        result = subprocess.run(
+            [sys.executable, '-m', 'scripts.grm_lt1_1', '--arm', arm,
+             '--worker', 'A-001-008'],
+            cwd=ROOT, env=env, capture_output=True, text=True, timeout=300)
+        assert result.returncode != 0
+>       assert 'LT11_CHILD_PREFLIGHT_BLOCKED' in result.stderr
+E       assert 'LT11_CHILD_PREFLIGHT_BLOCKED' in 'Traceback (most recent call last):\n  File "<frozen runpy>", line 198, in _run_module_as_main\n  File "<frozen runpy>...No such file or directory: \'/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json\'\n'
+E        +  where 'Traceback (most recent call last):\n  File "<frozen runpy>", line 198, in _run_module_as_main\n  File "<frozen runpy>...No such file or directory: \'/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json\'\n' = CompletedProcess(args=['/usr/bin/python3', '-m', 'scripts.grm_lt1_1', '--arm', 'A+', '--worker', 'A-001-008'], returnc...o such file or directory: \'/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json\'\n').stderr
+
+tests/test_grm_lt1_1_child_spawn.py:218: AssertionError
+_____________ test_the_old_argv_reproduces_the_leads_worker_exit_1 _____________
+
+    def test_the_old_argv_reproduces_the_leads_worker_exit_1():
+        """RED-before: the argv that shipped must still fail, by name.
+    
+        Spawns `-m scripts.grm_lt1_worker --worker <cell>` -- the exact command
+        `run_cell` used to build -- and requires the child to die with
+        INPUT_SHA_MISMATCH, reproducing `run_Aplus/cells/A-001-008/worker.log`.
+        """
+        env = dict(os.environ)
+        env['GRM_LT1_LEASE_PARENT'] = str(os.getpid())
+        env['GRM_ADMISSION_RULE'] = 'margin_first'
+        result = subprocess.run(
+            [sys.executable, '-m', 'scripts.grm_lt1_worker', '--worker',
+             'A-001-008'],
+            cwd=ROOT, env=env, capture_output=True, text=True, timeout=300)
+        combined = result.stdout + result.stderr
+        assert result.returncode != 0, 'the old argv no longer fails; re-check'
+>       assert 'INPUT_SHA_MISMATCH' in combined, combined[-2000:]
+E       AssertionError: Traceback (most recent call last):
+E           File "<frozen runpy>", line 198, in _run_module_as_main
+E           File "<frozen runpy>", line 88, in _run_code
+E           File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_worker.py", line 337, in <module>
+E             if args.worker:worker(next(c for c in lt.verify()['cells'] if c['id']==args.worker))
+E                                                   ^^^^^^^^^^^
+E           File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1.py", line 62, in verify
+E             if sha(REG)!=REG.with_suffix('.sha256').read_text().split()[0]: raise ValueError('REGISTRATION_SHA_MISMATCH')
+E                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           File "/usr/lib/python3.12/pathlib.py", line 1029, in read_text
+E             with self.open(mode='r', encoding=encoding, errors=errors) as f:
+E                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+E             return io.open(self, mode, buffering, encoding, errors, newline)
+E                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E         FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/registration.sha256'
+E         
+E       assert 'INPUT_SHA_MISMATCH' in 'Traceback (most recent call last):\n  File "<frozen runpy>", line 198, in _run_module_as_main\n  File "<frozen runpy>...FoundError: [Errno 2] No such file or directory: \'/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/registration.sha256\'\n'
+
+tests/test_grm_lt1_1_child_spawn.py:286: AssertionError
+__________________ test_run_cell_raises_only_after_the_bound ___________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x735093c48e90>
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_run_cell_raises_only_afte0')
+
+    def test_run_cell_raises_only_after_the_bound(monkeypatch, tmp_path):
+        """Through `run_cell`: a busy card past the bound is a RED with evidence."""
+        import scripts.grm_cmc1_gpu_arms as arms
+        lock = tmp_path / 'lock'
+        lock.touch()
+        monkeypatch.setattr(arms, 'LOCK_PATH', lock)
+        root = tmp_path / 'run_A'
+        root.mkdir()
+        reg = runner.registration('A')
+        with runner.lt1_1_seams('A'), runner.pinned_arm('A'):
+            monkeypatch.setattr(worker, 'RUN', root)
+            monkeypatch.setattr(worker, 'accounting', lambda *a, **k: 0.0)
+            monkeypatch.setattr(worker.time, 'sleep', lambda *_: None)
+            monkeypatch.setattr(runner, 'device_snapshot',
+                                lambda: _sample(4096, pids=[3336818]))
+            monkeypatch.setattr(worker, 'await_idle',
+                                lambda: runner.await_idle(wait_seconds=30,
+                                                          poll_seconds=15))
+>           assert worker.run_cell(reg['cells'][0], reg) is False
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_1_idle_wait.py:189: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_lt1_worker.py:253: in run_cell
+    lt.create(directory/'reservation.json',dict(seconds=285,cell=cell,binding=bind(cell['arm']),execution_amendment_sha256=execution_sha(),admission_rule="margin_first"))
+                                                                                                                           ^^^^^^^^^^^^^^^
+scripts/grm_lt1_amendment4.py:30: in execution_sha
+    return sha(REG)
+           ^^^^^^^^
+scripts/grm_c7_common.py:77: in sha
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+                          ^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1021: in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json')
+mode = 'rb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+______________ test_a_planted_drift_in_our_own_amendment_goes_red ______________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x73509365f710>
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_a_planted_drift_in_our_ow0')
+
+    def test_a_planted_drift_in_our_own_amendment_goes_red(monkeypatch, tmp_path):
+        """THE teeth test: drift in LT1.1's OWN chain must still be caught.
+    
+        The ruling stops re-validating LT1's day-of pins. It does NOT stop
+        validating ours. Plant a bad core sha in LT1.1's own amendment 1 and
+        require the preflight to report INPUT_SHA_MISMATCH for that input. The
+        sidecar is kept consistent, so the failure is the INPUT check and not
+        merely a document-sha mismatch.
+        """
+        staged = _stage(monkeypatch, tmp_path)
+        name, doc = _governing(staged)
+        victim = 'core/graft_arena.py'
+        assert victim in doc['core_rebind']['changed']
+        doc['core_rebind']['changed'][victim]['after_sha256'] = 'deadbeef' * 8
+        _replant(staged, name, doc)
+    
+        with runner.pinned_arm('A'):
+>           gate = runner.lt1_1_preflight('A')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_1_preflight.py:195: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_lt1_1.py:1299: in lt1_1_preflight
+    parent=parent_lineage())
+           ^^^^^^^^^^^^^^^^
+scripts/grm_lt1_1.py:1147: in parent_lineage
+    for n, c in json.loads(lt1_binding.read_text())['core_shas'].items()}
+                           ^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+_________________ test_a_planted_drift_in_a_new_input_goes_red _________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x735093618aa0>
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_a_planted_drift_in_a_new_0')
+
+    def test_a_planted_drift_in_a_new_input_goes_red(monkeypatch, tmp_path):
+        """The new-input branch needs teeth too, not just the changed one."""
+        staged = _stage(monkeypatch, tmp_path)
+        name, doc = _governing(staged)
+        victim = 'core/grm_alias_fold.py'
+        # The governing rebind may carry this pin under ANY of the three
+        # sections: `changed` (amendment 8 rebound it) or `unchanged`
+        # (amendment 10 records it as untouched by GRM-F1). The branch under
+        # test is the new-input one, so plant it there and drop EVERY other
+        # section's copy first.
+        #
+        # Dropping only `changed` used to be enough and silently stopped being
+        # so: `governing_core_pins` applies `unchanged` LAST, so a surviving
+        # `unchanged` entry overwrites the planted sha and the test passed
+        # vacuously. Clearing all sections keeps the teeth independent of which
+        # section a future rebind happens to file this pin under.
+        doc['core_rebind'].setdefault('new_inputs', {})
+        for section in ('changed', 'unchanged'):
+            doc['core_rebind'].get(section, {}).pop(victim, None)
+        doc['core_rebind']['new_inputs'][victim] = dict(
+            sha256='deadbeef' * 8, attribution='planted by the teeth test')
+        _replant(staged, name, doc)
+        with runner.pinned_arm('A'):
+>           gate = runner.lt1_1_preflight('A')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_1_preflight.py:223: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_lt1_1.py:1299: in lt1_1_preflight
+    parent=parent_lineage())
+           ^^^^^^^^^^^^^^^^
+scripts/grm_lt1_1.py:1147: in parent_lineage
+    for n, c in json.loads(lt1_binding.read_text())['core_shas'].items()}
+                           ^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+_________________________ test_a_broken_chain_goes_red _________________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x73509064ca10>
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_a_broken_chain_goes_red0')
+
+    def test_a_broken_chain_goes_red(monkeypatch, tmp_path):
+        staged = _stage(monkeypatch, tmp_path)
+        doc = json.loads((staged / 'amendment2.json').read_text())
+        doc['previous_amendment_sha256'] = 'deadbeef' * 8
+        _rewrite(staged / 'amendment2.json', doc)
+        with runner.pinned_arm('A'):
+>           gate = runner.lt1_1_preflight('A')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_1_preflight.py:233: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_lt1_1.py:1299: in lt1_1_preflight
+    parent=parent_lineage())
+           ^^^^^^^^^^^^^^^^
+scripts/grm_lt1_1.py:1147: in parent_lineage
+    for n, c in json.loads(lt1_binding.read_text())['core_shas'].items()}
+                           ^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+_______________________ test_a_tampered_fixture_goes_red _______________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x73509066bc80>
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_a_tampered_fixture_goes_r0')
+
+    def test_a_tampered_fixture_goes_red(monkeypatch, tmp_path):
+        staged = _stage(monkeypatch, tmp_path)
+        (staged / 'dialogue.json').write_text('{}\n')
+        with runner.pinned_arm('A'):
+>           gate = runner.lt1_1_preflight('A')
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_1_preflight.py:251: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_lt1_1.py:1299: in lt1_1_preflight
+    parent=parent_lineage())
+           ^^^^^^^^^^^^^^^^
+scripts/grm_lt1_1.py:1147: in parent_lineage
+    for n, c in json.loads(lt1_binding.read_text())['core_shas'].items()}
+                           ^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+___________________ test_an_unpinned_admission_rule_goes_red ___________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x73509064ca10>
+
+    def test_an_unpinned_admission_rule_goes_red(monkeypatch):
+        monkeypatch.delenv(runner.RULE_ENV, raising=False)
+>       gate = runner.lt1_1_preflight('A')
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_1_preflight.py:258: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_lt1_1.py:1299: in lt1_1_preflight
+    parent=parent_lineage())
+           ^^^^^^^^^^^^^^^^
+scripts/grm_lt1_1.py:1147: in parent_lineage
+    for n, c in json.loads(lt1_binding.read_text())['core_shas'].items()}
+                           ^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+_____________ test_apply4_protocol_binding_still_passes_untouched ______________
+
+    def test_apply4_protocol_binding_still_passes_untouched():
+        """The lead asked. Measured answer: it passes, and we did not touch it."""
+        recorded = json.loads(
+            (ROOT / 'artifacts/grm_lt1/amendment4/resume_registration.json')
+>           .read_text())['protocol_binding']
+             ^^^^^^^^^^^
+
+tests/test_grm_lt1_1_preflight.py:289: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+________________ test_a_supersede_turn_retires_the_old_value[A] ________________
+
+arm = 'A'
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_a_supersede_turn_retires_0')
+
+    @pytest.mark.parametrize('arm', ['A', 'A+'])
+    def test_a_supersede_turn_retires_the_old_value(arm, tmp_path):
+        """THE gate: after a supersede, the old node is retired and un-routable.
+    
+        Cells 1-3 span turns 1-24, which include the Vega lineage
+        (17 -> 23 -> 29 credits) and the Medibay lineage (12 -> 14 -> 16 beds).
+        """
+>       root = _cells_through(arm, tmp_path, 3)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_1_production_turns.py:107: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_lt1_1_production_turns.py:50: in _cells_through
+    runner.run_fake(arm, root=root, limit=count)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'A'
+
+    def run_fake(arm, *, root=None, limit=None):
+        """Execute cells on the CPU double, one subprocess per cell.
+    
+        Mirrors the GPU controller's structure (one child process per cell, parent
+        accumulates receipts) minus the lease, the flock and the GPU check, so the
+        receipt plumbing `summary` reads is exercised end to end. Cells already
+        COMPLETE are skipped, which is what makes this path resumable.
+    
+        Prior art: the one-subprocess-per-cell fake loop in
+        tests/test_grm_lt1_fix6.py and tests/test_grm_lt1_amendment1.py
+        (GRM contributors, 2026), reused.
+        """
+        import subprocess
+        reg = registration(arm)
+        root = Path(root) if root else out_dir(arm)
+        written, skipped = [], []
+        todo = reg['cells'][:limit] if limit else reg['cells']
+        for cell in todo:
+            directory = root / 'cells' / cell['id']
+            if (directory / 'controller.json').exists():
+                skipped.append(cell['id'])
+                continue
+            env = arm_environment(arm, reg['arms']['A']['flags'])
+            env['PATH'] = os.environ.get('PATH', '')
+            env['HOME'] = os.environ.get('HOME', '')
+            result = subprocess.run(
+                [sys.executable, '-m', 'scripts.grm_lt1_1', '--arm', arm,
+                 '--fake-cell', cell['id'], '--out', str(root)],
+                cwd=ROOT, env=env, capture_output=True, text=True)
+            if result.returncode:
+>               raise ValueError('LT11_FAKE_CELL_FAILED: %s\n%s'
+                                 % (cell['id'], result.stdout + result.stderr))
+E               ValueError: LT11_FAKE_CELL_FAILED: A-001-008
+E               Traceback (most recent call last):
+E                 File "<frozen runpy>", line 198, in _run_module_as_main
+E                 File "<frozen runpy>", line 88, in _run_code
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1560, in <module>
+E                   raise SystemExit(main())
+E                                    ^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1520, in main
+E                   print(fake_cell(args.arm, args.fake_cell,
+E                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1071, in fake_cell
+E                   value = worker.execute(cell, directory, reg, loader,
+E                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_worker.py", line 190, in execute
+E                   return dict(cell=cell,binding=bind(cell['arm']),execution_amendment_sha256=execution_sha(),admission_rule="margin_first",process_id=state['process_id'],pid=os.getpid(),
+E                                                                                              ^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_amendment4.py", line 30, in execution_sha
+E                   return sha(REG)
+E                          ^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_c7_common.py", line 77, in sha
+E                   return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+E                                         ^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/usr/lib/python3.12/pathlib.py", line 1021, in read_bytes
+E                   with self.open(mode='rb') as f:
+E                        ^^^^^^^^^^^^^^^^^^^^
+E                 File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+E                   return io.open(self, mode, buffering, encoding, errors, newline)
+E                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json'
+
+scripts/grm_lt1_1.py:1112: ValueError
+_______________ test_a_supersede_turn_retires_the_old_value[A+] ________________
+
+arm = 'A+'
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_a_supersede_turn_retires_1')
+
+    @pytest.mark.parametrize('arm', ['A', 'A+'])
+    def test_a_supersede_turn_retires_the_old_value(arm, tmp_path):
+        """THE gate: after a supersede, the old node is retired and un-routable.
+    
+        Cells 1-3 span turns 1-24, which include the Vega lineage
+        (17 -> 23 -> 29 credits) and the Medibay lineage (12 -> 14 -> 16 beds).
+        """
+>       root = _cells_through(arm, tmp_path, 3)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_1_production_turns.py:107: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_lt1_1_production_turns.py:50: in _cells_through
+    runner.run_fake(arm, root=root, limit=count)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'A+'
+
+    def run_fake(arm, *, root=None, limit=None):
+        """Execute cells on the CPU double, one subprocess per cell.
+    
+        Mirrors the GPU controller's structure (one child process per cell, parent
+        accumulates receipts) minus the lease, the flock and the GPU check, so the
+        receipt plumbing `summary` reads is exercised end to end. Cells already
+        COMPLETE are skipped, which is what makes this path resumable.
+    
+        Prior art: the one-subprocess-per-cell fake loop in
+        tests/test_grm_lt1_fix6.py and tests/test_grm_lt1_amendment1.py
+        (GRM contributors, 2026), reused.
+        """
+        import subprocess
+        reg = registration(arm)
+        root = Path(root) if root else out_dir(arm)
+        written, skipped = [], []
+        todo = reg['cells'][:limit] if limit else reg['cells']
+        for cell in todo:
+            directory = root / 'cells' / cell['id']
+            if (directory / 'controller.json').exists():
+                skipped.append(cell['id'])
+                continue
+            env = arm_environment(arm, reg['arms']['A']['flags'])
+            env['PATH'] = os.environ.get('PATH', '')
+            env['HOME'] = os.environ.get('HOME', '')
+            result = subprocess.run(
+                [sys.executable, '-m', 'scripts.grm_lt1_1', '--arm', arm,
+                 '--fake-cell', cell['id'], '--out', str(root)],
+                cwd=ROOT, env=env, capture_output=True, text=True)
+            if result.returncode:
+>               raise ValueError('LT11_FAKE_CELL_FAILED: %s\n%s'
+                                 % (cell['id'], result.stdout + result.stderr))
+E               ValueError: LT11_FAKE_CELL_FAILED: A-001-008
+E               Traceback (most recent call last):
+E                 File "<frozen runpy>", line 198, in _run_module_as_main
+E                 File "<frozen runpy>", line 88, in _run_code
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1560, in <module>
+E                   raise SystemExit(main())
+E                                    ^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1520, in main
+E                   print(fake_cell(args.arm, args.fake_cell,
+E                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1071, in fake_cell
+E                   value = worker.execute(cell, directory, reg, loader,
+E                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_worker.py", line 190, in execute
+E                   return dict(cell=cell,binding=bind(cell['arm']),execution_amendment_sha256=execution_sha(),admission_rule="margin_first",process_id=state['process_id'],pid=os.getpid(),
+E                                                                                              ^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_amendment4.py", line 30, in execution_sha
+E                   return sha(REG)
+E                          ^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_c7_common.py", line 77, in sha
+E                   return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+E                                         ^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/usr/lib/python3.12/pathlib.py", line 1021, in read_bytes
+E                   with self.open(mode='rb') as f:
+E                        ^^^^^^^^^^^^^^^^^^^^
+E                 File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+E                   return io.open(self, mode, buffering, encoding, errors, newline)
+E                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json'
+
+scripts/grm_lt1_1.py:1112: ValueError
+___________ test_the_retired_nodes_leave_the_route_candidate_base[A] ___________
+
+arm = 'A'
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_the_retired_nodes_leave_t0')
+
+    @pytest.mark.parametrize('arm', ['A', 'A+'])
+    def test_the_retired_nodes_leave_the_route_candidate_base(arm, tmp_path):
+        """Retirement must reach `_route_cand_base`, not just the manifest."""
+>       root = _cells_through(arm, tmp_path, 3)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_1_production_turns.py:126: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_lt1_1_production_turns.py:50: in _cells_through
+    runner.run_fake(arm, root=root, limit=count)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'A'
+
+    def run_fake(arm, *, root=None, limit=None):
+        """Execute cells on the CPU double, one subprocess per cell.
+    
+        Mirrors the GPU controller's structure (one child process per cell, parent
+        accumulates receipts) minus the lease, the flock and the GPU check, so the
+        receipt plumbing `summary` reads is exercised end to end. Cells already
+        COMPLETE are skipped, which is what makes this path resumable.
+    
+        Prior art: the one-subprocess-per-cell fake loop in
+        tests/test_grm_lt1_fix6.py and tests/test_grm_lt1_amendment1.py
+        (GRM contributors, 2026), reused.
+        """
+        import subprocess
+        reg = registration(arm)
+        root = Path(root) if root else out_dir(arm)
+        written, skipped = [], []
+        todo = reg['cells'][:limit] if limit else reg['cells']
+        for cell in todo:
+            directory = root / 'cells' / cell['id']
+            if (directory / 'controller.json').exists():
+                skipped.append(cell['id'])
+                continue
+            env = arm_environment(arm, reg['arms']['A']['flags'])
+            env['PATH'] = os.environ.get('PATH', '')
+            env['HOME'] = os.environ.get('HOME', '')
+            result = subprocess.run(
+                [sys.executable, '-m', 'scripts.grm_lt1_1', '--arm', arm,
+                 '--fake-cell', cell['id'], '--out', str(root)],
+                cwd=ROOT, env=env, capture_output=True, text=True)
+            if result.returncode:
+>               raise ValueError('LT11_FAKE_CELL_FAILED: %s\n%s'
+                                 % (cell['id'], result.stdout + result.stderr))
+E               ValueError: LT11_FAKE_CELL_FAILED: A-001-008
+E               Traceback (most recent call last):
+E                 File "<frozen runpy>", line 198, in _run_module_as_main
+E                 File "<frozen runpy>", line 88, in _run_code
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1560, in <module>
+E                   raise SystemExit(main())
+E                                    ^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1520, in main
+E                   print(fake_cell(args.arm, args.fake_cell,
+E                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1071, in fake_cell
+E                   value = worker.execute(cell, directory, reg, loader,
+E                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_worker.py", line 190, in execute
+E                   return dict(cell=cell,binding=bind(cell['arm']),execution_amendment_sha256=execution_sha(),admission_rule="margin_first",process_id=state['process_id'],pid=os.getpid(),
+E                                                                                              ^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_amendment4.py", line 30, in execution_sha
+E                   return sha(REG)
+E                          ^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_c7_common.py", line 77, in sha
+E                   return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+E                                         ^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/usr/lib/python3.12/pathlib.py", line 1021, in read_bytes
+E                   with self.open(mode='rb') as f:
+E                        ^^^^^^^^^^^^^^^^^^^^
+E                 File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+E                   return io.open(self, mode, buffering, encoding, errors, newline)
+E                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json'
+
+scripts/grm_lt1_1.py:1112: ValueError
+__________ test_the_retired_nodes_leave_the_route_candidate_base[A+] ___________
+
+arm = 'A+'
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_the_retired_nodes_leave_t1')
+
+    @pytest.mark.parametrize('arm', ['A', 'A+'])
+    def test_the_retired_nodes_leave_the_route_candidate_base(arm, tmp_path):
+        """Retirement must reach `_route_cand_base`, not just the manifest."""
+>       root = _cells_through(arm, tmp_path, 3)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_1_production_turns.py:126: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_lt1_1_production_turns.py:50: in _cells_through
+    runner.run_fake(arm, root=root, limit=count)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'A+'
+
+    def run_fake(arm, *, root=None, limit=None):
+        """Execute cells on the CPU double, one subprocess per cell.
+    
+        Mirrors the GPU controller's structure (one child process per cell, parent
+        accumulates receipts) minus the lease, the flock and the GPU check, so the
+        receipt plumbing `summary` reads is exercised end to end. Cells already
+        COMPLETE are skipped, which is what makes this path resumable.
+    
+        Prior art: the one-subprocess-per-cell fake loop in
+        tests/test_grm_lt1_fix6.py and tests/test_grm_lt1_amendment1.py
+        (GRM contributors, 2026), reused.
+        """
+        import subprocess
+        reg = registration(arm)
+        root = Path(root) if root else out_dir(arm)
+        written, skipped = [], []
+        todo = reg['cells'][:limit] if limit else reg['cells']
+        for cell in todo:
+            directory = root / 'cells' / cell['id']
+            if (directory / 'controller.json').exists():
+                skipped.append(cell['id'])
+                continue
+            env = arm_environment(arm, reg['arms']['A']['flags'])
+            env['PATH'] = os.environ.get('PATH', '')
+            env['HOME'] = os.environ.get('HOME', '')
+            result = subprocess.run(
+                [sys.executable, '-m', 'scripts.grm_lt1_1', '--arm', arm,
+                 '--fake-cell', cell['id'], '--out', str(root)],
+                cwd=ROOT, env=env, capture_output=True, text=True)
+            if result.returncode:
+>               raise ValueError('LT11_FAKE_CELL_FAILED: %s\n%s'
+                                 % (cell['id'], result.stdout + result.stderr))
+E               ValueError: LT11_FAKE_CELL_FAILED: A-001-008
+E               Traceback (most recent call last):
+E                 File "<frozen runpy>", line 198, in _run_module_as_main
+E                 File "<frozen runpy>", line 88, in _run_code
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1560, in <module>
+E                   raise SystemExit(main())
+E                                    ^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1520, in main
+E                   print(fake_cell(args.arm, args.fake_cell,
+E                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1071, in fake_cell
+E                   value = worker.execute(cell, directory, reg, loader,
+E                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_worker.py", line 190, in execute
+E                   return dict(cell=cell,binding=bind(cell['arm']),execution_amendment_sha256=execution_sha(),admission_rule="margin_first",process_id=state['process_id'],pid=os.getpid(),
+E                                                                                              ^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_amendment4.py", line 30, in execution_sha
+E                   return sha(REG)
+E                          ^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_c7_common.py", line 77, in sha
+E                   return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+E                                         ^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/usr/lib/python3.12/pathlib.py", line 1021, in read_bytes
+E                   with self.open(mode='rb') as f:
+E                        ^^^^^^^^^^^^^^^^^^^^
+E                 File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+E                   return io.open(self, mode, buffering, encoding, errors, newline)
+E                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json'
+
+scripts/grm_lt1_1.py:1112: ValueError
+__________ test_the_old_worker_would_have_left_the_stale_value_active __________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_the_old_worker_would_have0')
+
+    def test_the_old_worker_would_have_left_the_stale_value_active(tmp_path):
+        """RED-before: with LT1's default, nothing is retired.
+    
+        Runs one cell with the deposit seam removed, reproducing the worker that
+        produced the A+ = LT1 null.
+        """
+        reg = runner.registration('A+')
+        root = tmp_path / 'lt1_default'
+        with pytest.MonkeyPatch.context() as patch:
+            loader = runner.fake_loader(patch)
+            with runner.lt1_1_seams('A+'), runner.pinned_arm('A+'):
+                worker.RUN = root
+                # Remove ONLY the turn seam: LT1's prose-deposit default returns.
+                del worker.deposit_turn
+                cell = reg['cells'][0]
+                directory = root / 'cells' / cell['id']
+                directory.mkdir(parents=True)
+>               worker.execute(cell, directory, reg, loader,
+                               run=root / 'cells', fake=True)
+
+tests/test_grm_lt1_1_production_turns.py:153: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_lt1_worker.py:190: in execute
+    return dict(cell=cell,binding=bind(cell['arm']),execution_amendment_sha256=execution_sha(),admission_rule="margin_first",process_id=state['process_id'],pid=os.getpid(),
+                                                                               ^^^^^^^^^^^^^^^
+scripts/grm_lt1_amendment4.py:30: in execution_sha
+    return sha(REG)
+           ^^^^^^^^
+scripts/grm_c7_common.py:77: in sha
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+                          ^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1021: in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json')
+mode = 'rb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+______________ test_alias_turns_reach_a_node_naming_both_names[A] ______________
+
+arm = 'A'
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_alias_turns_reach_a_node_0')
+
+    @pytest.mark.parametrize('arm', ['A', 'A+'])
+    def test_alias_turns_reach_a_node_naming_both_names(arm, tmp_path):
+        """Both names must end up in ONE mountable node, by whichever path.
+    
+        Under A+ the alias fold-merge is enabled; under A it is off. What this
+        asserts is the OUTCOME the alias rows need -- a single active node naming
+        the alias and its base -- without asserting WHICH mechanism produced it,
+        because on this fixture the librarian's chronicle fold reaches the same
+        pairing. Claiming "the fold fired" when a chronicle digest did the work
+        would be a false attribution; see the report.
+        """
+        from core.grm_alias_fold import names_present
+>       root = _cells_through(arm, tmp_path, 3)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_1_production_turns.py:189: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_lt1_1_production_turns.py:50: in _cells_through
+    runner.run_fake(arm, root=root, limit=count)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'A'
+
+    def run_fake(arm, *, root=None, limit=None):
+        """Execute cells on the CPU double, one subprocess per cell.
+    
+        Mirrors the GPU controller's structure (one child process per cell, parent
+        accumulates receipts) minus the lease, the flock and the GPU check, so the
+        receipt plumbing `summary` reads is exercised end to end. Cells already
+        COMPLETE are skipped, which is what makes this path resumable.
+    
+        Prior art: the one-subprocess-per-cell fake loop in
+        tests/test_grm_lt1_fix6.py and tests/test_grm_lt1_amendment1.py
+        (GRM contributors, 2026), reused.
+        """
+        import subprocess
+        reg = registration(arm)
+        root = Path(root) if root else out_dir(arm)
+        written, skipped = [], []
+        todo = reg['cells'][:limit] if limit else reg['cells']
+        for cell in todo:
+            directory = root / 'cells' / cell['id']
+            if (directory / 'controller.json').exists():
+                skipped.append(cell['id'])
+                continue
+            env = arm_environment(arm, reg['arms']['A']['flags'])
+            env['PATH'] = os.environ.get('PATH', '')
+            env['HOME'] = os.environ.get('HOME', '')
+            result = subprocess.run(
+                [sys.executable, '-m', 'scripts.grm_lt1_1', '--arm', arm,
+                 '--fake-cell', cell['id'], '--out', str(root)],
+                cwd=ROOT, env=env, capture_output=True, text=True)
+            if result.returncode:
+>               raise ValueError('LT11_FAKE_CELL_FAILED: %s\n%s'
+                                 % (cell['id'], result.stdout + result.stderr))
+E               ValueError: LT11_FAKE_CELL_FAILED: A-001-008
+E               Traceback (most recent call last):
+E                 File "<frozen runpy>", line 198, in _run_module_as_main
+E                 File "<frozen runpy>", line 88, in _run_code
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1560, in <module>
+E                   raise SystemExit(main())
+E                                    ^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1520, in main
+E                   print(fake_cell(args.arm, args.fake_cell,
+E                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1071, in fake_cell
+E                   value = worker.execute(cell, directory, reg, loader,
+E                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_worker.py", line 190, in execute
+E                   return dict(cell=cell,binding=bind(cell['arm']),execution_amendment_sha256=execution_sha(),admission_rule="margin_first",process_id=state['process_id'],pid=os.getpid(),
+E                                                                                              ^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_amendment4.py", line 30, in execution_sha
+E                   return sha(REG)
+E                          ^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_c7_common.py", line 77, in sha
+E                   return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+E                                         ^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/usr/lib/python3.12/pathlib.py", line 1021, in read_bytes
+E                   with self.open(mode='rb') as f:
+E                        ^^^^^^^^^^^^^^^^^^^^
+E                 File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+E                   return io.open(self, mode, buffering, encoding, errors, newline)
+E                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json'
+
+scripts/grm_lt1_1.py:1112: ValueError
+_____________ test_alias_turns_reach_a_node_naming_both_names[A+] ______________
+
+arm = 'A+'
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_alias_turns_reach_a_node_1')
+
+    @pytest.mark.parametrize('arm', ['A', 'A+'])
+    def test_alias_turns_reach_a_node_naming_both_names(arm, tmp_path):
+        """Both names must end up in ONE mountable node, by whichever path.
+    
+        Under A+ the alias fold-merge is enabled; under A it is off. What this
+        asserts is the OUTCOME the alias rows need -- a single active node naming
+        the alias and its base -- without asserting WHICH mechanism produced it,
+        because on this fixture the librarian's chronicle fold reaches the same
+        pairing. Claiming "the fold fired" when a chronicle digest did the work
+        would be a false attribution; see the report.
+        """
+        from core.grm_alias_fold import names_present
+>       root = _cells_through(arm, tmp_path, 3)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_1_production_turns.py:189: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_lt1_1_production_turns.py:50: in _cells_through
+    runner.run_fake(arm, root=root, limit=count)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'A+'
+
+    def run_fake(arm, *, root=None, limit=None):
+        """Execute cells on the CPU double, one subprocess per cell.
+    
+        Mirrors the GPU controller's structure (one child process per cell, parent
+        accumulates receipts) minus the lease, the flock and the GPU check, so the
+        receipt plumbing `summary` reads is exercised end to end. Cells already
+        COMPLETE are skipped, which is what makes this path resumable.
+    
+        Prior art: the one-subprocess-per-cell fake loop in
+        tests/test_grm_lt1_fix6.py and tests/test_grm_lt1_amendment1.py
+        (GRM contributors, 2026), reused.
+        """
+        import subprocess
+        reg = registration(arm)
+        root = Path(root) if root else out_dir(arm)
+        written, skipped = [], []
+        todo = reg['cells'][:limit] if limit else reg['cells']
+        for cell in todo:
+            directory = root / 'cells' / cell['id']
+            if (directory / 'controller.json').exists():
+                skipped.append(cell['id'])
+                continue
+            env = arm_environment(arm, reg['arms']['A']['flags'])
+            env['PATH'] = os.environ.get('PATH', '')
+            env['HOME'] = os.environ.get('HOME', '')
+            result = subprocess.run(
+                [sys.executable, '-m', 'scripts.grm_lt1_1', '--arm', arm,
+                 '--fake-cell', cell['id'], '--out', str(root)],
+                cwd=ROOT, env=env, capture_output=True, text=True)
+            if result.returncode:
+>               raise ValueError('LT11_FAKE_CELL_FAILED: %s\n%s'
+                                 % (cell['id'], result.stdout + result.stderr))
+E               ValueError: LT11_FAKE_CELL_FAILED: A-001-008
+E               Traceback (most recent call last):
+E                 File "<frozen runpy>", line 198, in _run_module_as_main
+E                 File "<frozen runpy>", line 88, in _run_code
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1560, in <module>
+E                   raise SystemExit(main())
+E                                    ^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1520, in main
+E                   print(fake_cell(args.arm, args.fake_cell,
+E                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1071, in fake_cell
+E                   value = worker.execute(cell, directory, reg, loader,
+E                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_worker.py", line 190, in execute
+E                   return dict(cell=cell,binding=bind(cell['arm']),execution_amendment_sha256=execution_sha(),admission_rule="margin_first",process_id=state['process_id'],pid=os.getpid(),
+E                                                                                              ^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_amendment4.py", line 30, in execution_sha
+E                   return sha(REG)
+E                          ^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_c7_common.py", line 77, in sha
+E                   return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+E                                         ^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/usr/lib/python3.12/pathlib.py", line 1021, in read_bytes
+E                   with self.open(mode='rb') as f:
+E                        ^^^^^^^^^^^^^^^^^^^^
+E                 File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+E                   return io.open(self, mode, buffering, encoding, errors, newline)
+E                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json'
+
+scripts/grm_lt1_1.py:1112: ValueError
+_____________ test_the_shipped_seam_reproduces_the_leads_keyerror ______________
+
+    def test_the_shipped_seam_reproduces_the_leads_keyerror():
+        """RED-before: the exact failure from lead_Ap_resume.log."""
+        with _shipped_broken_seams('A+'):
+            with pytest.raises(KeyError) as exc:
+>               lt.preflight()
+
+tests/test_grm_lt1_1_resume_route.py:151: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_lt1.py:189: in preflight
+    r=verify(); free=shutil.disk_usage(ROOT).free
+      ^^^^^^^^
+scripts/grm_lt1.py:62: in verify
+    if sha(REG)!=REG.with_suffix('.sha256').read_text().split()[0]: raise ValueError('REGISTRATION_SHA_MISMATCH')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/registration.sha256')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/registration.sha256'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+_________________ test_the_fixed_seam_does_not_raise_keyerror __________________
+
+    def test_the_fixed_seam_does_not_raise_keyerror():
+        """GREEN-after on the same call."""
+        for arm in runner.ARMS:
+            with runner.lt1_1_seams(arm):
+                try:
+>                   lt.preflight()
+
+tests/test_grm_lt1_1_resume_route.py:163: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_lt1.py:189: in preflight
+    r=verify(); free=shutil.disk_usage(ROOT).free
+      ^^^^^^^^
+scripts/grm_lt1.py:62: in verify
+    if sha(REG)!=REG.with_suffix('.sha256').read_text().split()[0]: raise ValueError('REGISTRATION_SHA_MISMATCH')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/registration.sha256')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/registration.sha256'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+_____________ test_the_resume_route_selects_the_next_pending_cell ______________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_the_resume_route_selects_0')
+
+    def test_the_resume_route_selects_the_next_pending_cell(tmp_path):
+        """Cell selection is `worker.pending`, not a reimplementation."""
+        root = tmp_path / 'pending'
+>       runner.run_fake('A', root=root, limit=2)
+
+tests/test_grm_lt1_1_resume_route.py:215: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'A'
+
+    def run_fake(arm, *, root=None, limit=None):
+        """Execute cells on the CPU double, one subprocess per cell.
+    
+        Mirrors the GPU controller's structure (one child process per cell, parent
+        accumulates receipts) minus the lease, the flock and the GPU check, so the
+        receipt plumbing `summary` reads is exercised end to end. Cells already
+        COMPLETE are skipped, which is what makes this path resumable.
+    
+        Prior art: the one-subprocess-per-cell fake loop in
+        tests/test_grm_lt1_fix6.py and tests/test_grm_lt1_amendment1.py
+        (GRM contributors, 2026), reused.
+        """
+        import subprocess
+        reg = registration(arm)
+        root = Path(root) if root else out_dir(arm)
+        written, skipped = [], []
+        todo = reg['cells'][:limit] if limit else reg['cells']
+        for cell in todo:
+            directory = root / 'cells' / cell['id']
+            if (directory / 'controller.json').exists():
+                skipped.append(cell['id'])
+                continue
+            env = arm_environment(arm, reg['arms']['A']['flags'])
+            env['PATH'] = os.environ.get('PATH', '')
+            env['HOME'] = os.environ.get('HOME', '')
+            result = subprocess.run(
+                [sys.executable, '-m', 'scripts.grm_lt1_1', '--arm', arm,
+                 '--fake-cell', cell['id'], '--out', str(root)],
+                cwd=ROOT, env=env, capture_output=True, text=True)
+            if result.returncode:
+>               raise ValueError('LT11_FAKE_CELL_FAILED: %s\n%s'
+                                 % (cell['id'], result.stdout + result.stderr))
+E               ValueError: LT11_FAKE_CELL_FAILED: A-001-008
+E               Traceback (most recent call last):
+E                 File "<frozen runpy>", line 198, in _run_module_as_main
+E                 File "<frozen runpy>", line 88, in _run_code
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1560, in <module>
+E                   raise SystemExit(main())
+E                                    ^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1520, in main
+E                   print(fake_cell(args.arm, args.fake_cell,
+E                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1071, in fake_cell
+E                   value = worker.execute(cell, directory, reg, loader,
+E                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_worker.py", line 190, in execute
+E                   return dict(cell=cell,binding=bind(cell['arm']),execution_amendment_sha256=execution_sha(),admission_rule="margin_first",process_id=state['process_id'],pid=os.getpid(),
+E                                                                                              ^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_amendment4.py", line 30, in execution_sha
+E                   return sha(REG)
+E                          ^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_c7_common.py", line 77, in sha
+E                   return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+E                                         ^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/usr/lib/python3.12/pathlib.py", line 1021, in read_bytes
+E                   with self.open(mode='rb') as f:
+E                        ^^^^^^^^^^^^^^^^^^^^
+E                 File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+E                   return io.open(self, mode, buffering, encoding, errors, newline)
+E                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json'
+
+scripts/grm_lt1_1.py:1112: ValueError
+________ test_fake_path_writes_real_receipts_and_summary_reads_them[A] _________
+
+arm = 'A'
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_fake_path_writes_real_rec0')
+
+    @pytest.mark.parametrize('arm', ['A', 'A+'])
+    def test_fake_path_writes_real_receipts_and_summary_reads_them(arm, tmp_path):
+        root = tmp_path / ('run_' + arm.replace('+', 'plus'))
+>       result = runner.run_fake(arm, root=root, limit=2)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_1_runner.py:205: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'A'
+
+    def run_fake(arm, *, root=None, limit=None):
+        """Execute cells on the CPU double, one subprocess per cell.
+    
+        Mirrors the GPU controller's structure (one child process per cell, parent
+        accumulates receipts) minus the lease, the flock and the GPU check, so the
+        receipt plumbing `summary` reads is exercised end to end. Cells already
+        COMPLETE are skipped, which is what makes this path resumable.
+    
+        Prior art: the one-subprocess-per-cell fake loop in
+        tests/test_grm_lt1_fix6.py and tests/test_grm_lt1_amendment1.py
+        (GRM contributors, 2026), reused.
+        """
+        import subprocess
+        reg = registration(arm)
+        root = Path(root) if root else out_dir(arm)
+        written, skipped = [], []
+        todo = reg['cells'][:limit] if limit else reg['cells']
+        for cell in todo:
+            directory = root / 'cells' / cell['id']
+            if (directory / 'controller.json').exists():
+                skipped.append(cell['id'])
+                continue
+            env = arm_environment(arm, reg['arms']['A']['flags'])
+            env['PATH'] = os.environ.get('PATH', '')
+            env['HOME'] = os.environ.get('HOME', '')
+            result = subprocess.run(
+                [sys.executable, '-m', 'scripts.grm_lt1_1', '--arm', arm,
+                 '--fake-cell', cell['id'], '--out', str(root)],
+                cwd=ROOT, env=env, capture_output=True, text=True)
+            if result.returncode:
+>               raise ValueError('LT11_FAKE_CELL_FAILED: %s\n%s'
+                                 % (cell['id'], result.stdout + result.stderr))
+E               ValueError: LT11_FAKE_CELL_FAILED: A-001-008
+E               Traceback (most recent call last):
+E                 File "<frozen runpy>", line 198, in _run_module_as_main
+E                 File "<frozen runpy>", line 88, in _run_code
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1560, in <module>
+E                   raise SystemExit(main())
+E                                    ^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1520, in main
+E                   print(fake_cell(args.arm, args.fake_cell,
+E                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1071, in fake_cell
+E                   value = worker.execute(cell, directory, reg, loader,
+E                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_worker.py", line 190, in execute
+E                   return dict(cell=cell,binding=bind(cell['arm']),execution_amendment_sha256=execution_sha(),admission_rule="margin_first",process_id=state['process_id'],pid=os.getpid(),
+E                                                                                              ^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_amendment4.py", line 30, in execution_sha
+E                   return sha(REG)
+E                          ^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_c7_common.py", line 77, in sha
+E                   return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+E                                         ^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/usr/lib/python3.12/pathlib.py", line 1021, in read_bytes
+E                   with self.open(mode='rb') as f:
+E                        ^^^^^^^^^^^^^^^^^^^^
+E                 File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+E                   return io.open(self, mode, buffering, encoding, errors, newline)
+E                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json'
+
+scripts/grm_lt1_1.py:1112: ValueError
+________ test_fake_path_writes_real_receipts_and_summary_reads_them[A+] ________
+
+arm = 'A+'
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_fake_path_writes_real_rec1')
+
+    @pytest.mark.parametrize('arm', ['A', 'A+'])
+    def test_fake_path_writes_real_receipts_and_summary_reads_them(arm, tmp_path):
+        root = tmp_path / ('run_' + arm.replace('+', 'plus'))
+>       result = runner.run_fake(arm, root=root, limit=2)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_1_runner.py:205: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'A+'
+
+    def run_fake(arm, *, root=None, limit=None):
+        """Execute cells on the CPU double, one subprocess per cell.
+    
+        Mirrors the GPU controller's structure (one child process per cell, parent
+        accumulates receipts) minus the lease, the flock and the GPU check, so the
+        receipt plumbing `summary` reads is exercised end to end. Cells already
+        COMPLETE are skipped, which is what makes this path resumable.
+    
+        Prior art: the one-subprocess-per-cell fake loop in
+        tests/test_grm_lt1_fix6.py and tests/test_grm_lt1_amendment1.py
+        (GRM contributors, 2026), reused.
+        """
+        import subprocess
+        reg = registration(arm)
+        root = Path(root) if root else out_dir(arm)
+        written, skipped = [], []
+        todo = reg['cells'][:limit] if limit else reg['cells']
+        for cell in todo:
+            directory = root / 'cells' / cell['id']
+            if (directory / 'controller.json').exists():
+                skipped.append(cell['id'])
+                continue
+            env = arm_environment(arm, reg['arms']['A']['flags'])
+            env['PATH'] = os.environ.get('PATH', '')
+            env['HOME'] = os.environ.get('HOME', '')
+            result = subprocess.run(
+                [sys.executable, '-m', 'scripts.grm_lt1_1', '--arm', arm,
+                 '--fake-cell', cell['id'], '--out', str(root)],
+                cwd=ROOT, env=env, capture_output=True, text=True)
+            if result.returncode:
+>               raise ValueError('LT11_FAKE_CELL_FAILED: %s\n%s'
+                                 % (cell['id'], result.stdout + result.stderr))
+E               ValueError: LT11_FAKE_CELL_FAILED: A-001-008
+E               Traceback (most recent call last):
+E                 File "<frozen runpy>", line 198, in _run_module_as_main
+E                 File "<frozen runpy>", line 88, in _run_code
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1560, in <module>
+E                   raise SystemExit(main())
+E                                    ^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1520, in main
+E                   print(fake_cell(args.arm, args.fake_cell,
+E                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1071, in fake_cell
+E                   value = worker.execute(cell, directory, reg, loader,
+E                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_worker.py", line 190, in execute
+E                   return dict(cell=cell,binding=bind(cell['arm']),execution_amendment_sha256=execution_sha(),admission_rule="margin_first",process_id=state['process_id'],pid=os.getpid(),
+E                                                                                              ^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_amendment4.py", line 30, in execution_sha
+E                   return sha(REG)
+E                          ^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_c7_common.py", line 77, in sha
+E                   return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+E                                         ^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/usr/lib/python3.12/pathlib.py", line 1021, in read_bytes
+E                   with self.open(mode='rb') as f:
+E                        ^^^^^^^^^^^^^^^^^^^^
+E                 File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+E                   return io.open(self, mode, buffering, encoding, errors, newline)
+E                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json'
+
+scripts/grm_lt1_1.py:1112: ValueError
+______________ test_resume_after_interrupt_skips_completed_cells _______________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_resume_after_interrupt_sk0')
+
+    def test_resume_after_interrupt_skips_completed_cells(tmp_path):
+        root = tmp_path / 'resume'
+>       first = runner.run_fake('A', root=root, limit=2)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_1_runner.py:230: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'A'
+
+    def run_fake(arm, *, root=None, limit=None):
+        """Execute cells on the CPU double, one subprocess per cell.
+    
+        Mirrors the GPU controller's structure (one child process per cell, parent
+        accumulates receipts) minus the lease, the flock and the GPU check, so the
+        receipt plumbing `summary` reads is exercised end to end. Cells already
+        COMPLETE are skipped, which is what makes this path resumable.
+    
+        Prior art: the one-subprocess-per-cell fake loop in
+        tests/test_grm_lt1_fix6.py and tests/test_grm_lt1_amendment1.py
+        (GRM contributors, 2026), reused.
+        """
+        import subprocess
+        reg = registration(arm)
+        root = Path(root) if root else out_dir(arm)
+        written, skipped = [], []
+        todo = reg['cells'][:limit] if limit else reg['cells']
+        for cell in todo:
+            directory = root / 'cells' / cell['id']
+            if (directory / 'controller.json').exists():
+                skipped.append(cell['id'])
+                continue
+            env = arm_environment(arm, reg['arms']['A']['flags'])
+            env['PATH'] = os.environ.get('PATH', '')
+            env['HOME'] = os.environ.get('HOME', '')
+            result = subprocess.run(
+                [sys.executable, '-m', 'scripts.grm_lt1_1', '--arm', arm,
+                 '--fake-cell', cell['id'], '--out', str(root)],
+                cwd=ROOT, env=env, capture_output=True, text=True)
+            if result.returncode:
+>               raise ValueError('LT11_FAKE_CELL_FAILED: %s\n%s'
+                                 % (cell['id'], result.stdout + result.stderr))
+E               ValueError: LT11_FAKE_CELL_FAILED: A-001-008
+E               Traceback (most recent call last):
+E                 File "<frozen runpy>", line 198, in _run_module_as_main
+E                 File "<frozen runpy>", line 88, in _run_code
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1560, in <module>
+E                   raise SystemExit(main())
+E                                    ^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1520, in main
+E                   print(fake_cell(args.arm, args.fake_cell,
+E                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1071, in fake_cell
+E                   value = worker.execute(cell, directory, reg, loader,
+E                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_worker.py", line 190, in execute
+E                   return dict(cell=cell,binding=bind(cell['arm']),execution_amendment_sha256=execution_sha(),admission_rule="margin_first",process_id=state['process_id'],pid=os.getpid(),
+E                                                                                              ^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_amendment4.py", line 30, in execution_sha
+E                   return sha(REG)
+E                          ^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_c7_common.py", line 77, in sha
+E                   return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+E                                         ^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/usr/lib/python3.12/pathlib.py", line 1021, in read_bytes
+E                   with self.open(mode='rb') as f:
+E                        ^^^^^^^^^^^^^^^^^^^^
+E                 File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+E                   return io.open(self, mode, buffering, encoding, errors, newline)
+E                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json'
+
+scripts/grm_lt1_1.py:1112: ValueError
+___________ test_a_resumed_cell_chains_to_its_predecessor_checkpoint ___________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_a_resumed_cell_chains_to_0')
+
+    def test_a_resumed_cell_chains_to_its_predecessor_checkpoint(tmp_path):
+        """The dependency contract is real: cell 2 loads cell 1's checkpoint."""
+        root = tmp_path / 'chain'
+>       runner.run_fake('A', root=root, limit=2)
+
+tests/test_grm_lt1_1_runner.py:250: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'A'
+
+    def run_fake(arm, *, root=None, limit=None):
+        """Execute cells on the CPU double, one subprocess per cell.
+    
+        Mirrors the GPU controller's structure (one child process per cell, parent
+        accumulates receipts) minus the lease, the flock and the GPU check, so the
+        receipt plumbing `summary` reads is exercised end to end. Cells already
+        COMPLETE are skipped, which is what makes this path resumable.
+    
+        Prior art: the one-subprocess-per-cell fake loop in
+        tests/test_grm_lt1_fix6.py and tests/test_grm_lt1_amendment1.py
+        (GRM contributors, 2026), reused.
+        """
+        import subprocess
+        reg = registration(arm)
+        root = Path(root) if root else out_dir(arm)
+        written, skipped = [], []
+        todo = reg['cells'][:limit] if limit else reg['cells']
+        for cell in todo:
+            directory = root / 'cells' / cell['id']
+            if (directory / 'controller.json').exists():
+                skipped.append(cell['id'])
+                continue
+            env = arm_environment(arm, reg['arms']['A']['flags'])
+            env['PATH'] = os.environ.get('PATH', '')
+            env['HOME'] = os.environ.get('HOME', '')
+            result = subprocess.run(
+                [sys.executable, '-m', 'scripts.grm_lt1_1', '--arm', arm,
+                 '--fake-cell', cell['id'], '--out', str(root)],
+                cwd=ROOT, env=env, capture_output=True, text=True)
+            if result.returncode:
+>               raise ValueError('LT11_FAKE_CELL_FAILED: %s\n%s'
+                                 % (cell['id'], result.stdout + result.stderr))
+E               ValueError: LT11_FAKE_CELL_FAILED: A-001-008
+E               Traceback (most recent call last):
+E                 File "<frozen runpy>", line 198, in _run_module_as_main
+E                 File "<frozen runpy>", line 88, in _run_code
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1560, in <module>
+E                   raise SystemExit(main())
+E                                    ^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1520, in main
+E                   print(fake_cell(args.arm, args.fake_cell,
+E                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_1.py", line 1071, in fake_cell
+E                   value = worker.execute(cell, directory, reg, loader,
+E                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_worker.py", line 190, in execute
+E                   return dict(cell=cell,binding=bind(cell['arm']),execution_amendment_sha256=execution_sha(),admission_rule="margin_first",process_id=state['process_id'],pid=os.getpid(),
+E                                                                                              ^^^^^^^^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_lt1_amendment4.py", line 30, in execution_sha
+E                   return sha(REG)
+E                          ^^^^^^^^
+E                 File "/mnt/ForgeRealm/wt/grm-h4/scripts/grm_c7_common.py", line 77, in sha
+E                   return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+E                                         ^^^^^^^^^^^^^^^^^^^^^^^
+E                 File "/usr/lib/python3.12/pathlib.py", line 1021, in read_bytes
+E                   with self.open(mode='rb') as f:
+E                        ^^^^^^^^^^^^^^^^^^^^
+E                 File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+E                   return io.open(self, mode, buffering, encoding, errors, newline)
+E                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json'
+
+scripts/grm_lt1_1.py:1112: ValueError
+_________________ test_c7_checkpoint_roundtrip_and_corruption __________________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_c7_checkpoint_roundtrip_a0')
+
+    def test_c7_checkpoint_roundtrip_and_corruption(tmp_path):
+>       binding=lt.binding('A'); (tmp_path/'repository').mkdir()
+                ^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1.py:97: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_lt1.py:57: in binding
+    amendment_sha256=sha(AMEND3),admission_rule="margin_first",
+                     ^^^^^^^^^^^
+scripts/grm_c7_common.py:77: in sha
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+                          ^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1021: in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'rb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+_______________ test_orphan_red_and_checkpoint_process_integrity _______________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_orphan_red_and_checkpoint0')
+
+    def test_orphan_red_and_checkpoint_process_integrity(tmp_path):
+        d=tmp_path/'cells/A-001-008';d.mkdir(parents=True)
+        lt.create(d/'reservation.json',dict(seconds=285))
+        with pytest.raises(ValueError,match='ORPHAN'):worker.accounting(tmp_path)
+        lt.create(d/'controller.json',dict(status='RED',charged_seconds=285))
+        with pytest.raises(ValueError,match='PRIOR_CELL_RED'):worker.accounting(tmp_path)
+        cp=tmp_path/'checkpoint';cp.mkdir();(cp/'repository').mkdir()
+>       lt.checkpoint(cp,dict(next_turn=9,process_id='bound-process'),lt.binding('A'))
+                                                                      ^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_amendment1.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_lt1.py:57: in binding
+    amendment_sha256=sha(AMEND3),admission_rule="margin_first",
+                     ^^^^^^^^^^^
+scripts/grm_c7_common.py:77: in sha
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+                          ^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1021: in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'rb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+____________________ test_forged_amendment_checksum_refused ____________________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_forged_amendment_checksum0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x735090552060>
+
+    def test_forged_amendment_checksum_refused(tmp_path, monkeypatch):
+>       amended(tmp_path, monkeypatch, lambda a:a.update(status='forged'), rehash=False)
+
+tests/test_grm_lt1_amendment3.py:39: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_lt1_amendment3.py:15: in amended
+    a = lt.read(lt.AMEND3)
+        ^^^^^^^^^^^^^^^^^^
+scripts/grm_c7_common.py:81: in read
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+_______ test_rehashed_stale_amendment_chain_refused[registration_sha256] _______
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_rehashed_stale_amendment_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7350905511f0>
+field = 'registration_sha256'
+
+    @pytest.mark.parametrize('field', ['registration_sha256', 'previous_amendment_sha256', 'order_sha256', 'supersedes_amendment_sha256'])
+    def test_rehashed_stale_amendment_chain_refused(tmp_path, monkeypatch, field):
+>       amended(tmp_path, monkeypatch, lambda a:a.update({field:'0'*64}))
+
+tests/test_grm_lt1_amendment3.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_lt1_amendment3.py:15: in amended
+    a = lt.read(lt.AMEND3)
+        ^^^^^^^^^^^^^^^^^^
+scripts/grm_c7_common.py:81: in read
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+____ test_rehashed_stale_amendment_chain_refused[previous_amendment_sha256] ____
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_rehashed_stale_amendment_1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7350905efb30>
+field = 'previous_amendment_sha256'
+
+    @pytest.mark.parametrize('field', ['registration_sha256', 'previous_amendment_sha256', 'order_sha256', 'supersedes_amendment_sha256'])
+    def test_rehashed_stale_amendment_chain_refused(tmp_path, monkeypatch, field):
+>       amended(tmp_path, monkeypatch, lambda a:a.update({field:'0'*64}))
+
+tests/test_grm_lt1_amendment3.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_lt1_amendment3.py:15: in amended
+    a = lt.read(lt.AMEND3)
+        ^^^^^^^^^^^^^^^^^^
+scripts/grm_c7_common.py:81: in read
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+__________ test_rehashed_stale_amendment_chain_refused[order_sha256] ___________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_rehashed_stale_amendment_2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x73509055dd00>
+field = 'order_sha256'
+
+    @pytest.mark.parametrize('field', ['registration_sha256', 'previous_amendment_sha256', 'order_sha256', 'supersedes_amendment_sha256'])
+    def test_rehashed_stale_amendment_chain_refused(tmp_path, monkeypatch, field):
+>       amended(tmp_path, monkeypatch, lambda a:a.update({field:'0'*64}))
+
+tests/test_grm_lt1_amendment3.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_lt1_amendment3.py:15: in amended
+    a = lt.read(lt.AMEND3)
+        ^^^^^^^^^^^^^^^^^^
+scripts/grm_c7_common.py:81: in read
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+___ test_rehashed_stale_amendment_chain_refused[supersedes_amendment_sha256] ___
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_rehashed_stale_amendment_3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x73509026c650>
+field = 'supersedes_amendment_sha256'
+
+    @pytest.mark.parametrize('field', ['registration_sha256', 'previous_amendment_sha256', 'order_sha256', 'supersedes_amendment_sha256'])
+    def test_rehashed_stale_amendment_chain_refused(tmp_path, monkeypatch, field):
+>       amended(tmp_path, monkeypatch, lambda a:a.update({field:'0'*64}))
+
+tests/test_grm_lt1_amendment3.py:45: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_lt1_amendment3.py:15: in amended
+    a = lt.read(lt.AMEND3)
+        ^^^^^^^^^^^^^^^^^^
+scripts/grm_c7_common.py:81: in read
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+______ test_rehashed_protocol_forgery_refused[admission_rule-all_tokens] _______
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_rehashed_protocol_forgery0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x73509026db50>
+field = 'admission_rule', value = 'all_tokens'
+
+    @pytest.mark.parametrize('field,value', [('admission_rule','all_tokens'), ('budget_gpu_seconds',20000),
+        ('cells',[]), ('arms',{}), ('fixture_manifest_sha256','0'*64)])
+    def test_rehashed_protocol_forgery_refused(tmp_path, monkeypatch, field, value):
+>       amended(tmp_path, monkeypatch, lambda a:a['protocol'].update({field:value}))
+
+tests/test_grm_lt1_amendment3.py:52: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_lt1_amendment3.py:15: in amended
+    a = lt.read(lt.AMEND3)
+        ^^^^^^^^^^^^^^^^^^
+scripts/grm_c7_common.py:81: in read
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+_______ test_rehashed_protocol_forgery_refused[budget_gpu_seconds-20000] _______
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_rehashed_protocol_forgery1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x73509026c140>
+field = 'budget_gpu_seconds', value = 20000
+
+    @pytest.mark.parametrize('field,value', [('admission_rule','all_tokens'), ('budget_gpu_seconds',20000),
+        ('cells',[]), ('arms',{}), ('fixture_manifest_sha256','0'*64)])
+    def test_rehashed_protocol_forgery_refused(tmp_path, monkeypatch, field, value):
+>       amended(tmp_path, monkeypatch, lambda a:a['protocol'].update({field:value}))
+
+tests/test_grm_lt1_amendment3.py:52: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_lt1_amendment3.py:15: in amended
+    a = lt.read(lt.AMEND3)
+        ^^^^^^^^^^^^^^^^^^
+scripts/grm_c7_common.py:81: in read
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+_____________ test_rehashed_protocol_forgery_refused[cells-value2] _____________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_rehashed_protocol_forgery2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x73509026f080>
+field = 'cells', value = []
+
+    @pytest.mark.parametrize('field,value', [('admission_rule','all_tokens'), ('budget_gpu_seconds',20000),
+        ('cells',[]), ('arms',{}), ('fixture_manifest_sha256','0'*64)])
+    def test_rehashed_protocol_forgery_refused(tmp_path, monkeypatch, field, value):
+>       amended(tmp_path, monkeypatch, lambda a:a['protocol'].update({field:value}))
+
+tests/test_grm_lt1_amendment3.py:52: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_lt1_amendment3.py:15: in amended
+    a = lt.read(lt.AMEND3)
+        ^^^^^^^^^^^^^^^^^^
+scripts/grm_c7_common.py:81: in read
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+_____________ test_rehashed_protocol_forgery_refused[arms-value3] ______________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_rehashed_protocol_forgery3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7350902beb70>
+field = 'arms', value = {}
+
+    @pytest.mark.parametrize('field,value', [('admission_rule','all_tokens'), ('budget_gpu_seconds',20000),
+        ('cells',[]), ('arms',{}), ('fixture_manifest_sha256','0'*64)])
+    def test_rehashed_protocol_forgery_refused(tmp_path, monkeypatch, field, value):
+>       amended(tmp_path, monkeypatch, lambda a:a['protocol'].update({field:value}))
+
+tests/test_grm_lt1_amendment3.py:52: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_lt1_amendment3.py:15: in amended
+    a = lt.read(lt.AMEND3)
+        ^^^^^^^^^^^^^^^^^^
+scripts/grm_c7_common.py:81: in read
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+_ test_rehashed_protocol_forgery_refused[fixture_manifest_sha256-0000000000000000000000000000000000000000000000000000000000000000] _
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_rehashed_protocol_forgery4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7350902bd580>
+field = 'fixture_manifest_sha256'
+value = '0000000000000000000000000000000000000000000000000000000000000000'
+
+    @pytest.mark.parametrize('field,value', [('admission_rule','all_tokens'), ('budget_gpu_seconds',20000),
+        ('cells',[]), ('arms',{}), ('fixture_manifest_sha256','0'*64)])
+    def test_rehashed_protocol_forgery_refused(tmp_path, monkeypatch, field, value):
+>       amended(tmp_path, monkeypatch, lambda a:a['protocol'].update({field:value}))
+
+tests/test_grm_lt1_amendment3.py:52: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_lt1_amendment3.py:15: in amended
+    a = lt.read(lt.AMEND3)
+        ^^^^^^^^^^^^^^^^^^
+scripts/grm_c7_common.py:81: in read
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+____________ test_rehashed_core_pin_forgery_refused[before_sha256] _____________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_rehashed_core_pin_forgery0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x73509026cb00>
+field = 'before_sha256'
+
+    @pytest.mark.parametrize('field', ['before_sha256', 'after_sha256'])
+    def test_rehashed_core_pin_forgery_refused(tmp_path, monkeypatch, field):
+>       amended(tmp_path, monkeypatch, lambda a:a['core_shas']['core/graft_arena.py'].update({field:'0'*64}))
+
+tests/test_grm_lt1_amendment3.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_lt1_amendment3.py:15: in amended
+    a = lt.read(lt.AMEND3)
+        ^^^^^^^^^^^^^^^^^^
+scripts/grm_c7_common.py:81: in read
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+_____________ test_rehashed_core_pin_forgery_refused[after_sha256] _____________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_rehashed_core_pin_forgery1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7350902bcb60>
+field = 'after_sha256'
+
+    @pytest.mark.parametrize('field', ['before_sha256', 'after_sha256'])
+    def test_rehashed_core_pin_forgery_refused(tmp_path, monkeypatch, field):
+>       amended(tmp_path, monkeypatch, lambda a:a['core_shas']['core/graft_arena.py'].update({field:'0'*64}))
+
+tests/test_grm_lt1_amendment3.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_lt1_amendment3.py:15: in amended
+    a = lt.read(lt.AMEND3)
+        ^^^^^^^^^^^^^^^^^^
+scripts/grm_c7_common.py:81: in read
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+_____________________ test_rehashed_core_omission_refused ______________________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_rehashed_core_omission_re0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x735090281b20>
+
+    def test_rehashed_core_omission_refused(tmp_path, monkeypatch):
+>       amended(tmp_path, monkeypatch, lambda a:a['core_shas'].pop('core/grm_native.py'))
+
+tests/test_grm_lt1_amendment3.py:63: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_lt1_amendment3.py:15: in amended
+    a = lt.read(lt.AMEND3)
+        ^^^^^^^^^^^^^^^^^^
+scripts/grm_c7_common.py:81: in read
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+____________________ test_rehashed_override_forgery_refused ____________________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_rehashed_override_forgery0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x735090280d70>
+
+    def test_rehashed_override_forgery_refused(tmp_path, monkeypatch):
+>       amended(tmp_path, monkeypatch, lambda a:a['overrides']['core/graft_arena.py'].update(after_sha256='0'*64))
+
+tests/test_grm_lt1_amendment3.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_lt1_amendment3.py:15: in amended
+    a = lt.read(lt.AMEND3)
+        ^^^^^^^^^^^^^^^^^^
+scripts/grm_c7_common.py:81: in read
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+____________________ test_rehashed_fixture_override_refused ____________________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_rehashed_fixture_override0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x73509026f890>
+
+    def test_rehashed_fixture_override_refused(tmp_path, monkeypatch):
+>       amended(tmp_path, monkeypatch, lambda a:a['overrides'].update({'fixtures/lt1/dialogue.json':{}}))
+
+tests/test_grm_lt1_amendment3.py:73: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_lt1_amendment3.py:15: in amended
+    a = lt.read(lt.AMEND3)
+        ^^^^^^^^^^^^^^^^^^
+scripts/grm_c7_common.py:81: in read
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+____________________ test_rehashed_new_input_shadow_refused ____________________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_rehashed_new_input_shadow0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x735090280320>
+
+    def test_rehashed_new_input_shadow_refused(tmp_path, monkeypatch):
+>       amended(tmp_path, monkeypatch, lambda a:a['new_inputs'].update({'core/graft_arena.py':'0'*64}))
+
+tests/test_grm_lt1_amendment3.py:78: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_grm_lt1_amendment3.py:15: in amended
+    a = lt.read(lt.AMEND3)
+        ^^^^^^^^^^^^^^^^^^
+scripts/grm_c7_common.py:81: in read
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+________________________ test_missing_amendment_refused ________________________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_missing_amendment_refused0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7350902281d0>
+
+    def test_missing_amendment_refused(tmp_path, monkeypatch):
+        monkeypatch.setattr(lt, 'AMEND3', tmp_path/'absent.json')
+>       with pytest.raises(ValueError, match='AMENDMENT3_REQUIRED'): lt.verify()
+                                                                     ^^^^^^^^^^^
+
+tests/test_grm_lt1_amendment3.py:84: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_lt1.py:62: in verify
+    if sha(REG)!=REG.with_suffix('.sha256').read_text().split()[0]: raise ValueError('REGISTRATION_SHA_MISMATCH')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/registration.sha256')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/registration.sha256'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+______________________ test_stale_working_source_refused _______________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x735090228ce0>
+
+    def test_stale_working_source_refused(monkeypatch):
+        real = lt.sha
+        monkeypatch.setattr(lt, 'sha', lambda p:'0'*64 if Path(p)==lt.ROOT/'core/graft_arena.py' else real(p))
+>       with pytest.raises(ValueError, match='INPUT_SHA_MISMATCH: core/graft_arena.py'): lt.verify()
+                                                                                         ^^^^^^^^^^^
+
+tests/test_grm_lt1_amendment3.py:90: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_lt1.py:62: in verify
+    if sha(REG)!=REG.with_suffix('.sha256').read_text().split()[0]: raise ValueError('REGISTRATION_SHA_MISMATCH')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/registration.sha256')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/registration.sha256'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+_____________________ test_old_checkpoint_binding_refused ______________________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_old_checkpoint_binding_re0')
+
+    def test_old_checkpoint_binding_refused(tmp_path):
+        (tmp_path/'repository').mkdir()
+>       old = lt.binding('A'); old['amendment_sha256'] = lt.sha(lt.AMEND2); old.pop('core_shas')
+              ^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_amendment3.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_lt1.py:57: in binding
+    amendment_sha256=sha(AMEND3),admission_rule="margin_first",
+                     ^^^^^^^^^^^
+scripts/grm_c7_common.py:77: in sha
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+                          ^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1021: in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'rb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+_ test_rehashed_resume_forgery_refused[parent_sha256-0000000000000000000000000000000000000000000000000000000000000000-CHAIN] _
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_rehashed_resume_forgery_r0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x735090296bd0>
+field = 'parent_sha256'
+value = '0000000000000000000000000000000000000000000000000000000000000000'
+error = 'CHAIN'
+
+    @pytest.mark.parametrize('field,value,error', [
+        ('parent_sha256','0'*64,'CHAIN'), ('resume_at','A-041-048','PROTOCOL'),
+        ('budget_seconds',20000,'PROTOCOL'), ('retry_directory','arbitrary','PROTOCOL'),
+        ('retain_completed',[],'PROTOCOL'), ('new_inputs',{},'SCOPE')])
+    def test_rehashed_resume_forgery_refused(tmp_path, monkeypatch, field, value, error):
+        import json
+        from scripts import grm_lt1_amendment4 as a4
+>       r = lt.read(a4.REG); r[field] = value
+            ^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_amendment4.py:129: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_c7_common.py:81: in read
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+______ test_rehashed_resume_forgery_refused[resume_at-A-041-048-PROTOCOL] ______
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_rehashed_resume_forgery_r1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x735093d53bc0>
+field = 'resume_at', value = 'A-041-048', error = 'PROTOCOL'
+
+    @pytest.mark.parametrize('field,value,error', [
+        ('parent_sha256','0'*64,'CHAIN'), ('resume_at','A-041-048','PROTOCOL'),
+        ('budget_seconds',20000,'PROTOCOL'), ('retry_directory','arbitrary','PROTOCOL'),
+        ('retain_completed',[],'PROTOCOL'), ('new_inputs',{},'SCOPE')])
+    def test_rehashed_resume_forgery_refused(tmp_path, monkeypatch, field, value, error):
+        import json
+        from scripts import grm_lt1_amendment4 as a4
+>       r = lt.read(a4.REG); r[field] = value
+            ^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_amendment4.py:129: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_c7_common.py:81: in read
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+_____ test_rehashed_resume_forgery_refused[budget_seconds-20000-PROTOCOL] ______
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_rehashed_resume_forgery_r2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x735093d4ef30>
+field = 'budget_seconds', value = 20000, error = 'PROTOCOL'
+
+    @pytest.mark.parametrize('field,value,error', [
+        ('parent_sha256','0'*64,'CHAIN'), ('resume_at','A-041-048','PROTOCOL'),
+        ('budget_seconds',20000,'PROTOCOL'), ('retry_directory','arbitrary','PROTOCOL'),
+        ('retain_completed',[],'PROTOCOL'), ('new_inputs',{},'SCOPE')])
+    def test_rehashed_resume_forgery_refused(tmp_path, monkeypatch, field, value, error):
+        import json
+        from scripts import grm_lt1_amendment4 as a4
+>       r = lt.read(a4.REG); r[field] = value
+            ^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_amendment4.py:129: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_c7_common.py:81: in read
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+___ test_rehashed_resume_forgery_refused[retry_directory-arbitrary-PROTOCOL] ___
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_rehashed_resume_forgery_r3')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x735090294950>
+field = 'retry_directory', value = 'arbitrary', error = 'PROTOCOL'
+
+    @pytest.mark.parametrize('field,value,error', [
+        ('parent_sha256','0'*64,'CHAIN'), ('resume_at','A-041-048','PROTOCOL'),
+        ('budget_seconds',20000,'PROTOCOL'), ('retry_directory','arbitrary','PROTOCOL'),
+        ('retain_completed',[],'PROTOCOL'), ('new_inputs',{},'SCOPE')])
+    def test_rehashed_resume_forgery_refused(tmp_path, monkeypatch, field, value, error):
+        import json
+        from scripts import grm_lt1_amendment4 as a4
+>       r = lt.read(a4.REG); r[field] = value
+            ^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_amendment4.py:129: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_c7_common.py:81: in read
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+____ test_rehashed_resume_forgery_refused[retain_completed-value4-PROTOCOL] ____
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_rehashed_resume_forgery_r4')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7350902cc830>
+field = 'retain_completed', value = [], error = 'PROTOCOL'
+
+    @pytest.mark.parametrize('field,value,error', [
+        ('parent_sha256','0'*64,'CHAIN'), ('resume_at','A-041-048','PROTOCOL'),
+        ('budget_seconds',20000,'PROTOCOL'), ('retry_directory','arbitrary','PROTOCOL'),
+        ('retain_completed',[],'PROTOCOL'), ('new_inputs',{},'SCOPE')])
+    def test_rehashed_resume_forgery_refused(tmp_path, monkeypatch, field, value, error):
+        import json
+        from scripts import grm_lt1_amendment4 as a4
+>       r = lt.read(a4.REG); r[field] = value
+            ^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_amendment4.py:129: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_c7_common.py:81: in read
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+________ test_rehashed_resume_forgery_refused[new_inputs-value5-SCOPE] _________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_rehashed_resume_forgery_r5')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7350902cd370>
+field = 'new_inputs', value = {}, error = 'SCOPE'
+
+    @pytest.mark.parametrize('field,value,error', [
+        ('parent_sha256','0'*64,'CHAIN'), ('resume_at','A-041-048','PROTOCOL'),
+        ('budget_seconds',20000,'PROTOCOL'), ('retry_directory','arbitrary','PROTOCOL'),
+        ('retain_completed',[],'PROTOCOL'), ('new_inputs',{},'SCOPE')])
+    def test_rehashed_resume_forgery_refused(tmp_path, monkeypatch, field, value, error):
+        import json
+        from scripts import grm_lt1_amendment4 as a4
+>       r = lt.read(a4.REG); r[field] = value
+            ^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_amendment4.py:129: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_c7_common.py:81: in read
+    return json.loads(Path(path).read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+_________________________ test_stale_checksum_refused __________________________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_stale_checksum_refused0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7350938b1970>
+
+    def test_stale_checksum_refused(tmp_path, monkeypatch):
+        from scripts import grm_lt1_amendment4 as a4
+>       p = tmp_path/'resume.json'; p.write_bytes(a4.REG.read_bytes()+b' ')
+                                                  ^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1_amendment4.py:139: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.12/pathlib.py:1021: in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json')
+mode = 'rb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment4/resume_registration.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+______________________ test_frozen_cpu_arena_70_profiles _______________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x735090281fa0>
+
+    def test_frozen_cpu_arena_70_profiles(monkeypatch):
+        monkeypatch.setenv('GRM_ADMISSION_RULE','margin_first')
+        paths=list((lt.OUT/'amendment1/offline/lt1_states').glob('*.json'))
+>       assert len(paths)==70
+E       assert 0 == 70
+E        +  where 0 = len([])
+
+tests/test_grm_lt1_fix6.py:20: AssertionError
+_________________ test_c7_checkpoint_roundtrip_and_corruption __________________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_c7_checkpoint_roundtrip_a1')
+
+    def test_c7_checkpoint_roundtrip_and_corruption(tmp_path):
+>       binding=lt.binding('A'); (tmp_path/'repository').mkdir()
+                ^^^^^^^^^^^^^^^
+
+tests/test_grm_lt1.py:97: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_lt1.py:57: in binding
+    amendment_sha256=sha(AMEND3),admission_rule="margin_first",
+                     ^^^^^^^^^^^
+scripts/grm_c7_common.py:77: in sha
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+                          ^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1021: in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json')
+mode = 'rb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_lt1/amendment3/registration_amendment_r3.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+_______________ test_rebinding_does_not_weaken_the_other_inputs ________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x73509019f9b0>
+
+    def test_rebinding_does_not_weaken_the_other_inputs(monkeypatch):
+        """Only the listed sources are re-bound; the rest still fail closed."""
+        original = run.sha
+        target = run.ROOT / 'core/grm_admission.py'
+        monkeypatch.setattr(
+            run, 'sha', lambda p: 'bad' if Path(p) == target else original(p))
+        with pytest.raises(ValueError, match='R1_INPUT_SHA_MISMATCH'):
+>           run.verify()
+
+tests/test_grm_r1_amendment1.py:178: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_r1_replay.py:129: in verify
+    need(sha(p) == digest, 'R1_INPUT_SHA_MISMATCH: ' + path)
+         ^^^^^^
+tests/test_grm_r1_amendment1.py:176: in <lambda>
+    run, 'sha', lambda p: 'bad' if Path(p) == target else original(p))
+                                                          ^^^^^^^^^^^
+scripts/grm_c7_amendment7.py:32: in sha
+    with Path(p).open('rb') as f:
+         ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_scout_fix6/c2_replay_cells.json')
+mode = 'rb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_scout_fix6/c2_replay_cells.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+__________ test_archive_stale_sessions_moves_only_that_cells_scratch ___________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_archive_stale_sessions_mo0')
+
+    def test_archive_stale_sessions_moves_only_that_cells_scratch(tmp_path):
+>       c = run.cells()[0]
+            ^^^^^^^^^^^
+
+tests/test_grm_r1_amendment2.py:67: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_r1_replay.py:150: in cells
+    return read(CELLS)['cells']
+           ^^^^^^^^^^^
+scripts/grm_c7_amendment7.py:28: in read
+    return json.loads(Path(p).read_text())
+                      ^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_scout_fix6/c2_replay_cells.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_scout_fix6/c2_replay_cells.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+_______________ test_archive_stale_sessions_is_a_noop_when_clean _______________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_archive_stale_sessions_is0')
+
+    def test_archive_stale_sessions_is_a_noop_when_clean(tmp_path):
+>       c = run.cells()[0]
+            ^^^^^^^^^^^
+
+tests/test_grm_r1_amendment2.py:87: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_r1_replay.py:150: in cells
+    return read(CELLS)['cells']
+           ^^^^^^^^^^^
+scripts/grm_c7_amendment7.py:28: in read
+    return json.loads(Path(p).read_text())
+                      ^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_scout_fix6/c2_replay_cells.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_scout_fix6/c2_replay_cells.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+___________ test_archive_stale_sessions_numbers_successive_attempts ____________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_archive_stale_sessions_nu0')
+
+    def test_archive_stale_sessions_numbers_successive_attempts(tmp_path):
+>       c = run.cells()[0]
+            ^^^^^^^^^^^
+
+tests/test_grm_r1_amendment2.py:92: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_r1_replay.py:150: in cells
+    return read(CELLS)['cells']
+           ^^^^^^^^^^^
+scripts/grm_c7_amendment7.py:28: in read
+    return json.loads(Path(p).read_text())
+                      ^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_scout_fix6/c2_replay_cells.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_scout_fix6/c2_replay_cells.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+______________ test_non_fit_receipt_is_create_only_and_unmeasured ______________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_non_fit_receipt_is_create0')
+
+    def test_non_fit_receipt_is_create_only_and_unmeasured(tmp_path):
+>       c = run.cells()[0]
+            ^^^^^^^^^^^
+
+tests/test_grm_r1_amendment4.py:178: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_r1_replay.py:150: in cells
+    return read(CELLS)['cells']
+           ^^^^^^^^^^^
+scripts/grm_c7_amendment7.py:28: in read
+    return json.loads(Path(p).read_text())
+                      ^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_scout_fix6/c2_replay_cells.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_scout_fix6/c2_replay_cells.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+_________________ test_cpu_gate_covers_every_battery_and_side __________________
+
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_h4/tmp/test_cpu_gate_covers_every_bat0')
+
+    def test_cpu_gate_covers_every_battery_and_side(tmp_path):
+>       cells = run.cells()
+                ^^^^^^^^^^^
+
+tests/test_grm_r1_cpu_gate.py:73: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_r1_replay.py:150: in cells
+    return read(CELLS)['cells']
+           ^^^^^^^^^^^
+scripts/grm_c7_amendment7.py:28: in read
+    return json.loads(Path(p).read_text())
+                      ^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_scout_fix6/c2_replay_cells.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_scout_fix6/c2_replay_cells.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+__________ test_the_20_unresolved_executions_are_excluded_not_imputed __________
+
+    def test_the_20_unresolved_executions_are_excluded_not_imputed():
+>       unresolved = run.read(run.FIX6 / 'c2_unresolved.json')
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_r1_cpu_gate.py:81: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_c7_amendment7.py:28: in read
+    return json.loads(Path(p).read_text())
+                      ^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/pathlib.py:1029: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_scout_fix6/c2_unresolved.json')
+mode = 'r', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_scout_fix6/c2_unresolved.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+______________________ test_registered_input_drift_is_red ______________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x735084519190>
+
+    def test_registered_input_drift_is_red(monkeypatch):
+        original = run.sha
+        target = run.ROOT / 'core/grm_admission.py'
+        monkeypatch.setattr(
+            run, 'sha',
+            lambda p: 'bad' if Path(p) == target else original(p))
+        with pytest.raises(ValueError, match='R1_INPUT_SHA_MISMATCH'):
+>           run.verify()
+
+tests/test_grm_r1_replay.py:124: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/grm_r1_replay.py:129: in verify
+    need(sha(p) == digest, 'R1_INPUT_SHA_MISMATCH: ' + path)
+         ^^^^^^
+tests/test_grm_r1_replay.py:122: in <lambda>
+    lambda p: 'bad' if Path(p) == target else original(p))
+                                              ^^^^^^^^^^^
+scripts/grm_c7_amendment7.py:32: in sha
+    with Path(p).open('rb') as f:
+         ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_scout_fix6/c2_replay_cells.json')
+mode = 'rb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_scout_fix6/c2_replay_cells.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_grm_lt1_1_child_spawn.py::test_the_child_entry_point_blocks_on_a_drifted_chain[A]
+FAILED tests/test_grm_lt1_1_child_spawn.py::test_the_child_entry_point_blocks_on_a_drifted_chain[A+]
+FAILED tests/test_grm_lt1_1_child_spawn.py::test_the_old_argv_reproduces_the_leads_worker_exit_1
+FAILED tests/test_grm_lt1_1_idle_wait.py::test_run_cell_raises_only_after_the_bound
+FAILED tests/test_grm_lt1_1_preflight.py::test_a_planted_drift_in_our_own_amendment_goes_red
+FAILED tests/test_grm_lt1_1_preflight.py::test_a_planted_drift_in_a_new_input_goes_red
+FAILED tests/test_grm_lt1_1_preflight.py::test_a_broken_chain_goes_red - File...
+FAILED tests/test_grm_lt1_1_preflight.py::test_a_tampered_fixture_goes_red - ...
+FAILED tests/test_grm_lt1_1_preflight.py::test_an_unpinned_admission_rule_goes_red
+FAILED tests/test_grm_lt1_1_preflight.py::test_apply4_protocol_binding_still_passes_untouched
+FAILED tests/test_grm_lt1_1_production_turns.py::test_a_supersede_turn_retires_the_old_value[A]
+FAILED tests/test_grm_lt1_1_production_turns.py::test_a_supersede_turn_retires_the_old_value[A+]
+FAILED tests/test_grm_lt1_1_production_turns.py::test_the_retired_nodes_leave_the_route_candidate_base[A]
+FAILED tests/test_grm_lt1_1_production_turns.py::test_the_retired_nodes_leave_the_route_candidate_base[A+]
+FAILED tests/test_grm_lt1_1_production_turns.py::test_the_old_worker_would_have_left_the_stale_value_active
+FAILED tests/test_grm_lt1_1_production_turns.py::test_alias_turns_reach_a_node_naming_both_names[A]
+FAILED tests/test_grm_lt1_1_production_turns.py::test_alias_turns_reach_a_node_naming_both_names[A+]
+FAILED tests/test_grm_lt1_1_resume_route.py::test_the_shipped_seam_reproduces_the_leads_keyerror
+FAILED tests/test_grm_lt1_1_resume_route.py::test_the_fixed_seam_does_not_raise_keyerror
+FAILED tests/test_grm_lt1_1_resume_route.py::test_the_resume_route_selects_the_next_pending_cell
+FAILED tests/test_grm_lt1_1_runner.py::test_fake_path_writes_real_receipts_and_summary_reads_them[A]
+FAILED tests/test_grm_lt1_1_runner.py::test_fake_path_writes_real_receipts_and_summary_reads_them[A+]
+FAILED tests/test_grm_lt1_1_runner.py::test_resume_after_interrupt_skips_completed_cells
+FAILED tests/test_grm_lt1_1_runner.py::test_a_resumed_cell_chains_to_its_predecessor_checkpoint
+FAILED tests/test_grm_lt1_amendment1.py::test_c7_checkpoint_roundtrip_and_corruption
+FAILED tests/test_grm_lt1_amendment1.py::test_orphan_red_and_checkpoint_process_integrity
+FAILED tests/test_grm_lt1_amendment3.py::test_forged_amendment_checksum_refused
+FAILED tests/test_grm_lt1_amendment3.py::test_rehashed_stale_amendment_chain_refused[registration_sha256]
+FAILED tests/test_grm_lt1_amendment3.py::test_rehashed_stale_amendment_chain_refused[previous_amendment_sha256]
+FAILED tests/test_grm_lt1_amendment3.py::test_rehashed_stale_amendment_chain_refused[order_sha256]
+FAILED tests/test_grm_lt1_amendment3.py::test_rehashed_stale_amendment_chain_refused[supersedes_amendment_sha256]
+FAILED tests/test_grm_lt1_amendment3.py::test_rehashed_protocol_forgery_refused[admission_rule-all_tokens]
+FAILED tests/test_grm_lt1_amendment3.py::test_rehashed_protocol_forgery_refused[budget_gpu_seconds-20000]
+FAILED tests/test_grm_lt1_amendment3.py::test_rehashed_protocol_forgery_refused[cells-value2]
+FAILED tests/test_grm_lt1_amendment3.py::test_rehashed_protocol_forgery_refused[arms-value3]
+FAILED tests/test_grm_lt1_amendment3.py::test_rehashed_protocol_forgery_refused[fixture_manifest_sha256-0000000000000000000000000000000000000000000000000000000000000000]
+FAILED tests/test_grm_lt1_amendment3.py::test_rehashed_core_pin_forgery_refused[before_sha256]
+FAILED tests/test_grm_lt1_amendment3.py::test_rehashed_core_pin_forgery_refused[after_sha256]
+FAILED tests/test_grm_lt1_amendment3.py::test_rehashed_core_omission_refused
+FAILED tests/test_grm_lt1_amendment3.py::test_rehashed_override_forgery_refused
+FAILED tests/test_grm_lt1_amendment3.py::test_rehashed_fixture_override_refused
+FAILED tests/test_grm_lt1_amendment3.py::test_rehashed_new_input_shadow_refused
+FAILED tests/test_grm_lt1_amendment3.py::test_missing_amendment_refused - Fil...
+FAILED tests/test_grm_lt1_amendment3.py::test_stale_working_source_refused - ...
+FAILED tests/test_grm_lt1_amendment3.py::test_old_checkpoint_binding_refused
+FAILED tests/test_grm_lt1_amendment4.py::test_rehashed_resume_forgery_refused[parent_sha256-0000000000000000000000000000000000000000000000000000000000000000-CHAIN]
+FAILED tests/test_grm_lt1_amendment4.py::test_rehashed_resume_forgery_refused[resume_at-A-041-048-PROTOCOL]
+FAILED tests/test_grm_lt1_amendment4.py::test_rehashed_resume_forgery_refused[budget_seconds-20000-PROTOCOL]
+FAILED tests/test_grm_lt1_amendment4.py::test_rehashed_resume_forgery_refused[retry_directory-arbitrary-PROTOCOL]
+FAILED tests/test_grm_lt1_amendment4.py::test_rehashed_resume_forgery_refused[retain_completed-value4-PROTOCOL]
+FAILED tests/test_grm_lt1_amendment4.py::test_rehashed_resume_forgery_refused[new_inputs-value5-SCOPE]
+FAILED tests/test_grm_lt1_amendment4.py::test_stale_checksum_refused - FileNo...
+FAILED tests/test_grm_lt1_fix6.py::test_frozen_cpu_arena_70_profiles - assert...
+FAILED tests/test_grm_lt1.py::test_c7_checkpoint_roundtrip_and_corruption - F...
+FAILED tests/test_grm_r1_amendment1.py::test_rebinding_does_not_weaken_the_other_inputs
+FAILED tests/test_grm_r1_amendment2.py::test_archive_stale_sessions_moves_only_that_cells_scratch
+FAILED tests/test_grm_r1_amendment2.py::test_archive_stale_sessions_is_a_noop_when_clean
+FAILED tests/test_grm_r1_amendment2.py::test_archive_stale_sessions_numbers_successive_attempts
+FAILED tests/test_grm_r1_amendment4.py::test_non_fit_receipt_is_create_only_and_unmeasured
+FAILED tests/test_grm_r1_cpu_gate.py::test_cpu_gate_covers_every_battery_and_side
+FAILED tests/test_grm_r1_cpu_gate.py::test_the_20_unresolved_executions_are_excluded_not_imputed
+FAILED tests/test_grm_r1_replay.py::test_registered_input_drift_is_red - File...
+62 failed, 478 passed, 111 skipped, 2 warnings in 345.24s (0:05:45)
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
