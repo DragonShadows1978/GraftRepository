@@ -1,0 +1,17 @@
+{
+  "schema": "grm.xm1.amendment_1_gates.v1",
+  "immutable": true,
+  "registration_sha256": "758fd3ac1231ed44937714a86009b557f554f026e9d85773cb730074e04439e8",
+  "order": "orders/GRM_XM1_AMENDMENT_1.md",
+  "gates": [
+    "RED then GREEN: execute(mode=gpu), only device telemetry and RS4 run_arm stubbed; real reference_cell and scratch creation; isolated OUT/tmp absent",
+    "RED then GREEN: an ERROR GPT receipt cannot prevent the next GPT execute call",
+    "Ten GPT cells in order produce ten receipts and partial then PASS progress; deleting one reference blocks Qwen before loader or telemetry, including resume",
+    "Reference mismatch blocks Qwen but permits remaining GPT cells; scratch cleaned on exceptions",
+    "Immutable original registration and implementation pins; separate amendment overlays repo-relative pins and binds worker",
+    "All 60 commands accept appended --dry-run; worker leases itself, no outer flock",
+    "Final: python3 -m pytest -q --basetemp artifacts/grm_xm1/tmp tests/test_grm_xm1*.py tests/test_grm_rs4*.py; cleanup basetemp afterward"
+  ],
+  "evidence_limits": "Author CPU orchestration double with recorded RS4 outputs; no GPU numerical reproduction.",
+  "prior_art": "Unchanged GRM contributors (2026), RS4 replay/exact comparator and LT1 immutable receipt binding. Python tempfile scratch lifetime management. No new attention algorithm."
+}

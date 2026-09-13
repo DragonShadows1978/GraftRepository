@@ -81,3 +81,30 @@ Final command after all report/ledger writes:
 ```sh
 python3 -m pytest -q --basetemp artifacts/grm_xm1/tmp/pytest tests/test_grm_xm1*.py tests/test_grm_rs4*.py
 ```
+
+## Amendment 1 — both reported harness defects GREEN on CPU (2026-09-12)
+
+This section supersedes X0's harness execution instructions above. GPU parity remains unverified. The full amendment ledger is [AMENDMENT_1_LEDGER.md](AMENDMENT_1_LEDGER.md).
+
+- Scratch fix: `scripts/grm_xm1_parity.py:395` creates `artifacts/grm_xm1/worker_scratch`; `:397` owns and cleans each RS4 subtree independently of pytest basetemp, including exceptions.
+- Barrier fix: `scripts/grm_xm1_parity.py:472` hard-gates only non-GPT GPU cells, including resume; `:452` and `:520` record GPT progress after execution. CLI resume uses execute at `:559`. GPT cells continue after earlier failed references; exact comparison remains unchanged.
+- RED to GREEN: [amendment_1_RED.log](amendment_1_RED.log):114-119, five failed tests; [amendment_1_GREEN.log](amendment_1_GREEN.log):8-15, the same five passed plus the new binding test, six passed in 0.56 s. Missing-parent error is RED :110, scheduling STOP is RED :45; corresponding GREEN lines are :8 and :9.
+- Exact GPU execute branch on CPU: [test_grm_xm1_amendment_1.py](../../tests/test_grm_xm1_amendment_1.py):61 runs ten GPT cells from an empty isolated cells/gpu tree with its OUT/tmp absent. Only telemetry and RS4 run_arm are stubbed; real scratch, assembly, comparator, binding, cell receipts and progress barrier execute. Nine partial BLOCKED receipts precede PASS. Deleting a reference blocks Qwen, including resumed execute and CLI. Numeric/served mismatch remains blocking for Qwen but permits remaining GPT cells. Fake GPU-mode test receipts are removed with basetemp; they are CPU evidence only.
+
+Registration amendment: [registration_amendment_1.json](registration_amendment_1.json), SHA256 `a50046f9f790825503893613468cf9de40c0b3a8243204fc85ed626652a5de8d`, bound to unchanged registration `758fd3ac1231ed44937714a86009b557f554f026e9d85773cb730074e04439e8` and previous implementation pins. Worker validates the separate overlay and includes its SHA in new receipt bindings. All pins are repo-relative.
+
+[lead_commands.txt](lead_commands.txt) now explicitly says **the worker leases itself; DO NOT use an outer flock**. All 60 commands use `--output artifacts/grm_xm1/amendment_1_run`; this preserves the original failed lead receipts and bindings. GPT progress receipts will be in `amendment_1_run/barriers/gpu/`. Existing X0 CPU receipts/manifests are historical; do not resume them with the rebound worker. All 60 appended `--dry-run` checks run in the final suite.
+
+### Prior art
+
+Unchanged: GRM contributors (2026), RS4 replay/exact comparator and LT1 immutable receipts/source bindings. Python tempfile standard-library scratch lifetime management reused; our changes establish a separate worker parent and correct reference-gate placement. No new attention algorithm. Existing RoFormer and MLA literature leads above are unchanged and not newly verified.
+
+Deviations: none from amendment scope. RED: GPU numeric reproduction and the original loader-only whole-production replay are **not claimed fixed** by stubbed RS4 model execution. Historical source-text differences, missing adapter interfaces and prior mutation residual remain unchanged. Author unit evidence only, no blind verification claim.
+
+Process safety: no GPU, git, subagents, background waits, services, process kills or signals; foreground CPU calls below 10 min. Only authorized pytest basetemp and temporary scratch cleanup. Seat: `gpt-6-astra`, reasoning `high`.
+
+Final suite (run after these report writes; terminal result is authoritative), then remove basetemp:
+
+```text
+python3 -m pytest -q --basetemp artifacts/grm_xm1/tmp tests/test_grm_xm1*.py tests/test_grm_rs4*.py
+```

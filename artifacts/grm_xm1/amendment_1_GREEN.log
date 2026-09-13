@@ -1,0 +1,15 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.2, pluggy-1.6.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /mnt/ForgeRealm/wt/grm-xm1
+plugins: anyio-4.13.0
+collecting ... collected 6 items
+
+tests/test_grm_xm1_amendment_1.py::test_worker_scratch_without_pytest_basetemp PASSED [ 16%]
+tests/test_grm_xm1_amendment_1.py::test_failed_reference_does_not_block_next_gpt PASSED [ 33%]
+tests/test_grm_xm1_amendment_1.py::test_ten_gpu_execute_cells_then_deleted_reference_stops_qwen PASSED [ 50%]
+tests/test_grm_xm1_amendment_1.py::test_mismatched_reference_stops_qwen_but_not_gpt PASSED [ 66%]
+tests/test_grm_xm1_amendment_1.py::test_worker_scratch_cleanup_on_error PASSED [ 83%]
+tests/test_grm_xm1_amendment_1.py::test_amendment_binds_worker_and_preserves_original_registration PASSED [100%]
+
+============================== 6 passed in 0.56s ===============================

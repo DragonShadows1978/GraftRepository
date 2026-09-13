@@ -34,6 +34,7 @@ from scripts.grm_rs4_row_split import (live_band_bounds, split_full_row,
 
 REG = OUT/'registration.json'
 IMPL = OUT/'implementation_pins.json'
+AMENDMENT = OUT/'registration_amendment_1.json'
 
 class XM1Error(RuntimeError):
     pass
@@ -47,7 +48,13 @@ def validate_registration():
     impl = read(IMPL)
     if impl['registration_sha256'] != sha(REG):
         raise XM1Error('implementation amendment has wrong registration binding')
-    for rel, digest in impl['pins'].items():
+    # Prior art: LT1 immutable receipt/source bindings (GRM, 2026).
+    # Amendment 1 overlays only explicitly rebound files; originals stay intact.
+    amendment = read(AMENDMENT)
+    if (amendment['registration_sha256'] != sha(REG)
+            or amendment['previous_implementation_sha256'] != sha(IMPL)):
+        raise XM1Error('amendment 1 has wrong registration/implementation binding')
+    for rel, digest in {**impl['pins'], **amendment['pins']}.items():
         if Path(rel).is_absolute() or '..' in Path(rel).parts or sha(ROOT/rel) != digest:
             raise XM1Error(f'implementation source drift: {rel}')
     return reg
@@ -382,9 +389,12 @@ def reference_diff(expected, observed):
 def reference_cell(cell, reg):
     """RS4's own run_arm, unchanged: full session state replay per cell."""
     from scripts import grm_rs4_ceiling_gpu as rs4
-    # Keep RS4 temporary repository creation in the authorized worktree and
-    # clean it on all exits. Do not patch its loader/serve/observer arithmetic.
-    with tempfile.TemporaryDirectory(dir=OUT/'tmp', prefix='rs4_') as tmp:
+    # Prior art: Python tempfile.TemporaryDirectory lifetime management;
+    # GRM RS4 (2026) repository scratch. Ours: worker-owned parent, disjoint
+    # from pytest's disposable basetemp; numerical replay is unchanged.
+    scratch = OUT/'worker_scratch'
+    scratch.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(dir=scratch, prefix='rs4_') as tmp:
         original = tempfile.mkdtemp
         def local_temp(*args, **kw):
             kw['dir'] = tmp
@@ -407,7 +417,8 @@ def cell_path(directory, cell, mode):
 
 
 def binding(cell, mode):
-    return dict(cell=cell, mode=mode, registration_sha256=sha(REG), implementation_sha256=sha(IMPL))
+    return dict(cell=cell, mode=mode, registration_sha256=sha(REG),
+                implementation_sha256=sha(IMPL), amendment_sha256=sha(AMENDMENT))
 
 
 def verify_receipt(path, cell, mode):
@@ -426,12 +437,23 @@ def barrier(directory, reg):
         if not path.exists():
             missing.append(str(path.relative_to(directory)))
             continue
-        r = verify_receipt(path, cell, 'gpu')
+        try:
+            r = verify_receipt(path, cell, 'gpu')
+        except XM1Error as exc:
+            differences[path.name] = dict(status='BINDING_MISMATCH', error=str(exc))
+            continue
         expected = reg['rs4_references'][f"{cell['arm']}:{cell['probe']}"]
         diff = reference_diff(expected, r.get('result', {}).get('reference_row', {}))
         if r['status'] != 'PASS' or diff:
             differences[path.name] = dict(status=r['status'], diff=diff)
     return dict(status='FAIL' if differences else 'BLOCKED' if missing else 'PASS', missing=missing, differences=differences)
+
+
+def reference_progress(directory, cell, reg):
+    # Prior art: RS4 exact comparison and LT1 create-only receipts (GRM, 2026).
+    # Partial/failed reference progress is evidence, not a GPT scheduling gate.
+    create(Path(directory)/'barriers'/'gpu'/f'{time.time_ns()}.json',
+           dict(binding=binding(cell, 'gpu'), barrier=barrier(directory, reg)))
 
 
 def device_memory():
@@ -445,12 +467,17 @@ def device_memory():
 
 def execute(cell, reg, directory=OUT, mode='cpu', loader=None):
     path = cell_path(directory, cell, mode)
-    if path.exists():
-        return verify_receipt(path, cell, mode)
-    if mode == 'gpu':
+    # Prior art: GRM XM1/RS4 reference barrier (2026). Amendment 1: gate
+    # dependent models before both fresh execution and resume, never GPT-OSS.
+    if mode == 'gpu' and cell['model'] != 'gpt-oss':
         gate = barrier(directory, reg)
-        if gate['status']=='FAIL' or (cell['model']!='gpt-oss' and gate['status']!='PASS'):
+        if gate['status'] != 'PASS':
             raise XM1Error('STOP: GPT-OSS RS4 parity barrier '+json.dumps(gate))
+    if path.exists():
+        result = verify_receipt(path, cell, mode)
+        if mode == 'gpu' and cell['model'] == 'gpt-oss':
+            reference_progress(directory, cell, reg)
+        return result
     start = time.monotonic()
     result = dict(binding=binding(cell, mode), status='BLOCKED', evidence_class='CPU loader double' if mode=='cpu' else 'GPU end-to-end cell',
                   memory={'before':None, 'after':None, 'peak':None}, gpu_executed=False)
@@ -490,6 +517,8 @@ def execute(cell, reg, directory=OUT, mode='cpu', loader=None):
                     result['memory']['after'] = {'error':str(exc)}
     result['elapsed_s'] = time.monotonic()-start
     create(path, result)
+    if mode == 'gpu' and cell['model'] == 'gpt-oss':
+        reference_progress(directory, cell, reg)
     return result
 
 
@@ -527,7 +556,7 @@ def main(argv=None):
         from scripts.grm_cmc1_gpu_arms import gpu_lease
         target = cell_path(args.output,cell,'gpu')
         if target.exists():
-            result = verify_receipt(target,cell,'gpu')
+            result = execute(cell,reg,args.output,'gpu')
         else:
             with gpu_lease(285,0):
                 attempts = args.output/'attempts'/cell['model']
