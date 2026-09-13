@@ -293,6 +293,8 @@ def test_child_inherits_the_campaign_root(tmp_path, monkeypatch):
 
 
 # ---------------------- THE gate: the real resume route, with --out set
+@pytest.mark.campaign_receipt(
+    registration="artifacts/grm_d1/lt1_1/registration.json 02b44d02 + amendments 1-13 (LT1.1 r3 chain; GRM-D2 moved core/grm_admission.py, core/grm_alias_fold.py, core/grm_fold_alias_guard.py, core/grm_fold_retain.py and scripts/grm_lt1_1.py, so the chain preflight returns BLOCKED with INPUT_SHA_MISMATCH on the four core files and RUNNER_SHA_MISMATCH on the runner) -- the spawned child dies LT11_CHILD_PREFLIGHT_BLOCKED on those same five mismatches (WORKER_EXIT_1 -> rc 2)")
 
 @pytest.mark.parametrize('label', list(ARM_MATRIX))
 def test_real_resume_route_through_pending_and_one_run_cell(

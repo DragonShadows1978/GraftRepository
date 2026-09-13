@@ -219,6 +219,8 @@ def test_the_child_entry_point_blocks_on_a_drifted_chain(arm):
 
 
 # ----------------------------------------- THE gate: spawn through run_cell
+@pytest.mark.campaign_receipt(
+    registration="artifacts/grm_d1/lt1_1/registration.json 02b44d02 + amendments 1-13 (LT1.1 r3 chain; GRM-D2 moved core/grm_admission.py, core/grm_alias_fold.py, core/grm_fold_alias_guard.py, core/grm_fold_retain.py and scripts/grm_lt1_1.py, so the chain preflight returns BLOCKED with INPUT_SHA_MISMATCH on the four core files and RUNNER_SHA_MISMATCH on the runner) -- the spawned child dies LT11_CHILD_PREFLIGHT_BLOCKED on those same five mismatches (WORKER_EXIT_1 -> run_cell False)")
 
 @pytest.mark.parametrize('arm', ['A', 'A+'])
 def test_run_cell_spawns_a_child_that_writes_receipts(arm, monkeypatch,

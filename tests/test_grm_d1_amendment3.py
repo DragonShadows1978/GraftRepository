@@ -174,6 +174,8 @@ def test_the_open_host_blocker_is_recorded_not_hidden(doc):
     assert 'pre-existing' in blocker['status']
 
 
+@pytest.mark.campaign_receipt(
+    registration="artifacts/grm_d1/lt1_1/registration.json 02b44d02 + amendments 1-13 (LT1.1 r3 chain; GRM-D2 moved core/grm_admission.py, core/grm_alias_fold.py, core/grm_fold_alias_guard.py, core/grm_fold_retain.py and scripts/grm_lt1_1.py, so the chain preflight returns BLOCKED with INPUT_SHA_MISMATCH on the four core files and RUNNER_SHA_MISMATCH on the runner)")
 def test_the_host_blocker_claim_was_true_and_is_now_resolved():
     """INVERTED by the lead's ruling of 2026-09-11, with the receipt.
 

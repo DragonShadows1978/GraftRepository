@@ -129,6 +129,8 @@ def _rewrite(path, doc):
 
 
 # --------------------------------------------------------------- it passes
+@pytest.mark.campaign_receipt(
+    registration="artifacts/grm_d1/lt1_1/registration.json 02b44d02 + amendments 1-13 (LT1.1 r3 chain; GRM-D2 moved core/grm_admission.py, core/grm_alias_fold.py, core/grm_fold_alias_guard.py, core/grm_fold_retain.py and scripts/grm_lt1_1.py, so the chain preflight returns BLOCKED with INPUT_SHA_MISMATCH on the four core files and RUNNER_SHA_MISMATCH on the runner)")
 
 @pytest.mark.parametrize('arm', ['A', 'A+'])
 def test_the_chain_preflight_is_ready_on_this_tree(arm):
@@ -139,12 +141,16 @@ def test_the_chain_preflight_is_ready_on_this_tree(arm):
     assert gate['gpu_executed'] is False
 
 
+@pytest.mark.campaign_receipt(
+    registration="artifacts/grm_d1/lt1_1/registration.json 02b44d02 + amendments 1-13 (LT1.1 r3 chain; GRM-D2 moved core/grm_admission.py, core/grm_alias_fold.py, core/grm_fold_alias_guard.py, core/grm_fold_retain.py and scripts/grm_lt1_1.py, so the chain preflight returns BLOCKED with INPUT_SHA_MISMATCH on the four core files and RUNNER_SHA_MISMATCH on the runner)")
 def test_no_input_sha_mismatch_anywhere(pinned):
     """The blocker the ruling resolves must be gone, by name."""
     gate = runner.lt1_1_preflight('A')
     assert not any('INPUT_SHA_MISMATCH' in r for r in gate['reasons'])
 
 
+@pytest.mark.campaign_receipt(
+    registration="artifacts/grm_d1/lt1_1/registration.json 02b44d02 + amendments 1-13 (LT1.1 r3 chain; GRM-D2 moved core/grm_admission.py, core/grm_alias_fold.py, core/grm_fold_alias_guard.py, core/grm_fold_retain.py and scripts/grm_lt1_1.py, so the chain preflight returns BLOCKED with INPUT_SHA_MISMATCH on the four core files and RUNNER_SHA_MISMATCH on the runner)")
 def test_it_checks_the_classes_the_ruling_names(pinned):
     """sha-bound inputs, fixture sha, cell schedule, budget."""
     gate = runner.lt1_1_preflight('A')
@@ -159,6 +165,8 @@ def test_it_checks_the_classes_the_ruling_names(pinned):
     assert 'registration.json' in gate['document_sha256']
 
 
+@pytest.mark.campaign_receipt(
+    registration="artifacts/grm_d1/lt1_1/registration.json 02b44d02 + amendments 1-13 (LT1.1 r3 chain; GRM-D2 moved core/grm_admission.py, core/grm_alias_fold.py, core/grm_fold_alias_guard.py, core/grm_fold_retain.py and scripts/grm_lt1_1.py, so the chain preflight returns BLOCKED with INPUT_SHA_MISMATCH on the four core files and RUNNER_SHA_MISMATCH on the runner)")
 def test_the_ruling_is_carried_in_the_receipt(pinned):
     gate = runner.lt1_1_preflight('A')
     assert 'frozen receipt' in gate['ruling']
@@ -253,6 +261,8 @@ def test_an_unpinned_admission_rule_goes_red(monkeypatch):
 
 # ------------------------------------------------------- the parent lineage
 
+@pytest.mark.campaign_receipt(
+    registration="artifacts/grm_d1/lt1_1/registration.json 02b44d02 + amendments 1-13 (LT1.1 r3 chain; GRM-D2 moved core/grm_admission.py, core/grm_alias_fold.py, core/grm_fold_alias_guard.py, core/grm_fold_retain.py and scripts/grm_lt1_1.py, so the chain preflight returns BLOCKED with INPUT_SHA_MISMATCH on the four core files and RUNNER_SHA_MISMATCH on the runner)")
 def test_lt1_identity_is_recorded_not_gated(pinned):
     gate = runner.lt1_1_preflight('A')
     parent = gate['parent']
@@ -308,6 +318,8 @@ def test_the_old_lt1_gate_is_no_longer_called():
 
 # ---------------------------- the amendment-3 blocker, INVERTED with receipt
 
+@pytest.mark.campaign_receipt(
+    registration="artifacts/grm_d1/lt1_1/registration.json 02b44d02 + amendments 1-13 (LT1.1 r3 chain; GRM-D2 moved core/grm_admission.py, core/grm_alias_fold.py, core/grm_fold_alias_guard.py, core/grm_fold_retain.py and scripts/grm_lt1_1.py, so the chain preflight returns BLOCKED with INPUT_SHA_MISMATCH on the four core files and RUNNER_SHA_MISMATCH on the runner)")
 def test_the_amendment3_host_blocker_is_resolved():
     """Inverts `test_the_host_blocker_claim_is_true_right_now`.
 
@@ -333,6 +345,8 @@ def test_the_amendment3_host_blocker_is_resolved():
 
 
 # --------------------------------------------------- the route, host gate ON
+@pytest.mark.campaign_receipt(
+    registration="artifacts/grm_d1/lt1_1/registration.json 02b44d02 + amendments 1-13 (LT1.1 r3 chain; GRM-D2 moved core/grm_admission.py, core/grm_alias_fold.py, core/grm_fold_alias_guard.py, core/grm_fold_retain.py and scripts/grm_lt1_1.py, so the chain preflight returns BLOCKED with INPUT_SHA_MISMATCH on the four core files and RUNNER_SHA_MISMATCH on the runner)")
 
 @pytest.mark.parametrize('arm', ['A', 'A+'])
 def test_dry_lease_passes_with_the_host_gate_on(arm, tmp_path):
@@ -346,6 +360,8 @@ def test_dry_lease_passes_with_the_host_gate_on(arm, tmp_path):
     assert value['pinned']['alias_fold_merge'] is (arm == 'A+')
     assert 'INPUT_SHA_MISMATCH' not in json.dumps(value)
 
+@pytest.mark.campaign_receipt(
+    registration="artifacts/grm_d1/lt1_1/registration.json 02b44d02 + amendments 1-13 (LT1.1 r3 chain; GRM-D2 moved core/grm_admission.py, core/grm_alias_fold.py, core/grm_fold_alias_guard.py, core/grm_fold_retain.py and scripts/grm_lt1_1.py, so the chain preflight returns BLOCKED with INPUT_SHA_MISMATCH on the four core files and RUNNER_SHA_MISMATCH on the runner)")
 
 @pytest.mark.parametrize('arm', ['A', 'A+'])
 def test_dry_lease_passes_from_the_cli_without_no_host_gate(arm, tmp_path):

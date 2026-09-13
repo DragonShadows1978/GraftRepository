@@ -56,6 +56,8 @@ def registration():
 
 # ------------------------------------------------------------- the chain
 
+@pytest.mark.campaign_receipt(
+    registration="artifacts/grm_a1/gpu_contrast_registration.json + gpu_contrast_amendment_1..4.json worker pin (GRM-D2 edited scripts/grm_a1_gpu_contrast.py, so the last amendment worker sha 47f2f7d1 no longer matches the tree)")
 def test_amendment_chain_is_sha_bound_to_the_registration():
     base_sha, amendments = W.load_amendments(REGISTRATION)
     assert base_sha.startswith('329d5865'), base_sha

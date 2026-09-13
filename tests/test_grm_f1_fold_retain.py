@@ -679,6 +679,8 @@ def test_registration_present_and_shaped():
         assert not reg[key]['path'].startswith('/')
 
 
+@pytest.mark.campaign_receipt(
+    registration="artifacts/grm_d1/lt1_1/amendment13.json core_rebind (GRM-D2 moved core/grm_admission.py past the governing amendment pin 7912f291 -> bc5f7996; the amendment is a receipt of its day and is not rewritten)")
 def test_governing_amendment_rebinds_every_core_pin():
     """The rebind is what makes r3 runnable at all: LT1.1's preflight is
     sha-bound, and F1/F2/F5 all move core inputs.

@@ -1,0 +1,65 @@
+[
+  {
+    "module": "tests/test_grm_a1_gpu_contrast.py",
+    "marks_added_by_H3": 1,
+    "marked_functions_total": 28,
+    "node_ids_added_by_H3": 1,
+    "collected_node_ids_module_total": 28
+  },
+  {
+    "module": "tests/test_grm_d1_amendment1.py",
+    "marks_added_by_H3": 1,
+    "marked_functions_total": 1,
+    "node_ids_added_by_H3": 1,
+    "collected_node_ids_module_total": 1
+  },
+  {
+    "module": "tests/test_grm_d1_amendment3.py",
+    "marks_added_by_H3": 1,
+    "marked_functions_total": 1,
+    "node_ids_added_by_H3": 1,
+    "collected_node_ids_module_total": 1
+  },
+  {
+    "module": "tests/test_grm_f1_fold_retain.py",
+    "marks_added_by_H3": 1,
+    "marked_functions_total": 1,
+    "node_ids_added_by_H3": 1,
+    "collected_node_ids_module_total": 1
+  },
+  {
+    "module": "tests/test_grm_f1_r3_receipts.py",
+    "marks_added_by_H3": 8,
+    "marked_functions_total": 8,
+    "node_ids_added_by_H3": 16,
+    "collected_node_ids_module_total": 16
+  },
+  {
+    "module": "tests/test_grm_f1_resume_out_root.py",
+    "marks_added_by_H3": 1,
+    "marked_functions_total": 1,
+    "node_ids_added_by_H3": 3,
+    "collected_node_ids_module_total": 3
+  },
+  {
+    "module": "tests/test_grm_lt1_1_child_spawn.py",
+    "marks_added_by_H3": 1,
+    "marked_functions_total": 1,
+    "node_ids_added_by_H3": 2,
+    "collected_node_ids_module_total": 2
+  },
+  {
+    "module": "tests/test_grm_lt1_1_preflight.py",
+    "marks_added_by_H3": 8,
+    "marked_functions_total": 8,
+    "node_ids_added_by_H3": 11,
+    "collected_node_ids_module_total": 11
+  },
+  {
+    "module": "tests/test_grm_r1_amendment2.py",
+    "marks_added_by_H3": 1,
+    "marked_functions_total": 9,
+    "node_ids_added_by_H3": 1,
+    "collected_node_ids_module_total": 9
+  }
+]
