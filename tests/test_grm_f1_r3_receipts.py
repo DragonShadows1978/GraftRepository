@@ -121,6 +121,8 @@ def test_eleven_rows_differ_not_nine():
     assert 'recall_1_25' in differ and 'recall_1_50' in differ
 
 
+@pytest.mark.campaign_receipt(
+    registration="artifacts/grm_f1/lt1_1_r3/registration.json + amendment13.json (reads the gitignored r3 checkpoint/probe trees under artifacts/grm_f1/lt1_1_r3/run_*/cells/, absent from a fresh worktree)")
 @pytest.mark.parametrize('row', ['recall_3_10', 'recall_5_50', 'recall_7_10',
                                  'recall_7_25', 'recall_7_50'])
 def test_every_a_prime_loss_is_a_width_eviction(row):
@@ -136,6 +138,8 @@ def test_every_a_prime_loss_is_a_width_eviction(row):
     assert len(info['mount_plan']) == 3, info['mount_plan']
 
 
+@pytest.mark.campaign_receipt(
+    registration="artifacts/grm_f1/lt1_1_r3/registration.json + amendment13.json (reads the gitignored r3 checkpoint/probe trees under artifacts/grm_f1/lt1_1_r3/run_*/cells/, absent from a fresh worktree)")
 def test_recall_7_10_drops_the_only_node_holding_the_alias_relation():
     """The alias failure, at node resolution."""
     r = probes('Aprime')['recall_7_10']
@@ -153,6 +157,8 @@ def test_recall_7_10_drops_the_only_node_holding_the_alias_relation():
     assert 'still working on that' in r['memory']['answer']
 
 
+@pytest.mark.campaign_receipt(
+    registration="artifacts/grm_f1/lt1_1_r3/registration.json + amendment13.json (reads the gitignored r3 checkpoint/probe trees under artifacts/grm_f1/lt1_1_r3/run_*/cells/, absent from a fresh worktree)")
 def test_recall_5_50_twelve_is_a_cross_entity_leak():
     """The served "12" is Breakwater's z-coordinate in a co-mounted node."""
     r = probes('Aprime')['recall_5_50']
@@ -164,6 +170,8 @@ def test_recall_5_50_twelve_is_a_cross_entity_leak():
     assert leak, seated
 
 
+@pytest.mark.campaign_receipt(
+    registration="artifacts/grm_f1/lt1_1_r3/registration.json + amendment13.json (reads the gitignored r3 checkpoint/probe trees under artifacts/grm_f1/lt1_1_r3/run_*/cells/, absent from a fresh worktree)")
 def test_a_plus_prime_merged_digest_serves_the_alias():
     """A1 removes exactly the failure: relation AND value in ONE node."""
     r = probes('Aplusprime')['recall_7_10']
@@ -178,7 +186,8 @@ def test_a_plus_prime_merged_digest_serves_the_alias():
 
 
 # ------------------------------------------- the Beacon capture (item 3)
-
+@pytest.mark.campaign_receipt(
+    registration="artifacts/grm_f1/lt1_1_r3/registration.json + amendment13.json (reads the gitignored r3 checkpoint/probe trees under artifacts/grm_f1/lt1_1_r3/run_*/cells/, absent from a fresh worktree)")
 @pytest.mark.parametrize('arm,count,capture', [
     ('A0', 3, True), ('Aprime', 1, False), ('Aplusprime', 2, False)])
 def test_beacon_nodes_per_arm(arm, count, capture):
@@ -192,6 +201,8 @@ def test_beacon_nodes_per_arm(arm, count, capture):
     assert bool(captured) is capture, [g.get('kind') for g in captured]
 
 
+@pytest.mark.campaign_receipt(
+    registration="artifacts/grm_f1/lt1_1_r3/registration.json + amendment13.json (reads the gitignored r3 checkpoint/probe trees under artifacts/grm_f1/lt1_1_r3/run_*/cells/, absent from a fresh worktree)")
 def test_f2_excluded_the_alias_turns_from_the_fold_window():
     """Same fold, same cell: the SOURCE LIST is the receipt.
 
@@ -207,6 +218,8 @@ def test_f2_excluded_the_alias_turns_from_the_fold_window():
     assert 'Commtower' in ap[24]['text'] and 'Breakwater' in ap[24]['text']
 
 
+@pytest.mark.campaign_receipt(
+    registration="artifacts/grm_f1/lt1_1_r3/registration.json + amendment13.json (reads the gitignored r3 checkpoint/probe trees under artifacts/grm_f1/lt1_1_r3/run_*/cells/, absent from a fresh worktree)")
 def test_the_a_prime_alias_edge_is_the_source_of_nothing():
     """Never folded therefore never superseded: a lone raw edge forever."""
     nodes = manifest('Aprime')
@@ -218,7 +231,8 @@ def test_the_a_prime_alias_edge_is_the_source_of_nothing():
 
 
 # ------------------------------------------------------------- residency
-
+@pytest.mark.campaign_receipt(
+    registration="artifacts/grm_f1/lt1_1_r3/registration.json + amendment13.json (reads the gitignored r3 checkpoint/probe trees under artifacts/grm_f1/lt1_1_r3/run_*/cells/, absent from a fresh worktree)")
 @pytest.mark.parametrize('arm,nodes_n,active_n,max_seats', [
     ('A0', 199, 36, 94), ('Aprime', 228, 213, 95),
     ('Aplusprime', 200, 175, 94)])

@@ -281,6 +281,8 @@ def test_broken_chain_link_is_rejected(tmp_path):
         run.amendment(tmp_path)
 
 
+@pytest.mark.campaign_receipt(
+    registration="artifacts/grm_r1/amendment_2.json rebound_inputs (GRM-D2 edited scripts/grm_r1_replay.py for the margin_first default + the GRM_LEGACY_DEFAULTS pin, so the amendment pin 9301c7f8 no longer matches the tree)")
 def test_both_amendments_rebinds_accumulate():
     """A later link wins, but an earlier link's rebind is not dropped."""
     a = run.amendment()

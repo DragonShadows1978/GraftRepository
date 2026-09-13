@@ -12,6 +12,19 @@ Such a test fails on **its own source branch** once the core moves past its
 registration. It is a receipt, not a regression detector, and a tree-wide run
 must not report it as a regression of the tree under test.
 
+A third binding, added by GRM-H3: it may assert a **file set** a campaign
+froze — an attribution split, a pinned input list — that a later campaign grew
+past. Same rule; the receipt is of what the campaign registered, not of what
+the tree happens to contain today.
+
+**An inherited default is not a controlled arm** (GRM-D2, 2026-09-12). A test
+that is silent about a setting reads whatever the tree currently defaults to,
+so a default flip moves it without any assertion changing. A campaign receipt
+must PIN the arm it was registered under; an arm is a PIN, never an absence.
+This is why a completed campaign is marked rather than rebound to new
+defaults — rebinding would re-label a finished run as having been done under
+settings it never saw. See the GRM-H3 section.
+
 ## The marker
 
 ```python
@@ -449,6 +462,151 @@ asserts no `/mnt/ForgeRealm/wt/` path is bound as live code; plants a dead
 path per script and asserts the loud failure; and asserts the vacuous-zero
 guard. `tests/test_grm_f6_reproductions.py` pins each rebound script's number
 against its frozen receipt.
+
+## GRM-H3 delta: the D2 default flip (2026-09-12)
+
+GRM-D2 shipped the round-2 defaults, and in doing so moved
+`core/grm_admission.py`, `core/grm_alias_fold.py`,
+`core/grm_fold_alias_guard.py`, `core/grm_fold_retain.py` and
+`scripts/grm_lt1_1.py` — plus, as fallout of the same flip,
+`scripts/grm_r1_replay.py` and `scripts/grm_a1_gpu_contrast.py`.
+
+The **LT1.1 r3 chain** (registration `02b44d02` + amendments 1–13) pins the
+first five byte-for-byte. That campaign is COMPLETE: its r3 receipts are
+bound and its finding is registered. So its tests are receipts now, and the
+lead's ruling is **mark, do not rebind** — re-pinning a finished campaign's
+inputs to today's core would forge the receipt of what actually ran.
+
+Method as in H1/H2: every failure reproduced in an **isolated single-module
+process** first, marks on test FUNCTIONS, no assertion changed anywhere.
+D2's three-part suite reported 38 failures; 37 were receipts and got 23
+marks (a parametrised function travels under one mark), and 1 was not — see
+below.
+
+| Test module | Marks added | Marked fns | Node ids | Class | Why it is a receipt |
+|---|---:|---:|---:|---|---|
+| `tests/test_grm_f1_r3_receipts.py` | 8 | 8 | 16 | artifact-bound | reads the gitignored r3 cell trees under `artifacts/grm_f1/lt1_1_r3/run_*/cells/`. The 26 cell DIRECTORIES survive, but 0 of 26 `checkpoint/repository/manifest.json` and only 11 of 26 `probes.jsonl` do, so `manifest(arm)` dies `IndexError: list index out of range` on `cells[-1]` |
+| `tests/test_grm_lt1_1_preflight.py` | 8 | 8 | 11 | sha-bound | the chain preflight returns `BLOCKED` with `INPUT_SHA_MISMATCH` on all four moved core files and `RUNNER_SHA_MISMATCH: scripts/grm_lt1_1.py` |
+| `tests/test_grm_f1_resume_out_root.py` | 1 | 1 | 3 | sha-bound | drives the REAL resume route; the spawned child dies `LT11_CHILD_PREFLIGHT_BLOCKED` on those same five mismatches → `WORKER_EXIT_1` → rc 2 |
+| `tests/test_grm_lt1_1_child_spawn.py` | 1 | 1 | 2 | sha-bound | same child preflight, same five mismatches → `run_cell` returns False |
+| `tests/test_grm_d1_amendment3.py` | 1 | 1 | 1 | sha-bound | asserts LT1.1's governing gate is `READY`; it is `BLOCKED` by the same five |
+| `tests/test_grm_f1_fold_retain.py` | 1 | 1 | 1 | sha-bound | the governing amendment (13) pins `core/grm_admission.py` at `7912f291`; D2 moved it to `bc5f7996` |
+| `tests/test_grm_r1_amendment2.py` | 1 | 1 | 1 | sha-bound | `artifacts/grm_r1/amendment_2.json` pins `scripts/grm_r1_replay.py` at `9301c7f8`; D2 edited that script for the `margin_first` default and the `GRM_LEGACY_DEFAULTS` pin |
+| `tests/test_grm_a1_gpu_contrast.py` | 1 | 1 | 1 | sha-bound | the A1 amendment chain pins its worker `scripts/grm_a1_gpu_contrast.py` at `47f2f7d1`; D2 edited it (the verification repair at its line 654) |
+| `tests/test_grm_d1_amendment1.py` | 1 | 1 | 1 | file-set-bound | D1 amendment 1 froze an A1-vs-pre-A1 attribution split that a later campaign's docstring grew past — see below |
+| **9 modules** | **23** | **23** | **37** | | |
+
+The 38th failure, the other one in `test_grm_d1_amendment1.py`, was NOT a
+receipt and was pinned instead.
+
+### A receipt can be bound to a FILE SET, not only a sha
+
+`test_a1_files_are_attributed_to_a1_and_the_others_are_not` is marked, and it
+is worth saying why, because it is not an `INPUT_SHA_MISMATCH`.
+
+D1 amendment 1 froze a two-way attribution split:
+`A1_FILES = ('core/graft_repository.py', 'core/grm_runtime.py')`, everything
+else "pre-A1 drift, not attributable to A1". The test makes that attribution
+CHECKABLE: an A1 file must contain the string `alias_fold`, a non-A1 file must
+not. `core/graft_arena.py` is attributed pre-A1 — and a later campaign added
+the word `alias_fold` to a **GRM-A1 docstring** inside it (line 2195,
+describing why A1 pins `retain=False`). Prose, not live code; the substring
+scan cannot tell the difference.
+
+So the receipt here is bound to the FILE SET the amendment froze, which a
+later campaign's documentation grew past. Rebinding would mean editing
+`A1_FILES` in a completed amendment's generator — forging what that amendment
+attributed on its day. Same rule as a sha: a campaign's registration is a
+receipt of what was true when it ran.
+
+### Failures that are NOT receipts
+
+One of the 38.
+
+`test_grm_d1_amendment1.py::test_amendment1_no_longer_owns_lead_commands`
+asserts a fact about the CURRENT tree — `artifacts/grm_d1/lt1_1/lead_commands.txt`
+is owned by some amendment that is not amendment 1, names
+`scripts/grm_lt1_1.py`, and no longer carries the dead
+`grm_lt1.py --run --registration …` shape. **Every one of those assertions
+still passes.** What broke is the test's own OWNER PROBE:
+
+```python
+latest = max(int(p.stem.replace('amendment', ''))
+             for p in am.OUT.glob('amendment[0-9]*.json'))
+assert 'amendment %d' % latest in text
+```
+
+It assumed the highest-numbered amendment always regenerates the file.
+Amendments 10–13 are campaign RECORDS — bound receipts of runs that already
+happened, written by `scripts/grm_f1_register_lt11_r3_amd13.py` and friends —
+and none of them rewrites `lead_commands.txt`. The last that did was
+amendment 9, which the file says in its own first line. So the probe asked the
+file to name an amendment that never wrote it. Marking that would have filed a
+stale probe under a label meaning "not our problem".
+
+Fixed as a PIN, not an assertion change: `latest` is now read from the file's
+own header. Two notes on the shape:
+
+* The match is an **anchored regex on the header line**, not the original
+  `'amendment %d' % latest in text` substring. That substring passes off any
+  sha line that happens to carry the number — `# amendment 7  sha256: …` — so
+  a *wrong* `latest` could be confirmed by an unrelated line. Verified: with
+  the wrong answer 7, the old probe returns True and the new one returns
+  False. A gate a wrong answer can satisfy is not a gate (the GRM-F6
+  vacuous-zero rule, one line up from a dead glob).
+* Globbing `scripts/grm_d1_amendment[0-9]*.py` instead would have been the
+  same bug: those scripts stop at 7, so it would have "passed" at 7 purely by
+  that substring accident, while the real owner is 9.
+
+### The D2 rule: an inherited default is not a controlled arm
+
+D2 flipped `GRM_ADMISSION_RULE`, the C2 profile, and the four fold/alias flags
+to ON **as shipped defaults**. A test that was silent about those settings
+used to get the old values for free; it now gets the new ones for free. In
+both cases it is reading an INHERITED default, not a pinned arm — and an
+inherited default is not a controlled arm.
+
+The consequence for this document: a campaign receipt must pin the arm it was
+registered under, never rely on the tree's default agreeing with it.
+`scripts/grm_r1_replay.py` is the worked example — D2 gave it an explicit
+`R1_RULE_PIN_FAILED: arm=off observed=margin_first` rather than letting an
+absent variable stand for "off", because *an arm is a PIN, never an absence*.
+The same reasoning is why D2's own tests were re-pinned with
+`GRM_LEGACY_DEFAULTS=1` in a fixture instead of having their assertions
+relaxed, and why rebinding the LT1.1 chain to the new defaults would have been
+wrong: the r3 receipts record a run under the OLD defaults with the four flags
+pinned ON explicitly. Re-pinning would silently re-label that run as having
+been done under settings it never saw.
+
+### Gates (GRM-H3, D2 tree, 2026-09-12)
+
+```
+$ python3 -m pytest -q --basetemp artifacts/grm_h3/tmp $(ls tests/test_grm_*.py | sed -n 1,70p)
+1129 passed, 360 skipped, 2 warnings in 26.05s
+
+$ python3 -m pytest -q --basetemp artifacts/grm_h3/tmp $(ls tests/test_grm_*.py | sed -n 71,101p)
+540 passed, 111 skipped, 2 warnings in 461.64s (0:07:41)
+
+$ python3 -m pytest -q --basetemp artifacts/grm_h3/tmp $(ls tests/test_grm_*.py | sed -n 102,146p)
+1225 passed, 104 skipped, 2 warnings in 239.39s (0:03:59)
+
+$ python3 -m pytest -q --basetemp artifacts/grm_h3/tmp -m campaign_receipt tests/test_grm_*.py
+363 failed, 24 passed, 1 skipped, 2899 deselected, 2 warnings, 182 errors in 80.69s (0:01:20)
+```
+
+2894 passed, 575 skipped, **0 failed / 0 errors** across the three parts.
+
+Skip arithmetic: 363 failed + 182 errors + 24 passed = **569** collected
+receipt node ids; + 1 module-level C5 skip + 5 pre-existing non-receipt
+skipifs (2 LT1.1 archive "re-run since the archive", 2
+`test_grm_lt1_1_production_turns.py` `GRM_LT1_1_FULL_RUN`, 1
+`test_grm_lt1_1_idle_wait.py` archive) = **575**, matching the default skip
+count exactly. H2's other 12 non-receipt skips were
+`test_grm_d1_cause_table.py`'s module-level `skipif`, which no longer fires on
+this tree (44 tests collected and run).
+
+Tree totals after this pass: **356 marked test functions, 569 node ids,
+58 modules** (H2 left 321 / 504 / 49).
 
 ## Re-blessing a receipt
 

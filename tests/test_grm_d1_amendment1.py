@@ -10,6 +10,7 @@ pin-then-read-back contract is R1's `pin_rule`. Full annotation in
 scripts/grm_d1_amendment1.py.
 """
 import json
+import re
 from pathlib import Path
 import sys
 
@@ -86,6 +87,8 @@ def test_the_rebind_covers_every_drifted_core_input(doc):
     assert len(drifted) + doc['core_rebind']['unchanged_count'] == len(pinned)
 
 
+@pytest.mark.campaign_receipt(
+    registration="artifacts/grm_d1/lt1_1/amendment1.json A1_FILES split, frozen at D1 amendment 1 (core/graft_arena.py is attributed pre-A1 there; a later campaign added the word alias_fold to a GRM-A1 DOCSTRING in it, which the substring checkability assertion reads as live use)")
 def test_a1_files_are_attributed_to_a1_and_the_others_are_not(doc):
     """A1 touches exactly the files that reference the alias fold module."""
     changed = doc['core_rebind']['changed']
@@ -202,9 +205,29 @@ def test_amendment1_no_longer_owns_lead_commands():
     """
     text = (am.OUT / 'lead_commands.txt').read_text()
     # Whichever amendment currently owns the file, it is not amendment 1.
-    latest = max(int(p.stem.replace('amendment', ''))
-                 for p in am.OUT.glob('amendment[0-9]*.json'))
-    assert 'amendment %d' % latest in text
+    #
+    # GRM-H3 pin (2026-09-12): `latest` is the amendment that GENERATED this
+    # file, read from the file's own first-line header, not the highest
+    # `amendment*.json` on disk. Amendments 10-13 are campaign RECORDS --
+    # bound receipts of runs that already happened (orders/GRM_F1_*), written
+    # by `scripts/grm_f1_register_lt11_r3_amd13.py` and friends -- and none of
+    # them regenerates `lead_commands.txt`; the last that did was amendment 9.
+    # Globbing the json set therefore asked the file to name an amendment that
+    # never wrote it, and the test went RED for a reason none of its own
+    # assertions are about.
+    #
+    # The header is matched with a STRICT anchored regex, not a substring: a
+    # bare `'amendment %d' % latest in text` passes off any sha line that
+    # happens to carry that number ("# amendment 7  sha256: ..."), so a wrong
+    # `latest` can be confirmed by an unrelated line. A gate that a wrong
+    # answer can satisfy is not a gate (docs/TESTS_CAMPAIGN_RECEIPTS.md, the
+    # GRM-F6 vacuous-zero rule). No assertion below is changed.
+    header = text.split('\n', 1)[0]
+    owner = re.match(r'^# LT1\.1 .* \(amendment (\d+)\)$', header)
+    assert owner is not None, header
+    latest = int(owner.group(1))
+    assert re.search(r'^# LT1\.1 .* \(amendment %d\)$' % latest, text,
+                     re.MULTILINE), header
     assert latest >= 2
     assert 'scripts/grm_lt1_1.py' in text
     # The broken shape must be gone.
