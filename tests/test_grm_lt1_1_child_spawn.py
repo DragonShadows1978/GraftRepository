@@ -119,10 +119,10 @@ def test_spawn_env_carries_the_arm_across_the_boundary():
             env = worker.spawn_env({}, {'id': 'A-001-008'})
         assert env[runner.ARM_ENV] == arm
         assert env[runner.RULE_ENV] == 'margin_first'
-        if arm == 'A+':
-            assert env[runner.ALIAS_ENV] == '1'
-        else:
-            assert runner.ALIAS_ENV not in env
+        # GRM-D2: both arms pin the flag EXPLICITLY.  Absence used to mean
+        # OFF; A1 now ships ON, so an absent variable would carry the
+        # treatment across the boundary into the control arm.
+        assert env[runner.ALIAS_ENV] == ('1' if arm == 'A+' else '0')
 
 
 def test_every_lt_verify_reach_point_is_covered():

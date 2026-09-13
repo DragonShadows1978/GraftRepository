@@ -72,7 +72,14 @@ CELLS = FIX6 / 'c2_replay_cells.json'
 #: The two arms.  OFF is today's shipped default; ON is the FIX-6 opt-in.
 ARMS = ('off', 'on')
 RULE_ENV = 'GRM_ADMISSION_RULE'
+#: Arm -> the admission rule that arm runs under.  ``None`` means "the arm
+#: is the pre-FIX-6 rule"; ``pin_rule`` turns that into an EXPLICIT
+#: ``all_tokens_bind`` pin rather than an absence -- see its docstring.
 ARM_RULE = {'off': None, 'on': 'margin_first'}
+
+#: The rule an ``off`` arm actually pins.  Named so the R1 receipts keep
+#: saying "off" while the environment says what it means.
+ARM_RULE_OFF_VALUE = 'all_tokens_bind'
 
 #: Transition classes for one execution (OFF answer -> ON answer).
 TRANSITIONS = ('unchanged_correct', 'unchanged_wrong', 'correct_to_wrong',
@@ -257,12 +264,19 @@ def pin_rule(arm):
     silently runs the default.  ``core.grm_admission.admission_rule()`` reads
     ``os.environ`` at call time, so this single variable is the ONLY
     difference between the two arms.  The pin is read back and asserted.
+
+    GRM-D2 (2026-09-11) FIX.  The ``off`` arm used to be expressed as
+    ``os.environ.pop(RULE_ENV)`` -- correct only while UNSET meant
+    ``all_tokens_bind``.  D2 made ``margin_first`` the shipped rule (on THIS
+    campaign's own evidence: status ADOPT, 31/31, 0 correct->wrong), so the
+    pop handed the OFF arm the ON rule, and the read-back below caught it as
+    ``R1_RULE_PIN_FAILED: arm=off observed=margin_first`` -- the assertion
+    this function's docstring already promised.  Both arms now pin
+    EXPLICITLY, so each holds under either shipped default and under
+    ``GRM_LEGACY_DEFAULTS=1``.  An arm is a PIN, never an absence.
     """
     need(arm in ARM_RULE, 'R1_UNKNOWN_ARM: ' + str(arm))
-    os.environ.pop(RULE_ENV, None)
-    value = ARM_RULE[arm]
-    if value is not None:
-        os.environ[RULE_ENV] = value
+    os.environ[RULE_ENV] = ARM_RULE[arm] or ARM_RULE_OFF_VALUE
     from core.grm_admission import admission_rule
     observed = admission_rule()
     need(observed == ('margin_first' if arm == 'on' else 'all_tokens_bind'),

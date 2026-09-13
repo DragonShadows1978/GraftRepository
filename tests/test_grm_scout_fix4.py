@@ -15,6 +15,21 @@ from scripts.grm_e2e_session import _probe_ladder_chat, harmony_turn
 BEFORE = Path(__file__).resolve().parents[1]/'artifacts/grm_scout_fix4/nonrecency_before.json'
 
 
+# --------------------------------------------------------- GRM-D2 re-pin
+#
+# GRM-D2 (2026-09-11) made `margin_first` the shipped admission rule and
+# turned F1/F2/F5/A1 on.  THIS SUITE'S ASSERTIONS ARE UNCHANGED: FIX-4's
+# whole-receipt control (`nonrecency_before.json`) is a FROZEN RECEIPT of
+# the pre-D2 world, recorded byte for byte, and re-blessing it would
+# destroy the very control it exists to be.  `GRM_LEGACY_DEFAULTS=1`
+# restores that world in one variable, which is exactly the case the
+# umbrella was added for -- the order's own byte-identity gate.
+@pytest.fixture(autouse=True)
+def _grm_d2_legacy_defaults(monkeypatch):
+    from core import grm_legacy_defaults as legacy_defaults
+    monkeypatch.setenv(legacy_defaults.ENV_NAME, "1")
+
+
 def serve(repo, path, question):
     if path == 'core':
         return repo.arena.step(question, ngen=32, deposit=False, defer_memory=True)

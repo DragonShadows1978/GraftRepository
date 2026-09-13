@@ -58,6 +58,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from core import grm_legacy_defaults as legacy_defaults    # noqa: E402
 from scripts.grm_profile import (  # noqa: E402
     PROFILE_ENV, resolve_profile,
 )
@@ -458,11 +459,50 @@ def _save_fake_codec(session: "ChatSession") -> None:
 # CLI
 # --------------------------------------------------------------------------
 
-BANNER_KEYS = ("GRM_PERSISTENT_BOAT", "GRM_CAPTURE_PIN", "GRM_SEAT_NEAR_LIVE",
+#: GRM-D2: ``GRM_LEGACY_DEFAULTS`` leads the list because it is the one
+#: key that changes what every other line below MEANS, and a pasted receipt
+#: has to show it before the values it governs.
+BANNER_KEYS = ("GRM_LEGACY_DEFAULTS",
+               "GRM_PERSISTENT_BOAT", "GRM_CAPTURE_PIN", "GRM_SEAT_NEAR_LIVE",
                "GRM_LSR_FIXES", "GRM_RT1_RULE", "GRM_DEMAND_NGH",
                "GRM_GQA_CUDA_ROUTE", "GRM_GRAFT_STORAGE_BITS",
                "GRM_ROUTE_QUERY_LEX", "GRM_PROBE_LADDER", "GRM_SUP_RESOLVE",
                "GRM_ADM_DECISIVE", "GRM_ADMISSION_RULE")
+
+#: The four round-2 flag flips, in the order GRM-D2 registered them.  They
+#: are resolved live (they have env escapes but no profile entry), so the
+#: banner asks each resolver rather than reading ``resolved["env"]``.
+ROUND2_FLAG_RESOLVERS = (
+    ("GRM_FOLD_RETAIN_SOURCES", "F1 fold-retain    "),
+    ("GRM_FOLD_ALIAS_GUARD", "F2 fold alias grd "),
+    ("GRM_ROUTE_SOLE_BINDER_INSURANCE", "F5 sole binder    "),
+    ("GRM_ALIAS_FOLD_MERGE", "A1 alias fold     "),
+)
+
+
+def round2_flag_states(environ=None):
+    """``[(env name, label, on?)]`` for the four D2 flag flips.
+
+    Read through the production resolvers, never re-derived here: a banner
+    that computes its own answer can disagree with the serving path, and a
+    receipt that disagrees with the run is worse than no receipt.
+    """
+    from core.grm_admission import route_sole_binder_insurance_enabled
+    from core.grm_alias_fold import alias_fold_enabled
+    from core.grm_fold_alias_guard import fold_alias_guard_enabled
+    from core.grm_fold_retain import retain_sources_enabled
+    resolvers = {
+        "GRM_FOLD_RETAIN_SOURCES":
+            lambda e: retain_sources_enabled(environ=e),
+        "GRM_FOLD_ALIAS_GUARD":
+            lambda e: fold_alias_guard_enabled(environ=e),
+        "GRM_ROUTE_SOLE_BINDER_INSURANCE":
+            route_sole_binder_insurance_enabled,
+        "GRM_ALIAS_FOLD_MERGE": lambda e: alias_fold_enabled(environ=e),
+    }
+    env = os.environ if environ is None else environ
+    return [(name, label, bool(resolvers[name](env)))
+            for name, label in ROUND2_FLAG_RESOLVERS]
 
 
 def format_resolved(resolved: dict[str, Any]) -> str:
@@ -480,6 +520,18 @@ def format_resolved(resolved: dict[str, Any]) -> str:
         f"  admission rule   : {resolved['admission_rule']}",
         f"  topk / ngen      : {flags['topk']} / {flags['ngen']}",
     ]
+    # GRM-D2: the four round-2 flag flips ship ON as a SET.  Printed as a
+    # block, with the set's name, so a reader can see at a glance whether
+    # they are looking at the measured configuration or a subset -- a
+    # subset is a MEASURED regression (aliases 10/10 -> 7/10, LT1.1 r3).
+    legacy_on = legacy_defaults.legacy_defaults_enabled(resolved["env"])
+    states = round2_flag_states(resolved["env"])
+    lines.append(
+        f"  round-2 flag set : {'ALL ON (r3 A+\u2032)' if all(s for _, _, s in states) else 'ALL OFF (pre-round-2)' if not any(s for _, _, s in states) else 'MIXED \u2014 NOT a measured configuration'}")
+    for _, label, state in states:
+        lines.append(f"    {label}: {'on' if state else 'off'}")
+    lines.append(
+        f"  legacy defaults  : {'ON \u2014 pre-round-2 behaviour' if legacy_on else 'off (round-2 defaults shipped)'}")
     for name in resolved.get("named_flags_applied", ()):
         # "effective" is earned, not asserted: the resolver only lists a flag
         # here after finding a reader for it in core/ or scripts/. A flag
@@ -594,14 +646,23 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
             "(EB1 ephemeral boat)."),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
-            "one switch:\n"
-            f"  {PROFILE_ENV}=eb1_c2   select the registered C2 profile\n"
-            "                        (width 96, capture pin live, "
-            "seat-near-live,\n"
-            "                         RT1, margin-first admission).\n"
-            "  unset                 today's shipped defaults.\n\n"
+            "defaults (GRM-D2, 2026-09-11):\n"
+            "  the registered C2 profile (width 96, capture pin live,\n"
+            "  seat-near-live, RT1, margin-first admission) plus the r3\n"
+            "  A+\u2032 flag set (F1+F2+F5+A1 all ON).\n\n"
+            "rollback, one line:\n"
+            f"  {legacy_defaults.ENV_NAME}=1    restore EVERY pre-round-2 "
+            "default at once\n"
+            "                             (profile legacy_256, "
+            "all_tokens_bind,\n"
+            "                              F1/F2/F5/A1 all OFF).\n\n"
+            "switches:\n"
+            f"  {PROFILE_ENV}=eb1_c2       the C2 profile (the default)\n"
+            f"  {PROFILE_ENV}=legacy_256   the pre-D2 profile "
+            "(width 256, no C2 pins)\n\n"
             "example:\n"
-            "  GRM_PROFILE=eb1_c2 python3 scripts/grm_chat.py "
+            "  python3 scripts/grm_chat.py --repo ~/grm_sessions/notes\n"
+            f"  {legacy_defaults.ENV_NAME}=1 python3 scripts/grm_chat.py "
             "--repo ~/grm_sessions/notes\n"))
     p.add_argument("--repo", type=Path, required=True,
                    help="repository directory for this session "

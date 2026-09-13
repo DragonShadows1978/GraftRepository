@@ -115,6 +115,39 @@ This is what lets old, folded-away memory still be recalled *precisely*,
 rather than as a vague gist — the failure mode that makes ordinary
 summarization-based memory degrade.
 
+**As of GRM-D2 (2026-09-11) the librarian ADDS the digest rather than
+SUBSTITUTING it.** Until then, a fold that cleared its coverage bar RETIRED
+its sources, so after a consolidation the digest's own prose was the only
+routable record of the fact — and LT1.1 measured the cost: across both r2
+arms a source node appeared in the mounts of **0 of 57** correct answers.
+Source retention (F1) now ships ON, so the originals stay routable
+alongside the digest. That is the paragraph above made true by default
+rather than by intent.
+
+### The shipped defaults, and the one-line rollback
+
+The full decision, the evidence per setting and the rollback line are in
+[`GRM_DEFAULTS_2026-09-11.md`](GRM_DEFAULTS_2026-09-11.md). In short, since
+2026-09-11 the shipped defaults are the **measured** configuration rather
+than the un-measured one:
+
+| setting | pre-round-2 | shipped now |
+|---|---|---|
+| profile | width 256, capture pin off, seat-near-live off | **`eb1_c2`** — width 96, capture pin live, seat-near-live, RT1 |
+| admission rule | `all_tokens_bind` | **`margin_first`** |
+| F1 source retention · F2 fold alias guard · F5 sole-binder insurance · A1 alias fold-merge | all off | **all on, as a set** |
+
+Every one of them keeps its old value as an explicit setting, and
+
+```bash
+GRM_LEGACY_DEFAULTS=1
+```
+
+restores all six at once. The four flags ship as a SET: LT1.1 r3 measured
+three of the four, without the alias merge, REGRESSING aliases 10/10 → 7/10
+and going net-negative against the control. A subset is not a configuration
+this system has evidence for.
+
 ---
 
 ## 5. What it unlocks

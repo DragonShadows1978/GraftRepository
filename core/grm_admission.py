@@ -19,6 +19,7 @@ import os
 import re
 from typing import Any
 
+from core import grm_legacy_defaults as legacy_defaults
 from core.grm_text_norm import normalize_glyphs
 
 
@@ -144,17 +145,40 @@ SOLE_BINDER_BRANCH_ALL_TOKENS_BIND = "one_off_rank_identifier_insurance_k3_sole_
 def route_sole_binder_insurance_enabled(
     environ: Mapping[str, str] | None = None,
 ) -> bool:
-    """Resolve the F5 switch.  Default OFF; unknown tokens fail CLOSED to OFF.
+    """Resolve the F5 switch.  GRM-D2 (2026-09-11): DEFAULT ON.
 
-    OFF is the direction an unknown token falls because this flag is not yet
-    a default: an operator who mistypes it gets the pre-F5 world, which is
-    the world every frozen receipt on disk was recorded in.  (A-DEC's own
-    ``env_adm_decisive_override`` fails closed the same way; RT1 fails closed
-    to ON because RT1 *is* the default.)
+    EVIDENCE FOR THE FLIP (order ``orders/GRM_D2_DEFAULTS.md``, flip 3):
+    F5 ships ON **as a member of a SET**, never alone.  LT1.1 r3 moved
+    F1+F2+F5+A1 together: control 36/40 -> 38/40 on the lead's c2 column,
+    33/40 -> 37/40 on the column this tree can recompute
+    (``artifacts/grm_f1/REPORT.md``).  The three-without-A1 arm REGRESSED
+    aliases 10/10 -> 7/10, so a SUBSET of this set is a measured
+    regression and must not be shipped.  If you turn one of the four off,
+    turn all four off -- that is what ``GRM_LEGACY_DEFAULTS=1`` does.
+
+    ``=0`` remains this flag's OFF setting, and the OFF arm of every F5
+    fixture still pins the pre-F5 behaviour byte-for-byte.
+
+    PRECEDENCE (``core.grm_legacy_defaults``, rungs 2-4): an explicitly set
+    ``GRM_ROUTE_SOLE_BINDER_INSURANCE`` wins, then the
+    ``GRM_LEGACY_DEFAULTS`` umbrella, then ON.
+
+    FAIL-CLOSED DIRECTION, stated because D2 REVERSED it: an unknown token
+    now falls to the SHIPPED default (ON, or OFF under the umbrella), where
+    before D2 it fell to OFF.  The rule is unchanged -- a malformed escape
+    never silently selects a behaviour the operator may not have meant --
+    but what the shipped behaviour IS has changed.
     """
     env = os.environ if environ is None else environ
-    value = str(env.get(ROUTE_SOLE_BINDER_INSURANCE_ENV, "")).strip().casefold()
-    return value in _ENV_TRUE
+    if ROUTE_SOLE_BINDER_INSURANCE_ENV in env:
+        value = str(
+            env.get(ROUTE_SOLE_BINDER_INSURANCE_ENV, "")).strip().casefold()
+        if value in _ENV_TRUE:
+            return True
+        if value in _ENV_FALSE:
+            return False
+    return bool(legacy_defaults.default_for(
+        ROUTE_SOLE_BINDER_INSURANCE_ENV, env))
 
 
 def insure_sole_binder(
@@ -190,10 +214,45 @@ def insure_sole_binder(
     return [*planned[:-1], binder], True
 
 
+#: The two rules this resolver will return.  Named so an operator reading a
+#: receipt can tell a rule NAME from a typo without grepping the resolver.
+ADMISSION_RULES = ("margin_first", "all_tokens_bind")
+
+
 def admission_rule(environ: Mapping[str, str] | None = None) -> str:
-    """FIX-6 is opt-in; unset/unknown values retain the frozen default."""
+    """The shipped admission rule.  GRM-D2 (2026-09-11): ``margin_first``.
+
+    EVIDENCE FOR THE FLIP (order ``orders/GRM_D2_DEFAULTS.md``, flip 1):
+    R1 replayed all 31 historical C2 plans the rule changes -- 31/31, ZERO
+    correct->wrong -- and LT1/LT1.1 measured the OLD rule admitting 0 of 35
+    natural questions.  A rule that admits nothing on natural traffic is
+    not a conservative default, it is a broken one, and the replay is the
+    receipt that turning it off costs no historical plan.
+
+    ``all_tokens_bind`` REMAINS SELECTABLE -- it is the pre-D2 rule, and the
+    value ``GRM_LEGACY_DEFAULTS=1`` selects -- so the flip is a default
+    change, never a removal.
+
+    PRECEDENCE (``core.grm_legacy_defaults``, rungs 2-4; this resolver has
+    no explicit-caller rung): an explicitly set ``GRM_ADMISSION_RULE`` wins,
+    then the ``GRM_LEGACY_DEFAULTS`` umbrella, then ``margin_first``.
+
+    FAIL-CLOSED DIRECTION, stated because D2 REVERSED it: an unknown token
+    now falls to ``margin_first``, the SHIPPED default, where before D2 it
+    fell to ``all_tokens_bind`` -- which was the shipped default then.  The
+    rule has not changed ("a malformed escape never silently selects
+    something the operator may not have meant"); what the rule points at
+    has.  An operator who mistypes the rule name gets today's shipped
+    behaviour, not a rule that admits nothing.
+    """
     env = os.environ if environ is None else environ
-    return "margin_first" if env.get(ADMISSION_RULE_ENV) == "margin_first" else "all_tokens_bind"
+    token = str(env.get(ADMISSION_RULE_ENV, "")).strip().casefold()
+    if token in ADMISSION_RULES:
+        return token
+    # Unset and unknown take the same exit on purpose: both mean "the
+    # operator did not name a rule I recognise", and both land on the
+    # shipped default.
+    return str(legacy_defaults.default_for(ADMISSION_RULE_ENV, env))
 
 
 def shaped_identifier_tokens(arena: Any, question: str) -> list[str]:

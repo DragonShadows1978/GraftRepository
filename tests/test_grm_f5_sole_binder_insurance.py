@@ -87,6 +87,20 @@ ROW9_OFF_PLAN = [116, 110, 42]
 ROW9_ON_PLAN = [116, 110, 64]
 
 
+# --------------------------------------------------------- GRM-D2 re-pin
+#
+# GRM-D2 (2026-09-11) flipped F5's shipped default from OFF to ON.  THIS
+# SUITE'S ASSERTIONS ARE UNCHANGED -- every one of them pins the pre-F5
+# world, which is precisely what ``GRM_LEGACY_DEFAULTS=1`` restores, and
+# the OFF-byte-identity receipts here are the reason the umbrella exists.
+# One autouse pin covers BOTH ways this file reaches the resolver (the
+# ``flag`` fixture and ``_profile``), because both read ``os.environ``.
+@pytest.fixture(autouse=True)
+def _grm_d2_legacy_defaults(monkeypatch):
+    from core import grm_legacy_defaults as legacy_defaults
+    monkeypatch.setenv(legacy_defaults.ENV_NAME, "1")
+
+
 @pytest.fixture
 def flag(monkeypatch):
     """Set or clear `GRM_ROUTE_SOLE_BINDER_INSURANCE` for one test."""
@@ -105,10 +119,18 @@ def flag(monkeypatch):
 def test_flag_defaults_off_and_unknown_tokens_fail_closed_to_off(flag):
     """Default OFF; an unknown token keeps the pre-F5 world.
 
-    The direction matters and is the opposite of RT1's.  RT1 fails closed to
-    ON because RT1 IS the default; F5 fails closed to OFF because every
-    frozen receipt on disk was recorded with F5 absent, so a typo must not
-    silently move a plan.
+    Read this under the module's ``GRM_LEGACY_DEFAULTS=1`` pin: these are
+    the assertions for the PRE-D2 world, unchanged.
+
+    The direction mattered and was the opposite of RT1's.  RT1 failed
+    closed to ON because RT1 WAS the default; F5 failed closed to OFF
+    because every frozen receipt on disk was recorded with F5 absent, so a
+    typo must not silently move a plan.  GRM-D2 (2026-09-11) made F5 a
+    default too, so on a tree WITHOUT the legacy pin an unknown token now
+    falls to ON for exactly RT1's reason -- the rule ("fail closed to the
+    shipped default") never changed, only which behaviour is shipped.  The
+    frozen receipts are still protected: they are replayed under the
+    umbrella, which is what this fixture pins.
     """
     flag(None)
     assert route_sole_binder_insurance_enabled() is False

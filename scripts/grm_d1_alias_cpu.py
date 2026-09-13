@@ -82,15 +82,22 @@ def pin_arm(patch, *, alias_fold):
     Prior art: scripts/grm_r1_replay.py:242 `pin_rule` (GRM contributors,
     2026). The registered admission rule is the same for both arms; the ONLY
     difference between A and A+ is `GRM_ALIAS_FOLD_MERGE`.
+
+    GRM-D2 (2026-09-11) FIX, identical to the one in
+    `scripts/grm_lt1_1.arm_alias_pin`: the OFF arm used to be expressed as
+    `delenv(ALIAS_ENV)`, correct only while UNSET meant OFF.  D2 made A1's
+    shipped default ON, so the delete handed arm A the TREATMENT and the
+    read-back below caught it -- `D1_ALIAS_PIN_FAILED: wanted=False
+    observed=True`, the read-back doing exactly the job its name claims.
+    Both arms now pin EXPLICITLY, so each holds under either shipped
+    default and under `GRM_LEGACY_DEFAULTS=1`.  An arm is a PIN, never an
+    absence: an arm that inherits a default is not a controlled arm.
     """
     from core.grm_admission import admission_rule
     from core.grm_alias_fold import alias_fold_enabled
 
     patch.setenv(RULE_ENV, 'margin_first')
-    if alias_fold:
-        patch.setenv(ALIAS_ENV, '1')
-    else:
-        patch.delenv(ALIAS_ENV, raising=False)
+    patch.setenv(ALIAS_ENV, '1' if alias_fold else '0')
 
     observed_rule = admission_rule()
     if observed_rule != 'margin_first':

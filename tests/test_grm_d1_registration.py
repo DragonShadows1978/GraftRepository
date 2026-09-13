@@ -172,11 +172,23 @@ def test_alias_flag_is_present_and_really_read_on_this_tree():
         'the flag must be read by core; consumers=%r' % sorted(consumers))
 
     # 3. The reader actually switches on the value, in both directions, and
-    #    an unknown token fails CLOSED to OFF (A1's stated contract).
+    #    an unknown token fails CLOSED to the SHIPPED default (A1's stated
+    #    contract).  GRM-D2 (2026-09-11) made A1's shipped default ON, so
+    #    the last two assertions are pinned to the pre-D2 default with
+    #    `GRM_LEGACY_DEFAULTS=1` and are otherwise unchanged; the first two
+    #    are explicit tokens and outrank any default, so they stand as-is.
+    #    What D1 needs from this test -- that a real reader SWITCHES on the
+    #    value -- is exactly what the explicit pair proves.
+    legacy = {'GRM_LEGACY_DEFAULTS': '1'}
     assert af.alias_fold_enabled(environ={reg11.ALIAS_FLAG: '1'}) is True
     assert af.alias_fold_enabled(environ={reg11.ALIAS_FLAG: '0'}) is False
-    assert af.alias_fold_enabled(environ={}) is False
-    assert af.alias_fold_enabled(environ={reg11.ALIAS_FLAG: 'maybe'}) is False
+    assert af.alias_fold_enabled(environ=dict(legacy)) is False
+    assert af.alias_fold_enabled(
+        environ=dict(legacy, **{reg11.ALIAS_FLAG: 'maybe'})) is False
+    # And the post-D2 side, stated rather than left implicit: with no
+    # umbrella the same unset/unknown cases now resolve ON.
+    assert af.alias_fold_enabled(environ={}) is True
+    assert af.alias_fold_enabled(environ={reg11.ALIAS_FLAG: 'maybe'}) is True
 
 
 def test_p1_profile_now_pins_the_flag_instead_of_recording_it_absent():

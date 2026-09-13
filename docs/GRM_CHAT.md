@@ -49,19 +49,44 @@ evidence about plumbing and nothing else.
 
 `GRM_PROFILE` is one name for the whole registered flag set.
 
-| | `GRM_PROFILE` unset | `GRM_PROFILE=eb1_c2` |
+**GRM-D2 (2026-09-11): `eb1_c2` IS the shipped default.** See
+[`GRM_DEFAULTS_2026-09-11.md`](GRM_DEFAULTS_2026-09-11.md) for the decision,
+the evidence per flip and the rollback. Before D2 the defaults column below
+was what an unset environment gave you; it is now the named profile
+`legacy_256`.
+
+| | `GRM_PROFILE=legacy_256` | **unset / `eb1_c2`** (default) |
 |---|---|---|
 | arena width | 256 | **96** |
 | capture pin | off | **live** |
 | seat near live | off | **on** |
 | RT1 rule | on | on |
 | admission rule | `all_tokens_bind` | **`margin_first`** |
+| F1 fold-retain | off | **on** |
+| F2 fold alias guard | off | **on** |
+| F5 sole-binder insurance | off | **on** |
+| A1 alias fold-merge | off | **on** |
 | frame | EB1 ephemeral boat | EB1 ephemeral boat |
 
 `eb1_c2` is the C2 registry entry `gpt-oss-20b-eb1-w96-live-rt1`
 (`config/grm_eb1_profile_registered.json`) plus the margin-first admission
-rule LT1 registered its receipts under. **Unset is today's behaviour** —
-the shipped defaults stay the defaults and this switch never changes them.
+rule LT1 registered its receipts under.
+
+**The one-line rollback:**
+
+```bash
+GRM_LEGACY_DEFAULTS=1 python3 scripts/grm_chat.py --repo ~/grm_sessions/notes
+```
+
+That restores every pre-round-2 default at once — profile, admission rule
+and all four flags. Each also keeps its own `=0` / old-value setting, and an
+explicitly set flag outranks the umbrella, so
+`GRM_LEGACY_DEFAULTS=1 GRM_ALIAS_FOLD_MERGE=1` is legacy-everything-except-A1
+(which is how you bisect a regression to one flip).
+
+The four flag flips ship **as a set**: LT1.1 r3 measured three of the four
+without the alias merge REGRESSING aliases 10/10 → 7/10. Never ship a
+subset; the banner says `MIXED — NOT a measured configuration` if you do.
 
 Two properties worth knowing:
 
@@ -76,10 +101,12 @@ Two properties worth knowing:
 one that nothing reads is reported in the startup notes as absent and is
 **not** set, and one that has a reader prints as `(pinned, effective)`.
 
-`--pin-flag GRM_ALIAS_FOLD_MERGE` turns on A1's alias fold-merge
-(`core/grm_alias_fold.py`, **default OFF**). Unset stays off — the profile
-does not enable it by itself. Before A1 landed this same resolver reported
-that flag as absent; the transition needed no code change here.
+`--pin-flag GRM_ALIAS_FOLD_MERGE` pins A1's alias fold-merge
+(`core/grm_alias_fold.py`). **Since GRM-D2 it is ON by default**, so the pin
+is now mostly a way to state the condition explicitly on a receipt; to turn
+it OFF, set `GRM_ALIAS_FOLD_MERGE=0` (or the whole umbrella). Before A1
+landed this same resolver reported the flag as absent; that transition, and
+this one, needed no code change here.
 
 The resolved flag set prints at the top of every session, so any receipt you
 paste carries the conditions it was taken under.
@@ -237,10 +264,13 @@ Measured on LT1's 200-turn natural conversation, 2026-09-09, profile arm
   abstention clause, and the plain prompt fabricates on unanswerables rather
   than saying it does not know. Whether to add an abstention instruction is
   an open decision (it trades recall against fabrication).
-* **`margin_first` is not the default.** Today's shipped admission rule
-  admits 0 of LT1's 35 natural questions. `GRM_PROFILE=eb1_c2` turns
-  margin-first on; adopting it as the default is David's decision and is
-  gated on replaying the 31 historical C2 plans it changes.
+* **`margin_first` IS the default, as of GRM-D2 (2026-09-11).** The gate
+  named here — replaying the 31 historical C2 plans the rule changes — was
+  run and passed: `artifacts/grm_r1/summary_lead.json` reports status
+  `ADOPT`, 31/31 measured, off-plan parity true, **0 correct→wrong**, 1
+  wrong→correct. The rule it replaced admitted 0 of LT1's 35 natural
+  questions. `GRM_LEGACY_DEFAULTS=1` (or
+  `GRM_ADMISSION_RULE=all_tokens_bind`) selects the old rule.
 
 **Native publication (fixed 2026-09-10, first GPU smoke).** The first GPU
 run went RED at the first recall with `RuntimeError: graft 0 has no

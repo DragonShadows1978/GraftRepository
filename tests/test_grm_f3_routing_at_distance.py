@@ -59,6 +59,27 @@ ROOT = Path(__file__).resolve().parents[1]
 R2 = ROOT / 'artifacts/grm_d1/lt1_1'
 REGISTRATION = 'artifacts/grm_d1/lt1_1/registration.json'
 
+
+# --------------------------------------------------------- GRM-D2 re-pin
+#
+# This file is a CHARACTERIZATION suite (Feathers 2004, ch. 13): its
+# "identifier insurance branch drops the sole binder" tests exist to record
+# a DEFECT exactly as it behaved, so the fix can be shown against it.  F5
+# is that fix, and GRM-D2 (2026-09-11) made F5 a shipped default -- which
+# means that on a bare tree the defect no longer reproduces and these
+# characterizations would silently become assertions about the fix instead.
+#
+# THE ASSERTIONS ARE UNCHANGED.  `GRM_LEGACY_DEFAULTS=1` restores the
+# pre-F5 world, so the characterization still characterizes the thing it
+# was written for.  The ON-arm counterparts live in
+# tests/test_grm_f5_sole_binder_insurance.py, exactly as F5's module
+# docstring promised ("the F3 pinned-defect tests stay untouched and the
+# ON-arm counterparts are ADDED beside them").
+@pytest.fixture(autouse=True)
+def _grm_d2_legacy_defaults(monkeypatch):
+    from core import grm_legacy_defaults as legacy_defaults
+    monkeypatch.setenv(legacy_defaults.ENV_NAME, "1")
+
 #: The r2 question and the three node texts the diagnosis turns on, quoted
 #: verbatim from the frozen session repositories.  Kept as literals so the
 #: PURE-CPU half needs no artifacts at all.

@@ -1,0 +1,785 @@
+........................................................................ [  4%]
+.....................................................Fss.....s.....sssss [  9%]
+s......ss.ss.ssssss...s...s...s.ssss.s............................s..... [ 14%]
+sss.ssssssssssssssssssssssssssssssssssssssssss..s.....sssssssssss.....s. [ 19%]
+............s.......................sssss.ss............................ [ 24%]
+..ssssssssssssssssssss...........................s.sss.ss.ss.ssss....... [ 29%]
+.........................................ssssssssssss.........ssssssss.. [ 33%]
+.........ss..............sss.........sssssssssssssssssssssssssssssssssss [ 38%]
+ssssssssssssss.................ssssssssssssss............sssssssssssssss [ 43%]
+ssssssss............ss..s................ssss.sssssss............ss.s... [ 48%]
+ssss...ssssssssssssssssss........s...sssssssssss.......ssssssssssssssss. [ 53%]
+....................ss.s.s.............................................. [ 58%]
+............................F.......F................................F.. [ 62%]
+........................................................................ [ 67%]
+........................................................................ [ 72%]
+........................................................................ [ 77%]
+........................................................................ [ 82%]
+........................................................................ [ 87%]
+...................F.........FFFFFFFFFFFFFFFF...............FFF......... [ 91%]
+......................................ssssssssssssssssssssss............ [ 96%]
+..........................................ssssss                         [100%]
+=================================== FAILURES ===================================
+____________ test_amendment_chain_is_sha_bound_to_the_registration _____________
+
+    def test_amendment_chain_is_sha_bound_to_the_registration():
+        base_sha, amendments = W.load_amendments(REGISTRATION)
+        assert base_sha.startswith('329d5865'), base_sha
+        assert amendments, 'amendment 1 must exist'
+        for entry in amendments:
+            amendment = entry['amendment']
+            assert amendment['registration_sha256'] == base_sha
+            assert amendment['schema'] == 'grm.a1.lead-amendment.v1'
+            checksum = Path(entry['path']).with_suffix('.sha256')
+            assert checksum.read_text().split()[0] == entry['sha256']
+        worker = amendments[-1]['amendment']['worker']
+        assert worker['path'] == 'scripts/grm_a1_gpu_contrast.py'
+>       assert worker['sha256'] == W.sha(ROOT / worker['path'])
+E       AssertionError: assert '69a5542dc677...477babe0ccf97' == '47f2f7d15856...281d980539460'
+E         
+E         - 47f2f7d1585658ba34645b9a8acd618f7acafa14bd7cbb367b8281d980539460
+E         + 69a5542dc6777a7c74fa5427787ea294abafaca2ad32477a64b477babe0ccf97
+
+tests/test_grm_a1_gpu_contrast.py:71: AssertionError
+__________ test_a1_files_are_attributed_to_a1_and_the_others_are_not ___________
+
+doc = {'amendment': 1, 'arms': {'A': {'admission_rule': 'margin_first', 'alias_fold_merge': False, 'arm': 'A', 'budget_gpu_h...e, 'arm': 'A+', 'budget_gpu_hours': 1.7, ...}}, 'budget_gpu_hours_total': 3.4, 'budget_gpu_seconds_per_arm': 6120, ...}
+
+    def test_a1_files_are_attributed_to_a1_and_the_others_are_not(doc):
+        """A1 touches exactly the files that reference the alias fold module."""
+        changed = doc['core_rebind']['changed']
+        for name in am.A1_FILES:
+            assert name in changed, '%s should have been rebound' % name
+            assert changed[name]['attribution'].startswith('A1')
+            # And the attribution is checkable: the file really uses alias_fold.
+            assert 'alias_fold' in (ROOT / name).read_text()
+        for name, change in changed.items():
+            if name in am.A1_FILES:
+                continue
+            assert 'not attributable to A1' in change['attribution']
+            # A non-A1 file must NOT reference the alias module.
+>           assert 'alias_fold' not in (ROOT / name).read_text(), (
+                '%s references alias_fold but is attributed away from A1' % name)
+E           AssertionError: core/graft_arena.py references alias_fold but is attributed away from A1
+E           assert 'alias_fold' not in '"""Graft Ar...p.float32)\n'
+E             
+E             'alias_fold' is contained here:
+E               citly: ``_alias_fold_once`` makes
+E             ?           ++++++++++
+E                       its own lineage decision immediately after this returns (the edge is
+E                       ALWAYS superseded — a bare active alias edge that wins admission and
+E                       answers nothing IS the RD2 defect A1 exists to fix), and must not...
+E             
+E             ...Full output truncated (3366 lines hidden), use '-vv' to show
+
+tests/test_grm_d1_amendment1.py:102: AssertionError
+_________________ test_amendment1_no_longer_owns_lead_commands _________________
+
+    def test_amendment1_no_longer_owns_lead_commands():
+        """Amendment 1's command generator described a runner that never existed.
+    
+        It emitted `grm_lt1.py --run --arm … --registration … --out …`; that
+        script has no such flags, so the commands could not run and the only
+        test on them checked a sha string. `lead_commands.txt` is now generated
+        by amendment 2 from the ACTUAL argparse of `scripts/grm_lt1_1.py`, and
+        gated by `test_every_emitted_command_actually_runs`, which executes each
+        emitted command. This test pins that ownership so the dead generator
+        cannot quietly come back.
+        """
+        text = (am.OUT / 'lead_commands.txt').read_text()
+        # Whichever amendment currently owns the file, it is not amendment 1.
+        latest = max(int(p.stem.replace('amendment', ''))
+                     for p in am.OUT.glob('amendment[0-9]*.json'))
+>       assert 'amendment %d' % latest in text
+E       assert ('amendment %d' % 13) in '# LT1.1 — arm A and arm A+ (amendment 9)\n# registration sha256: 02b44d02e3fbb82ca9809c4a5e08597cf2d195e5a6fe4df8e4e8... (recall_3_150) that no lineage change addresses. 4/5 prices exactly one such drop.", "recap": ">= 3/5 memory-side"}\n'
+
+tests/test_grm_d1_amendment1.py:207: AssertionError
+___________ test_the_host_blocker_claim_was_true_and_is_now_resolved ___________
+
+    def test_the_host_blocker_claim_was_true_and_is_now_resolved():
+        """INVERTED by the lead's ruling of 2026-09-11, with the receipt.
+    
+        This test used to be `test_the_host_blocker_claim_is_true_right_now` and
+        asserted that `r.host_preflight()` raised `INPUT_SHA_MISMATCH`. The ruling
+        resolved that: LT1's registration is a frozen receipt, so LT1.1 validates
+        its OWN chain. Both halves are still asserted, because the honest claim is
+        not "the drift went away" -- it did not:
+    
+          1. the underlying LT1 condition is UNCHANGED (its gate still refuses);
+          2. LT1.1's gate, which is the one that governs, is READY.
+    
+        Amendment 3's recorded blocker therefore stands as a true statement about
+        its day, and amendment 4 records its resolution.
+        """
+        from scripts import grm_lt1 as lt
+        from scripts import grm_lt1_1 as r
+        # 1. Untouched: we did not paper over the drift.
+        with pytest.raises(ValueError, match='INPUT_SHA_MISMATCH'):
+            lt.preflight()
+        # 2. Resolved: the governing gate passes.
+        with r.pinned_arm('A+'):
+            gate = r.host_preflight('A+')
+>       assert gate['status'] == 'READY', gate['reasons']
+E       AssertionError: ['INPUT_SHA_MISMATCH: core/grm_admission.py', 'INPUT_SHA_MISMATCH: core/grm_alias_fold.py', 'INPUT_SHA_MISMATCH: core/grm_fold_alias_guard.py', 'INPUT_SHA_MISMATCH: core/grm_fold_retain.py', 'RUNNER_SHA_MISMATCH: scripts/grm_lt1_1.py']
+E       assert 'BLOCKED' == 'READY'
+E         
+E         - READY
+E         + BLOCKED
+
+tests/test_grm_d1_amendment3.py:200: AssertionError
+_______________ test_governing_amendment_rebinds_every_core_pin ________________
+
+    def test_governing_amendment_rebinds_every_core_pin():
+        """The rebind is what makes r3 runnable at all: LT1.1's preflight is
+        sha-bound, and F1/F2/F5 all move core inputs.
+    
+        Written against the GOVERNING amendment (the highest-numbered one
+        carrying a `core_rebind`), not a hard-coded number: amendment 10 was
+        F1's, amendment 11 rebinds the merged tree, and a later treatment will
+        add another. Every sha is checked against the tree, so the document
+        cannot claim one the tree lacks, and the pin set may only GROW.
+        """
+        import hashlib
+        from scripts import grm_lt1_1 as runner
+        number, block = runner.governing_core_rebind()
+        assert number >= 10
+        for name, entry in block['changed'].items():
+            on_tree = hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
+>           assert entry['after_sha256'] == on_tree, name
+E           AssertionError: core/grm_admission.py
+E           assert '7912f29108f0...5bde69b2c3494' == 'bc5f79963023...886d6cd98e193'
+E             
+E             - bc5f799630235bf0db6b3412c61051f76f92dcdc56ce9ac4053886d6cd98e193
+E             + 7912f29108f0aaa9bc8f51d7a613b2866596aa6b93f99f4fa0b5bde69b2c3494
+
+tests/test_grm_f1_fold_retain.py:698: AssertionError
+___________ test_every_a_prime_loss_is_a_width_eviction[recall_3_10] ___________
+
+row = 'recall_3_10'
+
+    @pytest.mark.parametrize('row', ['recall_3_10', 'recall_5_50', 'recall_7_10',
+                                     'recall_7_25', 'recall_7_50'])
+    def test_every_a_prime_loss_is_a_width_eviction(row):
+        """ONE mechanism, named by the route receipt on all five losses."""
+        r = probes('Aprime')[row]
+        info = r['memory']['route_info']
+        assert r['memory']['score']['exact_correct'] is False
+        assert info['mount_dropped_for_width'], info.get('mount_plan')
+        # The plan grew past what the arena can seat.
+>       nodes = manifest('Aprime')
+                ^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_f1_r3_receipts.py:133: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'Aprime'
+
+    def manifest(arm):
+        cells = sorted(glob.glob(
+            str(R3 / f'run_{arm}/cells/*/checkpoint/repository/manifest.json')))
+>       return json.loads(Path(cells[-1]).read_text())['nodes']
+                               ^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_grm_f1_r3_receipts.py:49: IndexError
+___________ test_every_a_prime_loss_is_a_width_eviction[recall_5_50] ___________
+
+row = 'recall_5_50'
+
+    @pytest.mark.parametrize('row', ['recall_3_10', 'recall_5_50', 'recall_7_10',
+                                     'recall_7_25', 'recall_7_50'])
+    def test_every_a_prime_loss_is_a_width_eviction(row):
+        """ONE mechanism, named by the route receipt on all five losses."""
+        r = probes('Aprime')[row]
+        info = r['memory']['route_info']
+        assert r['memory']['score']['exact_correct'] is False
+        assert info['mount_dropped_for_width'], info.get('mount_plan')
+        # The plan grew past what the arena can seat.
+>       nodes = manifest('Aprime')
+                ^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_f1_r3_receipts.py:133: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'Aprime'
+
+    def manifest(arm):
+        cells = sorted(glob.glob(
+            str(R3 / f'run_{arm}/cells/*/checkpoint/repository/manifest.json')))
+>       return json.loads(Path(cells[-1]).read_text())['nodes']
+                               ^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_grm_f1_r3_receipts.py:49: IndexError
+___________ test_every_a_prime_loss_is_a_width_eviction[recall_7_10] ___________
+
+row = 'recall_7_10'
+
+    @pytest.mark.parametrize('row', ['recall_3_10', 'recall_5_50', 'recall_7_10',
+                                     'recall_7_25', 'recall_7_50'])
+    def test_every_a_prime_loss_is_a_width_eviction(row):
+        """ONE mechanism, named by the route receipt on all five losses."""
+        r = probes('Aprime')[row]
+        info = r['memory']['route_info']
+        assert r['memory']['score']['exact_correct'] is False
+        assert info['mount_dropped_for_width'], info.get('mount_plan')
+        # The plan grew past what the arena can seat.
+>       nodes = manifest('Aprime')
+                ^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_f1_r3_receipts.py:133: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'Aprime'
+
+    def manifest(arm):
+        cells = sorted(glob.glob(
+            str(R3 / f'run_{arm}/cells/*/checkpoint/repository/manifest.json')))
+>       return json.loads(Path(cells[-1]).read_text())['nodes']
+                               ^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_grm_f1_r3_receipts.py:49: IndexError
+___________ test_every_a_prime_loss_is_a_width_eviction[recall_7_25] ___________
+
+row = 'recall_7_25'
+
+    @pytest.mark.parametrize('row', ['recall_3_10', 'recall_5_50', 'recall_7_10',
+                                     'recall_7_25', 'recall_7_50'])
+    def test_every_a_prime_loss_is_a_width_eviction(row):
+        """ONE mechanism, named by the route receipt on all five losses."""
+        r = probes('Aprime')[row]
+        info = r['memory']['route_info']
+        assert r['memory']['score']['exact_correct'] is False
+        assert info['mount_dropped_for_width'], info.get('mount_plan')
+        # The plan grew past what the arena can seat.
+>       nodes = manifest('Aprime')
+                ^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_f1_r3_receipts.py:133: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'Aprime'
+
+    def manifest(arm):
+        cells = sorted(glob.glob(
+            str(R3 / f'run_{arm}/cells/*/checkpoint/repository/manifest.json')))
+>       return json.loads(Path(cells[-1]).read_text())['nodes']
+                               ^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_grm_f1_r3_receipts.py:49: IndexError
+___________ test_every_a_prime_loss_is_a_width_eviction[recall_7_50] ___________
+
+row = 'recall_7_50'
+
+    @pytest.mark.parametrize('row', ['recall_3_10', 'recall_5_50', 'recall_7_10',
+                                     'recall_7_25', 'recall_7_50'])
+    def test_every_a_prime_loss_is_a_width_eviction(row):
+        """ONE mechanism, named by the route receipt on all five losses."""
+        r = probes('Aprime')[row]
+        info = r['memory']['route_info']
+        assert r['memory']['score']['exact_correct'] is False
+        assert info['mount_dropped_for_width'], info.get('mount_plan')
+        # The plan grew past what the arena can seat.
+>       nodes = manifest('Aprime')
+                ^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_f1_r3_receipts.py:133: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'Aprime'
+
+    def manifest(arm):
+        cells = sorted(glob.glob(
+            str(R3 / f'run_{arm}/cells/*/checkpoint/repository/manifest.json')))
+>       return json.loads(Path(cells[-1]).read_text())['nodes']
+                               ^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_grm_f1_r3_receipts.py:49: IndexError
+_______ test_recall_7_10_drops_the_only_node_holding_the_alias_relation ________
+
+    def test_recall_7_10_drops_the_only_node_holding_the_alias_relation():
+        """The alias failure, at node resolution."""
+        r = probes('Aprime')['recall_7_10']
+        info = r['memory']['route_info']
+        assert info['mount_plan'] == [12, 5, 18]
+        assert info['fit_seated'] == [5, 12]
+        assert info['mount_dropped_for_width'] == [18]
+        # Admission HAD identified it -- this is eviction, not a ranking miss.
+        assert info['admission_identified_candidates'] == [18]
+>       nodes = manifest('Aprime')
+                ^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_f1_r3_receipts.py:148: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'Aprime'
+
+    def manifest(arm):
+        cells = sorted(glob.glob(
+            str(R3 / f'run_{arm}/cells/*/checkpoint/repository/manifest.json')))
+>       return json.loads(Path(cells[-1]).read_text())['nodes']
+                               ^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_grm_f1_r3_receipts.py:49: IndexError
+________________ test_recall_5_50_twelve_is_a_cross_entity_leak ________________
+
+    def test_recall_5_50_twelve_is_a_cross_entity_leak():
+        """The served "12" is Breakwater's z-coordinate in a co-mounted node."""
+        r = probes('Aprime')['recall_5_50']
+>       nodes = manifest('Aprime')
+                ^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_f1_r3_receipts.py:159: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'Aprime'
+
+    def manifest(arm):
+        cells = sorted(glob.glob(
+            str(R3 / f'run_{arm}/cells/*/checkpoint/repository/manifest.json')))
+>       return json.loads(Path(cells[-1]).read_text())['nodes']
+                               ^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_grm_f1_r3_receipts.py:49: IndexError
+_______________ test_a_plus_prime_merged_digest_serves_the_alias _______________
+
+    def test_a_plus_prime_merged_digest_serves_the_alias():
+        """A1 removes exactly the failure: relation AND value in ONE node."""
+        r = probes('Aplusprime')['recall_7_10']
+        info = r['memory']['route_info']
+        assert r['memory']['score']['exact_correct'] is True
+        assert info['mount_plan'] == [20]
+        assert not info['mount_dropped_for_width']
+>       node = manifest('Aplusprime')[20]
+               ^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_f1_r3_receipts.py:174: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'Aplusprime'
+
+    def manifest(arm):
+        cells = sorted(glob.glob(
+            str(R3 / f'run_{arm}/cells/*/checkpoint/repository/manifest.json')))
+>       return json.loads(Path(cells[-1]).read_text())['nodes']
+                               ^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_grm_f1_r3_receipts.py:49: IndexError
+_____________________ test_beacon_nodes_per_arm[A0-3-True] _____________________
+
+arm = 'A0', count = 3, capture = True
+
+    @pytest.mark.parametrize('arm,count,capture', [
+        ('A0', 3, True), ('Aprime', 1, False), ('Aplusprime', 2, False)])
+    def test_beacon_nodes_per_arm(arm, count, capture):
+>       nodes = manifest(arm)
+                ^^^^^^^^^^^^^
+
+tests/test_grm_f1_r3_receipts.py:185: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'A0'
+
+    def manifest(arm):
+        cells = sorted(glob.glob(
+            str(R3 / f'run_{arm}/cells/*/checkpoint/repository/manifest.json')))
+>       return json.loads(Path(cells[-1]).read_text())['nodes']
+                               ^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_grm_f1_r3_receipts.py:49: IndexError
+__________________ test_beacon_nodes_per_arm[Aprime-1-False] ___________________
+
+arm = 'Aprime', count = 1, capture = False
+
+    @pytest.mark.parametrize('arm,count,capture', [
+        ('A0', 3, True), ('Aprime', 1, False), ('Aplusprime', 2, False)])
+    def test_beacon_nodes_per_arm(arm, count, capture):
+>       nodes = manifest(arm)
+                ^^^^^^^^^^^^^
+
+tests/test_grm_f1_r3_receipts.py:185: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'Aprime'
+
+    def manifest(arm):
+        cells = sorted(glob.glob(
+            str(R3 / f'run_{arm}/cells/*/checkpoint/repository/manifest.json')))
+>       return json.loads(Path(cells[-1]).read_text())['nodes']
+                               ^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_grm_f1_r3_receipts.py:49: IndexError
+________________ test_beacon_nodes_per_arm[Aplusprime-2-False] _________________
+
+arm = 'Aplusprime', count = 2, capture = False
+
+    @pytest.mark.parametrize('arm,count,capture', [
+        ('A0', 3, True), ('Aprime', 1, False), ('Aplusprime', 2, False)])
+    def test_beacon_nodes_per_arm(arm, count, capture):
+>       nodes = manifest(arm)
+                ^^^^^^^^^^^^^
+
+tests/test_grm_f1_r3_receipts.py:185: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'Aplusprime'
+
+    def manifest(arm):
+        cells = sorted(glob.glob(
+            str(R3 / f'run_{arm}/cells/*/checkpoint/repository/manifest.json')))
+>       return json.loads(Path(cells[-1]).read_text())['nodes']
+                               ^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_grm_f1_r3_receipts.py:49: IndexError
+____________ test_f2_excluded_the_alias_turns_from_the_fold_window _____________
+
+    def test_f2_excluded_the_alias_turns_from_the_fold_window():
+        """Same fold, same cell: the SOURCE LIST is the receipt.
+    
+        `fold_guard_history` is not persisted into the cell receipts, so F2's
+        exclusion is established by comparing what each arm's fold consumed.
+        """
+>       a0 = manifest('A0')
+             ^^^^^^^^^^^^^^
+
+tests/test_grm_f1_r3_receipts.py:201: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'A0'
+
+    def manifest(arm):
+        cells = sorted(glob.glob(
+            str(R3 / f'run_{arm}/cells/*/checkpoint/repository/manifest.json')))
+>       return json.loads(Path(cells[-1]).read_text())['nodes']
+                               ^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_grm_f1_r3_receipts.py:49: IndexError
+_____________ test_the_a_prime_alias_edge_is_the_source_of_nothing _____________
+
+    def test_the_a_prime_alias_edge_is_the_source_of_nothing():
+        """Never folded therefore never superseded: a lone raw edge forever."""
+>       nodes = manifest('Aprime')
+                ^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_f1_r3_receipts.py:212: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'Aprime'
+
+    def manifest(arm):
+        cells = sorted(glob.glob(
+            str(R3 / f'run_{arm}/cells/*/checkpoint/repository/manifest.json')))
+>       return json.loads(Path(cells[-1]).read_text())['nodes']
+                               ^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_grm_f1_r3_receipts.py:49: IndexError
+______________ test_residency_bounded_in_every_arm[A0-199-36-94] _______________
+
+arm = 'A0', nodes_n = 199, active_n = 36, max_seats = 94
+
+    @pytest.mark.parametrize('arm,nodes_n,active_n,max_seats', [
+        ('A0', 199, 36, 94), ('Aprime', 228, 213, 95),
+        ('Aplusprime', 200, 175, 94)])
+    def test_residency_bounded_in_every_arm(arm, nodes_n, active_n, max_seats):
+>       nodes = manifest(arm)
+                ^^^^^^^^^^^^^
+
+tests/test_grm_f1_r3_receipts.py:226: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'A0'
+
+    def manifest(arm):
+        cells = sorted(glob.glob(
+            str(R3 / f'run_{arm}/cells/*/checkpoint/repository/manifest.json')))
+>       return json.loads(Path(cells[-1]).read_text())['nodes']
+                               ^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_grm_f1_r3_receipts.py:49: IndexError
+____________ test_residency_bounded_in_every_arm[Aprime-228-213-95] ____________
+
+arm = 'Aprime', nodes_n = 228, active_n = 213, max_seats = 95
+
+    @pytest.mark.parametrize('arm,nodes_n,active_n,max_seats', [
+        ('A0', 199, 36, 94), ('Aprime', 228, 213, 95),
+        ('Aplusprime', 200, 175, 94)])
+    def test_residency_bounded_in_every_arm(arm, nodes_n, active_n, max_seats):
+>       nodes = manifest(arm)
+                ^^^^^^^^^^^^^
+
+tests/test_grm_f1_r3_receipts.py:226: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'Aprime'
+
+    def manifest(arm):
+        cells = sorted(glob.glob(
+            str(R3 / f'run_{arm}/cells/*/checkpoint/repository/manifest.json')))
+>       return json.loads(Path(cells[-1]).read_text())['nodes']
+                               ^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_grm_f1_r3_receipts.py:49: IndexError
+__________ test_residency_bounded_in_every_arm[Aplusprime-200-175-94] __________
+
+arm = 'Aplusprime', nodes_n = 200, active_n = 175, max_seats = 94
+
+    @pytest.mark.parametrize('arm,nodes_n,active_n,max_seats', [
+        ('A0', 199, 36, 94), ('Aprime', 228, 213, 95),
+        ('Aplusprime', 200, 175, 94)])
+    def test_residency_bounded_in_every_arm(arm, nodes_n, active_n, max_seats):
+>       nodes = manifest(arm)
+                ^^^^^^^^^^^^^
+
+tests/test_grm_f1_r3_receipts.py:226: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+arm = 'Aplusprime'
+
+    def manifest(arm):
+        cells = sorted(glob.glob(
+            str(R3 / f'run_{arm}/cells/*/checkpoint/repository/manifest.json')))
+>       return json.loads(Path(cells[-1]).read_text())['nodes']
+                               ^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_grm_f1_r3_receipts.py:49: IndexError
+_________ test_real_resume_route_through_pending_and_one_run_cell[A0] __________
+
+label = 'A0'
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_real_resume_route_through0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7d0db05c6c60>
+
+    @pytest.mark.parametrize('label', list(ARM_MATRIX))
+    def test_real_resume_route_through_pending_and_one_run_cell(
+            label, tmp_path, monkeypatch):
+        """`resume()` itself -- not the `--dry-lease` branch -- with `--out`.
+    
+        Drives the production route: chain preflight, seams, arm pin,
+        campaign-owner file, `worker.pending` selection, and ONE real
+        `worker.run_cell` spawn onto the CPU double. `run_cell` is allowed to
+        execute exactly one cell and is then short-circuited, so the gate stays
+        inside its time budget while still proving the spawn.
+        """
+        spec = ARM_MATRIX[label]
+        _apply_arm_env(monkeypatch, spec)
+        _stub_lease(monkeypatch, tmp_path)
+        out = tmp_path / ('run_' + label.replace('+', 'plus').replace("'", 'p'))
+    
+        monkeypatch.setattr(worker, 'accounting', lambda *a, **k: 0.0)
+        monkeypatch.setattr(worker.time, 'sleep', lambda *_: None)
+    
+        # `spawn_argv` CANNOT be patched out here: `resume()` enters
+        # `lt1_1_seams`, which assigns `worker.spawn_argv = spawn_argv` (the real
+        # `--worker` argv) and restores its saved value on exit. A monkeypatch
+        # applied before `resume()` is therefore overwritten the moment the
+        # seams open, the child loads the real 20B model, and on a machine with
+        # no GPU it exits 1 -> WORKER_EXIT_1 -> rc 2.
+        #
+        # That is exactly the "flake" this file chased: NOT a race and NOT load
+        # sensitivity, but a seam that silently wins over the patch. It looked
+        # intermittent only because the model-load failure is fast when the
+        # weights are cold in page cache and slow when they are warm, so the
+        # cell sometimes outran the surrounding assertions.
+        #
+        # `runner.spawn_argv` is what the seams INSTALL, so patching it at the
+        # source survives the seams and keeps the child on the CPU double.
+        monkeypatch.setattr(runner, 'spawn_argv',
+                            _child_argv_using_the_cpu_double)
+    
+        real_run_cell = worker.run_cell
+        calls = []
+    
+        def one_cell_then_stop(cell, reg):
+            calls.append(cell['id'])
+            result = real_run_cell(cell, reg)
+            # Stop the campaign loop after the first real spawn.
+            monkeypatch.setattr(worker, 'pending', lambda *a, **k: None)
+            return result
+        monkeypatch.setattr(worker, 'run_cell', one_cell_then_stop)
+    
+        rc = runner.resume(spec['base'], root=out, host_gate=False)
+>       assert rc == 0, rc
+E       AssertionError: 2
+E       assert 2 == 0
+
+tests/test_grm_f1_resume_out_root.py:346: AssertionError
+----------------------------- Captured stderr call -----------------------------
+LT1.1 arm A pinned {"arm": "A", "admission_rule": "margin_first", "alias_fold_merge": false}
+LT1.1 roots {"campaign_root": "/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_real_resume_route_through0/run_A0", "cells_root": "/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_real_resume_route_through0/run_A0/cells", "owner_file": "/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_real_resume_route_through0/run_A0/campaign.active", "worker_RUN": "/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_real_resume_route_through0/run_A0", "arm_default_root": "/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d1/lt1_1/run_A", "out_override": "/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_real_resume_route_through0/run_A0", "arm_default_in_use": false}
+LT1.1 A cell A-001-008
+_________ test_real_resume_route_through_pending_and_one_run_cell[A'] __________
+
+label = "A'"
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_real_resume_route_through1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7d0db05c6600>
+
+    @pytest.mark.parametrize('label', list(ARM_MATRIX))
+    def test_real_resume_route_through_pending_and_one_run_cell(
+            label, tmp_path, monkeypatch):
+        """`resume()` itself -- not the `--dry-lease` branch -- with `--out`.
+    
+        Drives the production route: chain preflight, seams, arm pin,
+        campaign-owner file, `worker.pending` selection, and ONE real
+        `worker.run_cell` spawn onto the CPU double. `run_cell` is allowed to
+        execute exactly one cell and is then short-circuited, so the gate stays
+        inside its time budget while still proving the spawn.
+        """
+        spec = ARM_MATRIX[label]
+        _apply_arm_env(monkeypatch, spec)
+        _stub_lease(monkeypatch, tmp_path)
+        out = tmp_path / ('run_' + label.replace('+', 'plus').replace("'", 'p'))
+    
+        monkeypatch.setattr(worker, 'accounting', lambda *a, **k: 0.0)
+        monkeypatch.setattr(worker.time, 'sleep', lambda *_: None)
+    
+        # `spawn_argv` CANNOT be patched out here: `resume()` enters
+        # `lt1_1_seams`, which assigns `worker.spawn_argv = spawn_argv` (the real
+        # `--worker` argv) and restores its saved value on exit. A monkeypatch
+        # applied before `resume()` is therefore overwritten the moment the
+        # seams open, the child loads the real 20B model, and on a machine with
+        # no GPU it exits 1 -> WORKER_EXIT_1 -> rc 2.
+        #
+        # That is exactly the "flake" this file chased: NOT a race and NOT load
+        # sensitivity, but a seam that silently wins over the patch. It looked
+        # intermittent only because the model-load failure is fast when the
+        # weights are cold in page cache and slow when they are warm, so the
+        # cell sometimes outran the surrounding assertions.
+        #
+        # `runner.spawn_argv` is what the seams INSTALL, so patching it at the
+        # source survives the seams and keeps the child on the CPU double.
+        monkeypatch.setattr(runner, 'spawn_argv',
+                            _child_argv_using_the_cpu_double)
+    
+        real_run_cell = worker.run_cell
+        calls = []
+    
+        def one_cell_then_stop(cell, reg):
+            calls.append(cell['id'])
+            result = real_run_cell(cell, reg)
+            # Stop the campaign loop after the first real spawn.
+            monkeypatch.setattr(worker, 'pending', lambda *a, **k: None)
+            return result
+        monkeypatch.setattr(worker, 'run_cell', one_cell_then_stop)
+    
+        rc = runner.resume(spec['base'], root=out, host_gate=False)
+>       assert rc == 0, rc
+E       AssertionError: 2
+E       assert 2 == 0
+
+tests/test_grm_f1_resume_out_root.py:346: AssertionError
+----------------------------- Captured stderr call -----------------------------
+LT1.1 arm A pinned {"arm": "A", "admission_rule": "margin_first", "alias_fold_merge": false}
+LT1.1 roots {"campaign_root": "/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_real_resume_route_through1/run_Ap", "cells_root": "/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_real_resume_route_through1/run_Ap/cells", "owner_file": "/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_real_resume_route_through1/run_Ap/campaign.active", "worker_RUN": "/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_real_resume_route_through1/run_Ap", "arm_default_root": "/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d1/lt1_1/run_A", "out_override": "/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_real_resume_route_through1/run_Ap", "arm_default_in_use": false}
+LT1.1 A cell A-001-008
+_________ test_real_resume_route_through_pending_and_one_run_cell[A+'] _________
+
+label = "A+'"
+tmp_path = PosixPath('/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_real_resume_route_through2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7d0db05b9fd0>
+
+    @pytest.mark.parametrize('label', list(ARM_MATRIX))
+    def test_real_resume_route_through_pending_and_one_run_cell(
+            label, tmp_path, monkeypatch):
+        """`resume()` itself -- not the `--dry-lease` branch -- with `--out`.
+    
+        Drives the production route: chain preflight, seams, arm pin,
+        campaign-owner file, `worker.pending` selection, and ONE real
+        `worker.run_cell` spawn onto the CPU double. `run_cell` is allowed to
+        execute exactly one cell and is then short-circuited, so the gate stays
+        inside its time budget while still proving the spawn.
+        """
+        spec = ARM_MATRIX[label]
+        _apply_arm_env(monkeypatch, spec)
+        _stub_lease(monkeypatch, tmp_path)
+        out = tmp_path / ('run_' + label.replace('+', 'plus').replace("'", 'p'))
+    
+        monkeypatch.setattr(worker, 'accounting', lambda *a, **k: 0.0)
+        monkeypatch.setattr(worker.time, 'sleep', lambda *_: None)
+    
+        # `spawn_argv` CANNOT be patched out here: `resume()` enters
+        # `lt1_1_seams`, which assigns `worker.spawn_argv = spawn_argv` (the real
+        # `--worker` argv) and restores its saved value on exit. A monkeypatch
+        # applied before `resume()` is therefore overwritten the moment the
+        # seams open, the child loads the real 20B model, and on a machine with
+        # no GPU it exits 1 -> WORKER_EXIT_1 -> rc 2.
+        #
+        # That is exactly the "flake" this file chased: NOT a race and NOT load
+        # sensitivity, but a seam that silently wins over the patch. It looked
+        # intermittent only because the model-load failure is fast when the
+        # weights are cold in page cache and slow when they are warm, so the
+        # cell sometimes outran the surrounding assertions.
+        #
+        # `runner.spawn_argv` is what the seams INSTALL, so patching it at the
+        # source survives the seams and keeps the child on the CPU double.
+        monkeypatch.setattr(runner, 'spawn_argv',
+                            _child_argv_using_the_cpu_double)
+    
+        real_run_cell = worker.run_cell
+        calls = []
+    
+        def one_cell_then_stop(cell, reg):
+            calls.append(cell['id'])
+            result = real_run_cell(cell, reg)
+            # Stop the campaign loop after the first real spawn.
+            monkeypatch.setattr(worker, 'pending', lambda *a, **k: None)
+            return result
+        monkeypatch.setattr(worker, 'run_cell', one_cell_then_stop)
+    
+        rc = runner.resume(spec['base'], root=out, host_gate=False)
+>       assert rc == 0, rc
+E       AssertionError: 2
+E       assert 2 == 0
+
+tests/test_grm_f1_resume_out_root.py:346: AssertionError
+----------------------------- Captured stderr call -----------------------------
+LT1.1 arm A+ pinned {"arm": "A+", "admission_rule": "margin_first", "alias_fold_merge": true}
+LT1.1 roots {"campaign_root": "/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_real_resume_route_through2/run_Aplusp", "cells_root": "/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_real_resume_route_through2/run_Aplusp/cells", "owner_file": "/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_real_resume_route_through2/run_Aplusp/campaign.active", "worker_RUN": "/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_real_resume_route_through2/run_Aplusp", "arm_default_root": "/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d1/lt1_1/run_Aplus", "out_override": "/mnt/ForgeRealm/wt/grm-d2/artifacts/grm_d2/tmp/test_real_resume_route_through2/run_Aplusp", "arm_default_in_use": false}
+LT1.1 A+ cell A-001-008
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_grm_a1_gpu_contrast.py::test_amendment_chain_is_sha_bound_to_the_registration
+FAILED tests/test_grm_d1_amendment1.py::test_a1_files_are_attributed_to_a1_and_the_others_are_not
+FAILED tests/test_grm_d1_amendment1.py::test_amendment1_no_longer_owns_lead_commands
+FAILED tests/test_grm_d1_amendment3.py::test_the_host_blocker_claim_was_true_and_is_now_resolved
+FAILED tests/test_grm_f1_fold_retain.py::test_governing_amendment_rebinds_every_core_pin
+FAILED tests/test_grm_f1_r3_receipts.py::test_every_a_prime_loss_is_a_width_eviction[recall_3_10]
+FAILED tests/test_grm_f1_r3_receipts.py::test_every_a_prime_loss_is_a_width_eviction[recall_5_50]
+FAILED tests/test_grm_f1_r3_receipts.py::test_every_a_prime_loss_is_a_width_eviction[recall_7_10]
+FAILED tests/test_grm_f1_r3_receipts.py::test_every_a_prime_loss_is_a_width_eviction[recall_7_25]
+FAILED tests/test_grm_f1_r3_receipts.py::test_every_a_prime_loss_is_a_width_eviction[recall_7_50]
+FAILED tests/test_grm_f1_r3_receipts.py::test_recall_7_10_drops_the_only_node_holding_the_alias_relation
+FAILED tests/test_grm_f1_r3_receipts.py::test_recall_5_50_twelve_is_a_cross_entity_leak
+FAILED tests/test_grm_f1_r3_receipts.py::test_a_plus_prime_merged_digest_serves_the_alias
+FAILED tests/test_grm_f1_r3_receipts.py::test_beacon_nodes_per_arm[A0-3-True]
+FAILED tests/test_grm_f1_r3_receipts.py::test_beacon_nodes_per_arm[Aprime-1-False]
+FAILED tests/test_grm_f1_r3_receipts.py::test_beacon_nodes_per_arm[Aplusprime-2-False]
+FAILED tests/test_grm_f1_r3_receipts.py::test_f2_excluded_the_alias_turns_from_the_fold_window
+FAILED tests/test_grm_f1_r3_receipts.py::test_the_a_prime_alias_edge_is_the_source_of_nothing
+FAILED tests/test_grm_f1_r3_receipts.py::test_residency_bounded_in_every_arm[A0-199-36-94]
+FAILED tests/test_grm_f1_r3_receipts.py::test_residency_bounded_in_every_arm[Aprime-228-213-95]
+FAILED tests/test_grm_f1_r3_receipts.py::test_residency_bounded_in_every_arm[Aplusprime-200-175-94]
+FAILED tests/test_grm_f1_resume_out_root.py::test_real_resume_route_through_pending_and_one_run_cell[A0]
+FAILED tests/test_grm_f1_resume_out_root.py::test_real_resume_route_through_pending_and_one_run_cell[A']
+FAILED tests/test_grm_f1_resume_out_root.py::test_real_resume_route_through_pending_and_one_run_cell[A+']
+24 failed, 1128 passed, 337 skipped, 2 warnings in 26.02s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

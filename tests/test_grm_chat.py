@@ -27,16 +27,44 @@ from scripts.grm_profile import (                               # noqa: E402
 
 # -- the one switch --------------------------------------------------------
 
-def test_profile_unset_is_todays_behaviour():
-    """Shipped defaults stay the defaults: unset changes nothing."""
-    resolved = resolve_profile(environ={})
-    assert resolved["profile"] == "defaults"
+def test_profile_unset_is_the_pre_d2_profile_under_the_umbrella():
+    """The pre-D2 shipped set, now reached through GRM_LEGACY_DEFAULTS=1.
+
+    GRM-D2 (2026-09-11, flip 2) made ``eb1_c2`` the shipped profile, so
+    "unset" no longer means width 256.  Every FLAG assertion below is
+    unchanged -- this is still the receipt for the old set -- and only two
+    things moved, both of them consequences of the flip rather than
+    expectations rewritten around it:
+
+      * the set now has a NAME (``legacy_256``) instead of being the
+        unnamed fallback, because a default you can no longer reach by
+        doing nothing has to be reachable by asking for it;
+      * ``GRM_ADMISSION_RULE`` is now PINNED to ``all_tokens_bind`` rather
+        than left absent.  Absent used to mean all-tokens-bind; after D2 it
+        means margin-first, so leaving it absent would put a margin-first
+        rule inside a legacy frame -- a half-applied profile.
+    """
+    environ = {"GRM_LEGACY_DEFAULTS": "1"}
+    resolved = resolve_profile(environ=environ)
+    assert resolved["profile"] == "legacy_256"
     assert resolved["profile_id"] is None
     assert resolved["flags"]["arena_width"] == 256
     assert resolved["flags"]["capture_pin"] == "off"
     assert resolved["flags"]["seat_near_live"] is False
     assert resolved["admission_rule"] == "all_tokens_bind"
-    assert "GRM_ADMISSION_RULE" not in resolved["env"]
+    assert resolved["env"]["GRM_ADMISSION_RULE"] == "all_tokens_bind"
+
+
+def test_profile_unset_is_the_c2_profile_after_d2():
+    """The other side of the flip: doing nothing gets the measured set."""
+    resolved = resolve_profile(environ={})
+    assert resolved["profile"] == "eb1_c2"
+    assert resolved["profile_id"] == "gpt-oss-20b-eb1-w96-live-rt1"
+    assert resolved["flags"]["arena_width"] == 96
+    assert resolved["flags"]["capture_pin"] == "live"
+    assert resolved["flags"]["seat_near_live"] is True
+    assert resolved["admission_rule"] == "margin_first"
+    assert resolved["env"]["GRM_ADMISSION_RULE"] == "margin_first"
 
 
 def test_profile_eb1_c2_selects_the_registered_entry():
@@ -108,7 +136,16 @@ def test_the_pinned_flag_reaches_the_repository(tmp_path):
     from scripts.grm_p1_smoke import pinned_environment
     for pins, expected in (([], False), (["GRM_ALIAS_FOLD_MERGE"], True)):
         resolved = resolve_profile(selection="eb1_c2", pinned=pins)
-        with pinned_environment(resolved["env"]):
+        # GRM-D2 re-pin.  The un-pinned arm's meaning is "A1 was NOT asked
+        # for", and before D2 that arm could be expressed by absence.  A1
+        # now ships ON, so absence is the treatment; the umbrella is what
+        # restores "not asked for" == OFF.  `pinned_environment` UPDATES
+        # rather than clears, so pinning it here reaches the repository
+        # constructor.  Both assertions are unchanged.
+        env = dict(resolved["env"])
+        if not pins:
+            env["GRM_LEGACY_DEFAULTS"] = "1"
+        with pinned_environment(env):
             session = grm_chat.ChatSession(
                 tmp_path / f"s{expected}", resolved, fake=True)
             session.open()

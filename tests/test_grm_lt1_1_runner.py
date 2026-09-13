@@ -128,11 +128,19 @@ def test_arm_environment_pins_after_the_ambient_strip():
     flags = reg['arms']['A']['flags']
     env_plus = runner.arm_environment('A+', flags)
     env_a = runner.arm_environment('A', flags)
+    # GRM-D2 (2026-09-11): the OFF arm is now an EXPLICIT '0' pin, not an
+    # absence.  Before D2 absence meant OFF; A1 now ships ON, so an absent
+    # variable would hand arm A the treatment (caught by `pinned_arm`'s
+    # read-back as LT11_ALIAS_PIN_FAILED).  An arm is a PIN, never an
+    # absence.  The property tested is unchanged.
     assert env_plus[runner.ALIAS_ENV] == '1'
-    assert runner.ALIAS_ENV not in env_a
+    assert env_a[runner.ALIAS_ENV] == '0'
     assert env_plus[runner.RULE_ENV] == env_a[runner.RULE_ENV] == 'margin_first'
-    assert set(env_plus) - set(env_a) == {runner.ALIAS_ENV}
-    assert set(env_a) - set(env_plus) == set()
+    # The arms still differ in exactly one variable -- now by VALUE rather
+    # than by presence, which is the stronger statement of the same thing.
+    assert set(env_plus) == set(env_a)
+    assert {k for k in env_plus if env_plus[k] != env_a[k]} == {
+        runner.ALIAS_ENV}
 
 
 def test_ambient_pollution_cannot_reach_the_child():
@@ -142,7 +150,11 @@ def test_ambient_pollution_cannot_reach_the_child():
     os.environ[runner.ALIAS_ENV] = '1'
     try:
         env = runner.arm_environment('A', flags)
-        assert runner.ALIAS_ENV not in env
+        # GRM-D2: arm A now OVERRIDES the stale flag with an explicit '0'
+        # rather than deleting it.  Stronger than the old assertion: a
+        # deletion left the arm at the mercy of the shipped default, while
+        # an explicit pin states the arm regardless of what ships.
+        assert env[runner.ALIAS_ENV] == '0'
     finally:
         os.environ.pop(runner.ALIAS_ENV, None)
 

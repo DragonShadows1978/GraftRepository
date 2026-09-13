@@ -64,9 +64,29 @@ import pytest
 
 from core.graft_arena import ArenaCache
 from core import grm_fold_alias_guard as guard
+from core import grm_legacy_defaults as legacy_defaults
 from scripts.grm_c7_diagnose import Model, repository
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+# --------------------------------------------------------- GRM-D2 re-pin
+#
+# GRM-D2 (2026-09-11) flipped F2's shipped default from OFF to ON.  THIS
+# SUITE'S ASSERTIONS ARE UNCHANGED: they pin the pre-D2 behaviour, which is
+# what ``GRM_LEGACY_DEFAULTS=1`` selects.  ``_grm_d2_legacy_defaults`` pins
+# the process environment for the arena-driven tests; ``legacy()`` builds
+# the explicit ``environ=`` dicts the resolver tests pass directly, which
+# never consult ``os.environ``.
+
+def legacy(**extra):
+    """An ``environ`` mapping pinned to the pre-D2 defaults."""
+    return {legacy_defaults.ENV_NAME: "1", **extra}
+
+
+@pytest.fixture(autouse=True)
+def _grm_d2_legacy_defaults(monkeypatch):
+    monkeypatch.setenv(legacy_defaults.ENV_NAME, "1")
 RECEIPT = json.loads(
     (ROOT / 'artifacts/grm_f2/receipt_digest24.json').read_text())
 
@@ -152,13 +172,17 @@ def test_flag_default_off_and_fails_closed(monkeypatch):
     for token, want in (('1', True), ('true', True), ('YES', True),
                         ('on', True), ('0', False), ('off', False),
                         ('', False), ('banana', False), ('2', False)):
+        # 'banana' / '2' still resolve False: GRM-D2 moved the fail-closed
+        # rung from the override helper (which now returns None) to the
+        # shipped default, and under this suite's legacy pin the shipped
+        # default IS False.  Same verdict, stated one rung later.
         assert guard.fold_alias_guard_enabled(
-            environ={guard.ENV_NAME: token}) is want, token
+            environ=legacy(**{guard.ENV_NAME: token})) is want, token
     # An explicit constructor value outranks the environment, both ways.
     assert guard.fold_alias_guard_enabled(
-        True, environ={guard.ENV_NAME: '0'}) is True
+        True, environ=legacy(**{guard.ENV_NAME: '0'})) is True
     assert guard.fold_alias_guard_enabled(
-        False, environ={guard.ENV_NAME: '1'}) is False
+        False, environ=legacy(**{guard.ENV_NAME: '1'})) is False
 
 
 def test_flag_off_byte_identical(tmp_path, monkeypatch):
