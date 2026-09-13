@@ -122,7 +122,11 @@ def test_amendment_binds_worker_and_preserves_original_registration():
     assert xm.sha(xm.REG) == '758fd3ac1231ed44937714a86009b557f554f026e9d85773cb730074e04439e8'
     assert amendment['registration_sha256'] == xm.sha(xm.REG)
     assert amendment['previous_implementation_sha256'] == xm.sha(xm.IMPL)
-    assert amendment['pins']['scripts/grm_xm1_parity.py'] == xm.sha(xm.ROOT / 'scripts/grm_xm1_parity.py')
+    # XM2 supersedes source pins in a separate immutable registration. Keep
+    # proving the original amendment against its exact preserved source.
+    assert amendment['pins']['scripts/grm_xm1_parity.py'] == xm.sha(xm.ROOT / 'artifacts/grm_xm2/sources/grm_xm1_parity_amendment_1.py')
+    assert read(xm.XM2_REG)['pins']['scripts/grm_xm1_parity.py'] == xm.sha(xm.ROOT / 'artifacts/grm_xm2/amendment_1/sources/scripts/grm_xm1_parity.py')
+    assert xm.xm2_registration()['pins']['scripts/grm_xm1_parity.py'] == xm.sha(xm.ROOT / 'scripts/grm_xm1_parity.py')
     assert xm.binding(GPT[0], 'gpu')['amendment_sha256'] == xm.sha(xm.AMENDMENT)
     assert xm.validate_registration() == REG
     commands = (xm.ROOT / 'artifacts/grm_xm1/lead_commands.txt').read_text()

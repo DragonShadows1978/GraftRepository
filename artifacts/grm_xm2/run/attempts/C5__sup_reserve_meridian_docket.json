@@ -1,0 +1,16 @@
+{
+  "binding": {
+    "cell": {
+      "arm": "C5",
+      "capture_pin": null,
+      "id": "C5__sup_reserve_meridian_docket",
+      "model": "qwen35",
+      "probe": "sup_reserve_meridian_docket",
+      "reservation_s": 110,
+      "seat_near_live": false
+    },
+    "registration_sha256": "7d537ab25ba485094b0235c9b1407d75b542dcbba21ebdd587a6534d16d73c3d"
+  },
+  "reservation_s": 110,
+  "started_unix_s": 1789271044.852956
+}

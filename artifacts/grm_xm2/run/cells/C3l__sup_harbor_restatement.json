@@ -1,0 +1,20 @@
+{
+  "binding": {
+    "cell": {
+      "arm": "C3l",
+      "capture_pin": "live",
+      "id": "C3l__sup_harbor_restatement",
+      "model": "qwen35",
+      "probe": "sup_harbor_restatement",
+      "reservation_s": 110,
+      "seat_near_live": true
+    },
+    "registration_sha256": "7d537ab25ba485094b0235c9b1407d75b542dcbba21ebdd587a6534d16d73c3d"
+  },
+  "elapsed_s": 115.31824087025598,
+  "error": "QuantLinearTC INT4 init failed tensor=lm_head.weight shape=(248320,4096)",
+  "error_type": "RuntimeError",
+  "evidence_class": "GPU Qwen native cell; historical source contrast",
+  "gpu_executed": true,
+  "status": "ERROR"
+}

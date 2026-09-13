@@ -1,0 +1,340 @@
+{
+  "answer_window": "Final content input-query tokens only: generated index i -> observer index i+1; omit prefill, thinking, delimiters, EOS, leading separator whitespace.",
+  "cells": [
+    {
+      "arm": "C3l",
+      "capture_pin": "live",
+      "id": "C3l__sup_harbor_restatement",
+      "model": "qwen35",
+      "probe": "sup_harbor_restatement",
+      "reservation_s": 110,
+      "seat_near_live": true
+    },
+    {
+      "arm": "C5",
+      "capture_pin": null,
+      "id": "C5__sup_harbor_restatement",
+      "model": "qwen35",
+      "probe": "sup_harbor_restatement",
+      "reservation_s": 110,
+      "seat_near_live": false
+    },
+    {
+      "arm": "C3l",
+      "capture_pin": "live",
+      "id": "C3l__sup_praxis_fresh",
+      "model": "qwen35",
+      "probe": "sup_praxis_fresh",
+      "reservation_s": 110,
+      "seat_near_live": true
+    },
+    {
+      "arm": "C5",
+      "capture_pin": null,
+      "id": "C5__sup_praxis_fresh",
+      "model": "qwen35",
+      "probe": "sup_praxis_fresh",
+      "reservation_s": 110,
+      "seat_near_live": false
+    },
+    {
+      "arm": "C3l",
+      "capture_pin": "live",
+      "id": "C3l__sup_reserve_meridian_docket",
+      "model": "qwen35",
+      "probe": "sup_reserve_meridian_docket",
+      "reservation_s": 110,
+      "seat_near_live": true
+    },
+    {
+      "arm": "C5",
+      "capture_pin": null,
+      "id": "C5__sup_reserve_meridian_docket",
+      "model": "qwen35",
+      "probe": "sup_reserve_meridian_docket",
+      "reservation_s": 110,
+      "seat_near_live": false
+    },
+    {
+      "arm": "C3l",
+      "capture_pin": "live",
+      "id": "C3l__sup_reserve_tundra_ledger",
+      "model": "qwen35",
+      "probe": "sup_reserve_tundra_ledger",
+      "reservation_s": 110,
+      "seat_near_live": true
+    },
+    {
+      "arm": "C5",
+      "capture_pin": null,
+      "id": "C5__sup_reserve_tundra_ledger",
+      "model": "qwen35",
+      "probe": "sup_reserve_tundra_ledger",
+      "reservation_s": 110,
+      "seat_near_live": false
+    },
+    {
+      "arm": "C3l",
+      "capture_pin": "live",
+      "id": "C3l__sup_solace_fresh",
+      "model": "qwen35",
+      "probe": "sup_solace_fresh",
+      "reservation_s": 110,
+      "seat_near_live": true
+    },
+    {
+      "arm": "C5",
+      "capture_pin": null,
+      "id": "C5__sup_solace_fresh",
+      "model": "qwen35",
+      "probe": "sup_solace_fresh",
+      "reservation_s": 110,
+      "seat_near_live": false
+    },
+    {
+      "arm": "C3l",
+      "capture_pin": "off",
+      "id": "C3l_pin_off_seat_0__sup_praxis_fresh",
+      "model": "qwen35",
+      "probe": "sup_praxis_fresh",
+      "reservation_s": 110,
+      "seat_near_live": false
+    },
+    {
+      "arm": "C3l",
+      "capture_pin": "live",
+      "id": "C3l_pin_live_seat_0__sup_praxis_fresh",
+      "model": "qwen35",
+      "probe": "sup_praxis_fresh",
+      "reservation_s": 110,
+      "seat_near_live": false
+    },
+    {
+      "arm": "C3l",
+      "capture_pin": "off",
+      "id": "C3l_pin_off_seat_1__sup_praxis_fresh",
+      "model": "qwen35",
+      "probe": "sup_praxis_fresh",
+      "reservation_s": 110,
+      "seat_near_live": true
+    },
+    {
+      "arm": "C3l",
+      "capture_pin": "off",
+      "id": "C3l_pin_off_seat_0__sup_solace_fresh",
+      "model": "qwen35",
+      "probe": "sup_solace_fresh",
+      "reservation_s": 110,
+      "seat_near_live": false
+    },
+    {
+      "arm": "C3l",
+      "capture_pin": "live",
+      "id": "C3l_pin_live_seat_0__sup_solace_fresh",
+      "model": "qwen35",
+      "probe": "sup_solace_fresh",
+      "reservation_s": 110,
+      "seat_near_live": false
+    },
+    {
+      "arm": "C3l",
+      "capture_pin": "off",
+      "id": "C3l_pin_off_seat_1__sup_solace_fresh",
+      "model": "qwen35",
+      "probe": "sup_solace_fresh",
+      "reservation_s": 110,
+      "seat_near_live": true
+    }
+  ],
+  "completion_rail": "Require nonempty EOS-complete final answer per cell; NO_FINAL or TRUNCATED_FINAL is RED. Never extend token or time cap after seeing results.",
+  "deviations": [
+    "Source sets retained despite missing Praxis C5 fact and wrong-fact Solace C3l mount; not a same-fact parity claim.",
+    "Final-query window intentionally changes predictor-row convention in legacy XM1; raw observations retained.",
+    "Controlled capture off=0 approximates fresh native legacy state; not arbitrary residual production-arena live_shift.",
+    "32-token direct-final cap retained for budget. EOS incomplete is RED, no automatic cap increase.",
+    "CPU doubles are author baseline only, not blind verification, Qwen quality or GPU numeric parity."
+  ],
+  "execution": "Register only in this seat. Worker leases itself fail-fast with wait=0; no outer flock. 110 s each, charge full reservation before load; 16 unique cells; no retry. 30 s minimum gap checked without waiting. Resume exact binding only.",
+  "flag": {
+    "GRM_QWEN35_FINAL_CHANNEL": "1"
+  },
+  "gates": [
+    "Pins and original GPT-OSS reference barrier pass before dispatch/dry-run.",
+    "CPU recorded trace final-window selection, OFF serialized identity on 10 cells, 4 RS3 geometries, flags/boundaries, source diagnosis.",
+    "All 16 lead commands accept --dry-run, no GPU import or lease.",
+    "Final command verbatim: python3 -m pytest -q --basetemp artifacts/grm_xm2/tmp tests/test_grm_xm1*.py tests/test_grm_xm2*.py"
+  ],
+  "geometry": "width=max(capture native ntok,feed native ntok)+96; capture live=width/off=0 (cleared fresh native state); near seat=[width-ntok,width), off seat=[0,ntok); live queries start at width. No physical sink. No DeltaNet state transfer.",
+  "geometry_by_probe": {
+    "sup_harbor_restatement": {
+      "capture_pin": "live",
+      "capture_shift": 279,
+      "delta_positions": 231,
+      "geometry_evidence": "capture shift inferred from pinned amendment-1 native_cell; seating measured in receipt",
+      "live_shift": 279,
+      "mount_ntok": 48,
+      "mount_pos0": 231,
+      "n_sink": 0,
+      "node_identity": "synthetic Qwen payload from RS4 capture_texts; no native Qwen repository node ID",
+      "physical_mount_band": [
+        0,
+        48
+      ],
+      "plan_head_last_position": 278,
+      "seat_near_live": true
+    },
+    "sup_praxis_fresh": {
+      "capture_pin": "live",
+      "capture_shift": 280,
+      "delta_positions": 242,
+      "geometry_evidence": "capture shift inferred from pinned amendment-1 native_cell; seating measured in receipt",
+      "live_shift": 280,
+      "mount_ntok": 38,
+      "mount_pos0": 242,
+      "n_sink": 0,
+      "node_identity": "synthetic Qwen payload from RS4 capture_texts; no native Qwen repository node ID",
+      "physical_mount_band": [
+        0,
+        38
+      ],
+      "plan_head_last_position": 279,
+      "seat_near_live": true
+    },
+    "sup_reserve_meridian_docket": {
+      "capture_pin": "live",
+      "capture_shift": 292,
+      "delta_positions": 213,
+      "geometry_evidence": "capture shift inferred from pinned amendment-1 native_cell; seating measured in receipt",
+      "live_shift": 292,
+      "mount_ntok": 79,
+      "mount_pos0": 213,
+      "n_sink": 0,
+      "node_identity": "synthetic Qwen payload from RS4 capture_texts; no native Qwen repository node ID",
+      "physical_mount_band": [
+        0,
+        79
+      ],
+      "plan_head_last_position": 291,
+      "seat_near_live": true
+    },
+    "sup_reserve_tundra_ledger": {
+      "capture_pin": "live",
+      "capture_shift": 280,
+      "delta_positions": 200,
+      "geometry_evidence": "capture shift inferred from pinned amendment-1 native_cell; seating measured in receipt",
+      "live_shift": 280,
+      "mount_ntok": 80,
+      "mount_pos0": 200,
+      "n_sink": 0,
+      "node_identity": "synthetic Qwen payload from RS4 capture_texts; no native Qwen repository node ID",
+      "physical_mount_band": [
+        0,
+        80
+      ],
+      "plan_head_last_position": 279,
+      "seat_near_live": true
+    },
+    "sup_solace_fresh": {
+      "capture_pin": "live",
+      "capture_shift": 280,
+      "delta_positions": 200,
+      "geometry_evidence": "capture shift inferred from pinned amendment-1 native_cell; seating measured in receipt",
+      "live_shift": 280,
+      "mount_ntok": 80,
+      "mount_pos0": 200,
+      "n_sink": 0,
+      "node_identity": "synthetic Qwen payload from RS4 capture_texts; no native Qwen repository node ID",
+      "physical_mount_band": [
+        0,
+        80
+      ],
+      "plan_head_last_position": 279,
+      "seat_near_live": true
+    }
+  },
+  "gpu_budget_s": 1800,
+  "hypotheses": [
+    {
+      "evidence_before_run": "Both original windows contain only thinking; causal effect unmeasured.",
+      "falsifier": "With nonempty EOS-complete final windows, either fresh C5-minus-C3l mean still >0.10; incomplete windows are RED/unevaluable, not parity.",
+      "hypothesis": "Thinking-window contamination accounts for the registered fresh-probe mass deficits.",
+      "id": "H1"
+    },
+    {
+      "evidence_before_run": "Falsified as a differential-pin attribution: Qwen inferred live shifts 279/280/292; historical RS4 recaptures all live/115.",
+      "falsifier": "Pinned native code and per-node receipts show the same live pin for all five.",
+      "hypothesis": "A different capture pin on fresh versus comparator nodes explains the observed split.",
+      "id": "H2",
+      "lever_falsifier": "Both fresh probe changes <0.05 at both seating settings with complete final windows.",
+      "lever_prediction": "At fixed seating, off versus live recapture changes fresh mounted mean by >=0.05 on at least one probe."
+    },
+    {
+      "evidence_before_run": "Existing Qwen receipts are already seat-on; no seat-off treatment observed.",
+      "falsifier": "For each capture pin, seat-on minus seat-off <0.05 on both fresh probes; empty/incomplete windows unevaluable.",
+      "hypothesis": "Moving the mounted head adjacent to live improves fresh-probe attention.",
+      "id": "H3"
+    },
+    {
+      "evidence_before_run": "Source audit confirms missing facts in those arms; causal contribution NOT measured.",
+      "falsifier": "Local tokenizer/source replay finds Quartz-8-Jade in Praxis C5 and Raven-9-Ivory in Solace C3l, with matched source sequences.",
+      "hypothesis": "The historical panel compares unequal fact/scaffold content, confounding a same-fact parity interpretation.",
+      "id": "H4",
+      "successor": "A same-text, same-fact, matched-length experiment would test causal attribution; not in the 16 registered cells."
+    },
+    {
+      "evidence_before_run": "Falsified as a sole separator: Praxis is one name token; Solace/Tundra/Meridian are split. Other lexical/scaffold effects remain untested.",
+      "falsifier": "A failing identifier is one name token like Harbor, or successful comparators are split into multiple name tokens.",
+      "hypothesis": "Identifier fragmentation alone separates the failing fresh probes from comparators.",
+      "id": "H5"
+    }
+  ],
+  "immutable": true,
+  "max_generated_tokens": 32,
+  "model_id": "Qwen/Qwen3.5-9B",
+  "model_revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+  "pins": {
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/gpt-oss/C3l__sup_harbor_restatement.json": "0701f9bb9ba3422996e9ab3717c48947179294b21e5d097afc68c33034636654",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/gpt-oss/C3l__sup_praxis_fresh.json": "43ad096b9e6e54237e0102680a51f36945abb5e2f1e5dc7e06fa9d007af62223",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/gpt-oss/C3l__sup_reserve_meridian_docket.json": "d5f7b3d0732cd94b67bd3a7eaebf38878749d0214259d97bd2b02e67248e3664",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/gpt-oss/C3l__sup_reserve_tundra_ledger.json": "acb0dbd408ffef26b7ef7bad5b8711641816bf980f9e699c6160a804cdd4daed",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/gpt-oss/C3l__sup_solace_fresh.json": "40bb19e53d176e090ceb88323726fc71e390ccb49cda511d7470512eefbad03f",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/gpt-oss/C5__sup_harbor_restatement.json": "6b1af688fd75f6fa222c7fbf34f56f6dbe998763d07c66f694f8315fa18058eb",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/gpt-oss/C5__sup_praxis_fresh.json": "feb87c0fd3b2c4a3b0b2eedc57d4f424993f973eb634d7c738a45566e1145f08",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/gpt-oss/C5__sup_reserve_meridian_docket.json": "2d323216f195424ff4016964a969f5d8e2790fc728fad5c2e7c0184aeecb7f4f",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/gpt-oss/C5__sup_reserve_tundra_ledger.json": "09ecd2283d4652883bc821990ba76af7160f5fc59244b292bfd335c7ee1e97c7",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/gpt-oss/C5__sup_solace_fresh.json": "65ffc929d01605a863d85f7d6dda837741680696b2b4c3dccfdd5047745f1639",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/qwen35/C3l__sup_harbor_restatement.json": "7acdb296870aabf02ed14b6fa0b463554fc59575f751f9d6f12d413bd34ca288",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/qwen35/C3l__sup_praxis_fresh.json": "dedc056a740ca8c2dc69643ed33c138ff518b75626d4d01299d8464ec32d12e4",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/qwen35/C3l__sup_reserve_meridian_docket.json": "44b1f13f6bb9a59e6db13ef6f10415013fd76187b2e5722e093b87783bb56e81",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/qwen35/C3l__sup_reserve_tundra_ledger.json": "7e0c50d43cb9a09175d0d3c2057354c21517f3d2d675a6106f3a5c47a35d1f62",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/qwen35/C3l__sup_solace_fresh.json": "8edba287bf4ca1134c6471038f4b3175ff50c42f2febc17b0ce8e10a452004c6",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/qwen35/C5__sup_harbor_restatement.json": "14c2e579b10eb3c2f5927f6b4f2bc6806393887ba11d711cbd9a27b0e7cce0ca",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/qwen35/C5__sup_praxis_fresh.json": "2f0bb6a70ade42575eafd2b1f60b3b6684059a8864eefebf9ca5ed0abba2d833",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/qwen35/C5__sup_reserve_meridian_docket.json": "1f0fbe6864df86f2766a7938f92d79b463d28cb5627297b312391179e586d7dc",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/qwen35/C5__sup_reserve_tundra_ledger.json": "3d31a7a3ecb1088ad664c8b1b77d73c251f9609d07c7d6ca59f1aeafd5ba7766",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/qwen35/C5__sup_solace_fresh.json": "a884ca8f34e7f9e9f082ce3199657de5f4556b50d02eb8bb9038cf1a1d7a54ce",
+    "artifacts/grm_xm2/IMPLEMENTATION_PLAN.md": "72d380539a75142ba225e168d04d5a3f24cf2ba215482ead04511cf28219d6dd",
+    "artifacts/grm_xm2/diagnosis.json": "3ce620bab28eb9cac54a5ca13b7603ad2c9e223990d62b8d14759344a65e7875",
+    "artifacts/grm_xm2/lead_commands.txt": "ef5e7937afcb5608f91a6b6d577338f142ece3514cc08a50c23b16435dd783e3",
+    "artifacts/grm_xm2/recorded_trace_cpu.json": "cc48995f1356b885fd7169a61ccfbb06f221c02f472ed646bbee1f35903886e2",
+    "artifacts/grm_xm2/sources/chat_template.jinja": "a4aee8afcf2e0711942cf848899be66016f8d14a889ff9ede07bca099c28f715",
+    "artifacts/grm_xm2/sources/grm_xm1_parity_amendment_1.py": "34eb537545293880fadb54db8f225ce8f0ddcf1008f5e9c12808a877787cde20",
+    "artifacts/grm_xm2/sources/tokenizer.json": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42",
+    "artifacts/grm_xm2/sources/tokenizer_config.json": "316230d6a809701f4db5ea8f8fc862bc3a6f3229c937c174e674ff3ca0a64ac8",
+    "scripts/grm_xm1_cpu.py": "1c1dbbc8371d7285cdeed16ee92fcbb7a34564c2b101a38559d19456489ca128",
+    "scripts/grm_xm1_parity.py": "3c49af5d333e83a6f71eb42f6c302af049c048a9609cb8ea9664fd22ea4d4c80",
+    "scripts/grm_xm1_qwen_final.py": "2effe470a2302d033c9ed1fe1c5fcc465f46f8428597a1d017645131aeab9320",
+    "scripts/grm_xm1_x2_diagnose.py": "8a4f0bf2e9153a69f8044b02b5edb593880aa38f2172a542686038f1849a60c8",
+    "scripts/grm_xm1_x2_register.py": "01f599dddcca49d669e594b9685f9a49cef2c75502f6aafcfc51cb06bb0196c5",
+    "scripts/grm_xm1_x2_run.py": "ae0728692e2a8e03d557b5052889b65f43f82d2d28fd9915236a55632308516a",
+    "tests/test_grm_xm1_amendment_1.py": "7f525ab915975635031ec7d9b6de0ee4bd5e330f07fca7383a3ad350fb3f4244",
+    "tests/test_grm_xm2_final.py": "992d2e481f40bcc53c7b99f9bd193a936200d9cb71fbe4a21e7d4fc874b96a46"
+  },
+  "prior_art": "Qwen Team (2026), cached chat_template.jinja revision c202236235762e1c871ad0ccb60c8ee5ba337b9a; enable_thinking=False empty block reused. Upstream unverified — lead to check: Qwen3.5-9B chat template thinking mode. GRM contributors (2026), RS3 capture/seat, RS4 row means, XM1/LT1 binding and CMC1 lease reused. Ours: final input-query indices and source audit; no new attention algorithm.",
+  "schema": "grm.xm2.registration.v1",
+  "seat_effort": "high",
+  "seat_model": "gpt-6-astra",
+  "total_reserved_s": 1760,
+  "xm1_amendment_sha256": "a50046f9f790825503893613468cf9de40c0b3a8243204fc85ed626652a5de8d",
+  "xm1_registration_sha256": "758fd3ac1231ed44937714a86009b557f554f026e9d85773cb730074e04439e8"
+}

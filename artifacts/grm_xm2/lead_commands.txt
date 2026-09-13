@@ -1,0 +1,24 @@
+# Registered only; this seat ran no GPU. Worker leases itself. DO NOT use an outer flock.
+# Amendment 1: registration_amendment_1.json binds unchanged registration 7d537ab2.
+# Run from repo root. Harbor C3l cap 130 s; Meridian C5 80 s; every other cell 90 s.
+# New reservations 1470 s + prior attempts 330 s = 1800 s.
+# Warm classification follows historical 64-69 s receipts; a later cold process can still go RED.
+# New create-only receipts: artifacts/grm_xm2/amendment_1_run. No automatic retry.
+# At least 30 s after the preceding reservation end before next dispatch; gap check fails fast, never waits.
+# Append --dry-run to every line for CPU-only validation; dry-run overrides --run.
+python3 scripts/grm_xm1_x2_run.py --cell C3l__sup_harbor_restatement --run
+python3 scripts/grm_xm1_x2_run.py --cell C5__sup_harbor_restatement --run
+python3 scripts/grm_xm1_x2_run.py --cell C3l__sup_praxis_fresh --run
+python3 scripts/grm_xm1_x2_run.py --cell C5__sup_praxis_fresh --run
+python3 scripts/grm_xm1_x2_run.py --cell C3l__sup_reserve_meridian_docket --run
+python3 scripts/grm_xm1_x2_run.py --cell C5__sup_reserve_meridian_docket --run
+python3 scripts/grm_xm1_x2_run.py --cell C3l__sup_reserve_tundra_ledger --run
+python3 scripts/grm_xm1_x2_run.py --cell C5__sup_reserve_tundra_ledger --run
+python3 scripts/grm_xm1_x2_run.py --cell C3l__sup_solace_fresh --run
+python3 scripts/grm_xm1_x2_run.py --cell C5__sup_solace_fresh --run
+python3 scripts/grm_xm1_x2_run.py --cell C3l_pin_off_seat_0__sup_praxis_fresh --run
+python3 scripts/grm_xm1_x2_run.py --cell C3l_pin_live_seat_0__sup_praxis_fresh --run
+python3 scripts/grm_xm1_x2_run.py --cell C3l_pin_off_seat_1__sup_praxis_fresh --run
+python3 scripts/grm_xm1_x2_run.py --cell C3l_pin_off_seat_0__sup_solace_fresh --run
+python3 scripts/grm_xm1_x2_run.py --cell C3l_pin_live_seat_0__sup_solace_fresh --run
+python3 scripts/grm_xm1_x2_run.py --cell C3l_pin_off_seat_1__sup_solace_fresh --run
