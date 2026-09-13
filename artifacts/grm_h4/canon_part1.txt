@@ -1,0 +1,58 @@
+........................................................................ [  4%]
+.....................................................sss.....s.....sssss [  9%]
+s......ss.ss.ssssss...s...s...s.ssss.s............................s..... [ 14%]
+sss.ssssssssssssssssssssssssssssssssssssssssss..s.....sssssssssss.....s. [ 19%]
+............s.......................sssss.ss............................ [ 24%]
+..ssssssssssssssssssss...........................s.sss.ss.ss.ssss....... [ 29%]
+.........................................ssssssssssss.........ssssssss.. [ 33%]
+.........ss..............sss.........sssssssssssssssssssssssssssssssssss [ 38%]
+ssssssssssssss.................ssssssssssssss............sssssssssssssss [ 43%]
+ssssssss............ss..s................ssss.sssssss............ss.s... [ 48%]
+ssss...ssssssssssssssssss........s...sssssssssss.......ssssssssssssssss. [ 53%]
+....................ss.s.s.............................................. [ 58%]
+............................s........................................s.. [ 62%]
+........................................................................ [ 67%]
+........................................................................ [ 72%]
+........................................................................ [ 77%]
+........................................................................ [ 82%]
+........................................................................ [ 87%]
+...................s.........ssssssssssssssss..F............sss......... [ 91%]
+......................................ssssssssssssssssssssss............ [ 96%]
+..........................................ssssss                         [100%]
+=================================== FAILURES ===================================
+___________ test_red_is_not_caused_by_the_restored_session_directory ___________
+
+    def test_red_is_not_caused_by_the_restored_session_directory():
+        """The lead's candidate (1), REFUTED by receipt.
+    
+        `pending()` fails on the FIRST cell and never reaches A-025-032, and it
+        reads only `controller.json` / `worker.json` / `checkpoint/` -- never
+        `session/`. The restored directory had nothing to do with it.
+        """
+        reg = runner.registration('A')
+        root = runner.out_dir('A')
+        ordered = sorted(reg['cells'], key=lambda c: (c['start'], c['arm']))
+        assert ordered[0]['id'] == 'A-001-008'
+        assert 'A-025-032' != ordered[0]['id']
+        source = (ROOT / 'scripts/grm_lt1_worker.py').read_text()
+        body = source.split('def pending(', 1)[1].split('\ndef ', 1)[0]
+        assert 'session' not in body, body
+        # And the stray directory is gone from the live run root entirely.
+>       assert not (root / 'cells/A-025-032/session').exists()
+E       AssertionError: assert not True
+E        +  where True = exists()
+E        +    where exists = (PosixPath('/mnt/ForgeRealm/GraftRepository/artifacts/grm_d1/lt1_1/run_A') / 'cells/A-025-032/session').exists
+
+tests/test_grm_f1_resume_out_root.py:170: AssertionError
+=============================== warnings summary ===============================
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+<frozen importlib._bootstrap>:488
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_grm_f1_resume_out_root.py::test_red_is_not_caused_by_the_restored_session_directory
+1 failed, 1128 passed, 360 skipped, 2 warnings in 28.63s
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute
