@@ -1,0 +1,172 @@
+{
+  "arms": {
+    "C0": {
+      "arm": "C3l",
+      "matched": true,
+      "near": false,
+      "pin": "off"
+    },
+    "C1l": {
+      "arm": "C3l",
+      "matched": true,
+      "near": false,
+      "pin": "live"
+    },
+    "C2": {
+      "arm": "C3l",
+      "matched": true,
+      "near": true,
+      "pin": "off"
+    },
+    "C3l": {
+      "arm": "C3l",
+      "matched": true,
+      "near": true,
+      "pin": "live"
+    },
+    "C5": {
+      "arm": "C5",
+      "matched": true
+    },
+    "legacy_C3l": {
+      "arm": "C3l",
+      "matched": false
+    },
+    "legacy_C5": {
+      "arm": "C5",
+      "matched": false
+    }
+  },
+  "cpu_gates": [
+    "immutable repo-relative source pins and dry-run all 14 commands without GPU imports/lease",
+    "OFF canonical result bytes identical to legacy native_cell for both arms on both probes",
+    "native local rotation at near/off seats against independent trig oracle; no payload mutation",
+    "matched ON source IDs identical and positions coincide for C5/C3l; factorial dials reflected",
+    "all historical 16184 layer rows widths sum to S (count to be audited, not pass criterion); partition tolerance inherited RS4",
+    "budget/lease/control prerequisites fail closed in CPU tests",
+    "pytest verbatim LAST with basetemp cleanup"
+  ],
+  "deviations": [
+    "New sibling scripts/grm_xm1_trinity_x3.py preserves immutable XM1 implementation pins and OFF baseline; original adapter/worker not edited.",
+    "Matched live capture uses actual C5 text start width-n; historical RS3/XM1 pinned question shift width. This is explicit matched geometry, not a claim of production RS3 replay.",
+    "Historical source contrast remains intact and RED; no GPU model-quality repair claimed.",
+    "GPU controls may STOP before factorial; no GPU run authorized in this seat."
+  ],
+  "effort": "high",
+  "evidence_class": "pre-gate registration; GPU NOT RUN",
+  "external_sources": {
+    "artifacts/grm_xm3/evidence/chat_template.jinja": {
+      "read_only_origin": "/mnt/ForgeRealm/models/trinity-nano/chat_template.jinja",
+      "sha256": "c295e73aea820982584a1f874fa71c61b1f3e6856adc6ef1d7efe339b936f2ad"
+    },
+    "artifacts/grm_xm3/evidence/config.json": {
+      "read_only_origin": "/mnt/ForgeRealm/models/trinity-nano/config.json",
+      "sha256": "15750458af859d21ad4fe4460cfe1e77a9415dc50cbd29b539b46566300f64f3"
+    },
+    "artifacts/grm_xm3/evidence/model_README.md": {
+      "read_only_origin": "/mnt/ForgeRealm/models/trinity-nano/README.md",
+      "sha256": "df198daf5c9127270808bb0dfc724d31b8b5426c7a735e16c318de11695a6919"
+    },
+    "artifacts/grm_xm3/evidence/tensor_functional.py": {
+      "read_only_origin": "/mnt/ForgeRealm/Project-Tensor/tensor_cuda/tensor_cuda/functional.py",
+      "sha256": "418ee285bdeefacbd9d5a1ccaf39700b8e83ea339377230c79f1d4480a1e3d9c"
+    },
+    "artifacts/grm_xm3/evidence/tokenizer_config.json": {
+      "read_only_origin": "/mnt/ForgeRealm/models/trinity-nano/tokenizer_config.json",
+      "sha256": "b57019eb2c887b8aa0c197c49ed311f93df5e6517de48b7af3fa3b8b975e0e6a"
+    },
+    "artifacts/grm_xm3/evidence/trinity_nano_tc.py": {
+      "read_only_origin": "/mnt/ForgeRealm/Project-Tensor/core/trinity_nano_tc.py",
+      "sha256": "9d991c53b1c1438c0c517df6101eb94d47eed6e226ecb78595318b008f94055e"
+    }
+  },
+  "flag": "--xm3-matched (default OFF delegates native_cell unchanged)",
+  "geometry": {
+    "cache_stop": "S must remain <2048; no eviction supported",
+    "capture_live": "width-n (the C5 source start, not stale question shift)",
+    "capture_off": 0,
+    "decode_steps": 32,
+    "live_text_start": "width-n",
+    "local_keys": "pre-RoPE payload composed with constant delta then native row rotation; full NoPE untouched",
+    "n_sink": 0,
+    "question_start": "width",
+    "seat_off": 0,
+    "seat_on": "width-n",
+    "width": "max(96,n); matched source capture_texts for BOTH arms"
+  },
+  "gpu": {
+    "cells": 14,
+    "control_gate": "matched C5 must be correct before mounted arms for that probe; otherwise STOP RED",
+    "lease": "worker gpu_lease(120,0); no outer flock; 30 s gap enforced by fail-fast check, no waits",
+    "max_reserved_s": 1680,
+    "reservation_per_cell_s": 120,
+    "stop": "source drift, busy lease, budget exhausted, bad bands, >96 source tokens, S>=2048, timeout or incorrect C5; no retries or knob changes",
+    "total_budget_s": 1800
+  },
+  "hypotheses": [
+    {
+      "claim": "wrong native chat scaffold causes collapse",
+      "falsifier": "local tokenizer reproduces stored source and question token IDs exactly and uses shipped chat_template.jinja; this refutes wrong-template selection, not training-template fidelity or model numerics",
+      "id": "template"
+    },
+    {
+      "claim": "local keys retain capture rotation or are doubly rotated",
+      "falsifier": "execute pinned native attention AST with CPU tensors; injected K equals independently computed R(seat_start+j) raw K within 1e-5 at both ends; full-layer K and every V remain byte-identical",
+      "id": "local_relocation"
+    },
+    {
+      "claim": "96 seats truncate or overflow this panel",
+      "falsifier": "historical rows expose native width=max(source counts)+96 with no truncation; new matched source n<=96 and S<2048. Hardware peak fit remains untested",
+      "id": "fit96"
+    },
+    {
+      "claim": "capture geometry changes graft K/V and causes read gap",
+      "falsifier": "fresh recaptures off at zero vs live at reference prefix position; digest and mass treatment effects recorded with identical source IDs. CPU source-only multilayer double cannot prove real hidden-state invariance",
+      "id": "capture_pin"
+    },
+    {
+      "claim": "historical gap is confounded by different text and positions",
+      "falsifier": "ON factorial uses identical source IDs, template and question, then compares correct C5 vs matched C3l with fed-minus-mount<=0.10; exact-token same-position treatment is C3l",
+      "id": "matched_tokens_positions"
+    },
+    {
+      "claim": "answer-position mass is valid semantic answer evidence",
+      "falsifier": "decode raw generated IDs incl specials, identify EOS/BOS and value span. Empty/garbled or incorrect control makes semantic parity RED",
+      "id": "decode_window"
+    }
+  ],
+  "immutable": true,
+  "model": "gpt-6-astra",
+  "order": "orders/GRM_XM1_X3_TRINITY.md",
+  "pins": {
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/trinity/C3l__sup_harbor_restatement.json": "0247a949c7a3090c3a60de676178504bd2fda500a9e6a1cb0d408a62890d5a1f",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/trinity/C3l__sup_praxis_fresh.json": "f2e553480cf1dc960ceae3b20372eaa6a0db5ffd507f368cf81cf73b408556a9",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/trinity/C3l__sup_reserve_meridian_docket.json": "5b2cf66d5d19c48f6d612810e464faada5ee731d23de7e8ffca0ce58c2fb0964",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/trinity/C3l__sup_reserve_tundra_ledger.json": "3cb2e8510207482ebd5d2d303ff437b6adbd2c46f039d1d08f792a702e5204a2",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/trinity/C3l__sup_solace_fresh.json": "d269cda1b45dad72b475be6020061c8e754d3974a2f61454f7c12492f08d6a1a",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/trinity/C5__sup_harbor_restatement.json": "8b24befa501e19f4db33abf3ae3a3436072a57541ab4e0c13e33e1a41206e7c3",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/trinity/C5__sup_praxis_fresh.json": "42cc53924445e33c4853707de13920ceb578ecd805f786bef99e79351a894ca0",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/trinity/C5__sup_reserve_meridian_docket.json": "01a830432d6fbc13d5a76715827694c79566b2689bc3f677d4898527f9895e85",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/trinity/C5__sup_reserve_tundra_ledger.json": "38779d80660afe47563f65bfe3458bf30793de3d75379d1a1a61fb05d9f018e4",
+    "artifacts/grm_xm1/amendment_1_run/cells/gpu/trinity/C5__sup_solace_fresh.json": "46defe3b8f9b52b8d9c1bf43cb70438158ae914c28710bf5f7875970edd1c9ee",
+    "artifacts/grm_xm1/registration.json": "758fd3ac1231ed44937714a86009b557f554f026e9d85773cb730074e04439e8",
+    "artifacts/grm_xm1/registration_amendment_1.json": "a50046f9f790825503893613468cf9de40c0b3a8243204fc85ed626652a5de8d",
+    "artifacts/grm_xm3/evidence/chat_template.jinja": "c295e73aea820982584a1f874fa71c61b1f3e6856adc6ef1d7efe339b936f2ad",
+    "artifacts/grm_xm3/evidence/config.json": "15750458af859d21ad4fe4460cfe1e77a9415dc50cbd29b539b46566300f64f3",
+    "artifacts/grm_xm3/evidence/model_README.md": "df198daf5c9127270808bb0dfc724d31b8b5426c7a735e16c318de11695a6919",
+    "artifacts/grm_xm3/evidence/tensor_functional.py": "418ee285bdeefacbd9d5a1ccaf39700b8e83ea339377230c79f1d4480a1e3d9c",
+    "artifacts/grm_xm3/evidence/tokenizer_config.json": "b57019eb2c887b8aa0c197c49ed311f93df5e6517de48b7af3fa3b8b975e0e6a",
+    "artifacts/grm_xm3/evidence/trinity_nano_tc.py": "9d991c53b1c1438c0c517df6101eb94d47eed6e226ecb78595318b008f94055e",
+    "orders/GRM_RS3_CAPTURE_PIN_SEAT_NEAR_LIVE.md": "c5a85be0d1b7e89e8e50a46e1357f45a36d076aaddddfa9e6e64b922c007c4a6",
+    "orders/GRM_XM1_X3_TRINITY.md": "247aad267b8569074f00a6cb6024f4f717d395c063c4e822c7a2ddc6fc7f10d1",
+    "scripts/grm_xm1_cpu.py": "531d4e0e2837012b1e4d3dabdac402674ca2586b474e3c959964a98dd6fc4792",
+    "scripts/grm_xm1_parity.py": "34eb537545293880fadb54db8f225ce8f0ddcf1008f5e9c12808a877787cde20",
+    "scripts/trinity_nope_graft_width_sweep.py": "920a861cf43096a16c6817eaeef6811ecebcc3f0e1bf77ed20fb19a689b56951"
+  },
+  "prior_art": "GRM contributors 2026: RS3 capture pin/seating, RS4 partitions, XM1 AST CPU double, CMC1 self lease, LT1 immutable receipts reused. Su et al. 2021 RoFormer: composition of rotary positions; unverified \u2014 lead to check arXiv 2104.09864. Arcee AI Trinity Nano Preview 2025 template: local source inspected; upstream unverified \u2014 lead to check arcee-ai/Trinity-Nano-Preview chat_template.jinja. Ours: isolated matched-token control and explicit decode semantics; no new attention algorithm.",
+  "probes": [
+    "sup_praxis_fresh",
+    "sup_harbor_restatement"
+  ],
+  "schema": "grm.xm3.registration.v1"
+}

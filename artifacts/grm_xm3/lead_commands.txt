@@ -1,0 +1,21 @@
+# GRM-XM3 registered Trinity re-measurement; NOT RUN by X3.
+# Worker leases itself; DO NOT use an outer flock.
+# Run each line from repo root; append --dry-run to validate before any GPU.
+# 14 x 120 s hard reservations = 1680 s <= 0.5 GPU-h.
+# Foreground only. Worker fails fast until previous reservation end + 30 s.
+# Run legacy controls to receipt their RED; then matched C5 for each probe.
+# If matched C5 is RED, STOP that probe: mounted arms are hard blocked.
+python3 scripts/grm_xm1_trinity_x3.py --probe sup_praxis_fresh --treatment legacy_C5
+python3 scripts/grm_xm1_trinity_x3.py --probe sup_harbor_restatement --treatment legacy_C5
+python3 scripts/grm_xm1_trinity_x3.py --probe sup_praxis_fresh --treatment legacy_C3l
+python3 scripts/grm_xm1_trinity_x3.py --probe sup_harbor_restatement --treatment legacy_C3l
+python3 scripts/grm_xm1_trinity_x3.py --probe sup_praxis_fresh --treatment C5 --xm3-matched
+python3 scripts/grm_xm1_trinity_x3.py --probe sup_harbor_restatement --treatment C5 --xm3-matched
+python3 scripts/grm_xm1_trinity_x3.py --probe sup_praxis_fresh --treatment C0 --xm3-matched
+python3 scripts/grm_xm1_trinity_x3.py --probe sup_harbor_restatement --treatment C0 --xm3-matched
+python3 scripts/grm_xm1_trinity_x3.py --probe sup_praxis_fresh --treatment C1l --xm3-matched
+python3 scripts/grm_xm1_trinity_x3.py --probe sup_harbor_restatement --treatment C1l --xm3-matched
+python3 scripts/grm_xm1_trinity_x3.py --probe sup_praxis_fresh --treatment C2 --xm3-matched
+python3 scripts/grm_xm1_trinity_x3.py --probe sup_harbor_restatement --treatment C2 --xm3-matched
+python3 scripts/grm_xm1_trinity_x3.py --probe sup_praxis_fresh --treatment C3l --xm3-matched
+python3 scripts/grm_xm1_trinity_x3.py --probe sup_harbor_restatement --treatment C3l --xm3-matched

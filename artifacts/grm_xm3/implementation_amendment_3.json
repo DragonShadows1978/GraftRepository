@@ -1,0 +1,20 @@
+{
+  "amendment_reason": "Final reporting review: GPU mounted receipt applies the already registered >0.10 mass-gap falsifier independently of served correctness; reject nonfinite metrics. Added CPU regression, no threshold changes.",
+  "correction": "Registration numeric row count is a pre-audit estimate, not a gate criterion; audit will supply exact observed count.",
+  "immutable": true,
+  "pins": {
+    "artifacts/grm_xm3/historical_audit.json": "97dd84699b295d7758787032d3215973c1aa9d4d44570b7e0c360be08e972c52",
+    "artifacts/grm_xm3/historical_audit_amendment_1.json": "5c8659464284ced5e52efae9a8737ef4e9995964e22501c9f1ebd819a463323a",
+    "artifacts/grm_xm3/lead_commands.txt": "408e2b30d320adfac300cd165d17221f50b63f99e4d917171fd4d4e71426f7db",
+    "scripts/grm_cmc1_gpu_arms.py": "663760d175bb35ed6c4df2b252bf909bcf52577f3ad5eb1c518167b6bb5e39ba",
+    "scripts/grm_cmc1_mechanism.py": "cef3a4bc9d8b5ca6d5951e5bdfcff048533914fee2e63e91afbcfc70058573c5",
+    "scripts/grm_xm1_trinity_audit.py": "247691c3007f778cfe0f6b955c75ecd23450844a7f2e83ecf3be541045707fb7",
+    "scripts/grm_xm1_trinity_x3.py": "d5cef390cf3e277b1947f393f8d25bceea7e09e645656126f5437203f426c9a4",
+    "tests/test_grm_xm3_trinity.py": "d157753427ff67d3a7474892b30dd8b2127a58b85193d6f412b7c84d98049494"
+  },
+  "previous_amendment_2_sha256": "db9f9148a93abff5bf20e408e6cffd779cf2f5a0a3dcc5149b04524178476c0d",
+  "previous_amendment_sha256": "8375dfcf815db183c72527bf092558afa23be9d15026e88ce9227c9dd5ecd7a9",
+  "previous_implementation_sha256": "8f5770a0a8c337639486bf8e1c4168f00d23b223cf7cf6b9cc7afbe0b10a0e44",
+  "registration_sha256": "a29173ea186cbf13368c4b720dbd01c6d52600393f9f97ca584e784c5f3b5ea9",
+  "schema": "grm.xm3.implementation.v1"
+}
