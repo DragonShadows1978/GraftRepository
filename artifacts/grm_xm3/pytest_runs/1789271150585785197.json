@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "-q",
+    "--basetemp",
+    "artifacts/grm_xm3/tmp",
+    "tests/test_grm_xm1_amendment_1.py",
+    "tests/test_grm_xm1_parity.py",
+    "tests/test_grm_xm1_results.py",
+    "tests/test_grm_xm3_trinity.py"
+  ],
+  "basetemp_cleaned": true,
+  "collected": 98,
+  "evidence_class": "author CPU pytest suite; not blind verification",
+  "exitstatus": 0,
+  "failed": 0,
+  "gpu_executed": false,
+  "passed": 98
+}

@@ -1,0 +1,11 @@
+gpu_lease_acquired=/tmp/forge-gpu.lock cap_s=120
+gpu_lease_released_s=0.000
+Traceback (most recent call last):
+  File "/mnt/ForgeRealm/wt/grm-xm3/scripts/grm_xm1_trinity_x3.py", line 251, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/mnt/ForgeRealm/wt/grm-xm3/scripts/grm_xm1_trinity_x3.py", line 222, in main
+    prerequisites(reg, args.probe, args.treatment)
+  File "/mnt/ForgeRealm/wt/grm-xm3/scripts/grm_xm1_trinity_x3.py", line 159, in prerequisites
+    raise xm.XM1Error('STOP: 30 s inter-lease gap not yet available; no waiting')
+scripts.grm_xm1_parity.XM1Error: STOP: 30 s inter-lease gap not yet available; no waiting
