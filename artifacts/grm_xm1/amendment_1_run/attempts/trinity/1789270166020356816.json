@@ -1,0 +1,9 @@
+{
+  "cell": {
+    "arm": "C3l",
+    "estimate_s": 150,
+    "model": "trinity",
+    "probe": "sup_reserve_tundra_ledger"
+  },
+  "reservation_s": 285
+}

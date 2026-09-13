@@ -1,0 +1,25 @@
+{
+  "clarification": "CPU loader compiles unmodified attention-function ASTs from pinned adapters against CPU tensor/projection doubles. GPT native sink/sliding observation reuses RS4 methods. Full RS4 repository replay remains GPU-only; strict whole-production-path CPU gate still RED.",
+  "gates_before_execution": [
+    "Historical raw RS4 reassembly exact comparison first",
+    "CPU dispatch matrix and fail-closed invariants",
+    "Every lead command with --dry-run appended",
+    "Final required pytest invocation"
+  ],
+  "pins": {
+    "artifacts/grm_xm1/lead_commands.txt": "2031fe40bd146db24ce17a332e00081d863a7af90ee2d8347edb5feb30947f42",
+    "scripts/grm_cmc1_gpu_arms.py": "663760d175bb35ed6c4df2b252bf909bcf52577f3ad5eb1c518167b6bb5e39ba",
+    "scripts/grm_det1_2_gpu.py": "a0be3e62133aae30cf233c57948e6d8af66b2319d50bae0e3222e86e00cc8e2f",
+    "scripts/grm_det1_3_gpu.py": "fef8442aa9cb17e194982b92ae53d8d4f2a7a65fd100ed28bdc8a7da7e29c58f",
+    "scripts/grm_det1_e2e.py": "21035fb2cb96707207143b45015d7b0fa78e6ad1127c9344ab9908f5568ed734",
+    "scripts/grm_e2e_session.py": "f2e8f07027b735b9b0e6ee8749e1c25aa8e7883ca782fa03efb5395e34367506",
+    "scripts/grm_rs2_mount_read_gpu.py": "96c7efe99adf0ced6387b7697cd3a79ba0f7a1a50162dee86ae97d3fc3eb7bcb",
+    "scripts/grm_xm1_cpu.py": "531d4e0e2837012b1e4d3dabdac402674ca2586b474e3c959964a98dd6fc4792",
+    "scripts/grm_xm1_parity.py": "31f4951c8be7e213d5f6070cab836edb15c6a814748289595f804e6905664e46",
+    "scripts/grm_xm1_registration.py": "49d5b782498d1d744a6c076a40db03fa7c17fde4ef451674edcfb234cd67c3f3",
+    "scripts/lsr_p2c_replay_gpu.py": "833d3f520f6ad17925b7371407032a792a60176d86445117627e44fddaa6b617",
+    "tests/test_grm_xm1_parity.py": "28337d26552abcb8f26d6e758c4c7aa7c1e40fae2473bb3ab5a0cf4fc0c6f073"
+  },
+  "registration_sha256": "758fd3ac1231ed44937714a86009b557f554f026e9d85773cb730074e04439e8",
+  "schema": "grm.xm1.implementation_pins.v1"
+}

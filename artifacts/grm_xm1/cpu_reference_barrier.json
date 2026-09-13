@@ -1,0 +1,50 @@
+{
+  "checks": [
+    {
+      "cell": "C3l:sup_harbor_restatement",
+      "diff": {}
+    },
+    {
+      "cell": "C3l:sup_praxis_fresh",
+      "diff": {}
+    },
+    {
+      "cell": "C3l:sup_reserve_meridian_docket",
+      "diff": {}
+    },
+    {
+      "cell": "C3l:sup_reserve_tundra_ledger",
+      "diff": {}
+    },
+    {
+      "cell": "C3l:sup_solace_fresh",
+      "diff": {}
+    },
+    {
+      "cell": "C5:sup_harbor_restatement",
+      "diff": {}
+    },
+    {
+      "cell": "C5:sup_praxis_fresh",
+      "diff": {}
+    },
+    {
+      "cell": "C5:sup_reserve_meridian_docket",
+      "diff": {}
+    },
+    {
+      "cell": "C5:sup_reserve_tundra_ledger",
+      "diff": {}
+    },
+    {
+      "cell": "C5:sup_solace_fresh",
+      "diff": {}
+    }
+  ],
+  "evidence_class": "CPU historical raw-receipt reassembly; no model re-execution",
+  "gpu_reference_barrier": "BLOCKED",
+  "registration_sha256": "758fd3ac1231ed44937714a86009b557f554f026e9d85773cb730074e04439e8",
+  "rows": 10,
+  "status": "PASS_REASSEMBLY_ONLY",
+  "strict_rs4_production_path_cpu_double": "RED: full repository replay not exercised"
+}

@@ -1,0 +1,328 @@
+{
+  "engine": {
+    "path": "core/trinity_nano_tc.py",
+    "repository_label": "Project-Tensor (read-only)",
+    "sha256": "9d991c53b1c1438c0c517df6101eb94d47eed6e226ecb78595318b008f94055e"
+  },
+  "gemma_note": "No native graft capture/injection reader in this tree; cache/storage hook does not imply graft support.",
+  "models": [
+    {
+      "adapter": {
+        "estimate_s": 0,
+        "kind": "ring_cache_only",
+        "path": "core/gemma4_tc.py",
+        "status": "NO_GRAFT_PATH"
+      },
+      "evidence_class": "source/config inspection, not an end-to-end gate",
+      "fits_12GB_with_graft": "UNMEASURED; no GPU in seat",
+      "literal_readers": {
+        "_capture": [],
+        "graft_seats": [],
+        "inject_kv": [],
+        "live_shift": []
+      },
+      "local_configs": [
+        {
+          "path": "/mnt/ForgeRealm/models/gemma-4-12B-it/config.json",
+          "sha256": "478c46e8d2c52d5c2d85bf67e3b3e8c90e7c9d91086cee27e3c267907e936bd9"
+        }
+      ],
+      "model": "gemma4",
+      "source_sha256": "c9a8cc1d01c30bb2b20e9c2e477d4bedf21072d0b1b6b157f3ba75c78a271d8b"
+    },
+    {
+      "adapter": {
+        "estimate_s": 150,
+        "kind": "gqa_sink",
+        "path": "core/gpt_oss20b_tc.py",
+        "status": "READY"
+      },
+      "evidence_class": "source/config inspection, not an end-to-end gate",
+      "fits_12GB_with_graft": "UNMEASURED; no GPU in seat",
+      "literal_readers": {
+        "_capture": [
+          678,
+          679,
+          680,
+          681,
+          1194
+        ],
+        "graft_seats": [
+          651,
+          692,
+          694,
+          697,
+          705,
+          706,
+          1194,
+          1285
+        ],
+        "inject_kv": [
+          650,
+          683,
+          1194
+        ],
+        "live_shift": [
+          695,
+          1194,
+          1283,
+          1284,
+          1285,
+          1286
+        ]
+      },
+      "local_configs": [
+        {
+          "path": "/home/vader/.cache/huggingface/hub/models--openai--gpt-oss-20b/snapshots/6cee5e81ee83917806bbde320786a8fb61efebee/config.json",
+          "sha256": "3a2a26ded679375b7928ddeca59764df7cea83220c1961035f6d6e232659e9ce"
+        }
+      ],
+      "model": "gpt-oss",
+      "source_sha256": "da8ca3bc8c961d731d9e32bf4558702ad1b8b10c8ecc37b18326e7df4ade74a1"
+    },
+    {
+      "adapter": {
+        "estimate_s": 120,
+        "kind": "mla",
+        "path": "core/minicpm3_tc.py",
+        "status": "READY"
+      },
+      "evidence_class": "source/config inspection, not an end-to-end gate",
+      "fits_12GB_with_graft": "UNMEASURED; no GPU in seat",
+      "literal_readers": {
+        "_capture": [
+          168,
+          169,
+          182,
+          183
+        ],
+        "graft_seats": [
+          187,
+          190
+        ],
+        "inject_kv": [
+          189
+        ],
+        "live_shift": [
+          193,
+          196,
+          197
+        ]
+      },
+      "local_configs": [
+        {
+          "path": "/home/vader/.cache/huggingface/hub/models--openbmb--MiniCPM3-4B/snapshots/d6b14ddaefdb11c624dd75c3c779549bc90b08cb/config.json",
+          "sha256": "cf1d08cb7c1815c676e685bd6ce94eb8b85a57d53871e6e159ee8c650717d98a"
+        }
+      ],
+      "model": "minicpm3",
+      "source_sha256": "3d19734f51d28eb48dc20a62658f2bfc250fdac4fce2cb906116d034b1371a69"
+    },
+    {
+      "adapter": {
+        "estimate_s": 0,
+        "kind": "router_inputs_only",
+        "path": "scripts/olmoe_e2_experiment.py",
+        "status": "NO_GRAFT_PATH"
+      },
+      "evidence_class": "source/config inspection, not an end-to-end gate",
+      "fits_12GB_with_graft": "UNMEASURED; no GPU in seat",
+      "literal_readers": {
+        "_capture": [
+          3612,
+          3613,
+          3618,
+          3631,
+          3643,
+          3644,
+          3678,
+          3681,
+          3682,
+          3686,
+          3717,
+          3719,
+          3771,
+          3774,
+          3811,
+          3820,
+          3825,
+          4009,
+          4032,
+          4130,
+          4134,
+          4226,
+          4286,
+          4354,
+          4453,
+          4492,
+          4502,
+          4665,
+          4688,
+          4819,
+          4842,
+          6101,
+          6766,
+          6773,
+          6786,
+          6798,
+          6827,
+          6981,
+          7008
+        ],
+        "graft_seats": [],
+        "inject_kv": [],
+        "live_shift": []
+      },
+      "local_configs": [
+        {
+          "path": "/home/vader/.cache/huggingface/hub/models--allenai--OLMoE-1B-7B-0924/snapshots/6d84c48581ece794365f2b8e9cfb043c68ade9c5/config.json",
+          "sha256": "3643aa880d2f1c9b418156269ae791c73e5612d6b6b6fde0724d927cf89b6335"
+        }
+      ],
+      "model": "olmoe",
+      "source_sha256": "d7aedec3a62ba50fab404d571496c397467ad4a6e05e6d780f75e3a37deb5448"
+    },
+    {
+      "adapter": {
+        "estimate_s": 120,
+        "kind": "partial_rope",
+        "path": "core/qwen35_tc.py",
+        "status": "READY"
+      },
+      "evidence_class": "source/config inspection, not an end-to-end gate",
+      "fits_12GB_with_graft": "UNMEASURED; no GPU in seat",
+      "literal_readers": {
+        "_capture": [
+          338,
+          339,
+          340,
+          341
+        ],
+        "graft_seats": [
+          311,
+          350,
+          466
+        ],
+        "inject_kv": [
+          310,
+          346
+        ],
+        "live_shift": [
+          353,
+          464,
+          465,
+          466,
+          467
+        ]
+      },
+      "local_configs": [
+        {
+          "path": "/home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a/config.json",
+          "sha256": "d0883072e01861ed0b2d47be3c16c36a8e81c224c7ffaa310c6558fb3f932b05"
+        }
+      ],
+      "model": "qwen35",
+      "source_sha256": "3f84f8e99f5cf8932440e5d6ff29df41cbf3fdaf13d27f3bbe8fb1dc3a7ec41b"
+    },
+    {
+      "adapter": {
+        "estimate_s": 150,
+        "kind": "nope_mixed",
+        "path": "scripts/trinity_nope_graft_width_sweep.py",
+        "status": "READY"
+      },
+      "evidence_class": "source/config inspection, not an end-to-end gate",
+      "fits_12GB_with_graft": "UNMEASURED; no GPU in seat",
+      "literal_readers": {
+        "_capture": [
+          281,
+          282,
+          283,
+          284,
+          363,
+          383,
+          384,
+          385,
+          386,
+          395,
+          1062
+        ],
+        "graft_seats": [
+          262,
+          263,
+          295,
+          297,
+          300,
+          310,
+          379,
+          380,
+          457,
+          1097
+        ],
+        "inject_kv": [
+          286,
+          363,
+          377,
+          378,
+          394,
+          1062,
+          1096,
+          1251
+        ],
+        "live_shift": [
+          2,
+          5,
+          11,
+          262,
+          298,
+          363,
+          381,
+          382,
+          395,
+          396,
+          449,
+          455,
+          646,
+          653,
+          681,
+          693,
+          757,
+          795,
+          805,
+          806,
+          809,
+          851,
+          911,
+          912,
+          924,
+          930,
+          938,
+          966,
+          968,
+          971,
+          1062,
+          1080,
+          1095,
+          1118,
+          1169,
+          1196,
+          1220,
+          1245,
+          1251,
+          1265,
+          1274,
+          1285
+        ]
+      },
+      "local_configs": [
+        {
+          "path": "/mnt/ForgeRealm/models/trinity-nano/config.json",
+          "sha256": "15750458af859d21ad4fe4460cfe1e77a9415dc50cbd29b539b46566300f64f3"
+        }
+      ],
+      "model": "trinity",
+      "source_sha256": "920a861cf43096a16c6817eaeef6811ecebcc3f0e1bf77ed20fb19a689b56951"
+    }
+  ],
+  "olmoe_note": "No scripts/moe_e2_* files; scripts/olmoe_e2_experiment.py captures MoE router inputs, not graft attention KV."
+}

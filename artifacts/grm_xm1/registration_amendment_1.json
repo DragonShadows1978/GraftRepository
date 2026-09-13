@@ -1,0 +1,24 @@
+{
+  "amendment": 1,
+  "changes": [
+    "Create and clean worker_scratch/rs4_* independently of pytest tmp.",
+    "GPT-OSS cells never pre-gated; create-only progress receipts after each execution or resume.",
+    "Other GPU models require complete exact RS4 parity before fresh execution or resume.",
+    "Worker receipt includes amendment sha; fresh output amendment_1_run preserves old receipts."
+  ],
+  "evidence_class": "CPU orchestration regression; GPU parity remains unverified",
+  "gates": "artifacts/grm_xm1/amendment_1_gates.json",
+  "immutable": true,
+  "pins": {
+    "artifacts/grm_xm1/amendment_1_gates.json": "9796cbb78cb0358e501ae712117974f69b33d742df181e01fd6dc2547ae99ca7",
+    "artifacts/grm_xm1/lead_commands.txt": "9d8ff5f3ded9f52301f33d2cdd4e19b74c134206059df3791fbfa8b4c1297ea9",
+    "orders/GRM_XM1_AMENDMENT_1.md": "eac72f306e3a449f86c55e1c07aeb167c9635f087c93587af4b8c4fcd8843e36",
+    "scripts/grm_xm1_parity.py": "34eb537545293880fadb54db8f225ce8f0ddcf1008f5e9c12808a877787cde20",
+    "tests/test_grm_xm1_amendment_1.py": "89cc7d11c34c16e3932fe95a7bca52efe53982e11ee1854fae7718fd50523742"
+  },
+  "previous_implementation_sha256": "b7165ac968e844959714b59443082442f57be2b283e9d72b3526ca5de331a92b",
+  "prior_art": "Unchanged GRM contributors (2026), RS4 exact comparison/replay and LT1 immutable bindings. Python tempfile scratch lifetime management; no new attention algorithm.",
+  "registration_sha256": "758fd3ac1231ed44937714a86009b557f554f026e9d85773cb730074e04439e8",
+  "schema": "grm.xm1.registration_amendment.v1",
+  "thresholds_unchanged": true
+}

@@ -1,0 +1,11 @@
+gpu_lease_acquired=/tmp/forge-gpu.lock cap_s=285
+    layer 4/32
+    layer 8/32
+    layer 12/32
+    layer 16/32
+    layer 20/32
+    layer 24/32
+    layer 28/32
+    layer 32/32
+gpu_lease_released_s=66.905
+{"status": "PASS", "cell": {"arm": "C3l", "estimate_s": 120, "model": "qwen35", "probe": "sup_praxis_fresh"}}

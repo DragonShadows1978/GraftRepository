@@ -1,0 +1,9 @@
+{
+  "cell": {
+    "arm": "C3l",
+    "estimate_s": 120,
+    "model": "qwen35",
+    "probe": "sup_reserve_meridian_docket"
+  },
+  "reservation_s": 285
+}

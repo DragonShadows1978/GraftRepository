@@ -1,0 +1,119 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+_________________ test_worker_scratch_without_pytest_basetemp __________________
+
+gpu_path_double = (PosixPath('/mnt/ForgeRealm/wt/grm-xm1/artifacts/grm_xm1/tmp/test_worker_scratch_without_py0/artifacts/grm_xm1'), [], [], ['CPU stub', 'CPU stub'])
+
+    def test_worker_scratch_without_pytest_basetemp(gpu_path_double):
+        out, calls, scratch, _ = gpu_path_double
+        got = xm.execute(GPT[0], REG, out, 'gpu')
+>       assert got['status'] == 'PASS', got
+E       AssertionError: {'binding': {'cell': {'arm': 'C3l', 'estimate_s': 150, 'model': 'gpt-oss', 'probe': 'sup_harbor_restatement'}, 'implem...m_xm1/tmp/test_worker_scratch_without_py0/artifacts/grm_xm1/tmp/rs4_rczluufw'", 'error_type': 'FileNotFoundError', ...}
+E       assert 'ERROR' == 'PASS'
+E         
+E         - PASS
+E         + ERROR
+
+tests/test_grm_xm1_amendment_1.py:46: AssertionError
+________________ test_failed_reference_does_not_block_next_gpt _________________
+
+gpu_path_double = (PosixPath('/mnt/ForgeRealm/wt/grm-xm1/artifacts/grm_xm1/tmp/test_failed_reference_does_not0/artifacts/grm_xm1'), [], [], [])
+
+    def test_failed_reference_does_not_block_next_gpt(gpu_path_double):
+        out, calls, _, _ = gpu_path_double
+        create(xm.cell_path(out, GPT[0], 'gpu'),
+               {'binding': xm.binding(GPT[0], 'gpu'), 'status': 'ERROR'})
+>       got = xm.execute(GPT[1], REG, out, 'gpu')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_grm_xm1_amendment_1.py:55: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cell = {'arm': 'C5', 'estimate_s': 150, 'model': 'gpt-oss', 'probe': 'sup_harbor_restatement'}
+reg = {'adapters': {'gemma4': {'estimate_s': 0, 'kind': 'ring_cache_only', 'path': 'core/gemma4_tc.py', 'status': 'NO_GRAFT_...e harness protocol and mass accounting, never GPU numeric parity. GPT-OSS reference replay remains GPU-blocked.'], ...}
+directory = PosixPath('/mnt/ForgeRealm/wt/grm-xm1/artifacts/grm_xm1/tmp/test_failed_reference_does_not0/artifacts/grm_xm1')
+mode = 'gpu', loader = None
+
+    def execute(cell, reg, directory=OUT, mode='cpu', loader=None):
+        path = cell_path(directory, cell, mode)
+        if path.exists():
+            return verify_receipt(path, cell, mode)
+        if mode == 'gpu':
+            gate = barrier(directory, reg)
+            if gate['status']=='FAIL' or (cell['model']!='gpt-oss' and gate['status']!='PASS'):
+>               raise XM1Error('STOP: GPT-OSS RS4 parity barrier '+json.dumps(gate))
+E               scripts.grm_xm1_parity.XM1Error: STOP: GPT-OSS RS4 parity barrier {"status": "FAIL", "missing": ["cells/gpu/gpt-oss/C5__sup_harbor_restatement.json", "cells/gpu/gpt-oss/C3l__sup_praxis_fresh.json", "cells/gpu/gpt-oss/C5__sup_praxis_fresh.json", "cells/gpu/gpt-oss/C3l__sup_solace_fresh.json", "cells/gpu/gpt-oss/C5__sup_solace_fresh.json", "cells/gpu/gpt-oss/C3l__sup_reserve_tundra_ledger.json", "cells/gpu/gpt-oss/C5__sup_reserve_tundra_ledger.json", "cells/gpu/gpt-oss/C3l__sup_reserve_meridian_docket.json", "cells/gpu/gpt-oss/C5__sup_reserve_meridian_docket.json"], "differences": {"C3l__sup_harbor_restatement.json": {"status": "ERROR", "diff": {"answer_mass_full_layers": {"expected": 0.16828862225843802, "observed": null}, "answer_mass_sliding_layers": {"expected": 0.345134552485413, "observed": null}, "fed_text_mass_full_layers": {"expected": 0.0, "observed": null}, "fed_text_mass_sliding_layers": {"expected": 0.0, "observed": null}, "learned_sink_mass_full_layers": {"expected": 0.27180512345706426, "observed": null}, "live_mass_full_layers": {"expected": 0.29382861438724733, "observed": null}, "live_mass_sliding_layers": {"expected": 0.5245490076641242, "observed": null}, "mounted_mass_full_layers": {"expected": 0.4129519179049465, "observed": null}, "mounted_mass_sliding_layers": {"expected": 0.04476352895532424, "observed": null}, "prior_live_mass_full_layers": {"expected": 0.0, "observed": null}, "prior_live_mass_sliding_layers": {"expected": 0.0, "observed": null}, "question_mass_full_layers": {"expected": 0.12553999134235913, "observed": null}, "question_mass_sliding_layers": {"expected": 0.17941445362650688, "observed": null}, "sink_mass_full_layers": {"expected": 0.021392281709187153, "observed": null}, "served": {"expected": "The Harbor token is currently **Nacre\u20116\u2011Blue**.", "observed": null}, "correct": {"expected": true, "observed": null}, "answer_positions": {"expected": 15, "observed": null}}}}}
+
+scripts/grm_xm1_parity.py:453: XM1Error
+_________ test_ten_gpu_execute_cells_then_deleted_reference_stops_qwen _________
+
+gpu_path_double = (PosixPath('/mnt/ForgeRealm/wt/grm-xm1/artifacts/grm_xm1/tmp/test_ten_gpu_execute_cells_the0/artifacts/grm_xm1'), [], [], ['CPU stub', 'CPU stub'])
+
+    def test_ten_gpu_execute_cells_then_deleted_reference_stops_qwen(gpu_path_double):
+        out, calls, scratch, telemetry = gpu_path_double
+        for index, cell in enumerate(GPT):
+            got = xm.execute(cell, REG, out, 'gpu')
+>           assert got['status'] == 'PASS', got
+E           AssertionError: {'binding': {'cell': {'arm': 'C3l', 'estimate_s': 150, 'model': 'gpt-oss', 'probe': 'sup_harbor_restatement'}, 'implem...m_xm1/tmp/test_ten_gpu_execute_cells_the0/artifacts/grm_xm1/tmp/rs4_3ez3j22u'", 'error_type': 'FileNotFoundError', ...}
+E           assert 'ERROR' == 'PASS'
+E             
+E             - PASS
+E             + ERROR
+
+tests/test_grm_xm1_amendment_1.py:65: AssertionError
+_______________ test_mismatched_reference_stops_qwen_but_not_gpt _______________
+
+gpu_path_double = (PosixPath('/mnt/ForgeRealm/wt/grm-xm1/artifacts/grm_xm1/tmp/test_mismatched_reference_stop0/artifacts/grm_xm1'), [], [], ['CPU stub', 'CPU stub'])
+
+    def test_mismatched_reference_stops_qwen_but_not_gpt(gpu_path_double):
+        out, calls, _, telemetry = gpu_path_double
+        for cell in GPT:
+>           xm.execute(cell, REG, out, 'gpu')
+
+tests/test_grm_xm1_amendment_1.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cell = {'arm': 'C5', 'estimate_s': 150, 'model': 'gpt-oss', 'probe': 'sup_harbor_restatement'}
+reg = {'adapters': {'gemma4': {'estimate_s': 0, 'kind': 'ring_cache_only', 'path': 'core/gemma4_tc.py', 'status': 'NO_GRAFT_...e harness protocol and mass accounting, never GPU numeric parity. GPT-OSS reference replay remains GPU-blocked.'], ...}
+directory = PosixPath('/mnt/ForgeRealm/wt/grm-xm1/artifacts/grm_xm1/tmp/test_mismatched_reference_stop0/artifacts/grm_xm1')
+mode = 'gpu', loader = None
+
+    def execute(cell, reg, directory=OUT, mode='cpu', loader=None):
+        path = cell_path(directory, cell, mode)
+        if path.exists():
+            return verify_receipt(path, cell, mode)
+        if mode == 'gpu':
+            gate = barrier(directory, reg)
+            if gate['status']=='FAIL' or (cell['model']!='gpt-oss' and gate['status']!='PASS'):
+>               raise XM1Error('STOP: GPT-OSS RS4 parity barrier '+json.dumps(gate))
+E               scripts.grm_xm1_parity.XM1Error: STOP: GPT-OSS RS4 parity barrier {"status": "FAIL", "missing": ["cells/gpu/gpt-oss/C5__sup_harbor_restatement.json", "cells/gpu/gpt-oss/C3l__sup_praxis_fresh.json", "cells/gpu/gpt-oss/C5__sup_praxis_fresh.json", "cells/gpu/gpt-oss/C3l__sup_solace_fresh.json", "cells/gpu/gpt-oss/C5__sup_solace_fresh.json", "cells/gpu/gpt-oss/C3l__sup_reserve_tundra_ledger.json", "cells/gpu/gpt-oss/C5__sup_reserve_tundra_ledger.json", "cells/gpu/gpt-oss/C3l__sup_reserve_meridian_docket.json", "cells/gpu/gpt-oss/C5__sup_reserve_meridian_docket.json"], "differences": {"C3l__sup_harbor_restatement.json": {"status": "ERROR", "diff": {"answer_mass_full_layers": {"expected": 0.16828862225843802, "observed": null}, "answer_mass_sliding_layers": {"expected": 0.345134552485413, "observed": null}, "fed_text_mass_full_layers": {"expected": 0.0, "observed": null}, "fed_text_mass_sliding_layers": {"expected": 0.0, "observed": null}, "learned_sink_mass_full_layers": {"expected": 0.27180512345706426, "observed": null}, "live_mass_full_layers": {"expected": 0.29382861438724733, "observed": null}, "live_mass_sliding_layers": {"expected": 0.5245490076641242, "observed": null}, "mounted_mass_full_layers": {"expected": 0.4129519179049465, "observed": null}, "mounted_mass_sliding_layers": {"expected": 0.04476352895532424, "observed": null}, "prior_live_mass_full_layers": {"expected": 0.0, "observed": null}, "prior_live_mass_sliding_layers": {"expected": 0.0, "observed": null}, "question_mass_full_layers": {"expected": 0.12553999134235913, "observed": null}, "question_mass_sliding_layers": {"expected": 0.17941445362650688, "observed": null}, "sink_mass_full_layers": {"expected": 0.021392281709187153, "observed": null}, "served": {"expected": "The Harbor token is currently **Nacre\u20116\u2011Blue**.", "observed": null}, "correct": {"expected": true, "observed": null}, "answer_positions": {"expected": 15, "observed": null}}}}}
+
+scripts/grm_xm1_parity.py:453: XM1Error
+_____________________ test_worker_scratch_cleanup_on_error _____________________
+
+gpu_path_double = (PosixPath('/mnt/ForgeRealm/wt/grm-xm1/artifacts/grm_xm1/tmp/test_worker_scratch_cleanup_on0/artifacts/grm_xm1'), [], [], ['CPU stub', 'CPU stub'])
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f5c1bbcf050>
+
+    def test_worker_scratch_cleanup_on_error(gpu_path_double, monkeypatch):
+        out, _, _, _ = gpu_path_double
+        paths = []
+        def fail(*_):
+            paths.append(xm.Path(tempfile.mkdtemp()))
+            raise RuntimeError('registered scratch cleanup failure double')
+        monkeypatch.setattr(rs4, 'run_arm', fail)
+        got = xm.execute(GPT[0], REG, out, 'gpu')
+        assert got['status'] == 'ERROR'
+>       assert got['error'] == 'registered scratch cleanup failure double'
+E       assert "[Errno 2] No...rs4_z35tu3ty'" == 'registered s...ailure double'
+E         
+E         - registered scratch cleanup failure double
+E         + [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-xm1/artifacts/grm_xm1/tmp/test_worker_scratch_cleanup_on0/artifacts/grm_xm1/tmp/rs4_z35tu3ty'
+
+tests/test_grm_xm1_amendment_1.py:112: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_grm_xm1_amendment_1.py::test_worker_scratch_without_pytest_basetemp
+FAILED tests/test_grm_xm1_amendment_1.py::test_failed_reference_does_not_block_next_gpt
+FAILED tests/test_grm_xm1_amendment_1.py::test_ten_gpu_execute_cells_then_deleted_reference_stops_qwen
+FAILED tests/test_grm_xm1_amendment_1.py::test_mismatched_reference_stops_qwen_but_not_gpt
+FAILED tests/test_grm_xm1_amendment_1.py::test_worker_scratch_cleanup_on_error
+5 failed in 0.23s
