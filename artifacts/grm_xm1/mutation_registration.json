@@ -1,0 +1,14 @@
+{
+  "baseline": "72 passed in 12.34s before mutants",
+  "faults": [
+    "float_tolerance",
+    "served_not_checked",
+    "capture_pin_ignored",
+    "value_rotated",
+    "partition_extra_mass"
+  ],
+  "rail": "Any surviving mutants are named coverage failures. No original source edits. No blind-red-team claim.",
+  "registration_sha256": "758fd3ac1231ed44937714a86009b557f554f026e9d85773cb730074e04439e8",
+  "script_sha256": "b2b2e76cad6433ba5ab441b4802ac3a0415cd02542d75febf6e372298206725b",
+  "threshold": 0.8
+}

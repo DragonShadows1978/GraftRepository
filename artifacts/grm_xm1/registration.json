@@ -1,0 +1,1771 @@
+{
+  "adapters": {
+    "gemma4": {
+      "estimate_s": 0,
+      "kind": "ring_cache_only",
+      "path": "core/gemma4_tc.py",
+      "status": "NO_GRAFT_PATH"
+    },
+    "gpt-oss": {
+      "estimate_s": 150,
+      "kind": "gqa_sink",
+      "path": "core/gpt_oss20b_tc.py",
+      "status": "READY"
+    },
+    "minicpm3": {
+      "estimate_s": 120,
+      "kind": "mla",
+      "path": "core/minicpm3_tc.py",
+      "status": "READY"
+    },
+    "olmoe": {
+      "estimate_s": 0,
+      "kind": "router_inputs_only",
+      "path": "scripts/olmoe_e2_experiment.py",
+      "status": "NO_GRAFT_PATH"
+    },
+    "qwen35": {
+      "estimate_s": 120,
+      "kind": "partial_rope",
+      "path": "core/qwen35_tc.py",
+      "status": "READY"
+    },
+    "trinity": {
+      "estimate_s": 150,
+      "kind": "nope_mixed",
+      "path": "scripts/trinity_nope_graft_width_sweep.py",
+      "status": "READY"
+    }
+  },
+  "arms": [
+    "C3l",
+    "C5"
+  ],
+  "cells": [
+    {
+      "arm": "C3l",
+      "estimate_s": 150,
+      "model": "gpt-oss",
+      "probe": "sup_harbor_restatement"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 150,
+      "model": "gpt-oss",
+      "probe": "sup_harbor_restatement"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 150,
+      "model": "gpt-oss",
+      "probe": "sup_praxis_fresh"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 150,
+      "model": "gpt-oss",
+      "probe": "sup_praxis_fresh"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 150,
+      "model": "gpt-oss",
+      "probe": "sup_solace_fresh"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 150,
+      "model": "gpt-oss",
+      "probe": "sup_solace_fresh"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 150,
+      "model": "gpt-oss",
+      "probe": "sup_reserve_tundra_ledger"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 150,
+      "model": "gpt-oss",
+      "probe": "sup_reserve_tundra_ledger"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 150,
+      "model": "gpt-oss",
+      "probe": "sup_reserve_meridian_docket"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 150,
+      "model": "gpt-oss",
+      "probe": "sup_reserve_meridian_docket"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 120,
+      "model": "qwen35",
+      "probe": "sup_harbor_restatement"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 120,
+      "model": "qwen35",
+      "probe": "sup_harbor_restatement"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 120,
+      "model": "qwen35",
+      "probe": "sup_praxis_fresh"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 120,
+      "model": "qwen35",
+      "probe": "sup_praxis_fresh"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 120,
+      "model": "qwen35",
+      "probe": "sup_solace_fresh"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 120,
+      "model": "qwen35",
+      "probe": "sup_solace_fresh"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 120,
+      "model": "qwen35",
+      "probe": "sup_reserve_tundra_ledger"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 120,
+      "model": "qwen35",
+      "probe": "sup_reserve_tundra_ledger"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 120,
+      "model": "qwen35",
+      "probe": "sup_reserve_meridian_docket"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 120,
+      "model": "qwen35",
+      "probe": "sup_reserve_meridian_docket"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 120,
+      "model": "minicpm3",
+      "probe": "sup_harbor_restatement"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 120,
+      "model": "minicpm3",
+      "probe": "sup_harbor_restatement"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 120,
+      "model": "minicpm3",
+      "probe": "sup_praxis_fresh"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 120,
+      "model": "minicpm3",
+      "probe": "sup_praxis_fresh"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 120,
+      "model": "minicpm3",
+      "probe": "sup_solace_fresh"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 120,
+      "model": "minicpm3",
+      "probe": "sup_solace_fresh"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 120,
+      "model": "minicpm3",
+      "probe": "sup_reserve_tundra_ledger"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 120,
+      "model": "minicpm3",
+      "probe": "sup_reserve_tundra_ledger"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 120,
+      "model": "minicpm3",
+      "probe": "sup_reserve_meridian_docket"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 120,
+      "model": "minicpm3",
+      "probe": "sup_reserve_meridian_docket"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 150,
+      "model": "trinity",
+      "probe": "sup_harbor_restatement"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 150,
+      "model": "trinity",
+      "probe": "sup_harbor_restatement"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 150,
+      "model": "trinity",
+      "probe": "sup_praxis_fresh"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 150,
+      "model": "trinity",
+      "probe": "sup_praxis_fresh"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 150,
+      "model": "trinity",
+      "probe": "sup_solace_fresh"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 150,
+      "model": "trinity",
+      "probe": "sup_solace_fresh"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 150,
+      "model": "trinity",
+      "probe": "sup_reserve_tundra_ledger"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 150,
+      "model": "trinity",
+      "probe": "sup_reserve_tundra_ledger"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 150,
+      "model": "trinity",
+      "probe": "sup_reserve_meridian_docket"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 150,
+      "model": "trinity",
+      "probe": "sup_reserve_meridian_docket"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 0,
+      "model": "olmoe",
+      "probe": "sup_harbor_restatement"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 0,
+      "model": "olmoe",
+      "probe": "sup_harbor_restatement"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 0,
+      "model": "olmoe",
+      "probe": "sup_praxis_fresh"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 0,
+      "model": "olmoe",
+      "probe": "sup_praxis_fresh"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 0,
+      "model": "olmoe",
+      "probe": "sup_solace_fresh"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 0,
+      "model": "olmoe",
+      "probe": "sup_solace_fresh"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 0,
+      "model": "olmoe",
+      "probe": "sup_reserve_tundra_ledger"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 0,
+      "model": "olmoe",
+      "probe": "sup_reserve_tundra_ledger"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 0,
+      "model": "olmoe",
+      "probe": "sup_reserve_meridian_docket"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 0,
+      "model": "olmoe",
+      "probe": "sup_reserve_meridian_docket"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 0,
+      "model": "gemma4",
+      "probe": "sup_harbor_restatement"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 0,
+      "model": "gemma4",
+      "probe": "sup_harbor_restatement"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 0,
+      "model": "gemma4",
+      "probe": "sup_praxis_fresh"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 0,
+      "model": "gemma4",
+      "probe": "sup_praxis_fresh"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 0,
+      "model": "gemma4",
+      "probe": "sup_solace_fresh"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 0,
+      "model": "gemma4",
+      "probe": "sup_solace_fresh"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 0,
+      "model": "gemma4",
+      "probe": "sup_reserve_tundra_ledger"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 0,
+      "model": "gemma4",
+      "probe": "sup_reserve_tundra_ledger"
+    },
+    {
+      "arm": "C3l",
+      "estimate_s": 0,
+      "model": "gemma4",
+      "probe": "sup_reserve_meridian_docket"
+    },
+    {
+      "arm": "C5",
+      "estimate_s": 0,
+      "model": "gemma4",
+      "probe": "sup_reserve_meridian_docket"
+    }
+  ],
+  "deviations_registered": [
+    "RS4 C3l capture texts and C5 fed texts differ on this historical panel; not a same-token causal test. Preserve and expose both text sets; do not claim to resolve the stronger same-token question.",
+    "Gemma-4 has no _capture/inject_kv/graft_seats/live_shift path in the inspected adapter; blocked without a product order.",
+    "Non-GPT explicit native capture/serve uses no physical system sink, lossless host payload, and a band wide enough for the recorded text. These are not production-ladder parity claims.",
+    "Qwen3.5 graft transfers attention KV only, not DeltaNet recurrent state.",
+    "CPU doubles validate harness protocol and mass accounting, never GPU numeric parity. GPT-OSS reference replay remains GPU-blocked."
+  ],
+  "environment": {
+    "GRM_ADMISSION_RULE": "all_tokens_bind",
+    "GRM_ALIAS_FOLD_MERGE": "0",
+    "GRM_CAPTURE_PIN": "off",
+    "GRM_DEMAND_NGH": "0",
+    "GRM_FOLD_ALIAS_GUARD": "0",
+    "GRM_FOLD_RETAIN_SOURCES": "0",
+    "GRM_LSR_FIXES": "1",
+    "GRM_PERSISTENT_BOAT": "0",
+    "GRM_ROUTE_SOLE_BINDER_INSURANCE": "0",
+    "GRM_SEAT_NEAR_LIVE": "0",
+    "GRM_X1_ADDRESSES": "0"
+  },
+  "falsifier_verbatim": "Falsifier: any model where fed-minus-mount mass on the same probe\nexceeds 0.10 with seat-near-live ON, or where the served answer flips from\ncorrect (fed) to refusal (mounted) on ≥ 2 of the panel.",
+  "gates": [
+    "Registration and separate implementation pin amendment before any gate.",
+    "Every model/arm/probe dispatch writes a create-only receipt, unavailable adapters explicitly NO_GRAFT_PATH.",
+    "Supported native adapter doubles traverse capture, seat, feed, generation, observation and scoring with only loader replaced.",
+    "GPT-OSS RS4 reference masses and served answers float-equal; any mismatch is STOP and blocks all other GPU models.",
+    "All physical band widths sum to S on every observed row; RS4 partition probabilities close at its existing tolerance.",
+    "Dry-run every non-comment line of lead_commands.txt with --dry-run appended, no GPU or lock.",
+    "Final command: python3 -m pytest -q --basetemp artifacts/grm_xm1/tmp/pytest tests/test_grm_xm1*.py tests/test_grm_rs4*.py"
+  ],
+  "gpu_budget_s_per_model": 1800,
+  "immutable": true,
+  "model_order": [
+    "gpt-oss",
+    "qwen35",
+    "minicpm3",
+    "trinity",
+    "olmoe",
+    "gemma4"
+  ],
+  "non_fit_candidates": [
+    "trinity: INT4 weights with float32 compute; transient MoE/attention memory unmeasured",
+    "gemma4: no graft path; if enabled later, 12B plus mixed-width ring caches may not fit"
+  ],
+  "outer_cap_s": 590,
+  "pins": {
+    "artifacts/grm_det1/run_20260831T160525Z_2/runtime_frame_28b3196f8fb04a41.json": "28b3196f8fb04a4123fcf21b1e61f8bb1b8a0e64fadcfc6643801f3e19c4ac02",
+    "artifacts/grm_rs3/registration.json": "1f37c0eab788ed88c09012a6de8d539ceb531729f14ab9e3cbce0783ac2f7534",
+    "artifacts/grm_rs4/grm_rs4_C3l_correction_then_restatement_c9a6fbacd986c992.json": "c9a6fbacd986c9926212443d02115a51e396a7b5cebaeae9e0f2f3aa864e4297",
+    "artifacts/grm_rs4/grm_rs4_C3l_fresh_fact_controls_f42f8da7fd3a817c.json": "f42f8da7fd3a817c7657cb8149d34afcc9eaa1dd9db0601e6667ede9cced7037",
+    "artifacts/grm_rs4/grm_rs4_C3l_multi_hop_a_b_c_9f03781dac09b680.json": "9f03781dac09b680e2323b635ad5ff17f78a70491c05d0b3efb676e60989cd32",
+    "artifacts/grm_rs4/grm_rs4_C5_correction_then_restatement_4e04252d50ee8338.json": "4e04252d50ee8338d23460b3b7ef069aab29ecdcd746bce3c083ddbbe4739c45",
+    "artifacts/grm_rs4/grm_rs4_C5_fresh_fact_controls_488e7894ee4bbd2a.json": "488e7894ee4bbd2a051d15690a66247a5d4e3a372a939ff3e4c48219a98252c1",
+    "artifacts/grm_rs4/grm_rs4_C5_multi_hop_a_b_c_0cb8f693ae114649.json": "0cb8f693ae11464938e50ddef1270bd97238b891dd1e0a284096c310059bae4a",
+    "artifacts/grm_rs4/grm_rs4_results.json": "c6ab746cbe70c3f99252489e63c614fc79d095f16905de4e362d625aac3b7b80",
+    "artifacts/grm_rs4/registration.json": "a6339454a1d5215e11e1fa25d78a609a5d1c55985faeb9fa451a78c2252d7707",
+    "core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "core/deepseek_v2_lite_tc.py": "96e371754496eb2ca467ad199bebed07c354cf5eae4b0a08daf571c6f04f0d07",
+    "core/gemma4_tc.py": "c9a8cc1d01c30bb2b20e9c2e477d4bedf21072d0b1b6b157f3ba75c78a271d8b",
+    "core/gpt_oss20b_tc.py": "da8ca3bc8c961d731d9e32bf4558702ad1b8b10c8ecc37b18326e7df4ade74a1",
+    "core/graft_arena.py": "3c97a3ea3afc7c2f6f8dce75bcc43e24e8e03ce535f14eec669fa6277ad02a62",
+    "core/graft_quant.py": "ebe40790286a719db38de403210aa20e17e7e4d2699f7b7dae452e014f4fa130",
+    "core/graft_repository.py": "758c62dc49ed89ddec7a0c6b78c1d36c55b9bae38fb7553a806036ddc4c7771c",
+    "core/grm_admission.py": "7912f29108f0aaa9bc8f51d7a613b2866596aa6b93f99f4fa0b5bde69b2c3494",
+    "core/grm_alias_fold.py": "8e3810106d0e93a5da7bcf1c09dc80bcc4c561c5c334b634a96419ce475c97a5",
+    "core/grm_cuda_router.py": "8dfd7a6ff5395eb846996c67b1570c9fb0e8b26dd78e84f28059f1b291766ce5",
+    "core/grm_demand.py": "daf787a95abbfd206638f5fbf74de2ee57efaaa54b4eac39509402e1386650e0",
+    "core/grm_fold_alias_guard.py": "45b5640cb6e2138f3b26b8d45ae2e36cbdbee052ea71437dac6b805ca27962ed",
+    "core/grm_fold_retain.py": "f1d1df10743bf6c15df33d2644a234ba582cf6478211ae482583d4a4be3d6fa7",
+    "core/grm_frame.py": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2",
+    "core/grm_native.py": "1f5a69716d751c670f37328cf012544b800f86226ad4549a0781bac654aaf3df",
+    "core/grm_runtime.py": "973addc491a29eda9bac611a9c3f0cc25cd1033395ecc39b84b19c6f1b8f0646",
+    "core/grm_supersession.py": "c8e9baf7c69e41ebdcf05fda84a2895ed7d2b6f7ff67903fdb655924510fdd5e",
+    "core/grm_text_norm.py": "e968d68791950adb3a59bc83f43d75a75e31879a2f77c379b44bf711ccecc30a",
+    "core/grm_three_pass.py": "312f4bc0e4922449b9231ea2d9c3e6fff3a116aef6d0a48712f530d9c419742f",
+    "core/grm_x1_addresses.py": "90ef90820023621cebf1b3f22eb8d243cd7f149d87a80d8a496eed0941ca3fa7",
+    "core/grm_x2_witnesses.py": "357d233ec008a67caaf6c6ba32e7b470f1c520b944ab366433be207d06cae704",
+    "core/kv_graft.py": "d8d44d032c5398c4606b1b6f1b547a94baa2415e36225cb04dd6ef313622ef2d",
+    "core/minicpm3_tc.py": "3d19734f51d28eb48dc20a62658f2bfc250fdac4fce2cb906116d034b1371a69",
+    "core/mistral7b_tc.py": "49430e5920508d740a2f8be7b6ba0caadd0442c7798454cf6fa2a808204bf1c4",
+    "core/paging_telemetry.py": "4eb484b1f6b512962b18d08cb714dd61346980a8af550c1fd814bcbad474097c",
+    "core/qwen35_tc.py": "3f84f8e99f5cf8932440e5d6ff29df41cbf3fdaf13d27f3bbe8fb1dc3a7ec41b",
+    "core/qwen35_translation_poc.py": "5a7f364aa7a4ff24bb9299671fc945626037cff44595f0b80364ebe9d1cfa3d1",
+    "core/qwen38_tc.py": "39875f97f09906ccdfcdf6f510c9ed2f7cad01e85007363a8d7ad00869f9d67e",
+    "core/qwen3_1p7b_tc.py": "1a563f502753a86b57abff8710440ae0e1921ed083481dee8232872704093c0f",
+    "core/qwen3_tc.py": "ba0e2d9ab68716922b9f942bc4bb8cd2c4a791abe2a2fabd42a65799212d95aa",
+    "core/qwen_tc.py": "1353e44f727fc24d1638e4e238d160619fea561602c921259b010af5f63478e3",
+    "scripts/grm_rs1_read_strength_gpu.py": "dde95a2dc46683def3e13aeee439b6eb6f552a6325318e7365c0c656da05b284",
+    "scripts/grm_rs3_capture_seat_gpu.py": "231b7b79424f9a1cd18ccffb328377ebf3667ab540279e9a473a8af6aefcda80",
+    "scripts/grm_rs4_ceiling_gpu.py": "7009821ad8caaa3357ca0c7316cf25dfe08a83f94c797a36e8036bde18fd547d",
+    "scripts/grm_rs4_registration.py": "ba6882075e3572a0cf998c40cf0bb524cf9bd5df3f9695e60060893f7a6b3487",
+    "scripts/grm_rs4_results.py": "911750227e096848a277fd7916ff4b2be7601325d87d3b7681a74136ff5c70c1",
+    "scripts/grm_rs4_row_split.py": "4c7d2a1dbf852f638d64c7c01adf9e75edc32577dc26ff26b535682a06f2f590",
+    "scripts/olmoe_e2_experiment.py": "d7aedec3a62ba50fab404d571496c397467ad4a6e05e6d780f75e3a37deb5448",
+    "scripts/trinity_nope_graft_width_sweep.py": "920a861cf43096a16c6817eaeef6811ecebcc3f0e1bf77ed20fb19a689b56951",
+    "tests/fixtures/supersession_battery/correction_then_restatement.json": "ea97d4007d66357442f0424f76200984e8c2f39311618a4b892e88db9ad90f4b",
+    "tests/fixtures/supersession_battery/fresh_fact_controls.json": "9b75e1e4f70d77524d7d099f1416ae34ea3cafc149e749e26e7a5dd47b298d75",
+    "tests/fixtures/supersession_battery/multi_hop_a_b_c.json": "036f291dc4f91d7e38b23d033f97d45b8d4b1176afa1741624f7728355a13d90",
+    "tests/fixtures/supersession_battery/short_correction_long_competitor.json": "c06decbe127dd228bdf6529b002ccdaaf5f628addda003692e5e49d9e47c1221"
+  },
+  "prediction_verbatim": "Lead's registered prediction: **parity holds on every model that has\na GRM adapter** — the read gap is a seating/geometry effect, not a model\nproperty.",
+  "prior_art": "GRM contributors (2026), RS3/RS4 observer/capture/seat and LT1 cell receipts reused. RoPE: Su et al. (2021); MLA: DeepSeek-AI (2024), unverified — lead to check: RoFormer arXiv 2104.09864; DeepSeek-V2 arXiv 2405.04434. No new attention algorithm.",
+  "probes": {
+    "sup_harbor_restatement": {
+      "capture_texts": [
+        "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Correction: the current Harbor token value is Nacre-6-Blue, replacing Morrow-5-Red.<|end|><|start|>assistant<|channel|>final<|message|>Updated: Harbor token is Nacre-6-Blue.<|end|>"
+      ],
+      "expected_values": [
+        "nacre-6-blue"
+      ],
+      "feed_texts": [
+        "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative restatement for the record: the current Harbor token remains Nacre-6-Blue.<|end|><|start|>assistant<|channel|>final<|message|>Confirmed: Harbor token remains Nacre-6-Blue.<|end|>",
+        "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The Harbor token is named in the preface of this separate shipping memorandum because the warehouse search index groups every token reference together. The memorandum then covers the north entrance inspection, morning dispatch cadence, return-label printer, pallet wrap order, customs call, lunch relief schedule, spare scanner allocation, and a delayed courier handoff. Its sole authoritative value is the current Juniper pass value, Opal-7-Green. Keep Opal-7-Green attached to Juniper pass; this memorandum does not alter the Harbor token.<|end|><|start|>assistant<|channel|>final<|message|>Archived Juniper pass as Opal-7-Green with its shipping context.<|end|>"
+      ],
+      "question": "What is the current Harbor token value?",
+      "rejected_values": [
+        "morrow-5-red",
+        "opal-7-green"
+      ],
+      "role": "refuser",
+      "session_id": "correction_then_restatement"
+    },
+    "sup_praxis_fresh": {
+      "capture_texts": [
+        "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current Praxis dock value is Quartz-8-Jade.<|end|><|start|>assistant<|channel|>final<|message|>Recorded: Praxis dock is Quartz-8-Jade.<|end|>"
+      ],
+      "expected_values": [
+        "quartz-8-jade"
+      ],
+      "feed_texts": [
+        "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current Solace key value is Raven-9-Ivory.<|end|><|start|>assistant<|channel|>final<|message|>Recorded: Solace key is Raven-9-Ivory.<|end|>",
+        "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>This long planning transcript mentions both the Praxis dock and the Solace key while cataloging search terms, but it owns neither fact. The participants reviewed conference rooms, access windows, catering counts, shuttle timing, presentation order, printed badges, microphone batteries, visitor escorts, emergency contacts, and the final cleanup roster. After that background they recorded the independent fact that the current Tundra ledger value is Sable-0-Copper. Preserve Sable-0-Copper for Tundra ledger only; the Praxis dock and Solace key references are index context.<|end|><|start|>assistant<|channel|>final<|message|>Archived Tundra ledger as Sable-0-Copper and kept the planning context.<|end|>"
+      ],
+      "question": "What is the current Praxis dock value?",
+      "rejected_values": [
+        "sable-0-copper",
+        "raven-9-ivory"
+      ],
+      "role": "refuser",
+      "session_id": "fresh_fact_controls"
+    },
+    "sup_reserve_meridian_docket": {
+      "capture_texts": [
+        "The current Meridian docket value is Delta-4-Drift. Preserve Delta-4-Drift exactly for the Meridian docket; the surrounding Lumen seal reference is context only and does not revise that seal.<|end|><|start|>assistant<|channel|>final<|message|>Archived Meridian docket as Delta-4-Drift and retained the audit context.<|end|>"
+      ],
+      "expected_values": [
+        "Delta-4-Drift"
+      ],
+      "feed_texts": [
+        "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Final correction: the current Lumen seal value is Cobalt-3-Comet, replacing Birch-2-Beacon.<|end|><|start|>assistant<|channel|>final<|message|>Updated: Lumen seal is Cobalt-3-Comet.<|end|>",
+        "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The Lumen seal appears in this unrelated audit narrative because the indexer cross-linked every seal mentioned during the quarter. The audit team walked through inventory tables, packaging receipts, courier routes, badge assignments, loading windows, spare-part bins, vendor calls, and the contingency calendar before reaching the one value this record actually owns. The current Meridian docket value is Delta-4-Drift. Preserve Delta-4-Drift exactly for the Meridian docket; the surrounding Lumen seal reference is context only and does not revise that seal.<|end|><|start|>assistant<|channel|>final<|message|>Archived Meridian docket as Delta-4-Drift and retained the audit context.<|end|>"
+      ],
+      "question": "What is the current Meridian docket value?",
+      "rejected_values": [
+        "Amber-1-Atlas",
+        "Birch-2-Beacon",
+        "Cobalt-3-Comet"
+      ],
+      "role": "control",
+      "session_id": "multi_hop_a_b_c"
+    },
+    "sup_reserve_tundra_ledger": {
+      "capture_texts": [
+        "After that background they recorded the independent fact that the current Tundra ledger value is Sable-0-Copper. Preserve Sable-0-Copper for Tundra ledger only; the Praxis dock and Solace key references are index context.<|end|><|start|>assistant<|channel|>final<|message|>Archived Tundra ledger as Sable-0-Copper and kept the planning context.<|end|>"
+      ],
+      "expected_values": [
+        "Sable-0-Copper"
+      ],
+      "feed_texts": [
+        "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current Solace key value is Raven-9-Ivory.<|end|><|start|>assistant<|channel|>final<|message|>Recorded: Solace key is Raven-9-Ivory.<|end|>",
+        "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>This long planning transcript mentions both the Praxis dock and the Solace key while cataloging search terms, but it owns neither fact. The participants reviewed conference rooms, access windows, catering counts, shuttle timing, presentation order, printed badges, microphone batteries, visitor escorts, emergency contacts, and the final cleanup roster. After that background they recorded the independent fact that the current Tundra ledger value is Sable-0-Copper. Preserve Sable-0-Copper for Tundra ledger only; the Praxis dock and Solace key references are index context.<|end|><|start|>assistant<|channel|>final<|message|>Archived Tundra ledger as Sable-0-Copper and kept the planning context.<|end|>"
+      ],
+      "question": "What is the current Tundra ledger value?",
+      "rejected_values": [
+        "Quartz-8-Jade",
+        "Raven-9-Ivory"
+      ],
+      "role": "control",
+      "session_id": "fresh_fact_controls"
+    },
+    "sup_solace_fresh": {
+      "capture_texts": [
+        "After that background they recorded the independent fact that the current Tundra ledger value is Sable-0-Copper. Preserve Sable-0-Copper for Tundra ledger only; the Praxis dock and Solace key references are index context.<|end|><|start|>assistant<|channel|>final<|message|>Archived Tundra ledger as Sable-0-Copper and kept the planning context.<|end|>"
+      ],
+      "expected_values": [
+        "raven-9-ivory"
+      ],
+      "feed_texts": [
+        "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The current Solace key value is Raven-9-Ivory.<|end|><|start|>assistant<|channel|>final<|message|>Recorded: Solace key is Raven-9-Ivory.<|end|>",
+        "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>This long planning transcript mentions both the Praxis dock and the Solace key while cataloging search terms, but it owns neither fact. The participants reviewed conference rooms, access windows, catering counts, shuttle timing, presentation order, printed badges, microphone batteries, visitor escorts, emergency contacts, and the final cleanup roster. After that background they recorded the independent fact that the current Tundra ledger value is Sable-0-Copper. Preserve Sable-0-Copper for Tundra ledger only; the Praxis dock and Solace key references are index context.<|end|><|start|>assistant<|channel|>final<|message|>Archived Tundra ledger as Sable-0-Copper and kept the planning context.<|end|>"
+      ],
+      "question": "What is the current Solace key value?",
+      "rejected_values": [
+        "sable-0-copper",
+        "quartz-8-jade"
+      ],
+      "role": "refuser",
+      "session_id": "fresh_fact_controls"
+    }
+  },
+  "protocol": "GPT-OSS delegates RS4 whole-session replay, then selects one registered probe; other adapters replay the recorded arm source texts with native chat templates and native graft capture.",
+  "rs4_references": {
+    "C3l:sup_harbor_restatement": {
+      "answer_mass_full_layers": 0.16828862225843802,
+      "answer_mass_sliding_layers": 0.345134552485413,
+      "answer_positions": 15,
+      "arm": "C3l",
+      "correct": true,
+      "fed_text_mass_full_layers": 0.0,
+      "fed_text_mass_sliding_layers": 0.0,
+      "learned_sink_mass_full_layers": 0.27180512345706426,
+      "levers": {
+        "capture_pin": "live",
+        "label": "pin 'live' + seat ON",
+        "levers_read_from": "artifacts/grm_rs3/registration.json",
+        "seat_near_live": true
+      },
+      "live_mass_full_layers": 0.29382861438724733,
+      "live_mass_sliding_layers": 0.5245490076641242,
+      "mounted_ids": [
+        4
+      ],
+      "mounted_mass_full_layers": 0.4129519179049465,
+      "mounted_mass_sliding_layers": 0.04476352895532424,
+      "partition_sums_to_one_full": true,
+      "prior_live_mass_full_layers": 0.0,
+      "prior_live_mass_sliding_layers": 0.0,
+      "probe_id": "sup_harbor_restatement",
+      "question_mass_full_layers": 0.12553999134235913,
+      "question_mass_sliding_layers": 0.17941445362650688,
+      "receipt": "grm_rs4_C3l_correction_then_restatement_c9a6fbacd986c992.json",
+      "recut_vs_base_abs_delta": {
+        "full_attention": {
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.0,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0
+        },
+        "sliding_attention": {
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.0,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0
+        }
+      },
+      "registered_probe": true,
+      "row_bounds": {
+        "S": 119,
+        "answer_band": [
+          119,
+          119
+        ],
+        "answer_rows": 0,
+        "bands_are_contiguous_and_cover_live": true,
+        "cur_mount_n": 64,
+        "fed_text_band": [
+          83,
+          83
+        ],
+        "fed_text_rows": 0,
+        "live0": 83,
+        "live_band": [
+          83,
+          119
+        ],
+        "live_rows": 36,
+        "mount_band": [
+          19,
+          83
+        ],
+        "n_sink": 19,
+        "prior_live_band": [
+          83,
+          83
+        ],
+        "prior_live_rows": 0,
+        "question_band": [
+          83,
+          119
+        ],
+        "question_rows": 36,
+        "sink_band": [
+          0,
+          19
+        ]
+      },
+      "row_split_inputs": {
+        "baseline_ntok": 0,
+        "baseline_receipt": {
+          "S_first_forward": 119,
+          "arena_pos_before_first_forward": 0,
+          "baseline_ntok_derived": 0,
+          "fed_ntok_from_feed_receipt": 0,
+          "live0": 83,
+          "prior_ntok": 0,
+          "question_ntok": 36,
+          "two_derivations_agree": true,
+          "why_not_pos_at_observer_entry": "ArenaCache.eb1_begin_turn's ephemeral branch clears the boat (caches, pos, live_segs = None, 0, []) at every production turn-open, so rows present at observer entry may not be in the cache the kernel scores. MEASURED on RS4's first C0 run."
+        },
+        "derived_by": "baseline = S_first - (n_sink + cur_mount_n) - question_ntok, cross-checked against arena.pos as the first observed forward began; fed off the arm's feed receipt; prior = baseline - fed; question through the model tokenizer over arena._format_step_prompt; S, n_sink and cur_mount_n read per forward off the live call and the live arena",
+        "fed_ntok": 0,
+        "pos_at_observer_entry": 0,
+        "prior_ntok": 0,
+        "question_ntok": 36
+      },
+      "served": "The Harbor token is currently **Nacre‑6‑Blue**.",
+      "session_id": "correction_then_restatement",
+      "sink_mass_full_layers": 0.021392281709187153,
+      "sliding_fed_text_reach": {
+        "always_reaches_fed_text": false,
+        "ever_reaches_fed_text": false,
+        "fed_text_band_width_max": 0,
+        "observed_rows": 180,
+        "reaching_rows": 0,
+        "structurally_invisible_rows": 0
+      },
+      "subbands_sum_to_live_full": true,
+      "variant": "registered"
+    },
+    "C3l:sup_praxis_fresh": {
+      "answer_mass_full_layers": 0.1685255280074974,
+      "answer_mass_sliding_layers": 0.34972792405945563,
+      "answer_positions": 16,
+      "arm": "C3l",
+      "correct": true,
+      "fed_text_mass_full_layers": 0.0,
+      "fed_text_mass_sliding_layers": 0.0,
+      "learned_sink_mass_full_layers": 0.27378186990002484,
+      "levers": {
+        "capture_pin": "live",
+        "label": "pin 'live' + seat ON",
+        "levers_read_from": "artifacts/grm_rs3/registration.json",
+        "seat_near_live": true
+      },
+      "live_mass_full_layers": 0.3105574116731683,
+      "live_mass_sliding_layers": 0.531418860812361,
+      "mounted_ids": [
+        5
+      ],
+      "mounted_mass_full_layers": 0.3938651598679523,
+      "mounted_mass_sliding_layers": 0.04054162833078105,
+      "partition_sums_to_one_full": true,
+      "prior_live_mass_full_layers": 0.0,
+      "prior_live_mass_sliding_layers": 0.0,
+      "probe_id": "sup_praxis_fresh",
+      "question_mass_full_layers": 0.14203188352985308,
+      "question_mass_sliding_layers": 0.1816909362532897,
+      "receipt": "grm_rs4_C3l_fresh_fact_controls_f42f8da7fd3a817c.json",
+      "recut_vs_base_abs_delta": {
+        "full_attention": {
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.0,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0
+        },
+        "sliding_attention": {
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.0,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0
+        }
+      },
+      "registered_probe": true,
+      "row_bounds": {
+        "S": 107,
+        "answer_band": [
+          107,
+          107
+        ],
+        "answer_rows": 0,
+        "bands_are_contiguous_and_cover_live": true,
+        "cur_mount_n": 52,
+        "fed_text_band": [
+          71,
+          71
+        ],
+        "fed_text_rows": 0,
+        "live0": 71,
+        "live_band": [
+          71,
+          107
+        ],
+        "live_rows": 36,
+        "mount_band": [
+          19,
+          71
+        ],
+        "n_sink": 19,
+        "prior_live_band": [
+          71,
+          71
+        ],
+        "prior_live_rows": 0,
+        "question_band": [
+          71,
+          107
+        ],
+        "question_rows": 36,
+        "sink_band": [
+          0,
+          19
+        ]
+      },
+      "row_split_inputs": {
+        "baseline_ntok": 0,
+        "baseline_receipt": {
+          "S_first_forward": 107,
+          "arena_pos_before_first_forward": 0,
+          "baseline_ntok_derived": 0,
+          "fed_ntok_from_feed_receipt": 0,
+          "live0": 71,
+          "prior_ntok": 0,
+          "question_ntok": 36,
+          "two_derivations_agree": true,
+          "why_not_pos_at_observer_entry": "ArenaCache.eb1_begin_turn's ephemeral branch clears the boat (caches, pos, live_segs = None, 0, []) at every production turn-open, so rows present at observer entry may not be in the cache the kernel scores. MEASURED on RS4's first C0 run."
+        },
+        "derived_by": "baseline = S_first - (n_sink + cur_mount_n) - question_ntok, cross-checked against arena.pos as the first observed forward began; fed off the arm's feed receipt; prior = baseline - fed; question through the model tokenizer over arena._format_step_prompt; S, n_sink and cur_mount_n read per forward off the live call and the live arena",
+        "fed_ntok": 0,
+        "pos_at_observer_entry": 0,
+        "prior_ntok": 0,
+        "question_ntok": 36
+      },
+      "served": "The current Praxis dock value is **Quartz‑8‑Jade**.",
+      "session_id": "fresh_fact_controls",
+      "sink_mass_full_layers": 0.021750425758606674,
+      "sliding_fed_text_reach": {
+        "always_reaches_fed_text": false,
+        "ever_reaches_fed_text": false,
+        "fed_text_band_width_max": 0,
+        "observed_rows": 192,
+        "reaching_rows": 0,
+        "structurally_invisible_rows": 0
+      },
+      "subbands_sum_to_live_full": true,
+      "variant": "registered"
+    },
+    "C3l:sup_reserve_meridian_docket": {
+      "answer_mass_full_layers": 0.12396232256044945,
+      "answer_mass_sliding_layers": 0.2474184662278276,
+      "answer_positions": 8,
+      "arm": "C3l",
+      "correct": true,
+      "fed_text_mass_full_layers": 0.0,
+      "fed_text_mass_sliding_layers": 0.0,
+      "learned_sink_mass_full_layers": 0.2486122884632399,
+      "levers": {
+        "capture_pin": "live",
+        "label": "pin 'live' + seat ON",
+        "levers_read_from": "artifacts/grm_rs3/registration.json",
+        "seat_near_live": true
+      },
+      "live_mass_full_layers": 0.2746872558879356,
+      "live_mass_sliding_layers": 0.5161025260264676,
+      "mounted_ids": [
+        6
+      ],
+      "mounted_mass_full_layers": 0.4524627501765887,
+      "mounted_mass_sliding_layers": 0.06154595251427963,
+      "partition_sums_to_one_full": true,
+      "prior_live_mass_full_layers": 0.0,
+      "prior_live_mass_sliding_layers": 0.0,
+      "probe_id": "sup_reserve_meridian_docket",
+      "question_mass_full_layers": 0.1507249353841568,
+      "question_mass_sliding_layers": 0.2686840599247565,
+      "receipt": "grm_rs4_C3l_multi_hop_a_b_c_9f03781dac09b680.json",
+      "recut_vs_base_abs_delta": {
+        "full_attention": {
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.0,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0
+        },
+        "sliding_attention": {
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.0,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0
+        }
+      },
+      "registered_probe": true,
+      "row_bounds": {
+        "S": 120,
+        "answer_band": [
+          120,
+          120
+        ],
+        "answer_rows": 0,
+        "bands_are_contiguous_and_cover_live": true,
+        "cur_mount_n": 65,
+        "fed_text_band": [
+          84,
+          84
+        ],
+        "fed_text_rows": 0,
+        "live0": 84,
+        "live_band": [
+          84,
+          120
+        ],
+        "live_rows": 36,
+        "mount_band": [
+          19,
+          84
+        ],
+        "n_sink": 19,
+        "prior_live_band": [
+          84,
+          84
+        ],
+        "prior_live_rows": 0,
+        "question_band": [
+          84,
+          120
+        ],
+        "question_rows": 36,
+        "sink_band": [
+          0,
+          19
+        ]
+      },
+      "row_split_inputs": {
+        "baseline_ntok": 0,
+        "baseline_receipt": {
+          "S_first_forward": 120,
+          "arena_pos_before_first_forward": 0,
+          "baseline_ntok_derived": 0,
+          "fed_ntok_from_feed_receipt": 0,
+          "live0": 84,
+          "prior_ntok": 0,
+          "question_ntok": 36,
+          "two_derivations_agree": true,
+          "why_not_pos_at_observer_entry": "ArenaCache.eb1_begin_turn's ephemeral branch clears the boat (caches, pos, live_segs = None, 0, []) at every production turn-open, so rows present at observer entry may not be in the cache the kernel scores. MEASURED on RS4's first C0 run."
+        },
+        "derived_by": "baseline = S_first - (n_sink + cur_mount_n) - question_ntok, cross-checked against arena.pos as the first observed forward began; fed off the arm's feed receipt; prior = baseline - fed; question through the model tokenizer over arena._format_step_prompt; S, n_sink and cur_mount_n read per forward off the live call and the live arena",
+        "fed_ntok": 0,
+        "pos_at_observer_entry": 0,
+        "prior_ntok": 0,
+        "question_ntok": 36
+      },
+      "served": "Delta‑4‑Drift.",
+      "session_id": "multi_hop_a_b_c",
+      "sink_mass_full_layers": 0.024221550959434048,
+      "sliding_fed_text_reach": {
+        "always_reaches_fed_text": false,
+        "ever_reaches_fed_text": false,
+        "fed_text_band_width_max": 0,
+        "observed_rows": 96,
+        "reaching_rows": 0,
+        "structurally_invisible_rows": 0
+      },
+      "subbands_sum_to_live_full": true,
+      "variant": "registered"
+    },
+    "C3l:sup_reserve_tundra_ledger": {
+      "answer_mass_full_layers": 0.15558371253104675,
+      "answer_mass_sliding_layers": 0.3407325035444012,
+      "answer_positions": 18,
+      "arm": "C3l",
+      "correct": true,
+      "fed_text_mass_full_layers": 0.0,
+      "fed_text_mass_sliding_layers": 0.0,
+      "learned_sink_mass_full_layers": 0.24935970663231,
+      "levers": {
+        "capture_pin": "live",
+        "label": "pin 'live' + seat ON",
+        "levers_read_from": "artifacts/grm_rs3/registration.json",
+        "seat_near_live": true
+      },
+      "live_mass_full_layers": 0.2894891599814098,
+      "live_mass_sliding_layers": 0.5356049330698119,
+      "mounted_ids": [
+        5
+      ],
+      "mounted_mass_full_layers": 0.4395621062290889,
+      "mounted_mass_sliding_layers": 0.0528520627051842,
+      "partition_sums_to_one_full": true,
+      "prior_live_mass_full_layers": 0.0,
+      "prior_live_mass_sliding_layers": 0.0,
+      "probe_id": "sup_reserve_tundra_ledger",
+      "question_mass_full_layers": 0.13390544764007684,
+      "question_mass_sliding_layers": 0.19487243106036825,
+      "receipt": "grm_rs4_C3l_fresh_fact_controls_f42f8da7fd3a817c.json",
+      "recut_vs_base_abs_delta": {
+        "full_attention": {
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.0,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0
+        },
+        "sliding_attention": {
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.0,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0
+        }
+      },
+      "registered_probe": true,
+      "row_bounds": {
+        "S": 132,
+        "answer_band": [
+          132,
+          132
+        ],
+        "answer_rows": 0,
+        "bands_are_contiguous_and_cover_live": true,
+        "cur_mount_n": 75,
+        "fed_text_band": [
+          94,
+          94
+        ],
+        "fed_text_rows": 0,
+        "live0": 94,
+        "live_band": [
+          94,
+          132
+        ],
+        "live_rows": 38,
+        "mount_band": [
+          19,
+          94
+        ],
+        "n_sink": 19,
+        "prior_live_band": [
+          94,
+          94
+        ],
+        "prior_live_rows": 0,
+        "question_band": [
+          94,
+          132
+        ],
+        "question_rows": 38,
+        "sink_band": [
+          0,
+          19
+        ]
+      },
+      "row_split_inputs": {
+        "baseline_ntok": 0,
+        "baseline_receipt": {
+          "S_first_forward": 132,
+          "arena_pos_before_first_forward": 0,
+          "baseline_ntok_derived": 0,
+          "fed_ntok_from_feed_receipt": 0,
+          "live0": 94,
+          "prior_ntok": 0,
+          "question_ntok": 38,
+          "two_derivations_agree": true,
+          "why_not_pos_at_observer_entry": "ArenaCache.eb1_begin_turn's ephemeral branch clears the boat (caches, pos, live_segs = None, 0, []) at every production turn-open, so rows present at observer entry may not be in the cache the kernel scores. MEASURED on RS4's first C0 run."
+        },
+        "derived_by": "baseline = S_first - (n_sink + cur_mount_n) - question_ntok, cross-checked against arena.pos as the first observed forward began; fed off the arm's feed receipt; prior = baseline - fed; question through the model tokenizer over arena._format_step_prompt; S, n_sink and cur_mount_n read per forward off the live call and the live arena",
+        "fed_ntok": 0,
+        "pos_at_observer_entry": 0,
+        "prior_ntok": 0,
+        "question_ntok": 38
+      },
+      "served": "The current Tundra ledger value is **Sable‑0‑Copper**.",
+      "session_id": "fresh_fact_controls",
+      "sink_mass_full_layers": 0.021566061927134995,
+      "sliding_fed_text_reach": {
+        "always_reaches_fed_text": false,
+        "ever_reaches_fed_text": false,
+        "fed_text_band_width_max": 0,
+        "observed_rows": 216,
+        "reaching_rows": 0,
+        "structurally_invisible_rows": 0
+      },
+      "subbands_sum_to_live_full": true,
+      "variant": "registered"
+    },
+    "C3l:sup_solace_fresh": {
+      "answer_mass_full_layers": 0.13522306609560142,
+      "answer_mass_sliding_layers": 0.29491383537198557,
+      "answer_positions": 11,
+      "arm": "C3l",
+      "correct": false,
+      "fed_text_mass_full_layers": 0.0,
+      "fed_text_mass_sliding_layers": 0.0,
+      "learned_sink_mass_full_layers": 0.2541706701176185,
+      "levers": {
+        "capture_pin": "live",
+        "label": "pin 'live' + seat ON",
+        "levers_read_from": "artifacts/grm_rs3/registration.json",
+        "seat_near_live": true
+      },
+      "live_mass_full_layers": 0.3092539135479566,
+      "live_mass_sliding_layers": 0.5410808928762422,
+      "mounted_ids": [
+        5
+      ],
+      "mounted_mass_full_layers": 0.41242587397044356,
+      "mounted_mass_sliding_layers": 0.04485527094397129,
+      "partition_sums_to_one_full": true,
+      "prior_live_mass_full_layers": 0.0,
+      "prior_live_mass_sliding_layers": 0.0,
+      "probe_id": "sup_solace_fresh",
+      "question_mass_full_layers": 0.17403084841189964,
+      "question_mass_sliding_layers": 0.2461670619774271,
+      "receipt": "grm_rs4_C3l_fresh_fact_controls_f42f8da7fd3a817c.json",
+      "recut_vs_base_abs_delta": {
+        "full_attention": {
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.0,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0
+        },
+        "sliding_attention": {
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.0,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0
+        }
+      },
+      "registered_probe": true,
+      "row_bounds": {
+        "S": 131,
+        "answer_band": [
+          131,
+          131
+        ],
+        "answer_rows": 0,
+        "bands_are_contiguous_and_cover_live": true,
+        "cur_mount_n": 75,
+        "fed_text_band": [
+          94,
+          94
+        ],
+        "fed_text_rows": 0,
+        "live0": 94,
+        "live_band": [
+          94,
+          131
+        ],
+        "live_rows": 37,
+        "mount_band": [
+          19,
+          94
+        ],
+        "n_sink": 19,
+        "prior_live_band": [
+          94,
+          94
+        ],
+        "prior_live_rows": 0,
+        "question_band": [
+          94,
+          131
+        ],
+        "question_rows": 37,
+        "sink_band": [
+          0,
+          19
+        ]
+      },
+      "row_split_inputs": {
+        "baseline_ntok": 0,
+        "baseline_receipt": {
+          "S_first_forward": 131,
+          "arena_pos_before_first_forward": 0,
+          "baseline_ntok_derived": 0,
+          "fed_ntok_from_feed_receipt": 0,
+          "live0": 94,
+          "prior_ntok": 0,
+          "question_ntok": 37,
+          "two_derivations_agree": true,
+          "why_not_pos_at_observer_entry": "ArenaCache.eb1_begin_turn's ephemeral branch clears the boat (caches, pos, live_segs = None, 0, []) at every production turn-open, so rows present at observer entry may not be in the cache the kernel scores. MEASURED on RS4's first C0 run."
+        },
+        "derived_by": "baseline = S_first - (n_sink + cur_mount_n) - question_ntok, cross-checked against arena.pos as the first observed forward began; fed off the arm's feed receipt; prior = baseline - fed; question through the model tokenizer over arena._format_step_prompt; S, n_sink and cur_mount_n read per forward off the live call and the live arena",
+        "fed_ntok": 0,
+        "pos_at_observer_entry": 0,
+        "prior_ntok": 0,
+        "question_ntok": 37
+      },
+      "served": "The Solace key is 0‑Copper.",
+      "session_id": "fresh_fact_controls",
+      "sink_mass_full_layers": 0.02409933635852102,
+      "sliding_fed_text_reach": {
+        "always_reaches_fed_text": false,
+        "ever_reaches_fed_text": false,
+        "fed_text_band_width_max": 0,
+        "observed_rows": 132,
+        "reaching_rows": 0,
+        "structurally_invisible_rows": 0
+      },
+      "subbands_sum_to_live_full": true,
+      "variant": "registered"
+    },
+    "C5:sup_harbor_restatement": {
+      "answer_mass_full_layers": 0.15310029718610974,
+      "answer_mass_sliding_layers": 0.3087567882405387,
+      "answer_positions": 15,
+      "arm": "C5",
+      "correct": true,
+      "fed_text_mass_full_layers": 0.4436121770077282,
+      "fed_text_mass_sliding_layers": 0.06214319623541087,
+      "learned_sink_mass_full_layers": 0.22988389806511503,
+      "levers": {
+        "capture_pin": "off",
+        "label": "the live ceiling (RS2 B5) as the reference row",
+        "levers_read_from": "artifacts/grm_rs3/registration.json",
+        "seat_near_live": false
+      },
+      "live_mass_full_layers": 0.7420041425360574,
+      "live_mass_sliding_layers": 0.5632574200630188,
+      "mounted_ids": [],
+      "mounted_mass_full_layers": 0.0,
+      "mounted_mass_sliding_layers": 0.0,
+      "partition_sums_to_one_full": true,
+      "prior_live_mass_full_layers": 0.0,
+      "prior_live_mass_sliding_layers": 0.0,
+      "probe_id": "sup_harbor_restatement",
+      "question_mass_full_layers": 0.14529167353692982,
+      "question_mass_sliding_layers": 0.19235743581213882,
+      "receipt": "grm_rs4_C5_correction_then_restatement_4e04252d50ee8338.json",
+      "recut_vs_base_abs_delta": {
+        "full_attention": {
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.0,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0
+        },
+        "sliding_attention": {
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.0,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0
+        }
+      },
+      "registered_probe": true,
+      "row_bounds": {
+        "S": 266,
+        "answer_band": [
+          266,
+          266
+        ],
+        "answer_rows": 0,
+        "bands_are_contiguous_and_cover_live": true,
+        "cur_mount_n": 0,
+        "fed_text_band": [
+          19,
+          230
+        ],
+        "fed_text_rows": 211,
+        "live0": 19,
+        "live_band": [
+          19,
+          266
+        ],
+        "live_rows": 247,
+        "mount_band": [
+          19,
+          19
+        ],
+        "n_sink": 19,
+        "prior_live_band": [
+          19,
+          19
+        ],
+        "prior_live_rows": 0,
+        "question_band": [
+          230,
+          266
+        ],
+        "question_rows": 36,
+        "sink_band": [
+          0,
+          19
+        ]
+      },
+      "row_split_inputs": {
+        "baseline_ntok": 211,
+        "baseline_receipt": {
+          "S_first_forward": 266,
+          "arena_pos_before_first_forward": 211,
+          "baseline_ntok_derived": 211,
+          "fed_ntok_from_feed_receipt": 211,
+          "live0": 19,
+          "prior_ntok": 0,
+          "question_ntok": 36,
+          "two_derivations_agree": true,
+          "why_not_pos_at_observer_entry": "ArenaCache.eb1_begin_turn's ephemeral branch clears the boat (caches, pos, live_segs = None, 0, []) at every production turn-open, so rows present at observer entry may not be in the cache the kernel scores. MEASURED on RS4's first C0 run."
+        },
+        "derived_by": "baseline = S_first - (n_sink + cur_mount_n) - question_ntok, cross-checked against arena.pos as the first observed forward began; fed off the arm's feed receipt; prior = baseline - fed; question through the model tokenizer over arena._format_step_prompt; S, n_sink and cur_mount_n read per forward off the live call and the live arena",
+        "fed_ntok": 211,
+        "pos_at_observer_entry": 211,
+        "prior_ntok": 0,
+        "question_ntok": 36
+      },
+      "served": "The current Harbor token is **Nacre‑6‑Blue**.",
+      "session_id": "correction_then_restatement",
+      "sink_mass_full_layers": 0.02810893986800996,
+      "sliding_fed_text_reach": {
+        "always_reaches_fed_text": true,
+        "ever_reaches_fed_text": true,
+        "fed_text_band_width_max": 211,
+        "observed_rows": 180,
+        "reaching_rows": 180,
+        "structurally_invisible_rows": 0
+      },
+      "subbands_sum_to_live_full": true,
+      "variant": "registered"
+    },
+    "C5:sup_praxis_fresh": {
+      "answer_mass_full_layers": 0.1473714788718259,
+      "answer_mass_sliding_layers": 0.32116308245880937,
+      "answer_positions": 17,
+      "arm": "C5",
+      "correct": false,
+      "fed_text_mass_full_layers": 0.44534459483681943,
+      "fed_text_mass_sliding_layers": 0.06954546776764534,
+      "learned_sink_mass_full_layers": 0.2288039599125292,
+      "levers": {
+        "capture_pin": "off",
+        "label": "the live ceiling (RS2 B5) as the reference row",
+        "levers_read_from": "artifacts/grm_rs3/registration.json",
+        "seat_near_live": false
+      },
+      "live_mass_full_layers": 0.7431145773506632,
+      "live_mass_sliding_layers": 0.5782798743423293,
+      "mounted_ids": [],
+      "mounted_mass_full_layers": 0.0,
+      "mounted_mass_sliding_layers": 0.0,
+      "partition_sums_to_one_full": true,
+      "prior_live_mass_full_layers": 0.0,
+      "prior_live_mass_sliding_layers": 0.0,
+      "probe_id": "sup_praxis_fresh",
+      "question_mass_full_layers": 0.15039850611641417,
+      "question_mass_sliding_layers": 0.18757132375065022,
+      "receipt": "grm_rs4_C5_fresh_fact_controls_488e7894ee4bbd2a.json",
+      "recut_vs_base_abs_delta": {
+        "full_attention": {
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.0,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0
+        },
+        "sliding_attention": {
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.0,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0
+        }
+      },
+      "registered_probe": true,
+      "row_bounds": {
+        "S": 270,
+        "answer_band": [
+          270,
+          270
+        ],
+        "answer_rows": 0,
+        "bands_are_contiguous_and_cover_live": true,
+        "cur_mount_n": 0,
+        "fed_text_band": [
+          19,
+          234
+        ],
+        "fed_text_rows": 215,
+        "live0": 19,
+        "live_band": [
+          19,
+          270
+        ],
+        "live_rows": 251,
+        "mount_band": [
+          19,
+          19
+        ],
+        "n_sink": 19,
+        "prior_live_band": [
+          19,
+          19
+        ],
+        "prior_live_rows": 0,
+        "question_band": [
+          234,
+          270
+        ],
+        "question_rows": 36,
+        "sink_band": [
+          0,
+          19
+        ]
+      },
+      "row_split_inputs": {
+        "baseline_ntok": 215,
+        "baseline_receipt": {
+          "S_first_forward": 270,
+          "arena_pos_before_first_forward": 215,
+          "baseline_ntok_derived": 215,
+          "fed_ntok_from_feed_receipt": 215,
+          "live0": 19,
+          "prior_ntok": 0,
+          "question_ntok": 36,
+          "two_derivations_agree": true,
+          "why_not_pos_at_observer_entry": "ArenaCache.eb1_begin_turn's ephemeral branch clears the boat (caches, pos, live_segs = None, 0, []) at every production turn-open, so rows present at observer entry may not be in the cache the kernel scores. MEASURED on RS4's first C0 run."
+        },
+        "derived_by": "baseline = S_first - (n_sink + cur_mount_n) - question_ntok, cross-checked against arena.pos as the first observed forward began; fed off the arm's feed receipt; prior = baseline - fed; question through the model tokenizer over arena._format_step_prompt; S, n_sink and cur_mount_n read per forward off the live call and the live arena",
+        "fed_ntok": 215,
+        "pos_at_observer_entry": 215,
+        "prior_ntok": 0,
+        "question_ntok": 36
+      },
+      "served": "The current Praxis dock value is **Raven-9-Ivory**.",
+      "session_id": "fresh_fact_controls",
+      "sink_mass_full_layers": 0.028102961497828732,
+      "sliding_fed_text_reach": {
+        "always_reaches_fed_text": true,
+        "ever_reaches_fed_text": true,
+        "fed_text_band_width_max": 215,
+        "observed_rows": 204,
+        "reaching_rows": 204,
+        "structurally_invisible_rows": 0
+      },
+      "subbands_sum_to_live_full": true,
+      "variant": "registered"
+    },
+    "C5:sup_reserve_meridian_docket": {
+      "answer_mass_full_layers": 0.1538580781586158,
+      "answer_mass_sliding_layers": 0.30580152466427535,
+      "answer_positions": 16,
+      "arm": "C5",
+      "correct": true,
+      "fed_text_mass_full_layers": 0.4234250755980611,
+      "fed_text_mass_sliding_layers": 0.07667721227335278,
+      "learned_sink_mass_full_layers": 0.24452492539421655,
+      "levers": {
+        "capture_pin": "off",
+        "label": "the live ceiling (RS2 B5) as the reference row",
+        "levers_read_from": "artifacts/grm_rs3/registration.json",
+        "seat_near_live": false
+      },
+      "live_mass_full_layers": 0.7255251645110548,
+      "live_mass_sliding_layers": 0.5702819908037782,
+      "mounted_ids": [],
+      "mounted_mass_full_layers": 0.0,
+      "mounted_mass_sliding_layers": 0.0,
+      "partition_sums_to_one_full": true,
+      "prior_live_mass_full_layers": 0.0,
+      "prior_live_mass_sliding_layers": 0.0,
+      "probe_id": "sup_reserve_meridian_docket",
+      "question_mass_full_layers": 0.14824201089989703,
+      "question_mass_sliding_layers": 0.18780325035913847,
+      "receipt": "grm_rs4_C5_multi_hop_a_b_c_0cb8f693ae114649.json",
+      "recut_vs_base_abs_delta": {
+        "full_attention": {
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.0,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0
+        },
+        "sliding_attention": {
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.0,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0
+        }
+      },
+      "registered_probe": true,
+      "row_bounds": {
+        "S": 272,
+        "answer_band": [
+          272,
+          272
+        ],
+        "answer_rows": 0,
+        "bands_are_contiguous_and_cover_live": true,
+        "cur_mount_n": 0,
+        "fed_text_band": [
+          19,
+          236
+        ],
+        "fed_text_rows": 217,
+        "live0": 19,
+        "live_band": [
+          19,
+          272
+        ],
+        "live_rows": 253,
+        "mount_band": [
+          19,
+          19
+        ],
+        "n_sink": 19,
+        "prior_live_band": [
+          19,
+          19
+        ],
+        "prior_live_rows": 0,
+        "question_band": [
+          236,
+          272
+        ],
+        "question_rows": 36,
+        "sink_band": [
+          0,
+          19
+        ]
+      },
+      "row_split_inputs": {
+        "baseline_ntok": 217,
+        "baseline_receipt": {
+          "S_first_forward": 272,
+          "arena_pos_before_first_forward": 217,
+          "baseline_ntok_derived": 217,
+          "fed_ntok_from_feed_receipt": 217,
+          "live0": 19,
+          "prior_ntok": 0,
+          "question_ntok": 36,
+          "two_derivations_agree": true,
+          "why_not_pos_at_observer_entry": "ArenaCache.eb1_begin_turn's ephemeral branch clears the boat (caches, pos, live_segs = None, 0, []) at every production turn-open, so rows present at observer entry may not be in the cache the kernel scores. MEASURED on RS4's first C0 run."
+        },
+        "derived_by": "baseline = S_first - (n_sink + cur_mount_n) - question_ntok, cross-checked against arena.pos as the first observed forward began; fed off the arm's feed receipt; prior = baseline - fed; question through the model tokenizer over arena._format_step_prompt; S, n_sink and cur_mount_n read per forward off the live call and the live arena",
+        "fed_ntok": 217,
+        "pos_at_observer_entry": 217,
+        "prior_ntok": 0,
+        "question_ntok": 36
+      },
+      "served": "The current Meridian docket value is **Delta‑4‑Drift**.",
+      "session_id": "multi_hop_a_b_c",
+      "sink_mass_full_layers": 0.029952420699070597,
+      "sliding_fed_text_reach": {
+        "always_reaches_fed_text": true,
+        "ever_reaches_fed_text": true,
+        "fed_text_band_width_max": 217,
+        "observed_rows": 192,
+        "reaching_rows": 192,
+        "structurally_invisible_rows": 0
+      },
+      "subbands_sum_to_live_full": true,
+      "variant": "registered"
+    },
+    "C5:sup_reserve_tundra_ledger": {
+      "answer_mass_full_layers": 0.15925396666689604,
+      "answer_mass_sliding_layers": 0.31221965572762267,
+      "answer_positions": 18,
+      "arm": "C5",
+      "correct": true,
+      "fed_text_mass_full_layers": 0.4188124812035649,
+      "fed_text_mass_sliding_layers": 0.07499209153077875,
+      "learned_sink_mass_full_layers": 0.23737105877242154,
+      "levers": {
+        "capture_pin": "off",
+        "label": "the live ceiling (RS2 B5) as the reference row",
+        "levers_read_from": "artifacts/grm_rs3/registration.json",
+        "seat_near_live": false
+      },
+      "live_mass_full_layers": 0.7328376167074397,
+      "live_mass_sliding_layers": 0.5735211598652381,
+      "mounted_ids": [],
+      "mounted_mass_full_layers": 0.0,
+      "mounted_mass_sliding_layers": 0.0,
+      "partition_sums_to_one_full": true,
+      "prior_live_mass_full_layers": 0.0,
+      "prior_live_mass_sliding_layers": 0.0,
+      "probe_id": "sup_reserve_tundra_ledger",
+      "question_mass_full_layers": 0.15477117252777572,
+      "question_mass_sliding_layers": 0.1863094144888843,
+      "receipt": "grm_rs4_C5_fresh_fact_controls_488e7894ee4bbd2a.json",
+      "recut_vs_base_abs_delta": {
+        "full_attention": {
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.0,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0
+        },
+        "sliding_attention": {
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.0,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0
+        }
+      },
+      "registered_probe": true,
+      "row_bounds": {
+        "S": 272,
+        "answer_band": [
+          272,
+          272
+        ],
+        "answer_rows": 0,
+        "bands_are_contiguous_and_cover_live": true,
+        "cur_mount_n": 0,
+        "fed_text_band": [
+          19,
+          234
+        ],
+        "fed_text_rows": 215,
+        "live0": 19,
+        "live_band": [
+          19,
+          272
+        ],
+        "live_rows": 253,
+        "mount_band": [
+          19,
+          19
+        ],
+        "n_sink": 19,
+        "prior_live_band": [
+          19,
+          19
+        ],
+        "prior_live_rows": 0,
+        "question_band": [
+          234,
+          272
+        ],
+        "question_rows": 38,
+        "sink_band": [
+          0,
+          19
+        ]
+      },
+      "row_split_inputs": {
+        "baseline_ntok": 215,
+        "baseline_receipt": {
+          "S_first_forward": 272,
+          "arena_pos_before_first_forward": 215,
+          "baseline_ntok_derived": 215,
+          "fed_ntok_from_feed_receipt": 215,
+          "live0": 19,
+          "prior_ntok": 0,
+          "question_ntok": 38,
+          "two_derivations_agree": true,
+          "why_not_pos_at_observer_entry": "ArenaCache.eb1_begin_turn's ephemeral branch clears the boat (caches, pos, live_segs = None, 0, []) at every production turn-open, so rows present at observer entry may not be in the cache the kernel scores. MEASURED on RS4's first C0 run."
+        },
+        "derived_by": "baseline = S_first - (n_sink + cur_mount_n) - question_ntok, cross-checked against arena.pos as the first observed forward began; fed off the arm's feed receipt; prior = baseline - fed; question through the model tokenizer over arena._format_step_prompt; S, n_sink and cur_mount_n read per forward off the live call and the live arena",
+        "fed_ntok": 215,
+        "pos_at_observer_entry": 215,
+        "prior_ntok": 0,
+        "question_ntok": 38
+      },
+      "served": "The current Tundra ledger value is **Sable‑0‑Copper**.",
+      "session_id": "fresh_fact_controls",
+      "sink_mass_full_layers": 0.02978704719269579,
+      "sliding_fed_text_reach": {
+        "always_reaches_fed_text": true,
+        "ever_reaches_fed_text": true,
+        "fed_text_band_width_max": 215,
+        "observed_rows": 216,
+        "reaching_rows": 216,
+        "structurally_invisible_rows": 0
+      },
+      "subbands_sum_to_live_full": true,
+      "variant": "registered"
+    },
+    "C5:sup_solace_fresh": {
+      "answer_mass_full_layers": 0.1595312999216495,
+      "answer_mass_sliding_layers": 0.3224533431369949,
+      "answer_positions": 18,
+      "arm": "C5",
+      "correct": true,
+      "fed_text_mass_full_layers": 0.4378284659857552,
+      "fed_text_mass_sliding_layers": 0.06104675268202469,
+      "learned_sink_mass_full_layers": 0.23161538441113574,
+      "levers": {
+        "capture_pin": "off",
+        "label": "the live ceiling (RS2 B5) as the reference row",
+        "levers_read_from": "artifacts/grm_rs3/registration.json",
+        "seat_near_live": false
+      },
+      "live_mass_full_layers": 0.7398592255733631,
+      "live_mass_sliding_layers": 0.5646732553701709,
+      "mounted_ids": [],
+      "mounted_mass_full_layers": 0.0,
+      "mounted_mass_sliding_layers": 0.0,
+      "partition_sums_to_one_full": true,
+      "prior_live_mass_full_layers": 0.0,
+      "prior_live_mass_sliding_layers": 0.0,
+      "probe_id": "sup_solace_fresh",
+      "question_mass_full_layers": 0.14249945892866148,
+      "question_mass_sliding_layers": 0.181173163755038,
+      "receipt": "grm_rs4_C5_fresh_fact_controls_488e7894ee4bbd2a.json",
+      "recut_vs_base_abs_delta": {
+        "full_attention": {
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.0,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0
+        },
+        "sliding_attention": {
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.0,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0
+        }
+      },
+      "registered_probe": true,
+      "row_bounds": {
+        "S": 271,
+        "answer_band": [
+          271,
+          271
+        ],
+        "answer_rows": 0,
+        "bands_are_contiguous_and_cover_live": true,
+        "cur_mount_n": 0,
+        "fed_text_band": [
+          19,
+          234
+        ],
+        "fed_text_rows": 215,
+        "live0": 19,
+        "live_band": [
+          19,
+          271
+        ],
+        "live_rows": 252,
+        "mount_band": [
+          19,
+          19
+        ],
+        "n_sink": 19,
+        "prior_live_band": [
+          19,
+          19
+        ],
+        "prior_live_rows": 0,
+        "question_band": [
+          234,
+          271
+        ],
+        "question_rows": 37,
+        "sink_band": [
+          0,
+          19
+        ]
+      },
+      "row_split_inputs": {
+        "baseline_ntok": 215,
+        "baseline_receipt": {
+          "S_first_forward": 271,
+          "arena_pos_before_first_forward": 215,
+          "baseline_ntok_derived": 215,
+          "fed_ntok_from_feed_receipt": 215,
+          "live0": 19,
+          "prior_ntok": 0,
+          "question_ntok": 37,
+          "two_derivations_agree": true,
+          "why_not_pos_at_observer_entry": "ArenaCache.eb1_begin_turn's ephemeral branch clears the boat (caches, pos, live_segs = None, 0, []) at every production turn-open, so rows present at observer entry may not be in the cache the kernel scores. MEASURED on RS4's first C0 run."
+        },
+        "derived_by": "baseline = S_first - (n_sink + cur_mount_n) - question_ntok, cross-checked against arena.pos as the first observed forward began; fed off the arm's feed receipt; prior = baseline - fed; question through the model tokenizer over arena._format_step_prompt; S, n_sink and cur_mount_n read per forward off the live call and the live arena",
+        "fed_ntok": 215,
+        "pos_at_observer_entry": 215,
+        "prior_ntok": 0,
+        "question_ntok": 37
+      },
+      "served": "The current Solace key value is **Raven‑9‑Ivory**.",
+      "session_id": "fresh_fact_controls",
+      "sink_mass_full_layers": 0.028494896047589098,
+      "sliding_fed_text_reach": {
+        "always_reaches_fed_text": true,
+        "ever_reaches_fed_text": true,
+        "fed_text_band_width_max": 215,
+        "observed_rows": 216,
+        "reaching_rows": 216,
+        "structurally_invisible_rows": 0
+      },
+      "subbands_sum_to_live_full": true,
+      "variant": "registered"
+    }
+  },
+  "schema": "grm.xm1.registration.v1",
+  "worker_cap_s": 285
+}

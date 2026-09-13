@@ -1,0 +1,47 @@
+{
+  "core_commit_sha": "Not recorded in selected RS4 arm receipts; no git used. File SHA256s are authoritative available identities.",
+  "round_two_environment": {
+    "GRM_ADMISSION_RULE": "all_tokens_bind",
+    "GRM_ALIAS_FOLD_MERGE": "0",
+    "GRM_CAPTURE_PIN": "off",
+    "GRM_DEMAND_NGH": "0",
+    "GRM_FOLD_ALIAS_GUARD": "0",
+    "GRM_FOLD_RETAIN_SOURCES": "0",
+    "GRM_LSR_FIXES": "1",
+    "GRM_PERSISTENT_BOAT": "0",
+    "GRM_ROUTE_SOLE_BINDER_INSURANCE": "0",
+    "GRM_SEAT_NEAR_LIVE": "0",
+    "GRM_X1_ADDRESSES": "0"
+  },
+  "source_file_sha256_comparison": [
+    {
+      "current_sha256": "da8ca3bc8c961d731d9e32bf4558702ad1b8b10c8ecc37b18326e7df4ade74a1",
+      "equal": true,
+      "label": "gpt_oss20b_tc",
+      "path": "core/gpt_oss20b_tc.py",
+      "rs4_sha256": "da8ca3bc8c961d731d9e32bf4558702ad1b8b10c8ecc37b18326e7df4ade74a1"
+    },
+    {
+      "current_sha256": "3c97a3ea3afc7c2f6f8dce75bcc43e24e8e03ce535f14eec669fa6277ad02a62",
+      "equal": false,
+      "label": "graft_arena",
+      "path": "core/graft_arena.py",
+      "rs4_sha256": "24f227be9e5f7584d86dbb3580e735c406796a5c49497b07d89c001adace9ffc"
+    },
+    {
+      "current_sha256": "daf787a95abbfd206638f5fbf74de2ee57efaaa54b4eac39509402e1386650e0",
+      "equal": false,
+      "label": "grm_demand",
+      "path": "core/grm_demand.py",
+      "rs4_sha256": "2fd50307650af0c72c19ecb4f7ce6eb11c3bbf9d5b3439905007b87857b195b3"
+    },
+    {
+      "current_sha256": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2",
+      "equal": true,
+      "label": "grm_frame",
+      "path": "core/grm_frame.py",
+      "rs4_sha256": "b1b49c624428d3bea0ad2b39a1cd65817c1725db274175a84c47d3b3b5b6dfc2"
+    }
+  ],
+  "unflagged_changes": "FIX-9 changes cannot be reverted by an invented environment variable. Actual measurement must float-match or STOP."
+}
