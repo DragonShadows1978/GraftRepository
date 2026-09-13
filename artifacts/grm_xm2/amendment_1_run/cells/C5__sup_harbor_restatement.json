@@ -1,0 +1,7329 @@
+{
+  "binding": {
+    "amendment_sha256": "c300374de576251c6f622ef2371f4ede0ae3fac58c4ea8465e26d8547d3fc5ff",
+    "cell": {
+      "arm": "C5",
+      "capture_pin": null,
+      "id": "C5__sup_harbor_restatement",
+      "model": "qwen35",
+      "probe": "sup_harbor_restatement",
+      "reservation_s": 90,
+      "seat_near_live": false
+    },
+    "registration_sha256": "7d537ab25ba485094b0235c9b1407d75b542dcbba21ebdd587a6534d16d73c3d"
+  },
+  "elapsed_s": 74.91184569615871,
+  "evidence_class": "GPU Qwen native cell; historical source contrast",
+  "gpu_executed": true,
+  "result": {
+    "answer_position_convention": "input query for each final content token i: observation i+1; prefill/thinking/control excluded",
+    "capture": null,
+    "decode_status": "FINAL",
+    "final_channel": true,
+    "final_observation_indices": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    "final_token_indices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+    ],
+    "generated_token_ids": [
+      760,
+      1428,
+      37885,
+      3817,
+      869,
+      369,
+      2972,
+      45,
+      27544,
+      12,
+      21,
+      12,
+      10025,
+      159034,
+      248046
+    ],
+    "model_info": {
+      "attention_layers": [
+        3,
+        7,
+        11,
+        15,
+        19,
+        23,
+        27,
+        31
+      ],
+      "framework": "tensor_cuda Qwen3.5",
+      "head_dim": 256,
+      "hidden_dim": 4096,
+      "layers": 32,
+      "loaded": "INT4 hybrid",
+      "model_dir": "/home/vader/.cache/huggingface/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+      "num_heads": 16,
+      "num_kv_heads": 4,
+      "repository": "Qwen/Qwen3.5-9B",
+      "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+      "tie_word_embeddings": false,
+      "weight_bits": 4
+    },
+    "observed_rows": [
+      [
+        {
+          "answer_mass": 0.0,
+          "answer_rows": 0,
+          "bounds": {
+            "S": 203,
+            "answer_band": [
+              203,
+              203
+            ],
+            "answer_rows": 0,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              203
+            ],
+            "live_rows": 203,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7258142828941345,
+          "fed_text_rows": 183,
+          "layer_index": 3,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0003669261932373,
+          "live_rows": 203,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.274552583694458,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.0,
+          "answer_rows": 0,
+          "bounds": {
+            "S": 203,
+            "answer_band": [
+              203,
+              203
+            ],
+            "answer_rows": 0,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              203
+            ],
+            "live_rows": 203,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7238398790359497,
+          "fed_text_rows": 183,
+          "layer_index": 7,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9999378323554993,
+          "live_rows": 203,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.27609801292419434,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.0,
+          "answer_rows": 0,
+          "bounds": {
+            "S": 203,
+            "answer_band": [
+              203,
+              203
+            ],
+            "answer_rows": 0,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              203
+            ],
+            "live_rows": 203,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.6565523147583008,
+          "fed_text_rows": 183,
+          "layer_index": 11,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9995504021644592,
+          "live_rows": 203,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.34299805760383606,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.0,
+          "answer_rows": 0,
+          "bounds": {
+            "S": 203,
+            "answer_band": [
+              203,
+              203
+            ],
+            "answer_rows": 0,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              203
+            ],
+            "live_rows": 203,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.6967136859893799,
+          "fed_text_rows": 183,
+          "layer_index": 15,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0000979900360107,
+          "live_rows": 203,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.303384393453598,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.0,
+          "answer_rows": 0,
+          "bounds": {
+            "S": 203,
+            "answer_band": [
+              203,
+              203
+            ],
+            "answer_rows": 0,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              203
+            ],
+            "live_rows": 203,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.5186161994934082,
+          "fed_text_rows": 183,
+          "layer_index": 19,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0003042221069336,
+          "live_rows": 203,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.48168808221817017,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.0,
+          "answer_rows": 0,
+          "bounds": {
+            "S": 203,
+            "answer_band": [
+              203,
+              203
+            ],
+            "answer_rows": 0,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              203
+            ],
+            "live_rows": 203,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.5561213493347168,
+          "fed_text_rows": 183,
+          "layer_index": 23,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0002593994140625,
+          "live_rows": 203,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.4441380500793457,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.0,
+          "answer_rows": 0,
+          "bounds": {
+            "S": 203,
+            "answer_band": [
+              203,
+              203
+            ],
+            "answer_rows": 0,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              203
+            ],
+            "live_rows": 203,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7560962438583374,
+          "fed_text_rows": 183,
+          "layer_index": 27,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0007376670837402,
+          "live_rows": 203,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.2446414828300476,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.0,
+          "answer_rows": 0,
+          "bounds": {
+            "S": 203,
+            "answer_band": [
+              203,
+              203
+            ],
+            "answer_rows": 0,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              203
+            ],
+            "live_rows": 203,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.5696795582771301,
+          "fed_text_rows": 183,
+          "layer_index": 31,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.000435471534729,
+          "live_rows": 203,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.4307559132575989,
+          "question_rows": 20
+        }
+      ],
+      [
+        {
+          "answer_mass": 0.03478813171386719,
+          "answer_rows": 1,
+          "bounds": {
+            "S": 204,
+            "answer_band": [
+              203,
+              204
+            ],
+            "answer_rows": 1,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              204
+            ],
+            "live_rows": 204,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.6739144921302795,
+          "fed_text_rows": 183,
+          "layer_index": 3,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0000650882720947,
+          "live_rows": 204,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.2913625240325928,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.07628250122070312,
+          "answer_rows": 1,
+          "bounds": {
+            "S": 204,
+            "answer_band": [
+              203,
+              204
+            ],
+            "answer_rows": 1,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              204
+            ],
+            "live_rows": 204,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.5288912057876587,
+          "fed_text_rows": 183,
+          "layer_index": 7,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9999175071716309,
+          "live_rows": 204,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.39474382996559143,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.036974191665649414,
+          "answer_rows": 1,
+          "bounds": {
+            "S": 204,
+            "answer_band": [
+              203,
+              204
+            ],
+            "answer_rows": 1,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              204
+            ],
+            "live_rows": 204,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.6650216579437256,
+          "fed_text_rows": 183,
+          "layer_index": 11,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0006881952285767,
+          "live_rows": 204,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.29869237542152405,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.04702186584472656,
+          "answer_rows": 1,
+          "bounds": {
+            "S": 204,
+            "answer_band": [
+              203,
+              204
+            ],
+            "answer_rows": 1,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              204
+            ],
+            "live_rows": 204,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.5353630781173706,
+          "fed_text_rows": 183,
+          "layer_index": 15,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0001780986785889,
+          "live_rows": 204,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.4177930951118469,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.015977859497070312,
+          "answer_rows": 1,
+          "bounds": {
+            "S": 204,
+            "answer_band": [
+              203,
+              204
+            ],
+            "answer_rows": 1,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              204
+            ],
+            "live_rows": 204,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.469504177570343,
+          "fed_text_rows": 183,
+          "layer_index": 19,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0003607273101807,
+          "live_rows": 204,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.5148787498474121,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.030148983001708984,
+          "answer_rows": 1,
+          "bounds": {
+            "S": 204,
+            "answer_band": [
+              203,
+              204
+            ],
+            "answer_rows": 1,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              204
+            ],
+            "live_rows": 204,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.5144383907318115,
+          "fed_text_rows": 183,
+          "layer_index": 23,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.000475525856018,
+          "live_rows": 204,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.4558880627155304,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.02597332000732422,
+          "answer_rows": 1,
+          "bounds": {
+            "S": 204,
+            "answer_band": [
+              203,
+              204
+            ],
+            "answer_rows": 1,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              204
+            ],
+            "live_rows": 204,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.6377198696136475,
+          "fed_text_rows": 183,
+          "layer_index": 27,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0004245042800903,
+          "live_rows": 204,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.3367313742637634,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.23223876953125,
+          "answer_rows": 1,
+          "bounds": {
+            "S": 204,
+            "answer_band": [
+              203,
+              204
+            ],
+            "answer_rows": 1,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              204
+            ],
+            "live_rows": 204,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.5181533694267273,
+          "fed_text_rows": 183,
+          "layer_index": 31,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0003035068511963,
+          "live_rows": 204,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.24991145730018616,
+          "question_rows": 20
+        }
+      ],
+      [
+        {
+          "answer_mass": 0.016099929809570312,
+          "answer_rows": 2,
+          "bounds": {
+            "S": 205,
+            "answer_band": [
+              203,
+              205
+            ],
+            "answer_rows": 2,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              205
+            ],
+            "live_rows": 205,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7989339828491211,
+          "fed_text_rows": 183,
+          "layer_index": 3,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.00071382522583,
+          "live_rows": 205,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.18567988276481628,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.0876011997461319,
+          "answer_rows": 2,
+          "bounds": {
+            "S": 205,
+            "answer_band": [
+              203,
+              205
+            ],
+            "answer_rows": 2,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              205
+            ],
+            "live_rows": 205,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.5224865674972534,
+          "fed_text_rows": 183,
+          "layer_index": 7,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9999038577079773,
+          "live_rows": 205,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.3898160457611084,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.04241150617599487,
+          "answer_rows": 2,
+          "bounds": {
+            "S": 205,
+            "answer_band": [
+              203,
+              205
+            ],
+            "answer_rows": 2,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              205
+            ],
+            "live_rows": 205,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7578145265579224,
+          "fed_text_rows": 183,
+          "layer_index": 11,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9992738962173462,
+          "live_rows": 205,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.19904787838459015,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.036553144454956055,
+          "answer_rows": 2,
+          "bounds": {
+            "S": 205,
+            "answer_band": [
+              203,
+              205
+            ],
+            "answer_rows": 2,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              205
+            ],
+            "live_rows": 205,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.6199739575386047,
+          "fed_text_rows": 183,
+          "layer_index": 15,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0004758834838867,
+          "live_rows": 205,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.3439488410949707,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.03394240140914917,
+          "answer_rows": 2,
+          "bounds": {
+            "S": 205,
+            "answer_band": [
+              203,
+              205
+            ],
+            "answer_rows": 2,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              205
+            ],
+            "live_rows": 205,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.5426636934280396,
+          "fed_text_rows": 183,
+          "layer_index": 19,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0003259181976318,
+          "live_rows": 205,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.4237198233604431,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.03483378887176514,
+          "answer_rows": 2,
+          "bounds": {
+            "S": 205,
+            "answer_band": [
+              203,
+              205
+            ],
+            "answer_rows": 2,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              205
+            ],
+            "live_rows": 205,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.6297706365585327,
+          "fed_text_rows": 183,
+          "layer_index": 23,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9991543889045715,
+          "live_rows": 205,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.33454999327659607,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.0393257737159729,
+          "answer_rows": 2,
+          "bounds": {
+            "S": 205,
+            "answer_band": [
+              203,
+              205
+            ],
+            "answer_rows": 2,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              205
+            ],
+            "live_rows": 205,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.6884278059005737,
+          "fed_text_rows": 183,
+          "layer_index": 27,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0004961490631104,
+          "live_rows": 205,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.27274268865585327,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.2945394515991211,
+          "answer_rows": 2,
+          "bounds": {
+            "S": 205,
+            "answer_band": [
+              203,
+              205
+            ],
+            "answer_rows": 2,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              205
+            ],
+            "live_rows": 205,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.5255453586578369,
+          "fed_text_rows": 183,
+          "layer_index": 31,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9999906420707703,
+          "live_rows": 205,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.17990580201148987,
+          "question_rows": 20
+        }
+      ],
+      [
+        {
+          "answer_mass": 0.01476067304611206,
+          "answer_rows": 3,
+          "bounds": {
+            "S": 206,
+            "answer_band": [
+              203,
+              206
+            ],
+            "answer_rows": 3,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              206
+            ],
+            "live_rows": 206,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8439570069313049,
+          "fed_text_rows": 183,
+          "layer_index": 3,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0001013278961182,
+          "live_rows": 206,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.141383558511734,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.028775032609701157,
+          "answer_rows": 3,
+          "bounds": {
+            "S": 206,
+            "answer_band": [
+              203,
+              206
+            ],
+            "answer_rows": 3,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              206
+            ],
+            "live_rows": 206,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7971676588058472,
+          "fed_text_rows": 183,
+          "layer_index": 7,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0005321502685547,
+          "live_rows": 206,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.17458941042423248,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.025964392349123955,
+          "answer_rows": 3,
+          "bounds": {
+            "S": 206,
+            "answer_band": [
+              203,
+              206
+            ],
+            "answer_rows": 3,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              206
+            ],
+            "live_rows": 206,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.9078555107116699,
+          "fed_text_rows": 183,
+          "layer_index": 11,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.999549388885498,
+          "live_rows": 206,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.06572951376438141,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.03255351260304451,
+          "answer_rows": 3,
+          "bounds": {
+            "S": 206,
+            "answer_band": [
+              203,
+              206
+            ],
+            "answer_rows": 3,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              206
+            ],
+            "live_rows": 206,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8345815539360046,
+          "fed_text_rows": 183,
+          "layer_index": 15,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.000317096710205,
+          "live_rows": 206,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.13318216800689697,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.012818172574043274,
+          "answer_rows": 3,
+          "bounds": {
+            "S": 206,
+            "answer_band": [
+              203,
+              206
+            ],
+            "answer_rows": 3,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              206
+            ],
+            "live_rows": 206,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7089211344718933,
+          "fed_text_rows": 183,
+          "layer_index": 19,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9999873638153076,
+          "live_rows": 206,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.2782480716705322,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.03857409954071045,
+          "answer_rows": 3,
+          "bounds": {
+            "S": 206,
+            "answer_band": [
+              203,
+              206
+            ],
+            "answer_rows": 3,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              206
+            ],
+            "live_rows": 206,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.6311911940574646,
+          "fed_text_rows": 183,
+          "layer_index": 23,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9999762773513794,
+          "live_rows": 206,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.33021098375320435,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.04327273368835449,
+          "answer_rows": 3,
+          "bounds": {
+            "S": 206,
+            "answer_band": [
+              203,
+              206
+            ],
+            "answer_rows": 3,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              206
+            ],
+            "live_rows": 206,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7059082984924316,
+          "fed_text_rows": 183,
+          "layer_index": 27,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9999837279319763,
+          "live_rows": 206,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.2508026957511902,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.23109543323516846,
+          "answer_rows": 3,
+          "bounds": {
+            "S": 206,
+            "answer_band": [
+              203,
+              206
+            ],
+            "answer_rows": 3,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              206
+            ],
+            "live_rows": 206,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.6076956987380981,
+          "fed_text_rows": 183,
+          "layer_index": 31,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9999498128890991,
+          "live_rows": 206,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.16115862131118774,
+          "question_rows": 20
+        }
+      ],
+      [
+        {
+          "answer_mass": 0.014756802469491959,
+          "answer_rows": 4,
+          "bounds": {
+            "S": 207,
+            "answer_band": [
+              203,
+              207
+            ],
+            "answer_rows": 4,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              207
+            ],
+            "live_rows": 207,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8716444969177246,
+          "fed_text_rows": 183,
+          "layer_index": 3,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0004909038543701,
+          "live_rows": 207,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.11408953368663788,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.07637283205986023,
+          "answer_rows": 4,
+          "bounds": {
+            "S": 207,
+            "answer_band": [
+              203,
+              207
+            ],
+            "answer_rows": 4,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              207
+            ],
+            "live_rows": 207,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.6703765392303467,
+          "fed_text_rows": 183,
+          "layer_index": 7,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.99953293800354,
+          "live_rows": 207,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.25278356671333313,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.04359262064099312,
+          "answer_rows": 4,
+          "bounds": {
+            "S": 207,
+            "answer_band": [
+              203,
+              207
+            ],
+            "answer_rows": 4,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              207
+            ],
+            "live_rows": 207,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7784683704376221,
+          "fed_text_rows": 183,
+          "layer_index": 11,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0000019073486328,
+          "live_rows": 207,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.17794083058834076,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.04716278612613678,
+          "answer_rows": 4,
+          "bounds": {
+            "S": 207,
+            "answer_band": [
+              203,
+              207
+            ],
+            "answer_rows": 4,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              207
+            ],
+            "live_rows": 207,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7790163159370422,
+          "fed_text_rows": 183,
+          "layer_index": 15,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0007362365722656,
+          "live_rows": 207,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.17455706000328064,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.02469305694103241,
+          "answer_rows": 4,
+          "bounds": {
+            "S": 207,
+            "answer_band": [
+              203,
+              207
+            ],
+            "answer_rows": 4,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              207
+            ],
+            "live_rows": 207,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.6560966372489929,
+          "fed_text_rows": 183,
+          "layer_index": 19,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9989491105079651,
+          "live_rows": 207,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.31815940141677856,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.0727429986000061,
+          "answer_rows": 4,
+          "bounds": {
+            "S": 207,
+            "answer_band": [
+              203,
+              207
+            ],
+            "answer_rows": 4,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              207
+            ],
+            "live_rows": 207,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.5874950885772705,
+          "fed_text_rows": 183,
+          "layer_index": 23,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9998813271522522,
+          "live_rows": 207,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.33964332938194275,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.08017285168170929,
+          "answer_rows": 4,
+          "bounds": {
+            "S": 207,
+            "answer_band": [
+              203,
+              207
+            ],
+            "answer_rows": 4,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              207
+            ],
+            "live_rows": 207,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.6591666340827942,
+          "fed_text_rows": 183,
+          "layer_index": 27,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9995266199111938,
+          "live_rows": 207,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.2601870894432068,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.2633633613586426,
+          "answer_rows": 4,
+          "bounds": {
+            "S": 207,
+            "answer_band": [
+              203,
+              207
+            ],
+            "answer_rows": 4,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              207
+            ],
+            "live_rows": 207,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.5845866203308105,
+          "fed_text_rows": 183,
+          "layer_index": 31,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.000819444656372,
+          "live_rows": 207,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.1528695821762085,
+          "question_rows": 20
+        }
+      ],
+      [
+        {
+          "answer_mass": 0.03472273424267769,
+          "answer_rows": 5,
+          "bounds": {
+            "S": 208,
+            "answer_band": [
+              203,
+              208
+            ],
+            "answer_rows": 5,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              208
+            ],
+            "live_rows": 208,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7034335136413574,
+          "fed_text_rows": 183,
+          "layer_index": 3,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9996999502182007,
+          "live_rows": 208,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.26154378056526184,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.1375403255224228,
+          "answer_rows": 5,
+          "bounds": {
+            "S": 208,
+            "answer_band": [
+              203,
+              208
+            ],
+            "answer_rows": 5,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              208
+            ],
+            "live_rows": 208,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.43732643127441406,
+          "fed_text_rows": 183,
+          "layer_index": 7,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0000370740890503,
+          "live_rows": 208,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.42517033219337463,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.05945030599832535,
+          "answer_rows": 5,
+          "bounds": {
+            "S": 208,
+            "answer_band": [
+              203,
+              208
+            ],
+            "answer_rows": 5,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              208
+            ],
+            "live_rows": 208,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7975742816925049,
+          "fed_text_rows": 183,
+          "layer_index": 11,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0002148151397705,
+          "live_rows": 208,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.14319032430648804,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.07300347089767456,
+          "answer_rows": 5,
+          "bounds": {
+            "S": 208,
+            "answer_band": [
+              203,
+              208
+            ],
+            "answer_rows": 5,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              208
+            ],
+            "live_rows": 208,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7043747901916504,
+          "fed_text_rows": 183,
+          "layer_index": 15,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0000394582748413,
+          "live_rows": 208,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.22266116738319397,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.03835563361644745,
+          "answer_rows": 5,
+          "bounds": {
+            "S": 208,
+            "answer_band": [
+              203,
+              208
+            ],
+            "answer_rows": 5,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              208
+            ],
+            "live_rows": 208,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.745733380317688,
+          "fed_text_rows": 183,
+          "layer_index": 19,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9997870326042175,
+          "live_rows": 208,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.21569807827472687,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.05551636219024658,
+          "answer_rows": 5,
+          "bounds": {
+            "S": 208,
+            "answer_band": [
+              203,
+              208
+            ],
+            "answer_rows": 5,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              208
+            ],
+            "live_rows": 208,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.680232048034668,
+          "fed_text_rows": 183,
+          "layer_index": 23,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9998890161514282,
+          "live_rows": 208,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.26414063572883606,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.05969134718179703,
+          "answer_rows": 5,
+          "bounds": {
+            "S": 208,
+            "answer_band": [
+              203,
+              208
+            ],
+            "answer_rows": 5,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              208
+            ],
+            "live_rows": 208,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.812766432762146,
+          "fed_text_rows": 183,
+          "layer_index": 27,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0006767511367798,
+          "live_rows": 208,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.12821900844573975,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.28516101837158203,
+          "answer_rows": 5,
+          "bounds": {
+            "S": 208,
+            "answer_band": [
+              203,
+              208
+            ],
+            "answer_rows": 5,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              208
+            ],
+            "live_rows": 208,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.5639074444770813,
+          "fed_text_rows": 183,
+          "layer_index": 31,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9997975826263428,
+          "live_rows": 208,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.1507292091846466,
+          "question_rows": 20
+        }
+      ],
+      [
+        {
+          "answer_mass": 0.07461344450712204,
+          "answer_rows": 6,
+          "bounds": {
+            "S": 209,
+            "answer_band": [
+              203,
+              209
+            ],
+            "answer_rows": 6,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              209
+            ],
+            "live_rows": 209,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.5894601941108704,
+          "fed_text_rows": 183,
+          "layer_index": 3,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0007151365280151,
+          "live_rows": 209,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.33664149045944214,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.15220700204372406,
+          "answer_rows": 6,
+          "bounds": {
+            "S": 209,
+            "answer_band": [
+              203,
+              209
+            ],
+            "answer_rows": 6,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              209
+            ],
+            "live_rows": 209,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.46356067061424255,
+          "fed_text_rows": 183,
+          "layer_index": 7,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.000062108039856,
+          "live_rows": 209,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.38429445028305054,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.06384910643100739,
+          "answer_rows": 6,
+          "bounds": {
+            "S": 209,
+            "answer_band": [
+              203,
+              209
+            ],
+            "answer_rows": 6,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              209
+            ],
+            "live_rows": 209,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7524155378341675,
+          "fed_text_rows": 183,
+          "layer_index": 11,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0006242990493774,
+          "live_rows": 209,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.18435969948768616,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.08200482279062271,
+          "answer_rows": 6,
+          "bounds": {
+            "S": 209,
+            "answer_band": [
+              203,
+              209
+            ],
+            "answer_rows": 6,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              209
+            ],
+            "live_rows": 209,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7280888557434082,
+          "fed_text_rows": 183,
+          "layer_index": 15,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0005860328674316,
+          "live_rows": 209,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.19049230217933655,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.030522599816322327,
+          "answer_rows": 6,
+          "bounds": {
+            "S": 209,
+            "answer_band": [
+              203,
+              209
+            ],
+            "answer_rows": 6,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              209
+            ],
+            "live_rows": 209,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8903998136520386,
+          "fed_text_rows": 183,
+          "layer_index": 19,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9999791383743286,
+          "live_rows": 209,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.07905671745538712,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.05575064942240715,
+          "answer_rows": 6,
+          "bounds": {
+            "S": 209,
+            "answer_band": [
+              203,
+              209
+            ],
+            "answer_rows": 6,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              209
+            ],
+            "live_rows": 209,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7843103408813477,
+          "fed_text_rows": 183,
+          "layer_index": 23,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0005638599395752,
+          "live_rows": 209,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.16050291061401367,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.05984266847372055,
+          "answer_rows": 6,
+          "bounds": {
+            "S": 209,
+            "answer_band": [
+              203,
+              209
+            ],
+            "answer_rows": 6,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              209
+            ],
+            "live_rows": 209,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8595974445343018,
+          "fed_text_rows": 183,
+          "layer_index": 27,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9999138116836548,
+          "live_rows": 209,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.0804736465215683,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.28429877758026123,
+          "answer_rows": 6,
+          "bounds": {
+            "S": 209,
+            "answer_band": [
+              203,
+              209
+            ],
+            "answer_rows": 6,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              209
+            ],
+            "live_rows": 209,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.5942941904067993,
+          "fed_text_rows": 183,
+          "layer_index": 31,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0001535415649414,
+          "live_rows": 209,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.12156060338020325,
+          "question_rows": 20
+        }
+      ],
+      [
+        {
+          "answer_mass": 0.11995481699705124,
+          "answer_rows": 7,
+          "bounds": {
+            "S": 210,
+            "answer_band": [
+              203,
+              210
+            ],
+            "answer_rows": 7,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              210
+            ],
+            "live_rows": 210,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.649666965007782,
+          "fed_text_rows": 183,
+          "layer_index": 3,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0001060962677002,
+          "live_rows": 210,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.23048442602157593,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.2909255027770996,
+          "answer_rows": 7,
+          "bounds": {
+            "S": 210,
+            "answer_band": [
+              203,
+              210
+            ],
+            "answer_rows": 7,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              210
+            ],
+            "live_rows": 210,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.5310459136962891,
+          "fed_text_rows": 183,
+          "layer_index": 7,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0001380443572998,
+          "live_rows": 210,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.17816652357578278,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.14090850949287415,
+          "answer_rows": 7,
+          "bounds": {
+            "S": 210,
+            "answer_band": [
+              203,
+              210
+            ],
+            "answer_rows": 7,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              210
+            ],
+            "live_rows": 210,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.6896324753761292,
+          "fed_text_rows": 183,
+          "layer_index": 11,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0001606941223145,
+          "live_rows": 210,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.16961978375911713,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.04911751672625542,
+          "answer_rows": 7,
+          "bounds": {
+            "S": 210,
+            "answer_band": [
+              203,
+              210
+            ],
+            "answer_rows": 7,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              210
+            ],
+            "live_rows": 210,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8291348218917847,
+          "fed_text_rows": 183,
+          "layer_index": 15,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0004260540008545,
+          "live_rows": 210,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.1221737489104271,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.02825029566884041,
+          "answer_rows": 7,
+          "bounds": {
+            "S": 210,
+            "answer_band": [
+              203,
+              210
+            ],
+            "answer_rows": 7,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              210
+            ],
+            "live_rows": 210,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.9404550790786743,
+          "fed_text_rows": 183,
+          "layer_index": 19,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9999322891235352,
+          "live_rows": 210,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.031226960942149162,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.059592410922050476,
+          "answer_rows": 7,
+          "bounds": {
+            "S": 210,
+            "answer_band": [
+              203,
+              210
+            ],
+            "answer_rows": 7,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              210
+            ],
+            "live_rows": 210,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8585628271102905,
+          "fed_text_rows": 183,
+          "layer_index": 23,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.00007963180542,
+          "live_rows": 210,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.08192440867424011,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.04784099757671356,
+          "answer_rows": 7,
+          "bounds": {
+            "S": 210,
+            "answer_band": [
+              203,
+              210
+            ],
+            "answer_rows": 7,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              210
+            ],
+            "live_rows": 210,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.9128500819206238,
+          "fed_text_rows": 183,
+          "layer_index": 27,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9997739791870117,
+          "live_rows": 210,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.0390828512609005,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.2805215120315552,
+          "answer_rows": 7,
+          "bounds": {
+            "S": 210,
+            "answer_band": [
+              203,
+              210
+            ],
+            "answer_rows": 7,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              210
+            ],
+            "live_rows": 210,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.6162993907928467,
+          "fed_text_rows": 183,
+          "layer_index": 31,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0000640153884888,
+          "live_rows": 210,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.10324320197105408,
+          "question_rows": 20
+        }
+      ],
+      [
+        {
+          "answer_mass": 0.05406791716814041,
+          "answer_rows": 8,
+          "bounds": {
+            "S": 211,
+            "answer_band": [
+              203,
+              211
+            ],
+            "answer_rows": 8,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              211
+            ],
+            "live_rows": 211,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8836072683334351,
+          "fed_text_rows": 183,
+          "layer_index": 3,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0003032684326172,
+          "live_rows": 211,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.06262807548046112,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.12320689857006073,
+          "answer_rows": 8,
+          "bounds": {
+            "S": 211,
+            "answer_band": [
+              203,
+              211
+            ],
+            "answer_rows": 8,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              211
+            ],
+            "live_rows": 211,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7996747493743896,
+          "fed_text_rows": 183,
+          "layer_index": 7,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0000252723693848,
+          "live_rows": 211,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.07714352011680603,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.061003297567367554,
+          "answer_rows": 8,
+          "bounds": {
+            "S": 211,
+            "answer_band": [
+              203,
+              211
+            ],
+            "answer_rows": 8,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              211
+            ],
+            "live_rows": 211,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8712588548660278,
+          "fed_text_rows": 183,
+          "layer_index": 11,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0000616312026978,
+          "live_rows": 211,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.06779953837394714,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.06978005915880203,
+          "answer_rows": 8,
+          "bounds": {
+            "S": 211,
+            "answer_band": [
+              203,
+              211
+            ],
+            "answer_rows": 8,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              211
+            ],
+            "live_rows": 211,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8149811029434204,
+          "fed_text_rows": 183,
+          "layer_index": 15,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0005754232406616,
+          "live_rows": 211,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.11581423133611679,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.04242591932415962,
+          "answer_rows": 8,
+          "bounds": {
+            "S": 211,
+            "answer_band": [
+              203,
+              211
+            ],
+            "answer_rows": 8,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              211
+            ],
+            "live_rows": 211,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.9343836307525635,
+          "fed_text_rows": 183,
+          "layer_index": 19,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9999527931213379,
+          "live_rows": 211,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.023143231868743896,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.11285081505775452,
+          "answer_rows": 8,
+          "bounds": {
+            "S": 211,
+            "answer_band": [
+              203,
+              211
+            ],
+            "answer_rows": 8,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              211
+            ],
+            "live_rows": 211,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.828736424446106,
+          "fed_text_rows": 183,
+          "layer_index": 23,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9999006986618042,
+          "live_rows": 211,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.05831347778439522,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.06915777921676636,
+          "answer_rows": 8,
+          "bounds": {
+            "S": 211,
+            "answer_band": [
+              203,
+              211
+            ],
+            "answer_rows": 8,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              211
+            ],
+            "live_rows": 211,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.9042736291885376,
+          "fed_text_rows": 183,
+          "layer_index": 27,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0011024475097656,
+          "live_rows": 211,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.027670923620462418,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.2855478525161743,
+          "answer_rows": 8,
+          "bounds": {
+            "S": 211,
+            "answer_band": [
+              203,
+              211
+            ],
+            "answer_rows": 8,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              211
+            ],
+            "live_rows": 211,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.6832051873207092,
+          "fed_text_rows": 183,
+          "layer_index": 31,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.000375509262085,
+          "live_rows": 211,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.03162243589758873,
+          "question_rows": 20
+        }
+      ],
+      [
+        {
+          "answer_mass": 0.07725028693675995,
+          "answer_rows": 9,
+          "bounds": {
+            "S": 212,
+            "answer_band": [
+              203,
+              212
+            ],
+            "answer_rows": 9,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              212
+            ],
+            "live_rows": 212,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8736832141876221,
+          "fed_text_rows": 183,
+          "layer_index": 3,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9989868402481079,
+          "live_rows": 212,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.048053301870822906,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.15262660384178162,
+          "answer_rows": 9,
+          "bounds": {
+            "S": 212,
+            "answer_band": [
+              203,
+              212
+            ],
+            "answer_rows": 9,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              212
+            ],
+            "live_rows": 212,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8055955767631531,
+          "fed_text_rows": 183,
+          "layer_index": 7,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9997091889381409,
+          "live_rows": 212,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.041487015783786774,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.044550810009241104,
+          "answer_rows": 9,
+          "bounds": {
+            "S": 212,
+            "answer_band": [
+              203,
+              212
+            ],
+            "answer_rows": 9,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              212
+            ],
+            "live_rows": 212,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.944434642791748,
+          "fed_text_rows": 183,
+          "layer_index": 11,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0001552104949951,
+          "live_rows": 212,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.011169714853167534,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.0860719233751297,
+          "answer_rows": 9,
+          "bounds": {
+            "S": 212,
+            "answer_band": [
+              203,
+              212
+            ],
+            "answer_rows": 9,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              212
+            ],
+            "live_rows": 212,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.9001615047454834,
+          "fed_text_rows": 183,
+          "layer_index": 15,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0001686811447144,
+          "live_rows": 212,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.013935309834778309,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.07631802558898926,
+          "answer_rows": 9,
+          "bounds": {
+            "S": 212,
+            "answer_band": [
+              203,
+              212
+            ],
+            "answer_rows": 9,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              212
+            ],
+            "live_rows": 212,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.9176850914955139,
+          "fed_text_rows": 183,
+          "layer_index": 19,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0002057552337646,
+          "live_rows": 212,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.006202659569680691,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.09158238768577576,
+          "answer_rows": 9,
+          "bounds": {
+            "S": 212,
+            "answer_band": [
+              203,
+              212
+            ],
+            "answer_rows": 9,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              212
+            ],
+            "live_rows": 212,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8883064389228821,
+          "fed_text_rows": 183,
+          "layer_index": 23,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0000050067901611,
+          "live_rows": 212,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.020116064697504044,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.04182017594575882,
+          "answer_rows": 9,
+          "bounds": {
+            "S": 212,
+            "answer_band": [
+              203,
+              212
+            ],
+            "answer_rows": 9,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              212
+            ],
+            "live_rows": 212,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.9322671890258789,
+          "fed_text_rows": 183,
+          "layer_index": 27,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0006204843521118,
+          "live_rows": 212,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.02653314173221588,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.2462632954120636,
+          "answer_rows": 9,
+          "bounds": {
+            "S": 212,
+            "answer_band": [
+              203,
+              212
+            ],
+            "answer_rows": 9,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              212
+            ],
+            "live_rows": 212,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7188781499862671,
+          "fed_text_rows": 183,
+          "layer_index": 31,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9987304210662842,
+          "live_rows": 212,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.033588994294404984,
+          "question_rows": 20
+        }
+      ],
+      [
+        {
+          "answer_mass": 0.04216301441192627,
+          "answer_rows": 10,
+          "bounds": {
+            "S": 213,
+            "answer_band": [
+              203,
+              213
+            ],
+            "answer_rows": 10,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              213
+            ],
+            "live_rows": 213,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8970118165016174,
+          "fed_text_rows": 183,
+          "layer_index": 3,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9992551803588867,
+          "live_rows": 213,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.060080304741859436,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.20899169147014618,
+          "answer_rows": 10,
+          "bounds": {
+            "S": 213,
+            "answer_band": [
+              203,
+              213
+            ],
+            "answer_rows": 10,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              213
+            ],
+            "live_rows": 213,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7192209959030151,
+          "fed_text_rows": 183,
+          "layer_index": 7,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9997379779815674,
+          "live_rows": 213,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.07152527570724487,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.11245642602443695,
+          "answer_rows": 10,
+          "bounds": {
+            "S": 213,
+            "answer_band": [
+              203,
+              213
+            ],
+            "answer_rows": 10,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              213
+            ],
+            "live_rows": 213,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8125711679458618,
+          "fed_text_rows": 183,
+          "layer_index": 11,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0006848573684692,
+          "live_rows": 213,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.07565726339817047,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.07350169122219086,
+          "answer_rows": 10,
+          "bounds": {
+            "S": 213,
+            "answer_band": [
+              203,
+              213
+            ],
+            "answer_rows": 10,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              213
+            ],
+            "live_rows": 213,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8694464564323425,
+          "fed_text_rows": 183,
+          "layer_index": 15,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.000340461730957,
+          "live_rows": 213,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.05739232897758484,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.17117628455162048,
+          "answer_rows": 10,
+          "bounds": {
+            "S": 213,
+            "answer_band": [
+              203,
+              213
+            ],
+            "answer_rows": 10,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              213
+            ],
+            "live_rows": 213,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7480878233909607,
+          "fed_text_rows": 183,
+          "layer_index": 19,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9996780157089233,
+          "live_rows": 213,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.08041396737098694,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.205886572599411,
+          "answer_rows": 10,
+          "bounds": {
+            "S": 213,
+            "answer_band": [
+              203,
+              213
+            ],
+            "answer_rows": 10,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              213
+            ],
+            "live_rows": 213,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.6620661616325378,
+          "fed_text_rows": 183,
+          "layer_index": 23,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9999656081199646,
+          "live_rows": 213,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.13201294839382172,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.18030276894569397,
+          "answer_rows": 10,
+          "bounds": {
+            "S": 213,
+            "answer_band": [
+              203,
+              213
+            ],
+            "answer_rows": 10,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              213
+            ],
+            "live_rows": 213,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7544159889221191,
+          "fed_text_rows": 183,
+          "layer_index": 27,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0002535581588745,
+          "live_rows": 213,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.06553489714860916,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.3308834433555603,
+          "answer_rows": 10,
+          "bounds": {
+            "S": 213,
+            "answer_band": [
+              203,
+              213
+            ],
+            "answer_rows": 10,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              213
+            ],
+            "live_rows": 213,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.6189122796058655,
+          "fed_text_rows": 183,
+          "layer_index": 31,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9990280866622925,
+          "live_rows": 213,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.049232400953769684,
+          "question_rows": 20
+        }
+      ],
+      [
+        {
+          "answer_mass": 0.05468783900141716,
+          "answer_rows": 11,
+          "bounds": {
+            "S": 214,
+            "answer_band": [
+              203,
+              214
+            ],
+            "answer_rows": 11,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              214
+            ],
+            "live_rows": 214,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8965784311294556,
+          "fed_text_rows": 183,
+          "layer_index": 3,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0003342628479004,
+          "live_rows": 214,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.049068011343479156,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.24810485541820526,
+          "answer_rows": 11,
+          "bounds": {
+            "S": 214,
+            "answer_band": [
+              203,
+              214
+            ],
+            "answer_rows": 11,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              214
+            ],
+            "live_rows": 214,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7253000140190125,
+          "fed_text_rows": 183,
+          "layer_index": 7,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9998707175254822,
+          "live_rows": 214,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.026465831324458122,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.1149822250008583,
+          "answer_rows": 11,
+          "bounds": {
+            "S": 214,
+            "answer_band": [
+              203,
+              214
+            ],
+            "answer_rows": 11,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              214
+            ],
+            "live_rows": 214,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8515396118164062,
+          "fed_text_rows": 183,
+          "layer_index": 11,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0004191398620605,
+          "live_rows": 214,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.03389725834131241,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.08316364884376526,
+          "answer_rows": 11,
+          "bounds": {
+            "S": 214,
+            "answer_band": [
+              203,
+              214
+            ],
+            "answer_rows": 11,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              214
+            ],
+            "live_rows": 214,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8889688849449158,
+          "fed_text_rows": 183,
+          "layer_index": 15,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.000150442123413,
+          "live_rows": 214,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.02801785245537758,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.08766630291938782,
+          "answer_rows": 11,
+          "bounds": {
+            "S": 214,
+            "answer_band": [
+              203,
+              214
+            ],
+            "answer_rows": 11,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              214
+            ],
+            "live_rows": 214,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8998947143554688,
+          "fed_text_rows": 183,
+          "layer_index": 19,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9998307228088379,
+          "live_rows": 214,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.01226971484720707,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.11658049374818802,
+          "answer_rows": 11,
+          "bounds": {
+            "S": 214,
+            "answer_band": [
+              203,
+              214
+            ],
+            "answer_rows": 11,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              214
+            ],
+            "live_rows": 214,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8295976519584656,
+          "fed_text_rows": 183,
+          "layer_index": 23,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0000855922698975,
+          "live_rows": 214,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.053907446563243866,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.08388607949018478,
+          "answer_rows": 11,
+          "bounds": {
+            "S": 214,
+            "answer_band": [
+              203,
+              214
+            ],
+            "answer_rows": 11,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              214
+            ],
+            "live_rows": 214,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8795855641365051,
+          "fed_text_rows": 183,
+          "layer_index": 27,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0000481605529785,
+          "live_rows": 214,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.03657647967338562,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.2868128716945648,
+          "answer_rows": 11,
+          "bounds": {
+            "S": 214,
+            "answer_band": [
+              203,
+              214
+            ],
+            "answer_rows": 11,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              214
+            ],
+            "live_rows": 214,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.6698278188705444,
+          "fed_text_rows": 183,
+          "layer_index": 31,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9998827576637268,
+          "live_rows": 214,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.043242018669843674,
+          "question_rows": 20
+        }
+      ],
+      [
+        {
+          "answer_mass": 0.0800643265247345,
+          "answer_rows": 12,
+          "bounds": {
+            "S": 215,
+            "answer_band": [
+              203,
+              215
+            ],
+            "answer_rows": 12,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              215
+            ],
+            "live_rows": 215,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8529567718505859,
+          "fed_text_rows": 183,
+          "layer_index": 3,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0001733303070068,
+          "live_rows": 215,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.06715233623981476,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.12460032105445862,
+          "answer_rows": 12,
+          "bounds": {
+            "S": 215,
+            "answer_band": [
+              203,
+              215
+            ],
+            "answer_rows": 12,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              215
+            ],
+            "live_rows": 215,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7122368812561035,
+          "fed_text_rows": 183,
+          "layer_index": 7,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0000250339508057,
+          "live_rows": 215,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.16318783164024353,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.0858089029788971,
+          "answer_rows": 12,
+          "bounds": {
+            "S": 215,
+            "answer_band": [
+              203,
+              215
+            ],
+            "answer_rows": 12,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              215
+            ],
+            "live_rows": 215,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7074503898620605,
+          "fed_text_rows": 183,
+          "layer_index": 11,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.000008463859558,
+          "live_rows": 215,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.20674926042556763,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.054852887988090515,
+          "answer_rows": 12,
+          "bounds": {
+            "S": 215,
+            "answer_band": [
+              203,
+              215
+            ],
+            "answer_rows": 12,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              215
+            ],
+            "live_rows": 215,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8193620443344116,
+          "fed_text_rows": 183,
+          "layer_index": 15,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.999324381351471,
+          "live_rows": 215,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.1251094788312912,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.052869196981191635,
+          "answer_rows": 12,
+          "bounds": {
+            "S": 215,
+            "answer_band": [
+              203,
+              215
+            ],
+            "answer_rows": 12,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              215
+            ],
+            "live_rows": 215,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8298224210739136,
+          "fed_text_rows": 183,
+          "layer_index": 19,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9997503757476807,
+          "live_rows": 215,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.11705880612134933,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.050381503999233246,
+          "answer_rows": 12,
+          "bounds": {
+            "S": 215,
+            "answer_band": [
+              203,
+              215
+            ],
+            "answer_rows": 12,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              215
+            ],
+            "live_rows": 215,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8900041580200195,
+          "fed_text_rows": 183,
+          "layer_index": 23,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0002069473266602,
+          "live_rows": 215,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.0598212406039238,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.049676984548568726,
+          "answer_rows": 12,
+          "bounds": {
+            "S": 215,
+            "answer_band": [
+              203,
+              215
+            ],
+            "answer_rows": 12,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              215
+            ],
+            "live_rows": 215,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.9093594551086426,
+          "fed_text_rows": 183,
+          "layer_index": 27,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9997291564941406,
+          "live_rows": 215,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.040692709386348724,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.35351037979125977,
+          "answer_rows": 12,
+          "bounds": {
+            "S": 215,
+            "answer_band": [
+              203,
+              215
+            ],
+            "answer_rows": 12,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              215
+            ],
+            "live_rows": 215,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.5999710559844971,
+          "fed_text_rows": 183,
+          "layer_index": 31,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9997010231018066,
+          "live_rows": 215,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.046219564974308014,
+          "question_rows": 20
+        }
+      ],
+      [
+        {
+          "answer_mass": 0.08542491495609283,
+          "answer_rows": 13,
+          "bounds": {
+            "S": 216,
+            "answer_band": [
+              203,
+              216
+            ],
+            "answer_rows": 13,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              216
+            ],
+            "live_rows": 216,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8784283995628357,
+          "fed_text_rows": 183,
+          "layer_index": 3,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.999882161617279,
+          "live_rows": 216,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.03602882847189903,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.252537339925766,
+          "answer_rows": 13,
+          "bounds": {
+            "S": 216,
+            "answer_band": [
+              203,
+              216
+            ],
+            "answer_rows": 13,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              216
+            ],
+            "live_rows": 216,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.6794182062149048,
+          "fed_text_rows": 183,
+          "layer_index": 7,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9996351599693298,
+          "live_rows": 216,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.06767959892749786,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.10124683380126953,
+          "answer_rows": 13,
+          "bounds": {
+            "S": 216,
+            "answer_band": [
+              203,
+              216
+            ],
+            "answer_rows": 13,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              216
+            ],
+            "live_rows": 216,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8099170327186584,
+          "fed_text_rows": 183,
+          "layer_index": 11,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0000958442687988,
+          "live_rows": 216,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.08893193304538727,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.11630204319953918,
+          "answer_rows": 13,
+          "bounds": {
+            "S": 216,
+            "answer_band": [
+              203,
+              216
+            ],
+            "answer_rows": 13,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              216
+            ],
+            "live_rows": 216,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7946760654449463,
+          "fed_text_rows": 183,
+          "layer_index": 15,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9997526407241821,
+          "live_rows": 216,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.08877450972795486,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.08794066309928894,
+          "answer_rows": 13,
+          "bounds": {
+            "S": 216,
+            "answer_band": [
+              203,
+              216
+            ],
+            "answer_rows": 13,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              216
+            ],
+            "live_rows": 216,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7860981822013855,
+          "fed_text_rows": 183,
+          "layer_index": 19,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9997633695602417,
+          "live_rows": 216,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.12572456896305084,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.10113458335399628,
+          "answer_rows": 13,
+          "bounds": {
+            "S": 216,
+            "answer_band": [
+              203,
+              216
+            ],
+            "answer_rows": 13,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              216
+            ],
+            "live_rows": 216,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7782668471336365,
+          "fed_text_rows": 183,
+          "layer_index": 23,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9996509552001953,
+          "live_rows": 216,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.12024953961372375,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.06884106993675232,
+          "answer_rows": 13,
+          "bounds": {
+            "S": 216,
+            "answer_band": [
+              203,
+              216
+            ],
+            "answer_rows": 13,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              216
+            ],
+            "live_rows": 216,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8636518716812134,
+          "fed_text_rows": 183,
+          "layer_index": 27,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0000355243682861,
+          "live_rows": 216,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.06754256784915924,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.30094724893569946,
+          "answer_rows": 13,
+          "bounds": {
+            "S": 216,
+            "answer_band": [
+              203,
+              216
+            ],
+            "answer_rows": 13,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              216
+            ],
+            "live_rows": 216,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.6301885843276978,
+          "fed_text_rows": 183,
+          "layer_index": 31,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0003365278244019,
+          "live_rows": 216,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.06920070201158524,
+          "question_rows": 20
+        }
+      ],
+      [
+        {
+          "answer_mass": 0.15737828612327576,
+          "answer_rows": 14,
+          "bounds": {
+            "S": 217,
+            "answer_band": [
+              203,
+              217
+            ],
+            "answer_rows": 14,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              217
+            ],
+            "live_rows": 217,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.6656450033187866,
+          "fed_text_rows": 183,
+          "layer_index": 3,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0000104904174805,
+          "live_rows": 217,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.1769872009754181,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.22454431653022766,
+          "answer_rows": 14,
+          "bounds": {
+            "S": 217,
+            "answer_band": [
+              203,
+              217
+            ],
+            "answer_rows": 14,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              217
+            ],
+            "live_rows": 217,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.623022735118866,
+          "fed_text_rows": 183,
+          "layer_index": 7,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.000059962272644,
+          "live_rows": 217,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.15249285101890564,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.09845569729804993,
+          "answer_rows": 14,
+          "bounds": {
+            "S": 217,
+            "answer_band": [
+              203,
+              217
+            ],
+            "answer_rows": 14,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              217
+            ],
+            "live_rows": 217,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7339864373207092,
+          "fed_text_rows": 183,
+          "layer_index": 11,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9996337294578552,
+          "live_rows": 217,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.16719162464141846,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.17299801111221313,
+          "answer_rows": 14,
+          "bounds": {
+            "S": 217,
+            "answer_band": [
+              203,
+              217
+            ],
+            "answer_rows": 14,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              217
+            ],
+            "live_rows": 217,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.636766791343689,
+          "fed_text_rows": 183,
+          "layer_index": 15,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0004630088806152,
+          "live_rows": 217,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.19069811701774597,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.1147487610578537,
+          "answer_rows": 14,
+          "bounds": {
+            "S": 217,
+            "answer_band": [
+              203,
+              217
+            ],
+            "answer_rows": 14,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              217
+            ],
+            "live_rows": 217,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7230274677276611,
+          "fed_text_rows": 183,
+          "layer_index": 19,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0006103515625,
+          "live_rows": 217,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.16283409297466278,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.1204456314444542,
+          "answer_rows": 14,
+          "bounds": {
+            "S": 217,
+            "answer_band": [
+              203,
+              217
+            ],
+            "answer_rows": 14,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              217
+            ],
+            "live_rows": 217,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.7515838146209717,
+          "fed_text_rows": 183,
+          "layer_index": 23,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9998615980148315,
+          "live_rows": 217,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.12783220410346985,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.07619477808475494,
+          "answer_rows": 14,
+          "bounds": {
+            "S": 217,
+            "answer_band": [
+              203,
+              217
+            ],
+            "answer_rows": 14,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              217
+            ],
+            "live_rows": 217,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.8521319627761841,
+          "fed_text_rows": 183,
+          "layer_index": 27,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0006637573242188,
+          "live_rows": 217,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.07233697175979614,
+          "question_rows": 20
+        },
+        {
+          "answer_mass": 0.29808881878852844,
+          "answer_rows": 14,
+          "bounds": {
+            "S": 217,
+            "answer_band": [
+              203,
+              217
+            ],
+            "answer_rows": 14,
+            "bands_are_contiguous_and_cover_live": true,
+            "cur_mount_n": 0,
+            "fed_text_band": [
+              0,
+              183
+            ],
+            "fed_text_rows": 183,
+            "live0": 0,
+            "live_band": [
+              0,
+              217
+            ],
+            "live_rows": 217,
+            "mount_band": [
+              0,
+              0
+            ],
+            "n_sink": 0,
+            "prior_live_band": [
+              0,
+              0
+            ],
+            "prior_live_rows": 0,
+            "question_band": [
+              183,
+              203
+            ],
+            "question_rows": 20,
+            "sink_band": [
+              0,
+              0
+            ]
+          },
+          "fed_text_mass": 0.6271569728851318,
+          "fed_text_rows": 183,
+          "layer_index": 31,
+          "layer_type": "full_attention",
+          "learned_sink_mass": 0.0,
+          "live_mass": 0.9991822242736816,
+          "live_rows": 217,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "prior_live_rows": 0,
+          "question_mass": 0.07393641769886017,
+          "question_rows": 20
+        }
+      ]
+    ],
+    "per_layer": {
+      "full_attention": {
+        "answer_positions": 14,
+        "layers_observed": 8,
+        "mean_over_answer_positions": {
+          "answer_mass": 0.10681955148798547,
+          "fed_text_mass": 0.7407782325255019,
+          "learned_sink_mass": 0.0,
+          "live_mass": 1.0000491424330644,
+          "mounted_mass": 0.0,
+          "physical_sink_mass": 0.0,
+          "prior_live_mass": 0.0,
+          "question_mass": 0.1524513633589127
+        },
+        "partition_sum": 1.0000491473724,
+        "partition_sums_to_one": true,
+        "per_layer_mean": [
+          {
+            "answer_mass": 0.061480936993445666,
+            "fed_text_mass": 0.7913515397480556,
+            "layer_ordinal": 0,
+            "learned_sink_mass": 0.0,
+            "live_mass": 1.000059847320829,
+            "mounted_mass": 0.0,
+            "physical_sink_mass": 0.0,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.1472273753689868
+          },
+          {
+            "answer_mass": 0.1560226016278778,
+            "fed_text_mass": 0.6439517246825355,
+            "layer_ordinal": 1,
+            "learned_sink_mass": 0.0,
+            "live_mass": 0.9999419280460903,
+            "mounted_mass": 0.0,
+            "physical_sink_mass": 0.0,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.19996757738824403
+          },
+          {
+            "answer_mass": 0.0736896303881492,
+            "fed_text_mass": 0.791424321276801,
+            "layer_ordinal": 2,
+            "learned_sink_mass": 0.0,
+            "live_mass": 1.0001122908932822,
+            "mounted_mass": 0.0,
+            "physical_sink_mass": 0.0,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.13499835705650703
+          },
+          {
+            "answer_mass": 0.07314909888165337,
+            "fed_text_mass": 0.7682068731103625,
+            "layer_ordinal": 3,
+            "learned_sink_mass": 0.0,
+            "live_mass": 1.0002524214131492,
+            "mounted_mass": 0.0,
+            "physical_sink_mass": 0.0,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.15889644363362873
+          },
+          {
+            "answer_mass": 0.05840751236038549,
+            "fed_text_mass": 0.7709123747689384,
+            "layer_ordinal": 4,
+            "learned_sink_mass": 0.0,
+            "live_mass": 0.9999366402626038,
+            "mounted_mass": 0.0,
+            "physical_sink_mass": 0.0,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.1706167746202222
+          },
+          {
+            "answer_mass": 0.08185866288840771,
+            "fed_text_mass": 0.7367544301918575,
+            "layer_ordinal": 5,
+            "learned_sink_mass": 0.0,
+            "live_mass": 0.9999783166817257,
+            "mounted_mass": 0.0,
+            "physical_sink_mass": 0.0,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.18136523185031755
+          },
+          {
+            "answer_mass": 0.066142809178148,
+            "fed_text_mass": 0.8122944448675428,
+            "layer_ordinal": 6,
+            "learned_sink_mass": 0.0,
+            "live_mass": 1.0002320451395852,
+            "mounted_mass": 0.0,
+            "physical_sink_mass": 0.0,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.1217947889651571
+          },
+          {
+            "answer_mass": 0.28380515958581654,
+            "fed_text_mass": 0.6113301515579224,
+            "layer_ordinal": 7,
+            "learned_sink_mass": 0.0,
+            "live_mass": 0.9998796497072492,
+            "mounted_mass": 0.0,
+            "physical_sink_mass": 0.0,
+            "prior_live_mass": 0.0,
+            "question_mass": 0.10474435798823833
+          }
+        ],
+        "subbands_sum_to_live": true
+      },
+      "sliding_attention": {
+        "answer_positions": 0,
+        "layers_observed": 0,
+        "mean_over_answer_positions": {
+          "answer_mass": null,
+          "fed_text_mass": null,
+          "learned_sink_mass": null,
+          "live_mass": null,
+          "mounted_mass": null,
+          "physical_sink_mass": null,
+          "prior_live_mass": null,
+          "question_mass": null
+        },
+        "per_layer_mean": []
+      }
+    },
+    "protocol": "XM2 native explicit capture/serve; historical source contrast; final input-query window",
+    "question_rendered": "<|im_start|>user\nWhat is the current Harbor token value?<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+    "question_token_ids": [
+      248045,
+      846,
+      198,
+      3710,
+      369,
+      279,
+      1428,
+      37885,
+      3817,
+      869,
+      30,
+      248046,
+      198,
+      248045,
+      74455,
+      198,
+      248068,
+      271,
+      248069,
+      271
+    ],
+    "raw_served": "The current Harbor token value is **Nacre-6-Blue**.<|im_end|>",
+    "recurrent_state_transferred": false,
+    "rendered_texts": [
+      "<|im_start|>user\nAuthoritative restatement for the record: the current Harbor token remains Nacre-6-Blue.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\nConfirmed: Harbor token remains Nacre-6-Blue.<|im_end|>\n",
+      "<|im_start|>user\nThe Harbor token is named in the preface of this separate shipping memorandum because the warehouse search index groups every token reference together. The memorandum then covers the north entrance inspection, morning dispatch cadence, return-label printer, pallet wrap order, customs call, lunch relief schedule, spare scanner allocation, and a delayed courier handoff. Its sole authoritative value is the current Juniper pass value, Opal-7-Green. Keep Opal-7-Green attached to Juniper pass; this memorandum does not alter the Harbor token.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\nArchived Juniper pass as Opal-7-Green with its shipping context.<|im_end|>\n"
+    ],
+    "seating": {
+      "live_shift": 279,
+      "mount_ntok": 0,
+      "n_sink": 0,
+      "seat_near_live": false
+    },
+    "served": "The current Harbor token value is **Nacre-6-Blue**.",
+    "source_texts": [
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>Authoritative restatement for the record: the current Harbor token remains Nacre-6-Blue.<|end|><|start|>assistant<|channel|>final<|message|>Confirmed: Harbor token remains Nacre-6-Blue.<|end|>",
+      "<|start|>system<|message|>You are ChatGPT. Reasoning: low. Valid channel: final.<|end|><|start|>user<|message|>The Harbor token is named in the preface of this separate shipping memorandum because the warehouse search index groups every token reference together. The memorandum then covers the north entrance inspection, morning dispatch cadence, return-label printer, pallet wrap order, customs call, lunch relief schedule, spare scanner allocation, and a delayed courier handoff. Its sole authoritative value is the current Juniper pass value, Opal-7-Green. Keep Opal-7-Green attached to Juniper pass; this memorandum does not alter the Harbor token.<|end|><|start|>assistant<|channel|>final<|message|>Archived Juniper pass as Opal-7-Green with its shipping context.<|end|>"
+    ],
+    "source_token_ids": [
+      248045,
+      846,
+      198,
+      6910,
+      20657,
+      2645,
+      5430,
+      364,
+      279,
+      3150,
+      25,
+      279,
+      1428,
+      37885,
+      3817,
+      8198,
+      443,
+      27544,
+      12,
+      21,
+      12,
+      10025,
+      13,
+      248046,
+      198,
+      248045,
+      74455,
+      198,
+      248068,
+      271,
+      248069,
+      271,
+      46348,
+      25,
+      37885,
+      3817,
+      8198,
+      443,
+      27544,
+      12,
+      21,
+      12,
+      10025,
+      13,
+      248046,
+      198,
+      248045,
+      846,
+      198,
+      760,
+      37885,
+      3817,
+      369,
+      6725,
+      303,
+      279,
+      829,
+      1509,
+      314,
+      411,
+      8387,
+      11268,
+      78842,
+      1521,
+      279,
+      29128,
+      2624,
+      1857,
+      5038,
+      1396,
+      3817,
+      5604,
+      3658,
+      13,
+      561,
+      78842,
+      1179,
+      14103,
+      279,
+      9897,
+      19204,
+      24865,
+      11,
+      6353,
+      6631,
+      18820,
+      738,
+      11,
+      460,
+      6726,
+      21683,
+      11,
+      56815,
+      14623,
+      1906,
+      11,
+      33619,
+      1562,
+      11,
+      15322,
+      15485,
+      9412,
+      11,
+      23116,
+      20142,
+      23014,
+      11,
+      321,
+      264,
+      22000,
+      71982,
+      1375,
+      1783,
+      13,
+      11116,
+      12924,
+      62411,
+      869,
+      369,
+      279,
+      1428,
+      11444,
+      12489,
+      1440,
+      869,
+      11,
+      10356,
+      278,
+      12,
+      22,
+      11668,
+      4296,
+      13,
+      13262,
+      10356,
+      278,
+      12,
+      22,
+      11668,
+      4296,
+      12037,
+      310,
+      11444,
+      12489,
+      1440,
+      26,
+      411,
+      78842,
+      1503,
+      524,
+      11263,
+      279,
+      37885,
+      3817,
+      13,
+      248046,
+      198,
+      248045,
+      74455,
+      198,
+      248068,
+      271,
+      248069,
+      271,
+      18164,
+      2150,
+      11444,
+      12489,
+      1440,
+      430,
+      10356,
+      278,
+      12,
+      22,
+      11668,
+      4296,
+      440,
+      1141,
+      11268,
+      2193,
+      13,
+      248046,
+      198
+    ],
+    "value_span": {
+      "correct": true,
+      "expected_hits": [
+        "nacre-6-blue"
+      ],
+      "refusal": false,
+      "refusal_rule": "registered lexical diagnostic; raw served text authoritative",
+      "rejected_hits": []
+    }
+  },
+  "status": "PASS"
+}

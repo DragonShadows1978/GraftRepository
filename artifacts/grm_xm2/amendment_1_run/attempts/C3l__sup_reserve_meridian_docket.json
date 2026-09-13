@@ -1,0 +1,17 @@
+{
+  "binding": {
+    "amendment_sha256": "c300374de576251c6f622ef2371f4ede0ae3fac58c4ea8465e26d8547d3fc5ff",
+    "cell": {
+      "arm": "C3l",
+      "capture_pin": "live",
+      "id": "C3l__sup_reserve_meridian_docket",
+      "model": "qwen35",
+      "probe": "sup_reserve_meridian_docket",
+      "reservation_s": 90,
+      "seat_near_live": true
+    },
+    "registration_sha256": "7d537ab25ba485094b0235c9b1407d75b542dcbba21ebdd587a6534d16d73c3d"
+  },
+  "reservation_s": 90,
+  "started_unix_s": 1789272852.3011892
+}

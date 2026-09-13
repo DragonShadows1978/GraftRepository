@@ -1,0 +1,15 @@
+QUEUE23 START 2026-09-13T00:05:52-04:00 — XM2 Qwen final-channel cells (amendment 1)
+00:07:08 C5__sup_harbor_restatement rc=0 "status": "PASS" pre_mib=461
+00:11:17 C3l__sup_praxis_fresh rc=2 "status": "TRUNCATED_FINAL" pre_mib=271
+00:15:24 C3l__sup_reserve_meridian_docket rc=2 "status": "TRUNCATED_FINAL" pre_mib=271
+00:19:34 C5__sup_reserve_meridian_docket rc=0 "status": "PASS" pre_mib=271
+00:23:42 C3l__sup_reserve_tundra_ledger rc=2 "status": "TRUNCATED_FINAL" pre_mib=271
+00:27:52 C5__sup_reserve_tundra_ledger rc=0 "status": "PASS" pre_mib=271
+00:31:59 C3l__sup_solace_fresh rc=2 "status": "TRUNCATED_FINAL" pre_mib=271
+00:36:09 C5__sup_solace_fresh rc=0 "status": "PASS" pre_mib=271
+00:40:16 C3l_pin_off_seat_0__sup_praxis_fresh rc=2 "status": "TRUNCATED_FINAL" pre_mib=271
+00:44:23 C3l_pin_live_seat_0__sup_praxis_fresh rc=2 "status": "TRUNCATED_FINAL" pre_mib=271
+00:48:29 C3l_pin_off_seat_1__sup_praxis_fresh rc=2 "status": "TRUNCATED_FINAL" pre_mib=271
+00:52:37 C3l_pin_off_seat_0__sup_solace_fresh rc=2 "status": "TRUNCATED_FINAL" pre_mib=271
+00:56:44 C3l_pin_live_seat_0__sup_solace_fresh rc=2 "status": "TRUNCATED_FINAL" pre_mib=271
+01:00:52 C3l_pin_off_seat_1__sup_solace_fresh rc=2 "status": "TRUNCATED_FINAL" pre_mib=271
