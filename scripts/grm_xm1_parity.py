@@ -35,6 +35,7 @@ from scripts.grm_rs4_row_split import (live_band_bounds, split_full_row,
 REG = OUT/'registration.json'
 IMPL = OUT/'implementation_pins.json'
 AMENDMENT = OUT/'registration_amendment_1.json'
+XM2_REG = ROOT/'artifacts/grm_xm2/registration.json'
 
 class XM1Error(RuntimeError):
     pass
@@ -54,7 +55,12 @@ def validate_registration():
     if (amendment['registration_sha256'] != sha(REG)
             or amendment['previous_implementation_sha256'] != sha(IMPL)):
         raise XM1Error('amendment 1 has wrong registration/implementation binding')
-    for rel, digest in {**impl['pins'], **amendment['pins']}.items():
+    # Prior art: XM1 amendment overlays (GRM, 2026). XM2 is a separate,
+    # immutable descendant; never rewrite the earlier registration or pins.
+    xm2 = read(XM2_REG)
+    if xm2['xm1_amendment_sha256'] != sha(AMENDMENT):
+        raise XM1Error('XM2 has wrong amendment 1 binding')
+    for rel, digest in {**impl['pins'], **amendment['pins'], **xm2['pins']}.items():
         if Path(rel).is_absolute() or '..' in Path(rel).parts or sha(ROOT/rel) != digest:
             raise XM1Error(f'implementation source drift: {rel}')
     return reg
@@ -66,6 +72,8 @@ def legacy_environment(reg):
     # A made-up GRM_LEGACY_DEFAULTS variable has no reader: pin real switches.
     env = {k: v for k, v in os.environ.items() if not k.startswith('GRM_')}
     env.update(reg['environment'])
+    if 'GRM_QWEN35_FINAL_CHANNEL' in os.environ:
+        env['GRM_QWEN35_FINAL_CHANNEL'] = os.environ['GRM_QWEN35_FINAL_CHANNEL']
     with patch.dict(os.environ, env, clear=True):
         yield
 
@@ -326,6 +334,15 @@ class Observer:
 
 
 def native_cell(loaded, cell, reg):
+    # Prior art: Qwen Team (2026), native thinking template; adapter and
+    # source attribution in grm_xm1_qwen_final. All other models unchanged.
+    if cell['model'] == 'qwen35':
+        from scripts.grm_xm1_qwen_final import native_cell as final_cell
+        return final_cell(loaded, cell, reg)
+    return legacy_native_cell(loaded, cell, reg)
+
+
+def legacy_native_cell(loaded, cell, reg):
     p = reg['probes'][cell['probe']]
     tok = loaded.tokenizer
     texts = p['capture_texts'] if cell['arm'] == 'C3l' else p['feed_texts']
@@ -417,8 +434,13 @@ def cell_path(directory, cell, mode):
 
 
 def binding(cell, mode):
-    return dict(cell=cell, mode=mode, registration_sha256=sha(REG),
+    result = dict(cell=cell, mode=mode, registration_sha256=sha(REG),
                 implementation_sha256=sha(IMPL), amendment_sha256=sha(AMENDMENT))
+    if cell['model'] == 'qwen35':
+        from scripts.grm_xm1_qwen_final import enabled
+        if enabled():
+            result['xm2_registration_sha256'] = sha(XM2_REG)
+    return result
 
 
 def verify_receipt(path, cell, mode):
@@ -499,6 +521,8 @@ def execute(cell, reg, directory=OUT, mode='cpu', loader=None):
                     loaded = loader(cell['model'], reg)
                     result['result'] = native_cell(loaded, cell, reg)
                     result['status'] = 'PASS'
+                    if result['result'].get('decode_status', 'FINAL') != 'FINAL':
+                        result['status'] = result['result']['decode_status']
                     if cell['model']=='gpt-oss':
                         result['reference_limit'] = 'Native CPU protocol double only; RS4 production replay is NOT exercised. GPU reference barrier remains BLOCKED.'
         except (Exception, TimeoutError) as exc:

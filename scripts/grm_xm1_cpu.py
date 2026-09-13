@@ -64,7 +64,7 @@ class Codec:
         return out
     def decode(self,ids,skip_special_tokens=False,**kw):
         return ''.join(self.words[int(i)] for i in ids if not(skip_special_tokens and int(i)==0))
-    def apply_chat_template(self,messages,tokenize=False,add_generation_prompt=False):
+    def apply_chat_template(self,messages,tokenize=False,add_generation_prompt=False, enable_thinking=None):
         text=''.join(f"[{m['role']}] {m['content']}\n" for m in messages)
         if add_generation_prompt: text+='[assistant] '
         return self.encode(text) if tokenize else text
