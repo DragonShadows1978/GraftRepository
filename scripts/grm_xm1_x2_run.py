@@ -14,19 +14,25 @@ import time
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from scripts import grm_xm1_parity as xm
+from scripts.grm_xm1_parity import gpu_loader
 from scripts.grm_xm1_registration import read,sha,create
 OUT=ROOT/'artifacts/grm_xm2'
 REG=OUT/'registration.json'
+AMENDMENT=OUT/'registration_amendment_1.json'
+RUN=OUT/'amendment_1_run'
 REFERENCE=ROOT/'artifacts/grm_xm1/amendment_1_run'
 
 
 def validate():
     parent=xm.validate_registration()
-    reg=read(REG)
+    reg=xm.xm2_registration()
     if reg['xm1_registration_sha256']!=sha(xm.REG):
         raise xm.XM1Error('XM2 parent registration mismatch')
-    if sum(c['reservation_s'] for c in reg['cells'])>1800:
+    if (reg['prior_reserved_s'] + sum(c['reservation_s'] for c in reg['cells'])
+            > reg['gpu_budget_s']):
         raise xm.XM1Error('XM2 budget exceeds 0.5 GPU-h')
+    if os.environ.get('TC_WEIGHT_BITS','4') != '4':
+        raise xm.XM1Error('registered XM1 Qwen loader requires TC_WEIGHT_BITS=4')
     gate=xm.barrier(REFERENCE,parent)
     if gate['status']!='PASS':
         raise xm.XM1Error('STOP: original GPT-OSS barrier '+json.dumps(gate))
@@ -34,11 +40,11 @@ def validate():
 
 
 def receipt_path(cell):
-    return OUT/'run'/'cells'/f"{cell['id']}.json"
+    return RUN/'cells'/f"{cell['id']}.json"
 
 
 def run(cell,reg,parent):
-    binding=dict(registration_sha256=sha(REG),cell=cell)
+    binding=dict(registration_sha256=sha(REG),amendment_sha256=sha(AMENDMENT),cell=cell)
     path=receipt_path(cell)
     if path.exists():
         receipt=read(path)
@@ -48,13 +54,16 @@ def run(cell,reg,parent):
     # Charge the full fixed reservation before loading, including failed or
     # interrupted attempts; one attempt per cell. No automatic retry.
     from scripts.grm_cmc1_gpu_arms import gpu_lease
-    attempts=OUT/'run'/'attempts'
+    attempts=RUN/'attempts'
     attempts.mkdir(parents=True,exist_ok=True)
     with gpu_lease(cell['reservation_s'],0):
-        used=sum(read(p)['reservation_s'] for p in attempts.glob('*.json'))
+        prior_paths=sorted((OUT/'run'/'attempts').glob('*.json'))
+        if {str(p.relative_to(ROOT)):sha(p) for p in prior_paths} != reg['prior_attempt_pins']:
+            raise xm.XM1Error('STOP: original XM2 attempt set changed; amendment required')
+        used=reg['prior_reserved_s']+sum(read(p)['reservation_s'] for p in attempts.glob('*.json'))
         if used+cell['reservation_s']>reg['gpu_budget_s']:
             raise xm.XM1Error('STOP: XM2 budget exhausted')
-        prior=sorted(attempts.glob('*.json'))
+        prior=prior_paths+sorted(attempts.glob('*.json'))
         if prior:
             last=max(read(p)['started_unix_s']+read(p)['reservation_s'] for p in prior)
             if time.time()<last+30:
@@ -69,9 +78,14 @@ def run(cell,reg,parent):
             with xm.legacy_environment(parent):
                 os.environ['GRM_QWEN35_FINAL_CHANNEL']='1'
                 receipt['gpu_executed']=True
-                loaded=xm.gpu_loader('qwen35',parent)
+                # Prior art: XM1 native loader (GRM contributors, 2026).
+                # Import/call the identical callable, with no adapter override.
+                # CPU doubles exercise this call and XM1 execute's default call.
+                loaded=gpu_loader('qwen35',parent)
                 if loaded.info.get('revision')!=reg['model_revision']:
                     raise xm.XM1Error('Qwen model revision mismatch')
+                if loaded.info.get('weight_bits')!=4:
+                    raise xm.XM1Error('Qwen weight mode differs from XM1 INT4 receipts')
                 # Check cached tokenizer/template content against registered
                 # local copies before any cell forward.
                 model_dir=Path(loaded.info['model_dir'])

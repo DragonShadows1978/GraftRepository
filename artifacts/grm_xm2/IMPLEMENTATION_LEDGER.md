@@ -68,3 +68,86 @@ pytest subprocess without launching another command.
 Final pytest receipt: **99 passed, 2 warnings in 22.76s**; exit code 0.
 Raw output: `artifacts/grm_xm2/pytest_LAST.log`; structured receipt:
 `artifacts/grm_xm2/pytest_LAST.json`. Owned basetemp removed: True. No XM2 GPU run directory: True.
+
+
+## 2026-09-13 — amendment 1 intake and source refutation (before gates)
+Authority: immutable orders/GRM_XM1_X2_AMENDMENT_1.md, gpt-6-astra / high.
+Read HOUSE_RULES; no git, subagents, GPU, signals, or background work.
+Evidence-before receipt: amendment_1/evidence_before.json. Same gpu_loader
+AST SHA in XM1 and XM2: 4ea4108468919e5594e4c846197b085accd67b851d45ed8ad534b4fc2561928f.
+Qwen adapter and QuantLinear source bytes match the read-only XM1 worktree.
+The current adapter uses whole-matrix INT4 QuantLinearTC for lm_head; the
+host matrix is the embedding. No chunked/host lm_head exists in the cited
+current adapter/drivers. Thus a different loader path is refuted by source;
+the allocation failure root cause remains unresolved and not claimed fixed.
+Verbatim failure preserved: QuantLinearTC INT4 init failed tensor=lm_head.weight shape=(248320,4096).
+The old Harbor receipt records elapsed_s=115.31824087025598; the second
+Praxis attempt has no cell receipt. Both 110 s reservations remain charged.
+
+New code imports gpu_loader directly from XM1; does not duplicate or alter
+its body or adapter. CPU regression invokes XM1 execute's default loader
+and X2 run, replays the actual adapter load_weights/from_pretrained methods
+with tiny host arrays and fake device/I/O primitives, and compares identity,
+lm_head branch and config. This is author CPU evidence only, no GPU fit.
+
+Historical cold Harbor C3l elapsed_s=129.69799864804372; nine other XM1
+Qwen receipts range 64.00301110185683 to 68.54434893094003 s. Asked optional
+budget preference while implementing independent work; no response before
+registration. Preserve the authorized 1800 s budget: cold cap ceil(elapsed)=
+130 s; warm cap ceil((68.54434893094003+20)/10)*10=90 s. New reservations
+1480 s plus prior 220 s =1700 s. A later cold process is not guaranteed to
+fit a warm cap; it must stop RED. No threshold applied retroactively: old
+registration, receipts, and source snapshots retained, new amendment and
+new attempt namespace only. No global 130 s cap falsely squeezed into 1800.
+
+Prior art unchanged: Qwen Team (2026), cached chat template at revision
+c202236235762e1c871ad0ccb60c8ee5ba337b9a; external lead unverified — lead to
+check Qwen3.5-9B chat template thinking mode. GRM contributors (2026),
+XM1/LT1 immutable overlays, CPU doubles, RS3/RS4 and CMC1 lease/accounting
+reused. Python AST source replay/unittest.mock reused. Ours: shared-loader
+proof and explicit receipt-derived time-cap policy; no new load algorithm.
+
+
+### Preparation correction and procedural RED
+The first create-only registration command failed AssertionError because the
+lead concurrently added a third 110 s attempt (Meridian C5), increasing old
+reservations to 330 s. No amendment file was created. My following preflight
+command still ran: this violated registration-before-gates and is procedural
+RED. Result: 4 failed, 1 passed, 2 errors in 0.53s. Exact root errors:
+FileNotFoundError: artifacts/grm_xm2/registration_amendment_1.json; and
+FileNotFoundError: artifacts/grm_xm2/tmp/preflight (parent tmp not created).
+The lone passing test compared loader/source identity. No CUDA or lease ran.
+No thresholds were successfully registered or subsequently relaxed. Future
+registration and gate commands are separate tool calls with checked exits.
+
+Concurrent lead receipts: Praxis C3l TRUNCATED_FINAL, elapsed_s=
+86.97211571317166; Meridian C5 PASS, elapsed_s=76.55421134503558.
+Evidence captured in amendment_1/evidence_concurrent.json; originals retained.
+Read-only process listing showed no matching XM1/X2 worker; no process signal.
+Reconcile the unchanged 1800 s budget before registration: Harbor C3l 130 s;
+Meridian C5 80 s (ceil its newer 76.55421134503558 s to 10 s); other 14 cells
+90 s. New reservations 1470 s + prior 330 s =1800 s. This is an explicit
+pre-run allocation from historical receipts, not a future-fit guarantee.
+The first 220 s accounting statement above is superseded by this live audit.
+
+
+### Successful amendment registration and CPU preflight
+Create-only registration succeeded separately, exit 0, SHA-256
+c300374de576251c6f622ef2371f4ede0ae3fac58c4ea8465e26d8547d3fc5ff.
+Original 7d537ab2 registration unchanged; amendment pins all changed code,
+original snapshots, source comparisons, prior attempts and receipt evidence.
+Targeted registered gate: 7 passed in 3.98s, exit 0. Exact command/stdout:
+amendment_1/cpu_preflight.json and amendment_1/cpu_preflight.log.
+Includes both worker entry points, actual adapter load-method CPU replay,
+loader identity/config/INT4 head comparison, historical source identity,
+immutable original pins, cap evidence, drift and mode rejection, all 16
+XM2 CLI dry-runs. No GPU or blind validation. Implementation unchanged
+since successful registration. Final report and updated synthesis written;
+final exact full pytest command will be last, followed only by in-process
+receipt/manifest updates and cleanup of owned artifacts/grm_xm2/tmp.
+
+
+Final pytest receipt: **sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute**; exit code 0.
+Raw output: artifacts/grm_xm2/amendment_1/pytest_LAST.log; structured receipt:
+artifacts/grm_xm2/amendment_1/pytest_LAST.json. Owned basetemp removed: True.
+No subsequent shell/test command. GPU failure remains not claimed fixed; procedural RED retained.

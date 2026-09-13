@@ -36,9 +36,22 @@ REG = OUT/'registration.json'
 IMPL = OUT/'implementation_pins.json'
 AMENDMENT = OUT/'registration_amendment_1.json'
 XM2_REG = ROOT/'artifacts/grm_xm2/registration.json'
+XM2_AMENDMENT = ROOT/'artifacts/grm_xm2/registration_amendment_1.json'
 
 class XM1Error(RuntimeError):
     pass
+
+
+def xm2_registration():
+    # Prior art: GRM XM1/LT1 immutable amendment overlays (2026), reused.
+    # The original XM2 registration remains immutable, including failed caps.
+    base = read(XM2_REG)
+    amendment = read(XM2_AMENDMENT)
+    if amendment['registration_sha256'] != sha(XM2_REG):
+        raise XM1Error('XM2 amendment has wrong registration binding')
+    effective = {**base, **amendment['overrides']}
+    effective['pins'] = {**base['pins'], **amendment['pins']}
+    return effective
 
 
 def validate_registration():
@@ -57,7 +70,7 @@ def validate_registration():
         raise XM1Error('amendment 1 has wrong registration/implementation binding')
     # Prior art: XM1 amendment overlays (GRM, 2026). XM2 is a separate,
     # immutable descendant; never rewrite the earlier registration or pins.
-    xm2 = read(XM2_REG)
+    xm2 = xm2_registration()
     if xm2['xm1_amendment_sha256'] != sha(AMENDMENT):
         raise XM1Error('XM2 has wrong amendment 1 binding')
     for rel, digest in {**impl['pins'], **amendment['pins'], **xm2['pins']}.items():

@@ -152,7 +152,8 @@ def test_registration_matrix_budget_and_dry_run():
     from scripts.grm_xm1_x2_run import validate
     reg,_=validate()
     assert len(reg['cells'])==16
-    assert sum(c['reservation_s'] for c in reg['cells'])==1760<=1800
+    assert sum(c['reservation_s'] for c in reg['cells'])==reg['total_reserved_s']
+    assert reg['total_reserved_s']+reg['prior_reserved_s']<=1800
     assert len({c['id'] for c in reg['cells']})==16
     assert sum(c['arm']=='C5' for c in reg['cells'])==5
     for probe in ('sup_praxis_fresh','sup_solace_fresh'):

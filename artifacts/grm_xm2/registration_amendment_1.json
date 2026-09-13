@@ -1,0 +1,320 @@
+{
+  "amendment": 1,
+  "cap_policy": {
+    "cold_cap_s": 130,
+    "cold_cell": "C3l__sup_harbor_restatement",
+    "cold_observed_s": 129.69799864804372,
+    "meridian_c5_cap_s": 80,
+    "meridian_c5_observed_s": 76.55421134503558,
+    "residual": "A later cold process may exceed 90 s. Stop RED at its registered cap; no retry or cap change. 130 s covers historical cold elapsed, not future GPU fit.",
+    "rule": "cold ceil(elapsed_s); Meridian C5 ceil(newer elapsed_s/10)*10; other cells ceil((XM1 max warm elapsed_s + 20)/10)*10. Explicit pre-run allocation under unchanged 1800 s including concurrent prior attempts.",
+    "warm_cap_s": 90,
+    "warm_max_observed_s": 68.54434893094003
+  },
+  "deviations": [
+    "Different lm_head load path premise contradicted by byte-identical adapters/QuantLinear and identical loader AST. No chunked/host lm_head exists in cited current paths; none invented.",
+    "Observed GPU allocation failure root cause remains unresolved; no GPU allowed, not claimed fixed.",
+    "Per-cell cold/warm caps preserve 1800 s total including prior attempts. Uniform 130 s would require 2410 s including prior attempts, outside authority.",
+    "Procedural RED: first preflight ran after registration creation failed on concurrent attempt accounting; missing-registration/scratch errors, no GPU. Logged before successful registration; no retrospective threshold change.",
+    "New amendment authorizes a separate attempt namespace; prior failed/missing receipts retained and charged."
+  ],
+  "evidence_class": "preregistration and source comparison; GPU failure not claimed fixed",
+  "gates": [
+    "Both actual worker entry points use the identical XM1 callable; CPU replay actual adapter load methods and compare lm_head matrix branch, INT4, BF16, fused settings, tokenizer kwargs, and GRM environment.",
+    "Historical source identity, original registration/snapshots, amendment parent/source drift fail closed, copied receipt timings and total budget, wrong weight mode rejection.",
+    "All 16 refreshed commands --dry-run; original XM1/XM2 suite verbatim LAST; CPU only; scratch cleanup."
+  ],
+  "immutable": true,
+  "loader_contract": {
+    "adapter": "core.qwen35_tc.Qwen35_TC.from_pretrained",
+    "adapter_kwargs": {},
+    "callable": "scripts.grm_xm1_parity.gpu_loader",
+    "chunked_lm_head": false,
+    "compute_dtype": "bfloat16",
+    "fused_decode": true,
+    "fused_norm": true,
+    "host_embedding": true,
+    "host_lm_head": false,
+    "linear_dtype": "bfloat16",
+    "lm_head": "whole-matrix QuantLinearTC",
+    "weight_bits": 4
+  },
+  "loader_finding": "Both loader bodies and adapter/QuantLinear sources are identical. Both use whole-matrix QuantLinearTC lm_head, not chunked/host-side head. Different loader path is refuted by current source; allocation failure root cause unresolved.",
+  "original_source_pins": {
+    "artifacts/grm_xm2/lead_commands.txt": "ef5e7937afcb5608f91a6b6d577338f142ece3514cc08a50c23b16435dd783e3",
+    "scripts/grm_xm1_parity.py": "3c49af5d333e83a6f71eb42f6c302af049c048a9609cb8ea9664fd22ea4d4c80",
+    "scripts/grm_xm1_x2_run.py": "ae0728692e2a8e03d557b5052889b65f43f82d2d28fd9915236a55632308516a",
+    "tests/test_grm_xm1_amendment_1.py": "7f525ab915975635031ec7d9b6de0ee4bd5e330f07fca7383a3ad350fb3f4244",
+    "tests/test_grm_xm2_final.py": "992d2e481f40bcc53c7b99f9bd193a936200d9cb71fbe4a21e7d4fc874b96a46"
+  },
+  "overrides": {
+    "cells": [
+      {
+        "arm": "C3l",
+        "capture_pin": "live",
+        "id": "C3l__sup_harbor_restatement",
+        "model": "qwen35",
+        "probe": "sup_harbor_restatement",
+        "reservation_s": 130,
+        "seat_near_live": true
+      },
+      {
+        "arm": "C5",
+        "capture_pin": null,
+        "id": "C5__sup_harbor_restatement",
+        "model": "qwen35",
+        "probe": "sup_harbor_restatement",
+        "reservation_s": 90,
+        "seat_near_live": false
+      },
+      {
+        "arm": "C3l",
+        "capture_pin": "live",
+        "id": "C3l__sup_praxis_fresh",
+        "model": "qwen35",
+        "probe": "sup_praxis_fresh",
+        "reservation_s": 90,
+        "seat_near_live": true
+      },
+      {
+        "arm": "C5",
+        "capture_pin": null,
+        "id": "C5__sup_praxis_fresh",
+        "model": "qwen35",
+        "probe": "sup_praxis_fresh",
+        "reservation_s": 90,
+        "seat_near_live": false
+      },
+      {
+        "arm": "C3l",
+        "capture_pin": "live",
+        "id": "C3l__sup_reserve_meridian_docket",
+        "model": "qwen35",
+        "probe": "sup_reserve_meridian_docket",
+        "reservation_s": 90,
+        "seat_near_live": true
+      },
+      {
+        "arm": "C5",
+        "capture_pin": null,
+        "id": "C5__sup_reserve_meridian_docket",
+        "model": "qwen35",
+        "probe": "sup_reserve_meridian_docket",
+        "reservation_s": 80,
+        "seat_near_live": false
+      },
+      {
+        "arm": "C3l",
+        "capture_pin": "live",
+        "id": "C3l__sup_reserve_tundra_ledger",
+        "model": "qwen35",
+        "probe": "sup_reserve_tundra_ledger",
+        "reservation_s": 90,
+        "seat_near_live": true
+      },
+      {
+        "arm": "C5",
+        "capture_pin": null,
+        "id": "C5__sup_reserve_tundra_ledger",
+        "model": "qwen35",
+        "probe": "sup_reserve_tundra_ledger",
+        "reservation_s": 90,
+        "seat_near_live": false
+      },
+      {
+        "arm": "C3l",
+        "capture_pin": "live",
+        "id": "C3l__sup_solace_fresh",
+        "model": "qwen35",
+        "probe": "sup_solace_fresh",
+        "reservation_s": 90,
+        "seat_near_live": true
+      },
+      {
+        "arm": "C5",
+        "capture_pin": null,
+        "id": "C5__sup_solace_fresh",
+        "model": "qwen35",
+        "probe": "sup_solace_fresh",
+        "reservation_s": 90,
+        "seat_near_live": false
+      },
+      {
+        "arm": "C3l",
+        "capture_pin": "off",
+        "id": "C3l_pin_off_seat_0__sup_praxis_fresh",
+        "model": "qwen35",
+        "probe": "sup_praxis_fresh",
+        "reservation_s": 90,
+        "seat_near_live": false
+      },
+      {
+        "arm": "C3l",
+        "capture_pin": "live",
+        "id": "C3l_pin_live_seat_0__sup_praxis_fresh",
+        "model": "qwen35",
+        "probe": "sup_praxis_fresh",
+        "reservation_s": 90,
+        "seat_near_live": false
+      },
+      {
+        "arm": "C3l",
+        "capture_pin": "off",
+        "id": "C3l_pin_off_seat_1__sup_praxis_fresh",
+        "model": "qwen35",
+        "probe": "sup_praxis_fresh",
+        "reservation_s": 90,
+        "seat_near_live": true
+      },
+      {
+        "arm": "C3l",
+        "capture_pin": "off",
+        "id": "C3l_pin_off_seat_0__sup_solace_fresh",
+        "model": "qwen35",
+        "probe": "sup_solace_fresh",
+        "reservation_s": 90,
+        "seat_near_live": false
+      },
+      {
+        "arm": "C3l",
+        "capture_pin": "live",
+        "id": "C3l_pin_live_seat_0__sup_solace_fresh",
+        "model": "qwen35",
+        "probe": "sup_solace_fresh",
+        "reservation_s": 90,
+        "seat_near_live": false
+      },
+      {
+        "arm": "C3l",
+        "capture_pin": "off",
+        "id": "C3l_pin_off_seat_1__sup_solace_fresh",
+        "model": "qwen35",
+        "probe": "sup_solace_fresh",
+        "reservation_s": 90,
+        "seat_near_live": true
+      }
+    ],
+    "execution": "New amendment_1_run directory; one attempt per cell, exact amendment binding. 130 s Harbor C3l, 80 s Meridian C5, 90 s each other cell; 1470 s new plus 330 s prior reservations = 1800 s. Worker leases itself fail-fast, no outer flock, 30 s gap including old attempts, no waiting or automatic retry. Original failed receipts remain immutable.",
+    "prior_attempt_pins": {
+      "artifacts/grm_xm2/run/attempts/C3l__sup_harbor_restatement.json": "eede3ad34339899bdb506027b3d619fcb5d3247c49cd51a1fc80dea5f2f3f159",
+      "artifacts/grm_xm2/run/attempts/C3l__sup_praxis_fresh.json": "ddc01f847773789e4742a1970524667b5d6282427363450959add9a2abf24cd3",
+      "artifacts/grm_xm2/run/attempts/C5__sup_reserve_meridian_docket.json": "23ea94dae569d3767f9137af36764a90889372d93e72b26dc9ce111d2a2861a6"
+    },
+    "prior_reserved_s": 330,
+    "total_reserved_s": 1470
+  },
+  "pins": {
+    "artifacts/grm_xm2/amendment_1/evidence_before.json": "0f08878ceb8e7e1c1fad14bc681ab0243949337dc77f3bce6bb5ba38a267e172",
+    "artifacts/grm_xm2/amendment_1/evidence_concurrent.json": "72bd29ffd194b96ee6b6c38b7839121b6afe0d2c57567a06f84b750e9753c20e",
+    "artifacts/grm_xm2/amendment_1/sources/artifacts/grm_xm2/lead_commands.txt": "ef5e7937afcb5608f91a6b6d577338f142ece3514cc08a50c23b16435dd783e3",
+    "artifacts/grm_xm2/amendment_1/sources/scripts/grm_xm1_parity.py": "3c49af5d333e83a6f71eb42f6c302af049c048a9609cb8ea9664fd22ea4d4c80",
+    "artifacts/grm_xm2/amendment_1/sources/scripts/grm_xm1_x2_run.py": "ae0728692e2a8e03d557b5052889b65f43f82d2d28fd9915236a55632308516a",
+    "artifacts/grm_xm2/amendment_1/sources/tests/test_grm_xm1_amendment_1.py": "7f525ab915975635031ec7d9b6de0ee4bd5e330f07fca7383a3ad350fb3f4244",
+    "artifacts/grm_xm2/amendment_1/sources/tests/test_grm_xm2_final.py": "992d2e481f40bcc53c7b99f9bd193a936200d9cb71fbe4a21e7d4fc874b96a46",
+    "artifacts/grm_xm2/lead_C3l__sup_harbor_restatement.log": "f76a015559ae4e8657c75c23257b8621943a8c16ede81d92415357ea93bcc575",
+    "artifacts/grm_xm2/lead_C3l__sup_praxis_fresh.log": "963fe214332dd8cc7c193de9ce677da24d81fa946f6d51287b8250bff768b7e0",
+    "artifacts/grm_xm2/lead_C3l__sup_reserve_meridian_docket.log": "481f39dac872163efc4d5d50cb6aead21e311d05c6a73e28499d282ea60bb89f",
+    "artifacts/grm_xm2/lead_C3l__sup_reserve_tundra_ledger.log": "fc9cbe63a04fbb0c88649ec18f81f4b94af37a041444e2bc5b2364b036ed8f3a",
+    "artifacts/grm_xm2/lead_C3l__sup_solace_fresh.log": "fc9cbe63a04fbb0c88649ec18f81f4b94af37a041444e2bc5b2364b036ed8f3a",
+    "artifacts/grm_xm2/lead_C3l_pin_live_seat_0__sup_praxis_fresh.log": "fc9cbe63a04fbb0c88649ec18f81f4b94af37a041444e2bc5b2364b036ed8f3a",
+    "artifacts/grm_xm2/lead_C3l_pin_live_seat_0__sup_solace_fresh.log": "fc9cbe63a04fbb0c88649ec18f81f4b94af37a041444e2bc5b2364b036ed8f3a",
+    "artifacts/grm_xm2/lead_C3l_pin_off_seat_0__sup_praxis_fresh.log": "fc9cbe63a04fbb0c88649ec18f81f4b94af37a041444e2bc5b2364b036ed8f3a",
+    "artifacts/grm_xm2/lead_C3l_pin_off_seat_0__sup_solace_fresh.log": "fc9cbe63a04fbb0c88649ec18f81f4b94af37a041444e2bc5b2364b036ed8f3a",
+    "artifacts/grm_xm2/lead_C3l_pin_off_seat_1__sup_praxis_fresh.log": "fc9cbe63a04fbb0c88649ec18f81f4b94af37a041444e2bc5b2364b036ed8f3a",
+    "artifacts/grm_xm2/lead_C3l_pin_off_seat_1__sup_solace_fresh.log": "fc9cbe63a04fbb0c88649ec18f81f4b94af37a041444e2bc5b2364b036ed8f3a",
+    "artifacts/grm_xm2/lead_C5__sup_harbor_restatement.log": "481f39dac872163efc4d5d50cb6aead21e311d05c6a73e28499d282ea60bb89f",
+    "artifacts/grm_xm2/lead_C5__sup_praxis_fresh.log": "bcdc49a2d5e8e6034e344bb80ad9f29927b846a526cfa55368bcc68c7518eded",
+    "artifacts/grm_xm2/lead_C5__sup_reserve_meridian_docket.log": "902f5b873ff2537db5657d5cce5dcee9bd8bff8b78e72db912b0ee799a5375ca",
+    "artifacts/grm_xm2/lead_C5__sup_reserve_tundra_ledger.log": "fc9cbe63a04fbb0c88649ec18f81f4b94af37a041444e2bc5b2364b036ed8f3a",
+    "artifacts/grm_xm2/lead_C5__sup_solace_fresh.log": "fc9cbe63a04fbb0c88649ec18f81f4b94af37a041444e2bc5b2364b036ed8f3a",
+    "artifacts/grm_xm2/lead_commands.txt": "918828227927f2aef063c5a858f920d5a23c9c990cd63b7d6a19eebe5b8f9825",
+    "artifacts/grm_xm2/run/attempts/C3l__sup_harbor_restatement.json": "eede3ad34339899bdb506027b3d619fcb5d3247c49cd51a1fc80dea5f2f3f159",
+    "artifacts/grm_xm2/run/attempts/C3l__sup_praxis_fresh.json": "ddc01f847773789e4742a1970524667b5d6282427363450959add9a2abf24cd3",
+    "artifacts/grm_xm2/run/attempts/C5__sup_reserve_meridian_docket.json": "23ea94dae569d3767f9137af36764a90889372d93e72b26dc9ce111d2a2861a6",
+    "artifacts/grm_xm2/run/cells/C3l__sup_harbor_restatement.json": "ae353c7dae5d09ea70177a0a89c3c5226f8b674831098cb7f375ef1f41d59540",
+    "artifacts/grm_xm2/run/cells/C3l__sup_praxis_fresh.json": "70b56eea897e2e301d14d306a9fd63fc2c64a4e72d17b14921e907b8d58aeab0",
+    "artifacts/grm_xm2/run/cells/C5__sup_reserve_meridian_docket.json": "a09a1d8c110d0d17b487f5b146a5c9ed54930577ae285cb8298c860f52444fa6",
+    "core/mistral7b_tc.py": "49430e5920508d740a2f8be7b6ba0caadd0442c7798454cf6fa2a808204bf1c4",
+    "core/qwen35_tc.py": "3f84f8e99f5cf8932440e5d6ff29df41cbf3fdaf13d27f3bbe8fb1dc3a7ec41b",
+    "orders/GRM_XM1_X2_AMENDMENT_1.md": "7e616e3b89baa80748dbcaee5f39f65dd2ce5f107ee7e88880c6890a2256b506",
+    "scripts/grm_cmc1_gpu_arms.py": "663760d175bb35ed6c4df2b252bf909bcf52577f3ad5eb1c518167b6bb5e39ba",
+    "scripts/grm_xm1_parity.py": "3ff1f89eb81a8d23348e8da485fb81da8a71b502d95da15aef2d15c59af29e7e",
+    "scripts/grm_xm1_x2_amendment_1.py": "ce019a8e002f36e6fc8f8c449bb0dcc6a70bd28ea4de21915bfecea2831f4fd5",
+    "scripts/grm_xm1_x2_run.py": "fab9a8da4de55b25fa1358677de54e27bb9de658345f23d4e3acae508c55ab98",
+    "tests/test_grm_xm1_amendment_1.py": "30ba84a0b4724eabdede398526b921b7e4030c07d1b48f478fb8f69e42c0ebfa",
+    "tests/test_grm_xm2_final.py": "87f51cb0a336d221f79b17f351c78ad49905f81899e1aaa055a70d0157b24662",
+    "tests/test_grm_xm2_loader.py": "31570db7a164b3e13b49f97ea4f09d044bf259ed0f1358f33842242e77ec6877"
+  },
+  "prior_art": "Qwen Team (2026), cached chat_template.jinja revision c202236235762e1c871ad0ccb60c8ee5ba337b9a; enable_thinking=False empty block reused. Upstream unverified — lead to check: Qwen3.5-9B chat template thinking mode. GRM contributors (2026), RS3 capture/seat, RS4 row means, XM1/LT1 binding and CMC1 lease reused. Ours: final input-query indices and source audit; no new attention algorithm.",
+  "registration_sha256": "7d537ab25ba485094b0235c9b1407d75b542dcbba21ebdd587a6534d16d73c3d",
+  "schema": "grm.xm2.registration_amendment.v1",
+  "seat_effort": "high",
+  "seat_model": "gpt-6-astra",
+  "timing_evidence": [
+    {
+      "elapsed_s": 129.69799864804372,
+      "path": "artifacts/grm_xm1/amendment_1_run/cells/gpu/qwen35/C3l__sup_harbor_restatement.json",
+      "sha256": "7acdb296870aabf02ed14b6fa0b463554fc59575f751f9d6f12d413bd34ca288"
+    },
+    {
+      "elapsed_s": 66.27821877365932,
+      "path": "artifacts/grm_xm1/amendment_1_run/cells/gpu/qwen35/C3l__sup_praxis_fresh.json",
+      "sha256": "dedc056a740ca8c2dc69643ed33c138ff518b75626d4d01299d8464ec32d12e4"
+    },
+    {
+      "elapsed_s": 64.48302770312876,
+      "path": "artifacts/grm_xm1/amendment_1_run/cells/gpu/qwen35/C3l__sup_reserve_meridian_docket.json",
+      "sha256": "44b1f13f6bb9a59e6db13ef6f10415013fd76187b2e5722e093b87783bb56e81"
+    },
+    {
+      "elapsed_s": 64.00301110185683,
+      "path": "artifacts/grm_xm1/amendment_1_run/cells/gpu/qwen35/C3l__sup_reserve_tundra_ledger.json",
+      "sha256": "7e0c50d43cb9a09175d0d3c2057354c21517f3d2d675a6106f3a5c47a35d1f62"
+    },
+    {
+      "elapsed_s": 64.96933559887111,
+      "path": "artifacts/grm_xm1/amendment_1_run/cells/gpu/qwen35/C3l__sup_solace_fresh.json",
+      "sha256": "8edba287bf4ca1134c6471038f4b3175ff50c42f2febc17b0ce8e10a452004c6"
+    },
+    {
+      "elapsed_s": 68.54434893094003,
+      "path": "artifacts/grm_xm1/amendment_1_run/cells/gpu/qwen35/C5__sup_harbor_restatement.json",
+      "sha256": "14c2e579b10eb3c2f5927f6b4f2bc6806393887ba11d711cbd9a27b0e7cce0ca"
+    },
+    {
+      "elapsed_s": 65.62100766412914,
+      "path": "artifacts/grm_xm1/amendment_1_run/cells/gpu/qwen35/C5__sup_praxis_fresh.json",
+      "sha256": "2f0bb6a70ade42575eafd2b1f60b3b6684059a8864eefebf9ca5ed0abba2d833"
+    },
+    {
+      "elapsed_s": 66.68407811783254,
+      "path": "artifacts/grm_xm1/amendment_1_run/cells/gpu/qwen35/C5__sup_reserve_meridian_docket.json",
+      "sha256": "1f0fbe6864df86f2766a7938f92d79b463d28cb5627297b312391179e586d7dc"
+    },
+    {
+      "elapsed_s": 66.20263885892928,
+      "path": "artifacts/grm_xm1/amendment_1_run/cells/gpu/qwen35/C5__sup_reserve_tundra_ledger.json",
+      "sha256": "3d31a7a3ecb1088ad664c8b1b77d73c251f9609d07c7d6ca59f1aeafd5ba7766"
+    },
+    {
+      "elapsed_s": 67.33114727865905,
+      "path": "artifacts/grm_xm1/amendment_1_run/cells/gpu/qwen35/C5__sup_solace_fresh.json",
+      "sha256": "a884ca8f34e7f9e9f082ce3199657de5f4556b50d02eb8bb9038cf1a1d7a54ce"
+    },
+    {
+      "elapsed_s": 115.31824087025598,
+      "path": "artifacts/grm_xm2/run/cells/C3l__sup_harbor_restatement.json",
+      "sha256": "ae353c7dae5d09ea70177a0a89c3c5226f8b674831098cb7f375ef1f41d59540"
+    },
+    {
+      "elapsed_s": 86.97211571317166,
+      "path": "artifacts/grm_xm2/run/cells/C3l__sup_praxis_fresh.json",
+      "sha256": "70b56eea897e2e301d14d306a9fd63fc2c64a4e72d17b14921e907b8d58aeab0"
+    },
+    {
+      "elapsed_s": 76.55421134503558,
+      "path": "artifacts/grm_xm2/run/cells/C5__sup_reserve_meridian_docket.json",
+      "sha256": "a09a1d8c110d0d17b487f5b146a5c9ed54930577ae285cb8298c860f52444fa6"
+    }
+  ]
+}

@@ -218,3 +218,21 @@ python3 -m pytest -q --basetemp artifacts/grm_xm2/tmp tests/test_grm_xm1*.py tes
 Final pytest receipt: **99 passed, 2 warnings in 22.76s**; exit code 0.
 Raw output: `artifacts/grm_xm2/pytest_LAST.log`; structured receipt:
 `artifacts/grm_xm2/pytest_LAST.json`. Owned basetemp removed: True. No XM2 GPU run directory: True.
+
+
+## 2026-09-13 amendment 1 synthesis update
+See amendment_1/REPORT.md and registration_amendment_1.json for the latest
+source/cap bindings. Original XM1/XM2 loader bodies and Qwen/QuantLinear
+sources matched already; both use whole-matrix INT4 lm_head. Allocation
+failure remains unresolved, not claimed fixed. Callable/config identity is
+now exercised through both worker entry points with CPU doubles. New caps:
+Harbor C3l 130 s, Meridian C5 80 s, others 90 s; 1470 s new plus 330 s old
+reservations =1800 s. Old failure and newer lead Praxis TRUNCATED_FINAL /
+Meridian PASS receipts retained. Procedural RED: one preflight ran after
+registration creation failed; fully recorded in the ledger and new report.
+
+
+Final pytest receipt: **sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute**; exit code 0.
+Raw output: artifacts/grm_xm2/amendment_1/pytest_LAST.log; structured receipt:
+artifacts/grm_xm2/amendment_1/pytest_LAST.json. Owned basetemp removed: True.
+No subsequent shell/test command. GPU failure remains not claimed fixed; procedural RED retained.
