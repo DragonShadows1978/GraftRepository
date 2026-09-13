@@ -1,0 +1,20 @@
+# Registered only; this seat ran no GPU. Worker leases itself. DO NOT use an outer flock.
+# Run from repo root. Each worker reserves 110 s; total 1760 s <= 0.5 GPU-h.
+# At least 30 s after the preceding reservation end before next dispatch; gap check fails fast, never waits.
+# Append --dry-run to every line for CPU-only validation; dry-run overrides --run.
+python3 scripts/grm_xm1_x2_run.py --cell C3l__sup_harbor_restatement --run
+python3 scripts/grm_xm1_x2_run.py --cell C5__sup_harbor_restatement --run
+python3 scripts/grm_xm1_x2_run.py --cell C3l__sup_praxis_fresh --run
+python3 scripts/grm_xm1_x2_run.py --cell C5__sup_praxis_fresh --run
+python3 scripts/grm_xm1_x2_run.py --cell C3l__sup_reserve_meridian_docket --run
+python3 scripts/grm_xm1_x2_run.py --cell C5__sup_reserve_meridian_docket --run
+python3 scripts/grm_xm1_x2_run.py --cell C3l__sup_reserve_tundra_ledger --run
+python3 scripts/grm_xm1_x2_run.py --cell C5__sup_reserve_tundra_ledger --run
+python3 scripts/grm_xm1_x2_run.py --cell C3l__sup_solace_fresh --run
+python3 scripts/grm_xm1_x2_run.py --cell C5__sup_solace_fresh --run
+python3 scripts/grm_xm1_x2_run.py --cell C3l_pin_off_seat_0__sup_praxis_fresh --run
+python3 scripts/grm_xm1_x2_run.py --cell C3l_pin_live_seat_0__sup_praxis_fresh --run
+python3 scripts/grm_xm1_x2_run.py --cell C3l_pin_off_seat_1__sup_praxis_fresh --run
+python3 scripts/grm_xm1_x2_run.py --cell C3l_pin_off_seat_0__sup_solace_fresh --run
+python3 scripts/grm_xm1_x2_run.py --cell C3l_pin_live_seat_0__sup_solace_fresh --run
+python3 scripts/grm_xm1_x2_run.py --cell C3l_pin_off_seat_1__sup_solace_fresh --run
