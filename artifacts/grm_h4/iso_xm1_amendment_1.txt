@@ -1,0 +1,25 @@
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_det1/run_20260831T160525Z_2/runtime_frame_28b3196f8fb04a41.json')
+mode = 'rb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/mnt/ForgeRealm/wt/grm-h4/artifacts/grm_det1/run_20260831T160525Z_2/runtime_frame_28b3196f8fb04a41.json'
+
+/usr/lib/python3.12/pathlib.py:1015: FileNotFoundError
+=========================== short test summary info ============================
+FAILED tests/test_grm_xm1_amendment_1.py::test_worker_scratch_without_pytest_basetemp
+FAILED tests/test_grm_xm1_amendment_1.py::test_failed_reference_does_not_block_next_gpt
+FAILED tests/test_grm_xm1_amendment_1.py::test_ten_gpu_execute_cells_then_deleted_reference_stops_qwen
+FAILED tests/test_grm_xm1_amendment_1.py::test_mismatched_reference_stops_qwen_but_not_gpt
+FAILED tests/test_grm_xm1_amendment_1.py::test_amendment_binds_worker_and_preserves_original_registration
+5 failed, 1 passed in 0.24s

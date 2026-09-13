@@ -128,6 +128,8 @@ def test_xm1_xm2_loader_identity_and_actual_lm_head_mode(adapter_double,tmp_path
     assert second['binding']['amendment_sha256']==sha(x2.AMENDMENT)
 
 
+# GRM-H4: artifact-bound: artifacts/grm_xm2/amendment_1/evidence_before.json was lost
+@pytest.mark.campaign_receipt(registration='artifacts/grm_xm2/registration.json + artifacts/grm_xm2/registration_amendment_1.json')
 def test_original_and_current_loader_bodies_equal():
     def body(path):
         t=ast.parse(path.read_text())
@@ -140,6 +142,8 @@ def test_original_and_current_loader_bodies_equal():
         assert row['identical'] and sha(xm.ROOT/row['path'])==row['xm1_sha256']==row['xm2_sha256']
 
 
+# GRM-H4: sha-bound: registration source drift: core/grm_admission.py (D2 flip)
+@pytest.mark.campaign_receipt(registration='artifacts/grm_xm2/registration.json + artifacts/grm_xm2/registration_amendment_1.json')
 def test_amendment_caps_and_immutable_originals():
     amendment=read(x2.AMENDMENT);reg,parent=x2.validate()
     assert sha(xm.XM2_REG)=='7d537ab25ba485094b0235c9b1407d75b542dcbba21ebdd587a6534d16d73c3d'
@@ -164,6 +168,8 @@ def test_amendment_caps_and_immutable_originals():
     assert (OUT/'run/cells/C3l__sup_harbor_restatement.json').is_file()
 
 
+# GRM-H4: sha-bound: registration source drift: core/grm_admission.py (D2 flip)
+@pytest.mark.campaign_receipt(registration='artifacts/grm_xm2/registration.json + artifacts/grm_xm2/registration_amendment_1.json')
 def test_amendment_parent_and_source_drift_fail_closed(tmp_path,monkeypatch):
     amendment=read(x2.AMENDMENT);path=tmp_path/'amendment.json'
     amendment['registration_sha256']='0'*64
@@ -176,6 +182,8 @@ def test_amendment_parent_and_source_drift_fail_closed(tmp_path,monkeypatch):
     with pytest.raises(xm.XM1Error,match='implementation source drift'):x2.validate()
 
 
+# GRM-H4: sha-bound: registration source drift: core/grm_admission.py (D2 flip)
+@pytest.mark.campaign_receipt(registration='artifacts/grm_xm2/registration.json + artifacts/grm_xm2/registration_amendment_1.json')
 def test_wrong_weight_mode_rejected_before_gpu(monkeypatch):
     monkeypatch.setenv('TC_WEIGHT_BITS','3')
     with pytest.raises(xm.XM1Error,match='TC_WEIGHT_BITS=4'):x2.validate()

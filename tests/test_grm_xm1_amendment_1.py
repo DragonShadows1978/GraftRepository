@@ -58,6 +58,8 @@ def test_failed_reference_does_not_block_next_gpt(gpu_path_double):
     assert xm.barrier(out, REG)['status'] == 'FAIL'
 
 
+# GRM-H4: sha-bound: registration source drift: core/grm_admission.py (D2 flip)
+@pytest.mark.campaign_receipt(registration='artifacts/grm_xm1/registration.json + artifacts/grm_xm1/registration_amendment_1.json')
 def test_ten_gpu_execute_cells_then_deleted_reference_stops_qwen(gpu_path_double):
     out, calls, scratch, telemetry = gpu_path_double
     for index, cell in enumerate(GPT):
@@ -117,6 +119,8 @@ def test_worker_scratch_cleanup_on_error(gpu_path_double, monkeypatch):
     assert paths and not paths[0].exists()
 
 
+# GRM-H4: sha-bound: registration source drift: core/grm_admission.py (D2 flip)
+@pytest.mark.campaign_receipt(registration='artifacts/grm_xm1/registration.json + artifacts/grm_xm1/registration_amendment_1.json')
 def test_amendment_binds_worker_and_preserves_original_registration():
     amendment = read(xm.AMENDMENT)
     assert xm.sha(xm.REG) == '758fd3ac1231ed44937714a86009b557f554f026e9d85773cb730074e04439e8'

@@ -108,6 +108,8 @@ def test_historical_audit_no_vacuous_bands_or_template():
     assert all(harbor['expected_in_source'].values())
 
 
+# GRM-H4: sha-bound: X3 source drift: scripts/grm_xm1_cpu.py (D2 fallout)
+@pytest.mark.campaign_receipt(registration='artifacts/grm_xm3/registration.json + artifacts/grm_xm3/implementation_amendment_3.json')
 def test_registration_dry_run_all_commands_no_gpu():
     reg=x3.validate()
     assert reg['gpu']['cells']*reg['gpu']['reservation_per_cell_s']<=1800
@@ -122,6 +124,8 @@ def test_registration_dry_run_all_commands_no_gpu():
     assert 'tensor_cuda' not in sys.modules
 
 
+# GRM-H4: sha-bound: X3 source drift: scripts/grm_xm1_cpu.py (D2 fallout)
+@pytest.mark.campaign_receipt(registration='artifacts/grm_xm3/registration.json + artifacts/grm_xm3/implementation_amendment_3.json')
 def test_prerequisites_reject_missing_wrong_control_budget_gap(tmp_path):
     reg=x3.validate()
     with pytest.raises(xm.XM1Error,match='control missing'):
@@ -142,6 +146,8 @@ def test_prerequisites_reject_missing_wrong_control_budget_gap(tmp_path):
         x3.prerequisites(reg,PROBES[0],'C5',tmp_path)
 
 
+# GRM-H4: sha-bound: X3 source drift: scripts/grm_xm1_cpu.py (D2 fallout)
+@pytest.mark.campaign_receipt(registration='artifacts/grm_xm3/registration.json + artifacts/grm_xm3/implementation_amendment_3.json')
 def test_pin_drift_fails_closed(tmp_path,monkeypatch):
     reg=x3.validate()
     modified=copy.deepcopy(reg)
@@ -203,6 +209,8 @@ def test_coupled_native_layers_matched_geometry(probe):
             assert abs(f['question_mass']-m['question_mass'])<1e-6
 
 
+# GRM-H4: sha-bound: X3 source drift: scripts/grm_xm1_cpu.py (D2 fallout)
+@pytest.mark.campaign_receipt(registration='artifacts/grm_xm3/registration.json + artifacts/grm_xm3/implementation_amendment_3.json')
 def test_gpu_entrypoint_mock_owns_lease_and_reservation(tmp_path,monkeypatch):
     from contextlib import contextmanager
     from scripts import grm_cmc1_gpu_arms as cmc
