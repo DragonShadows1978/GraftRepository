@@ -13,7 +13,7 @@ from core.grm_native import NativeGraftStore
 from core.grm_runtime import GRMRuntime
 
 
-ROOT = "/mnt/ForgeRealm/GraftRepository"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def test_arena_step_prompt_template_formats_prompt_and_deposit_turn():

@@ -75,6 +75,29 @@ struct HostPayload {
   std::uint64_t tensor_count() const;
 };
 
+// A GQA route card is an index record, never a mountable graft payload.  The
+// logical key layout is [slot_count, kv_heads, head_dim]; publication converts
+// it to the RouterIndex's historical [kv_heads, tokens, head_dim] flat layout
+// without changing the source vectors.
+struct RouteCardRecord {
+  bool present = false;
+  std::string state = "provisional";
+  std::string dialect_profile_hash;
+  std::string source_text_sha256;
+  std::string prompt_version;
+  std::string generator_version;
+  std::uint64_t slot_count = 0;
+  std::uint64_t kv_heads = 0;
+  std::uint64_t head_dim = 0;
+  std::vector<float> route_keys;
+  std::vector<std::string> lexical_identifiers;
+  std::string aliases_json = "[]";
+  std::string provenance_json = "{}";
+  std::uint64_t attempt_count = 0;
+  double created_at = 0.0;
+  double updated_at = 0.0;
+};
+
 struct ProvenanceRecord {
   std::uint64_t segment_id = 0;
   std::uint64_t node_id = 0;
@@ -91,6 +114,7 @@ struct HostGraftNode {
   bool no_fold = false;
   NodeLifecycle lifecycle;
   HostPayload payload;
+  RouteCardRecord route_card;
   std::vector<float> route_key;
   std::vector<std::vector<float>> route_keys;
   std::vector<std::string> lexical_keys;
@@ -394,6 +418,10 @@ class HostGraftStore {
   void set_provenance_json(std::uint64_t node_id,
                            std::string provenance_json);
   const std::string& provenance_json(std::uint64_t node_id) const;
+  void set_route_card(std::uint64_t node_id, RouteCardRecord route_card);
+  const RouteCardRecord* route_card(std::uint64_t node_id) const;
+  std::string route_card_json(std::uint64_t node_id) const;
+  void clear_route_card(std::uint64_t node_id);
   void clear_route(std::uint64_t node_id);
   void set_active(std::uint64_t node_id, bool active);
   bool is_active(std::uint64_t node_id) const;

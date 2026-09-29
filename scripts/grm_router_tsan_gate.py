@@ -61,6 +61,22 @@ std::vector<float> route_key(std::uint64_t node_id, std::uint64_t step) {
   return key;
 }
 
+std::vector<float> route_card_key(std::uint64_t node_id, std::uint64_t step) {
+  const auto head_major = route_key(node_id, step);
+  std::vector<float> card(head_major.size(), 0.0F);
+  for (std::uint64_t tok = 0; tok < kKeyTokens; ++tok) {
+    for (std::uint64_t kv = 0; kv < kKvHeads; ++kv) {
+      for (std::uint64_t d = 0; d < kHeadDim; ++d) {
+        const auto src = ((kv * kKeyTokens) + tok) * kHeadDim + d;
+        const auto dst = ((tok * kKvHeads) + kv) * kHeadDim + d;
+        card[static_cast<std::size_t>(dst)] =
+            head_major[static_cast<std::size_t>(src)];
+      }
+    }
+  }
+  return card;
+}
+
 std::vector<float> query() {
   std::vector<float> q(kQueryHeads * kQueryTokens * kHeadDim, 0.0F);
   for (std::uint64_t h = 0; h < kQueryHeads; ++h) {
@@ -105,14 +121,16 @@ int main(int argc, char** argv) {
       return 3;
     }
     ids.push_back(node_id);
-    auto key = route_key(i, 0);
+    auto key = route_card_key(i, 0);
     const std::string lexical = "node-" + std::to_string(i);
     if (!check_rc(handle,
-                  grm_store_set_route_multi(
-                      handle, node_id, key.data(), 1,
-                      static_cast<std::uint64_t>(key.size()),
-                      lexical.c_str()),
-                  "set_route_multi")) {
+                  grm_store_set_route_card(
+                      handle, node_id, "provisional", "profile-hash",
+                      "source-sha256", "gqa-route-card-v1", "tsan",
+                      kKeyTokens, kKvHeads, kHeadDim, key.data(),
+                      static_cast<std::uint64_t>(key.size()), lexical.c_str(),
+                      "[]", "{}", 0, 1.0, 1.0),
+                  "set_route_card")) {
       grm_store_destroy(handle);
       return 4;
     }
@@ -172,12 +190,15 @@ int main(int argc, char** argv) {
       const auto node_id = ids[static_cast<std::size_t>(idx)];
       bool ok = true;
       if (step % 5 == 0) {
-        auto key = route_key(idx, step + 1);
+        auto key = route_card_key(idx, step + 1);
         ok = check_rc(handle,
-                      grm_store_set_route_multi(
-                          handle, node_id, key.data(), 1,
-                          static_cast<std::uint64_t>(key.size()), ""),
-                      "writer set_route_multi");
+                      grm_store_set_route_card(
+                          handle, node_id, "ready", "profile-hash",
+                          "source-sha256", "gqa-route-card-v1", "tsan",
+                          kKeyTokens, kKvHeads, kHeadDim, key.data(),
+                          static_cast<std::uint64_t>(key.size()), "", "[]",
+                          "{}", step, 1.0, static_cast<double>(step + 2)),
+                      "writer set_route_card");
       } else if (step % 5 == 1) {
         ok = check_rc(handle, grm_store_set_active(handle, node_id, 0),
                       "writer set_active false") &&

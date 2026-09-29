@@ -73,6 +73,77 @@ boundary. The live GPU bridge receipt now exists. The next work item is a
 deliberate policy decision on whether CUDA should stay as the mount-window
 accelerator or become a full-rank general route backend.
 
+## Wing Continuation III: Fixed GQA Route Cards (opened 2026-07-11)
+
+The ragged-bank residual now has a concrete successor, and it does not change
+what a graft is. Each GQA node receives a small, non-mountable native route
+card: actual layer-0 K vectors selected per head into a fixed fp32 shape, plus
+strictly validated future-question aliases. The router searches the card; a
+mount still retrieves the original ragged K/V payload. MLA is deliberately
+absent because its latent centroids are already compact.
+
+The important architectural move is that this is another record inside
+`HostGraftStore`, not a side service. Card replacement uses the same native
+router write lock, immutable snapshot, epoch, stable IDs, metadata filters, and
+CUDA bridge that the prior work orders already made trustworthy. GQA can
+therefore become dense without teaching the memory plane to mount summaries or
+letting generated text become evidence.
+
+The provisional path preserves the measured raw `|q.k|` law: it stores raw
+vectors, never means. Highest norm seeds each head; later vectors trade norm
+against absolute-cosine diversity with deterministic source-position ties.
+Hidden question generation is deferred behind an explicit bookkeeping tick,
+uses scratch cache state, and has a harder trust boundary than the ordinary
+librarian: exact source evidence, answer containment, and source-supported
+identifiers are mandatory. Three failures leave the source-only card intact.
+
+Native schema, C/Python bindings, eager snapshot publication, GQA checkpoint
+v11, MLA v10 writer compatibility, repository lifecycle, cancellation, audit
+APIs, and focused concurrency/prompt-injection/restart tests are implemented on
+`codex/gqa-route-card-db`. The final focused battery is 23/23 green; the
+existing router baseline, lifecycle, and native-runtime suites are 21/21,
+101/101, and 121/121. The route-card publication TSAN stress and a synthetic
+20/20 CPU/CUDA stable-top-k parity check also pass. Those are implementation
+receipts, not adoption results. Slot count is not frozen and the fresh
+Qwen3.5/GPT-OSS seeds remain unopened until the one-shot development gate can
+replay both the capture corpus and the supersession cases without weakening
+their registered laws.
+
+The first replay immediately justified that caution. Against 20 deterministic
+self-source queries from the existing Qwen3.5 target K/Q shards, the full
+ragged bank held 18/20 top-three recall; provisional cards held only 2/20,
+3/20, and 4/20 at two, four, and eight slots. The vectors are behaving exactly
+like a tiny witness set: excellent at the positions they retain and blind to
+many of the 256 token-specific anchors they discard. This does not yet judge
+the hybrid idea—the stored corpus has no generated-question K—but it kills the
+easier story that fixed source medoids alone preserve ragged routing. The fresh
+gate stays closed, and the result is kept rather than tuned away.
+
+The operator authorized exactly one continuation to answer that missing hybrid
+question. Qwen3.5-9B reconstructed the same 32 captured source chunks,
+generated 42 mechanically grounded future-question aliases for 12 nodes, and
+harvested their native layer-3 K. That was not enough. Hybrid recall@3 was
+3/20, 2/20, and 3/20 at two, four, and eight slots against the ragged bank's
+18/20; four- and eight-slot cards were even worse than their provisional
+controls. Twenty nodes received no usable alias card, mostly because V1 JSON
+exceeded its frozen 384-token rail. The result closes both escape hatches:
+source medoids do not preserve coverage, and sparse generated-query keys do
+not restore it under the registered fixed shape. This line is now stopped, not
+retuned. A future routing design would need a different claim: most plausibly
+dense coarse candidate generation followed by exact ragged-key refinement, not
+another tiny-card prompt variation.
+
+A sealed-rank diagnostic then tested even that coarse-candidate escape hatch.
+It also failed: the hybrid cards recovered only 11-13 of 20 sources in a
+top-16 shortlist, and only 16-19 at top-24, where 75% of the 32-node corpus is
+already retained. The route-card compression is therefore not buying a useful
+filter. The surviving engineering direction is exact ragged GQA routing on
+CUDA—offset-segmented or length-bucketed with masked maxima—so the measured raw
+`|q.k|` law remains intact instead of being approximated by a tiny witness set.
+
+The sealed implementation/results postmortem is
+`docs/GRM_GQA_ROUTE_CARD_DB_POSTMORTEM.md`.
+
 ## Wing Continuation: The Bridge Overhead Work Order (opened 2026-07-07)
 
 The closure receipts themselves exposed the next defect: the router is

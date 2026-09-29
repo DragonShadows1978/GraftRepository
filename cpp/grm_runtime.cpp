@@ -349,7 +349,8 @@ constexpr char kCheckpointMagicV7[] = "GRMSTORE7";
 constexpr char kCheckpointMagicV8[] = "GRMSTORE8";
 constexpr char kCheckpointMagicV9[] = "GRMSTORE9";
 constexpr char kCheckpointMagicV10[] = "GRMSTOR10";
-constexpr char kCheckpointMagic[] = "GRMSTOR10";
+constexpr char kCheckpointMagicV11[] = "GRMSTOR11";
+constexpr char kCheckpointMagic[] = "GRMSTOR11";
 
 void write_u64(std::ostream& out, std::uint64_t v) {
   out.write(reinterpret_cast<const char*>(&v), sizeof(v));
@@ -357,6 +358,19 @@ void write_u64(std::ostream& out, std::uint64_t v) {
 
 std::uint64_t read_u64(std::istream& in) {
   std::uint64_t v = 0;
+  in.read(reinterpret_cast<char*>(&v), sizeof(v));
+  if (!in) {
+    throw std::runtime_error("truncated GRM checkpoint");
+  }
+  return v;
+}
+
+void write_f64(std::ostream& out, double v) {
+  out.write(reinterpret_cast<const char*>(&v), sizeof(v));
+}
+
+double read_f64(std::istream& in) {
+  double v = 0.0;
   in.read(reinterpret_cast<char*>(&v), sizeof(v));
   if (!in) {
     throw std::runtime_error("truncated GRM checkpoint");
@@ -2098,6 +2112,169 @@ const std::string& HostGraftStore::provenance_json(
   return n->provenance_json;
 }
 
+namespace {
+
+bool valid_route_card_state(const std::string& state) {
+  return state == "provisional" || state == "pending" ||
+         state == "ready" || state == "failed" || state == "stale";
+}
+
+std::uint64_t route_card_value_count(const RouteCardRecord& card) {
+  if (card.slot_count == 0 || card.kv_heads == 0 || card.head_dim == 0) {
+    return 0;
+  }
+  return checked_mul(
+      checked_mul(card.slot_count, card.kv_heads, "route card"),
+      card.head_dim, "route card");
+}
+
+std::vector<float> route_card_router_key(const RouteCardRecord& card) {
+  // RouteCardRecord is slot-major [S,H,D].  The existing GQA scorer consumes
+  // head-major [H,S,D].
+  std::vector<float> out(card.route_keys.size());
+  for (std::uint64_t s = 0; s < card.slot_count; ++s) {
+    for (std::uint64_t h = 0; h < card.kv_heads; ++h) {
+      for (std::uint64_t d = 0; d < card.head_dim; ++d) {
+        const auto src = (s * card.kv_heads + h) * card.head_dim + d;
+        const auto dst = (h * card.slot_count + s) * card.head_dim + d;
+        out[static_cast<std::size_t>(dst)] =
+            card.route_keys[static_cast<std::size_t>(src)];
+      }
+    }
+  }
+  return out;
+}
+
+void append_json_string_array(std::ostringstream& out,
+                              const std::vector<std::string>& values) {
+  out << '[';
+  for (std::size_t i = 0; i < values.size(); ++i) {
+    if (i != 0) out << ',';
+    out << '\"' << json_escape(values[i]) << '\"';
+  }
+  out << ']';
+}
+
+}  // namespace
+
+void HostGraftStore::set_route_card(std::uint64_t node_id,
+                                    RouteCardRecord route_card) {
+  auto* n = get(node_id);
+  if (n == nullptr) {
+    throw std::out_of_range("unknown GRM node id");
+  }
+  if (dialect_.payload_kind != PayloadKind::GQA) {
+    throw std::runtime_error("route cards are supported only for GQA stores");
+  }
+  if (!valid_route_card_state(route_card.state)) {
+    throw std::runtime_error("invalid route card state");
+  }
+  if (route_card.slot_count != 2 && route_card.slot_count != 4 &&
+      route_card.slot_count != 8) {
+    throw std::runtime_error("route card slot_count must be one of 2, 4, or 8");
+  }
+  if (route_card.kv_heads !=
+          static_cast<std::uint64_t>(dialect_.num_kv_heads) ||
+      route_card.head_dim != static_cast<std::uint64_t>(dialect_.head_dim)) {
+    throw std::runtime_error("route card shape does not match GQA dialect");
+  }
+  const auto expected = route_card_value_count(route_card);
+  if (route_card.route_keys.size() != static_cast<std::size_t>(expected)) {
+    throw std::runtime_error("route card key payload has the wrong size");
+  }
+  for (const auto value : route_card.route_keys) {
+    if (!std::isfinite(value)) {
+      throw std::runtime_error("route card keys must be finite fp32 values");
+    }
+  }
+  if (route_card.dialect_profile_hash.empty() ||
+      route_card.source_text_sha256.empty() ||
+      route_card.prompt_version.empty()) {
+    throw std::runtime_error("route card hashes and prompt version are required");
+  }
+  route_card.present = true;
+  auto router_key = route_card_router_key(route_card);
+  n->route_card = std::move(route_card);
+  n->route_key = router_key;
+  n->route_keys.clear();
+  n->route_keys.push_back(std::move(router_key));
+  n->lexical_keys = n->route_card.lexical_identifiers;
+  mark_dirty(node_id, false, true);
+}
+
+const RouteCardRecord* HostGraftStore::route_card(
+    std::uint64_t node_id) const {
+  const auto* n = get(node_id);
+  if (n == nullptr) {
+    throw std::out_of_range("unknown GRM node id");
+  }
+  return n->route_card.present ? &n->route_card : nullptr;
+}
+
+std::string HostGraftStore::route_card_json(std::uint64_t node_id) const {
+  const auto* card = route_card(node_id);
+  if (card == nullptr) {
+    return "null";
+  }
+  std::ostringstream out;
+  out << std::setprecision(std::numeric_limits<float>::max_digits10);
+  out << "{\"node_id\":" << node_id
+      << ",\"state\":\"" << json_escape(card->state) << "\""
+      << ",\"dialect_profile_hash\":\""
+      << json_escape(card->dialect_profile_hash) << "\""
+      << ",\"source_text_sha256\":\""
+      << json_escape(card->source_text_sha256) << "\""
+      << ",\"prompt_version\":\""
+      << json_escape(card->prompt_version) << "\""
+      << ",\"generator_version\":\""
+      << json_escape(card->generator_version) << "\""
+      << ",\"slot_count\":" << card->slot_count
+      << ",\"kv_heads\":" << card->kv_heads
+      << ",\"head_dim\":" << card->head_dim
+      << ",\"route_keys\":[";
+  for (std::uint64_t s = 0; s < card->slot_count; ++s) {
+    if (s != 0) out << ',';
+    out << '[';
+    for (std::uint64_t h = 0; h < card->kv_heads; ++h) {
+      if (h != 0) out << ',';
+      out << '[';
+      for (std::uint64_t d = 0; d < card->head_dim; ++d) {
+        if (d != 0) out << ',';
+        const auto off = (s * card->kv_heads + h) * card->head_dim + d;
+        out << card->route_keys[static_cast<std::size_t>(off)];
+      }
+      out << ']';
+    }
+    out << ']';
+  }
+  out << "],\"lexical_identifiers\":";
+  append_json_string_array(out, card->lexical_identifiers);
+  out << ",\"aliases\":"
+      << (trim(card->aliases_json).empty() ? "[]" : card->aliases_json)
+      << ",\"provenance\":"
+      << (trim(card->provenance_json).empty() ? "{}" : card->provenance_json)
+      << ",\"attempt_count\":" << card->attempt_count
+      << ",\"created_at\":" << std::setprecision(17) << card->created_at
+      << ",\"updated_at\":" << card->updated_at << '}';
+  return out.str();
+}
+
+void HostGraftStore::clear_route_card(std::uint64_t node_id) {
+  auto* n = get(node_id);
+  if (n == nullptr) {
+    throw std::out_of_range("unknown GRM node id");
+  }
+  if (!n->route_card.present && n->route_key.empty() &&
+      n->route_keys.empty() && n->lexical_keys.empty()) {
+    return;
+  }
+  n->route_card = RouteCardRecord();
+  n->route_key.clear();
+  n->route_keys.clear();
+  n->lexical_keys.clear();
+  mark_dirty(node_id, false, true);
+}
+
 void HostGraftStore::clear_route(std::uint64_t node_id) {
   auto* n = get(node_id);
   if (n == nullptr) {
@@ -2508,7 +2685,12 @@ void HostGraftStore::save_checkpoint(const std::string& root) {
     if (!out) {
       throw std::runtime_error("failed to open native GRM checkpoint for write");
     }
-    out.write(kCheckpointMagic, sizeof(kCheckpointMagic) - 1);
+    const bool write_route_cards = dialect_.payload_kind == PayloadKind::GQA;
+    if (write_route_cards) {
+      out.write(kCheckpointMagic, sizeof(kCheckpointMagic) - 1);
+    } else {
+      out.write(kCheckpointMagicV10, sizeof(kCheckpointMagicV10) - 1);
+    }
     write_string(out, dialect_.dialect_id());
     write_string(out, dialect_.position_law);
     write_string(out, dialect_.state_kind);
@@ -2540,6 +2722,26 @@ void HostGraftStore::save_checkpoint(const std::string& root) {
       write_bool(out, n.no_fold);
       write_f32_vectors(out, n.route_keys);
       write_string_vector(out, n.lexical_keys);
+      if (write_route_cards) {
+        write_bool(out, n.route_card.present);
+      }
+      if (write_route_cards && n.route_card.present) {
+        write_string(out, n.route_card.state);
+        write_string(out, n.route_card.dialect_profile_hash);
+        write_string(out, n.route_card.source_text_sha256);
+        write_string(out, n.route_card.prompt_version);
+        write_string(out, n.route_card.generator_version);
+        write_u64(out, n.route_card.slot_count);
+        write_u64(out, n.route_card.kv_heads);
+        write_u64(out, n.route_card.head_dim);
+        write_f32_vector(out, n.route_card.route_keys);
+        write_string_vector(out, n.route_card.lexical_identifiers);
+        write_string(out, n.route_card.aliases_json);
+        write_string(out, n.route_card.provenance_json);
+        write_u64(out, n.route_card.attempt_count);
+        write_f64(out, n.route_card.created_at);
+        write_f64(out, n.route_card.updated_at);
+      }
       write_bool(out, n.lifecycle.host_present);
       write_bool(out, n.lifecycle.device_present);
       write_bool(out, false);
@@ -2606,35 +2808,43 @@ void HostGraftStore::load_checkpoint(const std::string& root) {
   const bool checkpoint_v10 =
       magic_s == std::string(kCheckpointMagicV10,
                              sizeof(kCheckpointMagicV10) - 1);
+  const bool checkpoint_v11 =
+      magic_s == std::string(kCheckpointMagicV11,
+                             sizeof(kCheckpointMagicV11) - 1);
   if (!in || (!checkpoint_v1 && !checkpoint_v2 && !checkpoint_v3 &&
               !checkpoint_v4 && !checkpoint_v5 && !checkpoint_v6 &&
               !checkpoint_v7 && !checkpoint_v8 && !checkpoint_v9 &&
-              !checkpoint_v10)) {
+              !checkpoint_v10 && !checkpoint_v11)) {
     throw std::runtime_error("invalid native GRM checkpoint magic");
   }
   const bool has_active = checkpoint_v2 || checkpoint_v3 || checkpoint_v4 ||
                           checkpoint_v5 || checkpoint_v6 || checkpoint_v7 ||
-                          checkpoint_v8 || checkpoint_v9 || checkpoint_v10;
+                          checkpoint_v8 || checkpoint_v9 || checkpoint_v10 ||
+                          checkpoint_v11;
   const bool has_route_metadata = checkpoint_v3 || checkpoint_v4 ||
                                   checkpoint_v5 || checkpoint_v6 ||
                                   checkpoint_v7 || checkpoint_v8 ||
-                                  checkpoint_v9 || checkpoint_v10;
+                                  checkpoint_v9 || checkpoint_v10 ||
+                                  checkpoint_v11;
   const bool has_graph_edges = checkpoint_v4 || checkpoint_v5 ||
                                checkpoint_v6 || checkpoint_v7 ||
                                checkpoint_v8 || checkpoint_v9 ||
-                               checkpoint_v10;
+                               checkpoint_v10 || checkpoint_v11;
   const bool has_dialect_id = checkpoint_v5 || checkpoint_v6 ||
                               checkpoint_v7 || checkpoint_v8 ||
-                              checkpoint_v9 || checkpoint_v10;
+                              checkpoint_v9 || checkpoint_v10 ||
+                              checkpoint_v11;
   const bool has_route_lists = checkpoint_v6 || checkpoint_v7 ||
                                checkpoint_v8 || checkpoint_v9 ||
-                               checkpoint_v10;
+                               checkpoint_v10 || checkpoint_v11;
   const bool has_profile = checkpoint_v7 || checkpoint_v8 || checkpoint_v9 ||
-                           checkpoint_v10;
+                           checkpoint_v10 || checkpoint_v11;
   const bool has_fact_identity = checkpoint_v8 || checkpoint_v9 ||
-                                 checkpoint_v10;
-  const bool has_provenance = checkpoint_v9 || checkpoint_v10;
-  const bool has_no_fold = checkpoint_v10;
+                                 checkpoint_v10 || checkpoint_v11;
+  const bool has_provenance = checkpoint_v9 || checkpoint_v10 ||
+                              checkpoint_v11;
+  const bool has_no_fold = checkpoint_v10 || checkpoint_v11;
+  const bool has_route_card = checkpoint_v11;
   if (has_dialect_id) {
     const auto saved_dialect = read_string(in);
     const auto expected_dialect = dialect_.dialect_id();
@@ -2700,6 +2910,24 @@ void HostGraftStore::load_checkpoint(const std::string& root) {
       if (!n.route_keys.empty()) {
         n.route_key = n.route_keys.front();
       }
+    }
+    if (has_route_card && read_bool(in)) {
+      n.route_card.present = true;
+      n.route_card.state = read_string(in);
+      n.route_card.dialect_profile_hash = read_string(in);
+      n.route_card.source_text_sha256 = read_string(in);
+      n.route_card.prompt_version = read_string(in);
+      n.route_card.generator_version = read_string(in);
+      n.route_card.slot_count = read_u64(in);
+      n.route_card.kv_heads = read_u64(in);
+      n.route_card.head_dim = read_u64(in);
+      n.route_card.route_keys = read_f32_vector(in);
+      n.route_card.lexical_identifiers = read_string_vector(in);
+      n.route_card.aliases_json = read_string(in);
+      n.route_card.provenance_json = read_string(in);
+      n.route_card.attempt_count = read_u64(in);
+      n.route_card.created_at = read_f64(in);
+      n.route_card.updated_at = read_f64(in);
     }
     n.lifecycle.host_present = read_bool(in);
     n.lifecycle.device_present = read_bool(in);
@@ -5228,7 +5456,13 @@ void sync_router_node_state(grm_store_handle* handle, std::uint64_t node_id) {
   if (node == nullptr) {
     throw std::out_of_range("unknown GRM node id");
   }
-  handle->router.set_active(node_id, node->metadata.active);
+  // A stale card is audit-only even if a direct C caller has not yet mirrored
+  // the node's lifecycle bit.  Publishing a fresh provisional/pending/ready
+  // card re-enables routing when the underlying node is active.
+  const bool card_searchable =
+      !node->route_card.present || node->route_card.state != "stale";
+  handle->router.set_active(
+      node_id, node->metadata.active && card_searchable);
   handle->router.set_route_metadata(node_id, node->metadata.kind,
                                     node->metadata.scope,
                                     node->metadata.durability,
@@ -6748,6 +6982,141 @@ int grm_store_set_route_list(grm_store_handle* handle,
   }
 }
 
+int grm_store_set_route_card(grm_store_handle* handle,
+                             uint64_t node_id,
+                             const char* state,
+                             const char* dialect_profile_hash,
+                             const char* source_text_sha256,
+                             const char* prompt_version,
+                             const char* generator_version,
+                             uint64_t slot_count,
+                             uint64_t kv_heads,
+                             uint64_t head_dim,
+                             const float* route_values,
+                             uint64_t route_value_count,
+                             const char* lexical_identifiers,
+                             const char* aliases_json,
+                             const char* provenance_json,
+                             uint64_t attempt_count,
+                             double created_at,
+                             double updated_at) {
+  try {
+    if (handle == nullptr || handle->store == nullptr || state == nullptr ||
+        dialect_profile_hash == nullptr || source_text_sha256 == nullptr ||
+        prompt_version == nullptr) {
+      return grm_fail_msg(handle, "invalid set_route_card arguments");
+    }
+    if (route_values == nullptr && route_value_count > 0) {
+      return grm_fail_msg(handle,
+                          "null route card values with nonzero length");
+    }
+    grm::RouteCardRecord card;
+    card.present = true;
+    card.state = state;
+    card.dialect_profile_hash = dialect_profile_hash;
+    card.source_text_sha256 = source_text_sha256;
+    card.prompt_version = prompt_version;
+    card.generator_version = safe_cstr(generator_version, "");
+    card.slot_count = slot_count;
+    card.kv_heads = kv_heads;
+    card.head_dim = head_dim;
+    card.route_keys.reserve(static_cast<std::size_t>(route_value_count));
+    for (uint64_t i = 0; i < route_value_count; ++i) {
+      card.route_keys.push_back(route_values[i]);
+    }
+    card.lexical_identifiers = split_lexical_keys(lexical_identifiers);
+    card.aliases_json = safe_cstr(aliases_json, "[]");
+    card.provenance_json = safe_cstr(provenance_json, "{}");
+    card.attempt_count = attempt_count;
+    card.created_at = created_at;
+    card.updated_at = updated_at;
+
+    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
+    handle->store->set_route_card(node_id, std::move(card));
+    const auto* node = handle->store->get(node_id);
+    handle->router.upsert_multi(
+        node_id, node->route_keys, node->lexical_keys);
+    sync_router_node_state(handle, node_id);
+    mark_router_snapshot_dirty(handle);
+    prepare_router_for_store_dialect(handle);
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_route_card_status(grm_store_handle* handle,
+                                uint64_t node_id,
+                                char* out_status,
+                                size_t out_cap,
+                                uint64_t* out_len) {
+  try {
+    if (handle == nullptr || handle->store == nullptr || out_len == nullptr) {
+      return grm_fail_msg(handle, "invalid route_card_status arguments");
+    }
+    if (out_status == nullptr && out_cap > 0) {
+      return grm_fail_msg(
+          handle, "null route card status buffer with nonzero capacity");
+    }
+    std::shared_lock<std::shared_mutex> lock(handle->router_mutex);
+    const auto* card = handle->store->route_card(node_id);
+    const std::string status = card == nullptr ? "missing" : card->state;
+    *out_len = static_cast<uint64_t>(status.size());
+    if (out_status != nullptr && out_cap > 0) {
+      const size_t n = std::min(out_cap - 1, status.size());
+      std::memcpy(out_status, status.data(), n);
+      out_status[n] = '\0';
+    }
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_route_card_json(grm_store_handle* handle,
+                              uint64_t node_id,
+                              char* out_json,
+                              size_t out_cap,
+                              uint64_t* out_len) {
+  try {
+    if (handle == nullptr || handle->store == nullptr || out_len == nullptr) {
+      return grm_fail_msg(handle, "invalid route_card_json arguments");
+    }
+    if (out_json == nullptr && out_cap > 0) {
+      return grm_fail_msg(
+          handle, "null route card JSON buffer with nonzero capacity");
+    }
+    std::shared_lock<std::shared_mutex> lock(handle->router_mutex);
+    const auto json = handle->store->route_card_json(node_id);
+    *out_len = static_cast<uint64_t>(json.size());
+    if (out_json != nullptr && out_cap > 0) {
+      const size_t n = std::min(out_cap - 1, json.size());
+      std::memcpy(out_json, json.data(), n);
+      out_json[n] = '\0';
+    }
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
+int grm_store_clear_route_card(grm_store_handle* handle,
+                               uint64_t node_id) {
+  try {
+    if (handle == nullptr || handle->store == nullptr) {
+      return grm_fail_msg(handle, "invalid clear_route_card arguments");
+    }
+    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
+    handle->store->clear_route_card(node_id);
+    handle->router.erase(node_id);
+    mark_router_snapshot_dirty(handle);
+    prepare_router_for_store_dialect(handle);
+    return 0;
+  } catch (const std::exception& exc) {
+    return grm_fail(handle, exc);
+  }
+}
+
 int grm_store_clear_route(grm_store_handle* handle,
                           uint64_t node_id) {
   try {
@@ -7206,6 +7575,7 @@ int grm_store_save_checkpoint(grm_store_handle* handle, const char* root) {
     if (handle == nullptr || handle->store == nullptr || root == nullptr) {
       return grm_fail_msg(handle, "invalid save_checkpoint arguments");
     }
+    std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
     handle->store->save_checkpoint(root);
     return 0;
   } catch (const std::exception& exc) {
@@ -7218,7 +7588,10 @@ int grm_store_load_checkpoint(grm_store_handle* handle, const char* root) {
     if (handle == nullptr || handle->store == nullptr || root == nullptr) {
       return grm_fail_msg(handle, "invalid load_checkpoint arguments");
     }
-    handle->store->load_checkpoint(root);
+    {
+      std::unique_lock<std::shared_mutex> lock(handle->router_mutex);
+      handle->store->load_checkpoint(root);
+    }
     rebuild_router_from_store(handle);
     return 0;
   } catch (const std::exception& exc) {

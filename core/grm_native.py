@@ -576,6 +576,30 @@ class NativeGraftStore:
             lib.grm_store_clear_route.argtypes = [
                 ctypes.c_void_p, ctypes.c_uint64]
             lib.grm_store_clear_route.restype = ctypes.c_int
+        self._has_route_cards = all(hasattr(lib, name) for name in (
+            "grm_store_set_route_card", "grm_store_route_card_status",
+            "grm_store_route_card_json", "grm_store_clear_route_card"))
+        if self._has_route_cards:
+            lib.grm_store_set_route_card.argtypes = [
+                ctypes.c_void_p, ctypes.c_uint64,
+                ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.c_uint64, ctypes.c_uint64, ctypes.c_uint64,
+                ctypes.POINTER(ctypes.c_float), ctypes.c_uint64,
+                ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p,
+                ctypes.c_uint64, ctypes.c_double, ctypes.c_double]
+            lib.grm_store_set_route_card.restype = ctypes.c_int
+            lib.grm_store_route_card_status.argtypes = [
+                ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p,
+                ctypes.c_size_t, ctypes.POINTER(ctypes.c_uint64)]
+            lib.grm_store_route_card_status.restype = ctypes.c_int
+            lib.grm_store_route_card_json.argtypes = [
+                ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p,
+                ctypes.c_size_t, ctypes.POINTER(ctypes.c_uint64)]
+            lib.grm_store_route_card_json.restype = ctypes.c_int
+            lib.grm_store_clear_route_card.argtypes = [
+                ctypes.c_void_p, ctypes.c_uint64]
+            lib.grm_store_clear_route_card.restype = ctypes.c_int
         lib.grm_store_route.argtypes = [
             ctypes.c_void_p, ctypes.POINTER(ctypes.c_float), ctypes.c_uint64,
             ctypes.c_char_p, ctypes.c_uint64, ctypes.POINTER(ctypes.c_uint64),
@@ -1441,6 +1465,108 @@ class NativeGraftStore:
             self._handle, int(node_id)))
         self.clear_cuda_gqa_route_bank()
         self.clear_cuda_mla_route_bank()
+
+    @staticmethod
+    def _route_card_json_blob(value, default):
+        if value is None:
+            value = default
+        if isinstance(value, (bytes, bytearray)):
+            return bytes(value)
+        if isinstance(value, str):
+            # Preserve caller-supplied canonical JSON, but reject malformed
+            # audit metadata before it can make the native JSON API invalid.
+            json.loads(value)
+            return value.encode("utf-8")
+        return json.dumps(
+            value, sort_keys=True, separators=(",", ":"),
+            ensure_ascii=False).encode("utf-8")
+
+    def set_route_card(self, node_id, route_keys, *, state="provisional",
+                       dialect_profile_hash, source_text_sha256,
+                       prompt_version="gqa-route-card-v1",
+                       generator_version="", lexical_identifiers=(),
+                       aliases=(), provenance=None, attempt_count=0,
+                       created_at=0.0, updated_at=0.0):
+        """Atomically replace a GQA node's fixed route card and route rows.
+
+        ``route_keys`` uses the public logical layout
+        ``(slot_count, kv_heads, head_dim)``.  The native store retains that
+        exact fp32 card while publishing the historical head-major layout to
+        ``RouterIndex``; the graft payload is never touched.
+        """
+        if not getattr(self, "_has_route_cards", False):
+            raise RuntimeError("native GRM route-card ABI is unavailable")
+        if self._payload_kind != "gqa":
+            raise RuntimeError("GQA route cards require a GQA native store")
+        keys = np.ascontiguousarray(route_keys, dtype=np.float32)
+        if keys.ndim != 3:
+            raise ValueError(
+                "route card keys must have shape (slots, kv_heads, head_dim)")
+        slots, kv_heads, head_dim = (int(v) for v in keys.shape)
+        if slots not in (2, 4, 8):
+            raise ValueError("route card slots must be one of 2, 4, or 8")
+        if kv_heads != self._num_kv_heads or head_dim != self._head_dim:
+            raise ValueError(
+                "route card shape does not match the native GQA dialect")
+        if not np.isfinite(keys).all():
+            raise ValueError("route card keys must contain only finite fp32 values")
+        flat = keys.reshape(-1)
+        arr_t = ctypes.c_float * int(flat.size)
+        arr = arr_t(*[float(v) for v in flat])
+        aliases_blob = self._route_card_json_blob(aliases, [])
+        provenance_blob = self._route_card_json_blob(provenance, {})
+        self._check(self._lib.grm_store_set_route_card(
+            self._handle, int(node_id), str(state).encode("utf-8"),
+            str(dialect_profile_hash).encode("utf-8"),
+            str(source_text_sha256).encode("utf-8"),
+            str(prompt_version).encode("utf-8"),
+            str(generator_version).encode("utf-8"),
+            slots, kv_heads, head_dim, arr, int(flat.size),
+            self._lexical_blob(lexical_identifiers), aliases_blob,
+            provenance_blob, int(attempt_count), float(created_at),
+            float(updated_at)))
+        self.clear_cuda_gqa_route_bank()
+
+    def route_card_status(self, node_id):
+        if not getattr(self, "_has_route_cards", False):
+            raise RuntimeError("native GRM route-card ABI is unavailable")
+        needed = ctypes.c_uint64()
+        self._check(self._lib.grm_store_route_card_status(
+            self._handle, int(node_id), None, 0, ctypes.byref(needed)))
+        for _ in range(4):
+            buf = ctypes.create_string_buffer(int(needed.value) + 1)
+            actual = ctypes.c_uint64()
+            self._check(self._lib.grm_store_route_card_status(
+                self._handle, int(node_id), buf, ctypes.sizeof(buf),
+                ctypes.byref(actual)))
+            if int(actual.value) < ctypes.sizeof(buf):
+                return buf.value.decode("utf-8")
+            needed = actual
+        raise RuntimeError("route card status changed during repeated reads")
+
+    def route_card(self, node_id):
+        if not getattr(self, "_has_route_cards", False):
+            raise RuntimeError("native GRM route-card ABI is unavailable")
+        needed = ctypes.c_uint64()
+        self._check(self._lib.grm_store_route_card_json(
+            self._handle, int(node_id), None, 0, ctypes.byref(needed)))
+        for _ in range(4):
+            buf = ctypes.create_string_buffer(int(needed.value) + 1)
+            actual = ctypes.c_uint64()
+            self._check(self._lib.grm_store_route_card_json(
+                self._handle, int(node_id), buf, ctypes.sizeof(buf),
+                ctypes.byref(actual)))
+            if int(actual.value) < ctypes.sizeof(buf):
+                return json.loads(buf.value.decode("utf-8") or "null")
+            needed = actual
+        raise RuntimeError("route card changed during repeated audit reads")
+
+    def clear_route_card(self, node_id):
+        if not getattr(self, "_has_route_cards", False):
+            raise RuntimeError("native GRM route-card ABI is unavailable")
+        self._check(self._lib.grm_store_clear_route_card(
+            self._handle, int(node_id)))
+        self.clear_cuda_gqa_route_bank()
 
     def route(self, query, lexical_keys=(), topk=3, kinds=(), scopes=(),
               durabilities=(), mutabilities=()):

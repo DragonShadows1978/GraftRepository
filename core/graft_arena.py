@@ -2024,6 +2024,17 @@ class GQAArenaCache(ArenaCache):
         sc = np.einsum("hqd,hkd->hqk", pkey, kk) / np.sqrt(Dh)
         return float(np.abs(sc).max(axis=(1, 2)).mean())
 
+    def _cent_score(self, pkey, g):
+        if getattr(self, "gqa_route_cards_enabled", False):
+            metadata = g.get("metadata", {}) or {}
+            record = g.get("route_card") or {}
+            card_key = g.get("route_card_keys_native")
+            if (card_key is None or record.get("state") == "stale" or
+                    not metadata.get("active", True)):
+                return float("nan")
+            return self._key_score(pkey, card_key)
+        return super()._cent_score(pkey, g)
+
     def _normalize_scores(self, base):
         # raw |q.k| has no calibrated scale; rescale per route so the best
         # centroid-channel score sits at 1.0 — a monotone transform
@@ -2072,12 +2083,25 @@ class GQAArenaCache(ArenaCache):
         for g in self.grafts:
             if g.get("retired") or g.get("kind", "turn") == "recall":
                 continue
+            route_cards = getattr(self, "gqa_route_cards_enabled", False)
+            if route_cards:
+                metadata = g.get("metadata", {}) or {}
+                record = g.get("route_card") or {}
+                if (g.get("route_card_keys_native") is None or
+                        record.get("state") == "stale" or
+                        not metadata.get("active", True)):
+                    continue
             node_id = g.get("native_node_id")
-            if node_id is None or g.get("child_cents"):
+            if (node_id is None or
+                    (g.get("child_cents") and not getattr(
+                        self, "gqa_route_cards_enabled", False))):
                 return None
-            if "cent" not in g:
+            if ("cent" not in g and
+                    g.get("route_card_keys_native") is None):
                 return None
-            cent = g.get("cent")
+            cent = (g.get("route_card_keys_native")
+                    if route_cards
+                    else g.get("cent"))
             key = np.asarray(cent, dtype=np.float32)
             if key.ndim != 3:
                 return None
